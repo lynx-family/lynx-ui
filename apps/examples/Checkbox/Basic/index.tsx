@@ -71,7 +71,7 @@ function App() {
                 <CheckMark />
               </CheckboxIndicator>
             </Checkbox>
-            <text className='label-disabled'>Disabled</text>
+            <text className='label disabled'>Disabled</text>
           </view>
           <view className='row'>
             <Checkbox disabled checked className='checkbox'>
