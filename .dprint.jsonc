@@ -1,0 +1,83 @@
+{
+  "typescript": {
+    "lineWidth": 80,
+    "semiColons": "asi",
+    "quoteStyle": "alwaysSingle",
+    "typeLiteral.separatorKind.singleLine": "comma", // align with @stylistic/member-delimiter-style
+
+    // Let eslint-plugin-import handle this.
+    "module.sortImportDeclarations": "maintain",
+    "module.sortExportDeclarations": "maintain",
+    "exportDeclaration.sortNamedExports": "maintain",
+    "importDeclaration.sortNamedImports": "maintain"
+  },
+  "json": {
+    "jsonTrailingCommaFiles": [
+      ".vscode/extensions.json",
+      ".vscode/settings.json",
+      ".zed/settings.json",
+      "api-extractor.json",
+      "nx.json",
+      "renovate.json5",
+      "tsconfig.json",
+      "tsconfig.build.json",
+      "tsconfig.eslint.json"
+    ]
+  },
+  "markdown": {},
+  "toml": {},
+  "excludes": [
+    // dependencies
+    "**/node_modules",
+    "pnpm-lock.yaml",
+    ".pnpm-store",
+
+    // Outputs
+    ".nx",
+    "coverage",
+    "**/dist",
+    "**/lib",
+    "website/reviews/**",
+    "website/doc_build/**",
+    "website/docs/api",
+    "website/docs/config",
+    "website/docs/plugins",
+    "website/temp/**",
+
+    // Hot Cases
+    "packages/webpack/*/test/**/hotCases/**",
+
+    // Test snapshots
+    "**/expected/**",
+    "**/rspack-expected/**",
+    "packages/rspeedy/core/test/config/fixtures/error/**",
+    "packages/webpack/css-extract-webpack-plugin/test/js/**",
+    "packages/webpack/css-extract-webpack-plugin/test/rspack-js/**",
+    "packages/webpack/*/test/**/diagnostic/**",
+    "**/*.spec.ts",
+    "**/__test__/**",
+
+    // Ignored files
+    "**/*-lock.json",
+    // The tsconfig.json contains comments that align with indents.
+    "/tsconfig.json",
+
+    // Pipeline
+    ".codebase/pipelines/**",
+
+    // self
+    ".dprint.jsonc",
+
+    "lunarium/**"
+  ],
+  "plugins": [
+    "https://github.com/dprint/dprint-plugin-typescript/releases/download/0.93.3/plugin.wasm",
+    "https://github.com/dprint/dprint-plugin-json/releases/download/0.19.4/plugin.wasm",
+    "https://github.com/dprint/dprint-plugin-markdown/releases/download/0.17.8/plugin.wasm",
+    "https://github.com/dprint/dprint-plugin-toml/releases/download/0.6.3/plugin.wasm",
+    "https://github.com/dprint/dprint-plugin-dockerfile/releases/download/0.3.2/plugin.wasm",
+    "https://github.com/g-plane/malva/releases/download/v0.11.0/plugin.wasm",
+    "https://github.com/g-plane/markup_fmt/releases/download/v0.17.0/plugin.wasm",
+    "https://github.com/g-plane/pretty_yaml/releases/download/v0.5.0/plugin.wasm"
+  ]
+}

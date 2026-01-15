@@ -1,0 +1,49 @@
+{
+  "name": "@lynx-js/luna-tokens",
+  "version": "0.1.0",
+  "description": "Design tokens for the L.U.N.A project.",
+  "keywords": [
+    "luna",
+    "tokens",
+    "design tokens",
+    "theme",
+    "colors"
+  ],
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./luna-light": {
+      "types": "./dist/luna-light.d.ts",
+      "import": "./dist/luna-light.js",
+      "require": "./dist/luna-light.cjs"
+    },
+    "./luna-dark": {
+      "types": "./dist/luna-dark.d.ts",
+      "import": "./dist/luna-dark.js",
+      "require": "./dist/luna-dark.cjs"
+    },
+    "./lunaris-light": {
+      "types": "./dist/lunaris-light.d.ts",
+      "import": "./dist/lunaris-light.js",
+      "require": "./dist/lunaris-light.cjs"
+    },
+    "./lunaris-dark": {
+      "types": "./dist/lunaris-dark.d.ts",
+      "import": "./dist/lunaris-dark.js",
+      "require": "./dist/lunaris-dark.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ./scripts/sync-dist.mjs"
+  }
+}

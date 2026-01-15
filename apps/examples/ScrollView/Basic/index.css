@@ -1,0 +1,72 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.circle-letter-item {
+  width: 264px;
+  height: 472px;
+  padding-top: 128px;
+  padding-bottom: 128px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.circle {
+  width: 216px;
+  height: 216px;
+  border-radius: 108px;
+  background-color: var(--canvas);
+  padding-bottom: 45px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.letter {
+  font-size: 96px;
+  font-weight: 600;
+  line-height: 96px;
+  color: var(--primary);
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--content);
+  margin-top: 4px;
+}
+
+.subtitle {
+  font-size: 10px;
+  color: var(--content-subtle);
+  margin-top: 1px;
+}
+
+.container {
+  background-color: var(--canvas);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-view {
+  width: 100%;
+  height: 472px;
+}
+
+.scroll-view-background {
+  width: max-content;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  background: linear-gradient(
+    90deg,
+    var(--gradient-a) 0%,
+    var(--gradient-b) 31%,
+    var(--gradient-c) 65%,
+    var(--gradient-d) 100%
+  );
+}

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": [
+      "ESNext"
+    ],
+    "module": "ESNext",
+    "strictNullChecks": true,
+    "verbatimModuleSyntax": true,
+    "target": "ESNext",
+    "declaration": true,
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declarationMap": true,
+    "incremental": true
+  }
+}

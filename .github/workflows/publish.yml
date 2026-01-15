@@ -1,0 +1,102 @@
+name: Deploy
+
+on:
+  push:
+    branches: [
+      "main",
+    ]
+
+# Set default minimum permissions to prevent unnecessary access
+permissions: {}
+
+env:
+  CI: 1
+  TURBO_TELEMETRY_DISABLED: 1
+  GITHUB_BASE_REF: ${{ github.base_ref }}
+  GITHUB_HEAD_REF: ${{ github.head_ref }}
+  GITHUB_REF: ${{ github.ref }}
+  NPM_CONFIG_PROVENANCE: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.repository == 'lynx-family/lynx-ui'
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install
+        run: |
+          git submodule update --init --recursive --remote
+          npm install -g corepack@latest
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile
+      - name: build
+        run: |
+          corepack pnpm turbo build --summarize
+      - name: Save Turbo Result
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: deploy-${{ github.sha }}
+          path: .turbo
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true
+          include-hidden-files: true
+  # We make a build here to make sure cache works for pull requests
+  # See: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
+  publish:
+    timeout-minutes: 30
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.repository == 'lynx-family/lynx-ui'
+    concurrency:
+      group: ${{ github.workflow }}-publish-${{ github.ref }}
+      cancel-in-progress: false
+    environment: npm
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: read
+      # `id-token: write` is required for npm provenance
+      # See: https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions
+      id-token: write
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      - name: Install
+        run: |
+          git submodule update --init --recursive --remote
+          npm install -g corepack@latest
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile
+      - name: Download Turbo Cache
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        timeout-minutes: 5
+        with:
+          name: deploy-${{ github.sha }}
+          path: .turbo
+      - name: build
+        run: |
+          corepack pnpm turbo build --summarize
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date -u +'%Y-%m-%d %H:%M:%S')"
+      - name: attempt to release
+        uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          publish: pnpm changeset publish
+          title: "chore: Release ${{ steps.date.outputs.date }}"

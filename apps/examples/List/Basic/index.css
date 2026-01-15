@@ -1,0 +1,111 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.container {
+  background-color: var(--canvas-ambient);
+  width: 100%;
+  height: 100%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  position: relative;
+}
+
+.card {
+  border-color: #d0d0d0;
+  width: 343px;
+  height: 432px;
+  padding-left: 70px;
+  padding-right: 71px;
+  padding-top: 97px;
+  padding-bottom: 43px;
+  border-radius: 16px;
+}
+.rectangle-card__letter {
+  font-size: 56px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.rectangle-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: auto;
+  color: var(--content);
+}
+.rectangle-card__subtitle {
+  color: var(--content-subtle);
+}
+.rectangle-card {
+  background-color: var(--canvas);
+  border-color: var(--line);
+  border-width: 1px;
+  border-radius: 16px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 8px;
+  padding-top: 80px;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.list {
+  width: 100%;
+  height: calc(100% - 24px);
+  background-color: var(--canvas-ambient);
+}
+
+.button-container {
+  background-color: var(--canvas);
+  border-top-width: 1px;
+  border-top-color: var(--neutral-ambient);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px;
+  position: fixed;
+  bottom: 0px;
+  height: max-content;
+  flex-direction: column;
+}
+
+.button {
+  width: 348px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 24px;
+  background-color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.button:active {
+  opacity: 0.5;
+}
+
+.button.subtle {
+  background-color: var(--neutral-ambient);
+}
+
+.button.neutral {
+  background-color: var(--neutral);
+}
+
+.button-text {
+  color: var(--primary-content);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.button-text.subtle {
+  color: var(--content);
+}
+
+.button-text.neutral {
+  color: var(--neutral-content);
+}

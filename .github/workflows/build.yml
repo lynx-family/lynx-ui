@@ -1,0 +1,110 @@
+on:
+  workflow_call:
+env:
+  CI: 1
+  TURBO_TELEMETRY_DISABLED: 1
+jobs:
+  get-merge-base:
+    permissions:
+      contents: read
+    runs-on: lynx-ubuntu-24.04-medium
+    timeout-minutes: 5
+    env:
+      # We have 2 cases:
+      #   1. Pull request
+      #   2. Merge group
+      BASE_REF: ${{ github.base_ref || github.event.merge_group.base_ref }}
+      HEAD_REF: ${{ github.head_ref || github.event.merge_group.head_ref }}
+    outputs:
+      merge-base: ${{ steps.merge-base.outputs.merge-base }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          ref: ${{ env.HEAD_REF }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+      # Set up common variables for git operations
+      - name: Setup git refs
+        id: git-refs
+        run: |
+          # Strip refs/heads/ prefix if it exists
+          BASE_REF_CLEAN=${BASE_REF#refs/heads/}
+          HEAD_REF_CLEAN=${HEAD_REF#refs/heads/}
+          echo "base-ref=$BASE_REF_CLEAN" >> $GITHUB_OUTPUT
+          echo "head-ref=$HEAD_REF_CLEAN" >> $GITHUB_OUTPUT
+      # Modified from https://github.com/rmacklin/fetch-through-merge-base
+      - name: Fetch
+        if: github.event_name != 'push'
+        env:
+          CLEAN_BASE_REF: ${{ steps.git-refs.outputs.base-ref }}
+          CLEAN_HEAD_REF: ${{ steps.git-refs.outputs.head-ref }}
+          UPSTREAM_REMOTE: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        run: |
+          git remote add upstream $UPSTREAM_REMOTE
+          git fetch --progress --depth=1 upstream "+refs/heads/$CLEAN_BASE_REF:refs/remotes/upstream/$CLEAN_BASE_REF"
+          MAX_ATTEMPTS=10
+          ATTEMPT=0
+          while [ -z "$( git merge-base "refs/remotes/upstream/$CLEAN_BASE_REF" "$CLEAN_HEAD_REF" )" ] && [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; do
+            git fetch -q --deepen=10 upstream "refs/heads/$CLEAN_BASE_REF:refs/remotes/upstream/$CLEAN_BASE_REF"
+            git fetch -q --deepen=10 origin "$CLEAN_HEAD_REF"
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+          if [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+            echo "Failed to determine merge base after $MAX_ATTEMPTS attempts." >&2
+            exit 1
+          fi
+      - name: Get merge base
+        id: merge-base
+        env:
+          CLEAN_BASE_REF: ${{ format('upstream/{0}', steps.git-refs.outputs.base-ref) || github.event.base }}
+          CLEAN_HEAD_REF: ${{ steps.git-refs.outputs.head-ref }}
+        run: |
+          echo "merge-base=$(git merge-base "$CLEAN_BASE_REF" "$CLEAN_HEAD_REF" || git rev-parse "$CLEAN_BASE_REF")" >> $GITHUB_OUTPUT
+  build-all:
+    permissions:
+      contents: read
+    name: Build (${{ matrix.runs-on.name }})
+    runs-on: ${{ matrix.runs-on.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on:
+          - label: lynx-ubuntu-24.04-xlarge
+            name: Ubuntu
+    timeout-minutes: 30
+    needs: get-merge-base
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "20"
+          package-manager-cache: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - name: TurboCache
+        uses: lynx-infra/cache@5c6160a6a4c7fca80a2f3057bb9dfc9513fcb732
+        with:
+          path: .turbo
+          key: turbo-v4-${{ runner.os }}-${{ github.sha }}
+      - name: Install
+        run: |
+          git submodule update --init --recursive --remote
+          npm install -g corepack@latest
+          corepack enable
+          pnpm install --frozen-lockfile
+      - name: Build
+        id: build
+        run: |
+          pnpm turbo build --summarize
+        env:
+          NODE_OPTIONS: --max-old-space-size=32768
+      - name: Upload turbo summary
+        if: runner.debug == '1'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: turbo-summary-${{ github.sha }}
+          path: .turbo/runs/*.json
+          retention-days: 1
+          overwrite: true
+          include-hidden-files: true

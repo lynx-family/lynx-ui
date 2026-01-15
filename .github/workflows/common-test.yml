@@ -1,0 +1,62 @@
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        required: true
+        type: string
+      run:
+        required: true
+        type: string
+        description: "Command run parameters, limited to predefined test commands"
+
+# Set minimum permissions to prevent unnecessary access
+permissions:
+  repository-projects: read
+  contents: read
+  pull-requests: read
+
+env:
+  CI: 1
+  TURBO_TELEMETRY_DISABLED: 1
+jobs:
+  check:
+    timeout-minutes: 30
+    runs-on: ${{ inputs.runs-on }}
+    permissions:
+      contents: read
+      pull-requests: read
+      repository-projects: read
+      statuses: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "20"
+          package-manager-cache: false
+      - name: TurboCache
+        uses: lynx-infra/cache@5c6160a6a4c7fca80a2f3057bb9dfc9513fcb732
+        with:
+          path: .turbo
+          # We have to be strict here to make sure getting the cache of build-all
+          key: turbo-v4-${{ runner.os }}-${{ github.sha }}
+          fail-on-cache-miss: true
+      - name: Install
+        run: |
+          git submodule update --init --recursive --remote
+          npm install -g corepack@latest
+          corepack enable
+          pnpm install --frozen-lockfile
+      - name: Build
+        run: |
+          pnpm turbo build --summarize
+      - name: Test # zizmor: ignore[template-injection] The inputs.run is provided by us.
+        id: test
+        env:
+          NODE_OPTIONS: --max-old-space-size=16384
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ${{ inputs.run }}

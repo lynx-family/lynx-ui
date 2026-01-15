@@ -1,0 +1,69 @@
+{
+  "extends": "./tools/configs/tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/lynx-ui"
+    },
+    {
+      "path": "./packages/lynx-ui-button"
+    },
+    {
+      "path": "./packages/lynx-ui-checkbox"
+    },
+    {
+      "path": "./packages/lynx-ui-common"
+    },
+    {
+      "path": "./packages/lynx-ui-dialog"
+    },
+    {
+      "path": "./packages/lynx-ui-draggable"
+    },
+    {
+      "path": "./packages/lynx-ui-feed-list"
+    },
+    {
+      "path": "./packages/lynx-ui-form"
+    },
+    {
+      "path": "./packages/lynx-ui-input"
+    },
+    {
+      "path": "./packages/lynx-ui-lazy-component"
+    },
+    {
+      "path": "./packages/lynx-ui-list"
+    },
+    {
+      "path": "./packages/lynx-ui-overlay"
+    },
+    {
+      "path": "./packages/lynx-ui-popover"
+    },
+    {
+      "path": "./packages/lynx-ui-presence"
+    },
+    {
+      "path": "./packages/lynx-ui-radio-group"
+    },
+    {
+      "path": "./packages/lynx-ui-scroll-view"
+    },
+    {
+      "path": "./packages/lynx-ui-sortable"
+    },
+    {
+      "path": "./packages/lynx-ui-swipe-action"
+    },
+    {
+      "path": "./packages/lynx-ui-swiper"
+    },
+    {
+      "path": "./packages/lynx-ui-switch"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}

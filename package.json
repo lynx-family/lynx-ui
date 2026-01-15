@@ -1,0 +1,92 @@
+{
+  "name": "lynx-ui",
+  "private": true,
+  "description": "lynx-ui repo",
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "type": "module",
+  "scripts": {
+    "analyzeDoc": "pnpm tsx tools/typedoc/index.ts",
+    "build": "turbo build",
+    "changeset": "changeset",
+    "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
+    "check:all": "pnpm run check && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:manypkg": "pnpm dlx @manypkg/cli check",
+    "check:sherif": "pnpm dlx sherif@latest",
+    "check:submodule": "node tools/scripts/check-submodule-regression.mjs",
+    "coverage": "vitest --coverage",
+    "examples:build": "turbo build --filter 'examples'",
+    "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif",
+    "fix:changed": "sh tools/checkChanged/checkChanged.sh",
+    "fix:changed:unsafe": "sh tools/checkChanged/checkChanged.sh --unsafe",
+    "fix:manypkg": "pnpm dlx @manypkg/cli fix",
+    "fix:sherif": "pnpm dlx sherif@latest --fix",
+    "format": "dprint fmt",
+    "install:all": "pnpm run update:submodules && pnpm install",
+    "knip": "knip",
+    "make-new-component": "tsx tools/make-new-component/index.ts",
+    "prepare": "husky",
+    "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
+    "test": "vitest",
+    "update:submodules": "git submodule update --init --recursive",
+    "update:submodules-remote": "git submodule update --init --recursive --remote"
+  },
+  "nano-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
+      "eslint --cache --fix --no-warn-ignored",
+      "biome lint --write --no-errors-on-unmatched --files-ignore-unknown=true",
+      "dprint fmt --allow-no-files --"
+    ],
+    "*.{toml,css,sass,scss,less,html,yml,yaml}": [
+      "dprint fmt --allow-no-files --"
+    ],
+    "*package.json": "sort-package-json",
+    "*": [
+      "cspell lint --config cspell.jsonc --gitignore --no-must-find-files",
+      "node tools/ensure-changeset.js",
+      "node tools/scripts/check-submodule-regression.mjs"
+    ]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@changesets/cli": "2.28.1",
+    "@cspell/eslint-plugin": "^8.17.1",
+    "@eslint/js": "^9.17.0",
+    "@lynx-js/qrcode-rsbuild-plugin": "catalog:",
+    "@lynx-js/react-rsbuild-plugin": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@rslib/core": "catalog:",
+    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
+    "@types/node": "^18.19.130",
+    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/eslint-plugin": "^1.1.24",
+    "cspell": "^8.17.1",
+    "dprint": "^0.48.0",
+    "eslint": "^9.17.0",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsdoc": "^50.6.1",
+    "eslint-plugin-jsonc": "^2.18.2",
+    "eslint-plugin-n": "^17.15.1",
+    "eslint-plugin-notice": "^1.0.0",
+    "eslint-plugin-regexp": "^2.7.0",
+    "eslint-plugin-unicorn": "^56.0.1",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "jsonc-parser": "3.3.1",
+    "knip": "^5.80.0",
+    "nano-staged": "^0.8.0",
+    "sort-package-json": "^2.12.0",
+    "tsx": "^4.19.3",
+    "turbo": "^2.3.3",
+    "typedoc": "^0.28.0",
+    "typescript": "catalog:",
+    "typescript-eslint": "^8.19.1",
+    "vitest": "2.1.8"
+  },
+  "packageManager": "pnpm@9.12.3",
+  "engines": {
+    "node": ">=18.20",
+    "pnpm": "9.12.3"
+  }
+}

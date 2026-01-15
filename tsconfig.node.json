@@ -1,0 +1,18 @@
+{
+  "extends": "./tools/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "tools/configs/rslib.base.ts",
+    "packages/**/rslib.config.ts",
+    "tools/configs/exampleConfig.mjs",
+    "apps/**/lynx.config.ts"
+  ]
+}

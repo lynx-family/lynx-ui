@@ -1,0 +1,64 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  // Meta
+  "version": "0.2",
+  "language": "en",
+  // Dictionaries
+  "dictionaries": [
+    "misc",
+    "contributors",
+    "lynx",
+    "luna",
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "misc",
+      "path": "./.cspell/misc.txt",
+      "addWords": true,
+    },
+    {
+      "name": "contributors",
+      "path": "./.cspell/contributors.txt",
+      "addWords": true,
+    },
+    {
+      "name": "lynx",
+      "path": "./.cspell/lynx.txt",
+      "addWords": true,
+    },
+    {
+      "name": "luna",
+      "path": "./.cspell/luna.txt",
+      "addWords": true,
+    },
+  ],
+  // Misc words
+  "words": [],
+  // Glob
+  "ignorePaths": [
+    ".gitignore",
+    // Tests
+    "coverage",
+    "e2e",
+    "expected",
+    "tools/make-new-component/examplesTemplate/**",
+    "tools/make-new-component/template/**",
+    // Output
+    "dist",
+    "lib",
+    // Dependencies
+    "lynx-stack",
+    "node_modules",
+    ".pnpm-store",
+    "/patches",
+    "/pnpm-lock.yaml",
+    "/renovate.json5",
+    "**/*.json",
+    "/pnpm-workspace.yaml",
+    // Submodule
+    "lunarium/**",
+  ],
+  "enableFiletypes": [
+    "mdx",
+  ],
+}

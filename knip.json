@@ -1,0 +1,79 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  },
+  "tags": [
+    "-lintignore"
+  ],
+  "workspaces": {
+    ".": {
+      "entry": [
+        "tools/**/*.ts",
+        "tools/**/*.js",
+        "eslint.config.mjs",
+        "biome.jsonc",
+        "cspell.jsonc"
+      ],
+      "project": [
+        "tools/**/*.{js,ts}"
+      ]
+    },
+    "packages/*": {
+      "entry": [
+        "src/index.ts",
+        "src/index.tsx",
+        "rslib.config.ts",
+        "vitest.config.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}",
+        "test/**/*.{ts,tsx}"
+      ]
+    },
+    "apps/*": {
+      "entry": [
+        "lynx.config.mjs",
+        "vitest.config.ts",
+        "src/index.tsx"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "apps/examples/*": {
+      "entry": [
+        "lynx.config.mjs",
+        "**/*/index.tsx"
+      ],
+      "project": [
+        "**/*.{ts,tsx}"
+      ]
+    },
+    "tools/*": {
+      "entry": [
+        "index.ts",
+        "index.js",
+        "snapshot.js"
+      ]
+    }
+  },
+  "ignore": [
+    "luna/**",
+    "lunarium/**",
+    "**/dist/**"
+  ],
+  "ignoreBinaries": [
+    "rspeedy",
+    "rslib"
+  ],
+  "ignoreDependencies": [
+    "@lynx-js/react-rsbuild-plugin",
+    "@lynx-js/qrcode-rsbuild-plugin",
+    "@lynx-js/rspeedy",
+    "typescript",
+    "@lynx-js/luna-styles",
+    "@lynx-js/react"
+  ]
+}

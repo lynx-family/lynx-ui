@@ -1,0 +1,154 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.lunaris-dark,
+.lunaris-light,
+.luna-dark,
+.luna-light {
+  --ease-out-smooth: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Typography */
+  --font-semibold: 600;
+
+  --text-base: 14px;
+  --lh-base: 18px;
+
+  --text-lg: 16px;
+  --lh-lg: 21px;
+}
+
+/* =========================
+ * Container
+ * ========================= */
+
+.container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding-left: 48px;
+  padding-right: 48px;
+  padding-bottom: 160px;
+
+  background-color: var(--primary-muted);
+}
+
+/* =========================
+ * Popover trigger
+ * ========================= */
+
+.popover-trigger {
+  width: 168px;
+  height: 48px;
+
+  align-self: flex-end;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9999px;
+  background-color: var(--primary);
+
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.popover-trigger.ui-active {
+  background-color: var(--primary-2);
+}
+
+.popover-trigger-text {
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  font-weight: var(--font-semibold);
+  color: var(--primary-content);
+}
+
+/* =========================
+ * Popover positioner
+ * ========================= */
+
+.popover-positioner {
+  width: max-content;
+  height: max-content;
+}
+
+/* =========================
+ * Popover content
+ * ========================= */
+
+@keyframes popover-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes popover-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.popover-content {
+  width: 264px;
+  height: 192px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  padding-left: 36px;
+  padding-right: 36px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+
+  row-gap: 16px;
+
+  border-radius: 24px;
+  background-color: var(--canvas);
+  box-shadow: var(--shadow);
+
+  /* avoid transform affecting layout during animation */
+  transform-origin: top right;
+  opacity: 0;
+}
+
+.popover-content.ui-open {
+  animation: popover-in 180ms var(--ease-out-smooth) forwards;
+}
+
+.popover-content.ui-closed {
+  animation: popover-out 120ms var(--ease-in-exit) forwards;
+}
+
+/* =========================
+ * Popover body
+ * ========================= */
+
+.popover-title {
+  font-size: var(--text-lg);
+  line-height: var(--lh-lg);
+  font-weight: var(--font-semibold);
+  color: var(--content);
+}
+
+.popover-desc {
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  color: var(--content);
+}

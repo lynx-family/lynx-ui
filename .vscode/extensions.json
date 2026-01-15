@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "dprint.dprint",
+    "editorconfig.editorconfig",
+    "yoavbls.pretty-ts-errors",
+  ],
+}

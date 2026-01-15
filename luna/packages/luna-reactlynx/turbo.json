@@ -1,0 +1,17 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["@dugyu/luna-reactlynx#build"],
+      "inputs": [
+        "package.json",
+        "scripts/**",
+        "../../tools/shim/**",
+        "../../../lunarium/packages/reactlynx/src/**",
+        "../../../lunarium/packages/reactlynx/rslib.config.ts"
+      ],
+      "outputs": ["dist/**"]
+    }
+  }
+}

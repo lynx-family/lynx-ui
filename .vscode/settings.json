@@ -1,0 +1,50 @@
+{
+  "files.associations": {
+    "renovate.json5": "jsonc",
+    "OWNERS": "yaml",
+  },
+  "editor.formatOnSave": true,
+  "eslint.nodePath": "node_modules",
+  "eslint.trace.server": "verbose",
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto",
+    },
+  ],
+  "editor.defaultFormatter": "dprint.dprint",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[json]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "[html]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/_meta.json"],
+      "url": "./website/node_modules/@rspress/core/meta-json-schema.json",
+    },
+    {
+      "fileMatch": ["**/_nav.json"],
+      "url": "./website/node_modules/@rspress/core/nav-json-schema.json",
+    },
+  ],
+  "prettier.requireConfig": true,
+}

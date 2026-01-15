@@ -1,0 +1,17 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["@dugyu/luna-core#build"],
+      "inputs": [
+        "package.json",
+        "scripts/**",
+        "../../tools/shim/**",
+        "../../../lunarium/packages/core/src/**",
+        "../../../lunarium/packages/core/rslib.config.ts"
+      ],
+      "outputs": ["dist/**"]
+    }
+  }
+}

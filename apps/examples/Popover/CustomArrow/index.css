@@ -1,0 +1,78 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.trigger {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, red 0%, PeachPuff 100%);
+}
+
+.anchor {
+  width: 200px;
+  height: 100px;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: beige;
+}
+
+@keyframes fade-and-enlarge {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-and-shrink {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+.fade-enlarge {
+  animation: fade-and-enlarge 1s ease-out forwards;
+}
+
+.fade-shrink {
+  animation: fade-and-shrink 1s ease-out forwards;
+}
+
+.popover-content {
+  /* width: 400px; */
+  /* height: 50px; */
+  border-radius: 16px;
+  padding: 20px;
+  background-color: NavajoWhite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.popover-positioner {
+  width: max-content;
+  height: max-content;
+}

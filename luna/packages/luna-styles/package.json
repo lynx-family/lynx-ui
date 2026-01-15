@@ -1,0 +1,37 @@
+{
+  "name": "@lynx-js/luna-styles",
+  "version": "0.1.0",
+  "description": "CSS theme variables for the L.U.N.A project.",
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "sideEffects": [
+    "./dist/*.css"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/index.css"
+    },
+    "./index.css": {
+      "default": "./dist/index.css"
+    },
+    "./luna-light.css": {
+      "default": "./dist/luna-light.css"
+    },
+    "./luna-dark.css": {
+      "default": "./dist/luna-dark.css"
+    },
+    "./lunaris-light.css": {
+      "default": "./dist/lunaris-light.css"
+    },
+    "./lunaris-dark.css": {
+      "default": "./dist/lunaris-dark.css"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ./scripts/sync-dist.mjs"
+  }
+}

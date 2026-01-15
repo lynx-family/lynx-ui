@@ -1,0 +1,32 @@
+{
+  "name": "@lynx-js/luna-core",
+  "version": "0.1.0",
+  "description": "Core constants, types, and utilities for the L.U.N.A project.",
+  "keywords": [
+    "luna",
+    "core",
+    "constants",
+    "types",
+    "utils"
+  ],
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ./scripts/sync-dist.mjs"
+  }
+}

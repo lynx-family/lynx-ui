@@ -1,0 +1,34 @@
+diff --git a/dist/changesets-apply-release-plan.cjs.js b/dist/changesets-apply-release-plan.cjs.js
+index dea7ce5f97c88d2c4d2cc444506ff3f9ff55d7d8..6e872c09952cac389bfc48df377757b17e85e933 100644
+--- a/dist/changesets-apply-release-plan.cjs.js
++++ b/dist/changesets-apply-release-plan.cjs.js
+@@ -149,6 +149,11 @@ async function getChangelogEntry(release, releases, changesets, changelogFuncs,
+     patch: []
+   };
+ 
++  const newChangelogOpts = {
++    ...changelogOpts,
++    packageJson: release.packageJson
++  }
++
+   // I sort of feel we can do better, as ComprehensiveReleases have an array
+   // of the relevant changesets but since we need the version type for the
+   // release in the changeset, I don't know if we can
+@@ -156,7 +161,7 @@ async function getChangelogEntry(release, releases, changesets, changelogFuncs,
+   changesets.forEach(cs => {
+     const rls = cs.releases.find(r => r.name === release.name);
+     if (rls && rls.type !== "none") {
+-      changelogLines[rls.type].push(changelogFuncs.getReleaseLine(cs, rls.type, changelogOpts));
++      changelogLines[rls.type].push(changelogFuncs.getReleaseLine(cs, rls.type, newChangelogOpts));
+     }
+   });
+   let dependentReleases = releases.filter(rel => {
+@@ -183,7 +188,7 @@ async function getChangelogEntry(release, releases, changesets, changelogFuncs,
+     });
+   });
+   let relevantChangesets = changesets.filter(cs => relevantChangesetIds.has(cs.id));
+-  changelogLines.patch.push(changelogFuncs.getDependencyReleaseLine(relevantChangesets, dependentReleases, changelogOpts));
++  changelogLines.patch.push(changelogFuncs.getDependencyReleaseLine(relevantChangesets, dependentReleases, newChangelogOpts));
+   return [`## ${release.newVersion}`, await generateChangesForVersionTypeMarkdown(changelogLines, "major"), await generateChangesForVersionTypeMarkdown(changelogLines, "minor"), await generateChangesForVersionTypeMarkdown(changelogLines, "patch")].filter(line => line).join("\n");
+ }
+ 

@@ -1,0 +1,43 @@
+.scroll-view {
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  padding-top: 100px;
+}
+
+.sortable-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 120vh;
+  z-index: 0;
+}
+
+.sortable-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100px;
+}
+
+.even {
+  background-color: burlywood;
+}
+
+.odd {
+  background-color: aqua;
+}
+
+.sortable-item-area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 100%;
+  background-color: gray;
+}

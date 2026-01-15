@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "../../tsconfig.json",
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": "./",
+    "rootDir": "./",
+    "noEmit": true,
+    "allowJs": true,
+  },
+  "include": [
+    "index.ts",
+    "syncDependencies.js",
+    "updateTSConfigRefs.ts",
+  ],
+  "exclude": [
+    "node_modules",
+  ],
+}

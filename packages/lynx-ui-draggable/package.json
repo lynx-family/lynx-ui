@@ -1,0 +1,47 @@
+{
+  "name": "@lynx-js/lynx-ui-draggable",
+  "version": "3.122.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "packages/lynx-ui-draggable"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.jsx",
+  "module": "./dist/index.jsx",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "src/**",
+    "README.md",
+    "CHANGELOG.md",
+    "tsconfig.docs.json",
+    "tsconfig.json",
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "build:watch": "rslib build --watch"
+  },
+  "dependencies": {
+    "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/react-use": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-js/react": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@rslib/core": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@lynx-js/react": ">=0.100.0",
+    "@lynx-js/types": "*",
+    "@types/react": "^18"
+  },
+  "jsnext:source": "./src/index.tsx"
+}

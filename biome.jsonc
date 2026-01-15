@@ -1,0 +1,138 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "json": {
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": true,
+    },
+  },
+  "organizeImports": {
+    // We use `eslint-plugin-import` for imports sorting
+    "enabled": false,
+  },
+  "formatter": {
+    // We use `dprint` for formatting
+    "enabled": false,
+  },
+  "files": {
+    "ignore": [
+      "lunarium",
+    ],
+  },
+  "linter": {
+    "enabled": true,
+    "ignore": [
+      "**/__test__/**",
+      "tools/**",
+      ".codebase/**",
+      "coverage/**",
+      "dist/**",
+      "lib/**",
+      "output/**",
+      "apps/**/*.test.ts",
+      "packages/**/*.test.ts",
+      "__swc_snapshots__/**",
+      "__snapshots__/**",
+      "packages/web-platform/web-test/**",
+      "website/**",
+      "lunarium/**",
+    ],
+    "rules": {
+      // We are migrating from ESLint to Biome
+      "recommended": false,
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noPrecisionLoss": "error",
+        "noInvalidUseBeforeDeclaration": "error",
+        // eslint-plugin-react
+        "useJsxKeyInIterable": "warn",
+        "noChildrenProp": "error",
+        // eslint-plugin-react-hooks
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error",
+        // eslint-plugin-unicorn
+        "noInvalidBuiltinInstantiation": "error",
+      },
+      "complexity": {
+        // eslint-plugin-react
+        "noUselessFragments": "error",
+        // eslint-plugin-unicorn
+        "noUselessSwitchCase": "error",
+        "useDateNow": "error",
+        "useFlatMap": "error",
+        // typescript-eslint
+        "noBannedTypes": "error",
+        "useLiteralKeys": "off",
+        "noUselessThisAlias": "error",
+        "noUselessTypeConstraint": "error",
+        "noUselessConstructor": "error",
+        "noUselessEmptyExport": "error",
+        "useOptionalChain": "error",
+      },
+      "style": {
+        // eslint-plugin-react
+        "useFragmentSyntax": "error",
+        // eslint-plugin-unicorn
+        "useExplicitLengthCheck": "error",
+        "useNodejsImportProtocol": "error",
+        "useNumberNamespace": "error",
+        // typescript-eslint
+        "useConsistentArrayType": "error",
+        "useExportType": "error",
+        "useImportType": "error",
+        "useDefaultParameterLast": "error",
+        "noInferrableTypes": "error",
+        "noNamespace": "error",
+        "useThrowOnlyError": "error",
+        "useAsConstAssertion": "error",
+        "useEnumInitializers": "error",
+        "useForOf": "error",
+        "useShorthandFunctionType": "error",
+        "useLiteralEnumMembers": "error",
+      },
+      "suspicious": {
+        "noConsoleLog": "error",
+        // eslint-plugin-react
+        "noDuplicateJsxProps": "error",
+        // eslint-plugin-unicorn
+        "useErrorMessage": "error",
+        "useIsArray": "error",
+        // typescript-eslint
+        "noEmptyBlockStatements": "error",
+        "noEmptyInterface": "error",
+        "noExplicitAny": "error",
+        "noExtraNonNullAssertion": "error",
+        "noConfusingVoidType": "error",
+        "noMisleadingInstantiator": "error", // cSpell:disable-line
+        "noRedeclare": "error",
+        "noUnsafeDeclarationMerging": "error",
+        "useAwait": "error",
+      },
+      "nursery": {
+        // typescript-eslint
+        "useAdjacentOverloadSignatures": "error",
+      },
+    },
+  },
+  "overrides": [
+    {
+      "include": [
+        "apps/**",
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsoleLog": "off",
+          },
+        },
+      },
+    },
+  ],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "useIgnoreFile": true,
+  },
+}

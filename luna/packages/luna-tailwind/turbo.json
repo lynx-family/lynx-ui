@@ -1,0 +1,17 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["@dugyu/luna-tailwind#build"],
+      "inputs": [
+        "package.json",
+        "scripts/**",
+        "../../tools/shim/**",
+        "../../../lunarium/packages/tailwind/src/**",
+        "../../../lunarium/packages/tailwind/rslib.config.ts"
+      ],
+      "outputs": ["dist/**"]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+packages:
+  - packages/*
+  - apps/examples/*
+  - luna/packages/*
+  - lunarium/apps/*
+  - lunarium/packages/**
+  - tools/rsbuild-plugin-select-entry
+  - tools/canary-release
+  - "!**/node_modules/**"
+  - "!**/dist/**"
+  - "!**/output/**"
+
+catalog:
+  "@lynx-js/react": 0.113.0
+  "@lynx-js/react-rsbuild-plugin": 0.11.2
+  "@lynx-js/rspeedy": 0.11.2
+  "@lynx-js/types": 3.6.0
+  "@lynx-js/gesture-runtime": npm:@lynx-js/gesture-runtime-canary@2.1.1-canary-20251230-49ef14b2
+  "@lynx-js/qrcode-rsbuild-plugin": 0.3.3
+  "@rsbuild/plugin-react": ^1.4.1
+  "@rslib/core": ^0.16.0
+  "@lynx-js/react-use": 0.0.7
+  "@types/react": "^18.3.8"
+  clsx: ^2.1.1
+  "typescript": "^5.5.3"
+catalogs:
+  utils:
+    clsx: ^2.1.1
+  lynx:
+    "@lynx-js/react": 0.114.4
+    "@lynx-js/web-core": 0.18.1
+    "@lynx-js/web-elements": 0.8.9
+  lynx-dev:
+    "@lynx-js/preact-devtools": 5.0.1-cf9aef5
+    "@lynx-js/types": 3.4.11
+  lynx-build:
+    "@lynx-js/qrcode-rsbuild-plugin": 0.3.3
+    "@lynx-js/react-rsbuild-plugin": 0.11.4
+    "@lynx-js/rspeedy": 0.11.8
+  react18:
+    "@types/react": 18.3.24
+    "@types/react-dom": 18.3.7
+    react: 18.3.1
+    react-dom: 18.3.1
+  rsbuild:
+    "@rsbuild/core": 1.6.1
+    "@rsbuild/plugin-react": 1.4.2
+    "@rsbuild/plugin-type-check": 1.2.4
+  rslib:
+    "@rslib/core": 0.17.1
+  tailwind:
+    "@lynx-js/tailwind-preset": 0.4.0
+    rsbuild-plugin-tailwindcss: 0.2.3
+    tailwind-merge: 2.6.0
+    tailwindcss: 3.4.17
+  ts:
+    typescript: 5.9.2
+    "@types/node": 24.6.1
+    "@typescript/native-preview": 7.0.0-dev.20251103.1

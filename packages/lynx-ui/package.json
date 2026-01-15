@@ -1,0 +1,64 @@
+{
+  "name": "@lynx-js/lynx-ui",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "packages/lynx-ui"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.jsx",
+  "module": "./dist/index.jsx",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "src/**",
+    "README.md",
+    "CHANGELOG.md",
+    "tsconfig.docs.json",
+    "tsconfig.json",
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "build:watch": "rslib build --watch",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@lynx-js/lynx-ui-button": "workspace:*",
+    "@lynx-js/lynx-ui-checkbox": "workspace:*",
+    "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/lynx-ui-dialog": "workspace:*",
+    "@lynx-js/lynx-ui-draggable": "workspace:*",
+    "@lynx-js/lynx-ui-feed-list": "workspace:*",
+    "@lynx-js/lynx-ui-form": "workspace:*",
+    "@lynx-js/lynx-ui-input": "workspace:*",
+    "@lynx-js/lynx-ui-lazy-component": "workspace:*",
+    "@lynx-js/lynx-ui-list": "workspace:*",
+    "@lynx-js/lynx-ui-popover": "workspace:*",
+    "@lynx-js/lynx-ui-presence": "workspace:*",
+    "@lynx-js/lynx-ui-radio-group": "workspace:*",
+    "@lynx-js/lynx-ui-scroll-view": "workspace:*",
+    "@lynx-js/lynx-ui-sortable": "workspace:*",
+    "@lynx-js/lynx-ui-swipe-action": "workspace:*",
+    "@lynx-js/lynx-ui-swiper": "workspace:*",
+    "@lynx-js/lynx-ui-switch": "workspace:*"
+  },
+  "devDependencies": {
+    "@lynx-js/react": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@rslib/core": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@lynx-js/react": ">=0.100.0",
+    "@lynx-js/types": "*",
+    "@types/react": "^18"
+  },
+  "jsnext:source": "./src/index.tsx"
+}

@@ -1,0 +1,55 @@
+{
+  "name": "@lynx-js/luna-reactlynx",
+  "version": "0.1.0",
+  "description": "Reactlynx theming primitives (provider/hooks) and optional runtime wrappers for the L.U.N.A project.",
+  "keywords": [
+    "luna",
+    "theme",
+    "theming",
+    "reactlynx",
+    "lynx-ui",
+    "react",
+    "lynx"
+  ],
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.jsx"
+    },
+    "./theming": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.jsx"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.jsx"
+    },
+    "./runtime/global-props": {
+      "types": "./dist/runtime/global-props.d.ts",
+      "import": "./dist/runtime/global-props.jsx"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ./scripts/sync-dist.mjs"
+  },
+  "dependencies": {
+    "@lynx-js/luna-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@lynx-js/react": "catalog:lynx",
+    "@lynx-js/types": "*",
+    "@types/react": "catalog:"
+  },
+  "peerDependencies": {
+    "@lynx-js/react": ">=0.100.0",
+    "@lynx-js/types": "*",
+    "@types/react": "^18"
+  }
+}
