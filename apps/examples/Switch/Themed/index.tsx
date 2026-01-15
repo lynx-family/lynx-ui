@@ -56,7 +56,7 @@ function App() {
               {innerLight ? 'lunaris-light' : 'lunaris-dark'}
             </text>
           </view>
-          {/* 4) Inner disabled sample */}
+          {/* 3) Inner disabled sample */}
           <view className='flex flex-row items-center gap-[16px] w-full pt-[8px]'>
             <ThemedSwitch disabled checked={innerLight} />
             <text className='text-base text-content-2 opacity-50'>
@@ -64,7 +64,7 @@ function App() {
             </text>
           </view>
         </view>
-        {/* 2) Outer disabled sample */}
+        {/* 4) Outer disabled sample */}
         <view className='flex flex-row items-center gap-[16px] w-full pt-[8px]'>
           <ThemedSwitch disabled checked={outerDark} />
           <text className='text-base text-content-2 opacity-50'>Disabled</text>

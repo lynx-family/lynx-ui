@@ -37,7 +37,7 @@ function App() {
   }
 
   const handleItem = (item: string, checked: boolean) => {
-    console.log(`Item "${item}" changed:`, checked)
+    console.log(`Item "${item}" Changed:`, checked)
     setSelected((prev) => {
       if (checked) return prev.includes(item) ? prev : [...prev, item]
       return prev.filter((x) => x !== item)
