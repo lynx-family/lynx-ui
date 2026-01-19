@@ -257,11 +257,15 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
       bouncingPositionInfo.current.velocity = 0
     } else {
       // @ts-expect-error expected
-      bouncingPositionInfo.current.velocity =
+      const timeDiff = Date.now() - bouncingPositionInfo.current.timeStamp
+      // @ts-expect-error expected
+      const offsetDiff = offset - bouncingPositionInfo.current.bouncingOffset
+        || 0
+      if (timeDiff > 0) {
         // @ts-expect-error expected
-        (offset - bouncingPositionInfo.current.bouncingOffset || 0)
-        // @ts-expect-error expected
-        / (Date.now() - bouncingPositionInfo.current.timeStamp)
+        bouncingPositionInfo.current.velocity = offsetDiff / timeDiff
+      }
+      // If timeDiff <= 0, we keep the previous velocity to maintain momentum continuity.
     }
     // @ts-expect-error expected
     bouncingPositionInfo.current.bouncingOffset = offset
@@ -603,13 +607,17 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     if (!isEmpty(prevScroll.current)) {
       // @ts-expect-error expected
       const timeDuration = Date.now() - prevScroll.current.timestamp
-      const deltaY = isVertical() // @ts-expect-error expected
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        ? event.detail.scrollTop - prevScroll.current.detail.scrollTop // @ts-expect-error expected
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        : event.detail.scrollLeft - prevScroll.current.detail.scrollLeft
-      const velocity = deltaY / timeDuration
-      scrollVelocity.current = velocity
+      if (timeDuration > 0) {
+        const deltaY = isVertical() // @ts-expect-error expected
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          ? event.detail.scrollTop - prevScroll.current.detail.scrollTop // @ts-expect-error expected
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          : event.detail.scrollLeft - prevScroll.current.detail.scrollLeft
+        const velocity = deltaY / timeDuration
+        if (Number.isFinite(velocity)) {
+          scrollVelocity.current = velocity
+        }
+      }
     }
     prevScroll.current = event
   }
@@ -783,10 +791,12 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     'main thread'
     // @ts-expect-error expected
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    height.current = isAndroid() ? event.params?.height : event.detail?.height
+    height.current = (isAndroid() ? event.params?.height : event.detail?.height)
+      ?? 0
     // @ts-expect-error expected
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    width.current = isAndroid() ? event.params?.width : event.detail?.width
+    width.current = (isAndroid() ? event.params?.width : event.detail?.width)
+      ?? 0
   }
 
   return {
