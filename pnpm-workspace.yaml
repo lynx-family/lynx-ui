@@ -2,14 +2,11 @@ packages:
   - packages/*
   - apps/examples/*
   - luna/packages/*
-  - lunarium/apps/*
-  - lunarium/packages/**
   - tools/rsbuild-plugin-select-entry
   - tools/canary-release
   - "!**/node_modules/**"
   - "!**/dist/**"
   - "!**/output/**"
-
 catalog:
   "@lynx-js/react": 0.113.0
   "@lynx-js/react-rsbuild-plugin": 0.11.2
@@ -20,9 +17,9 @@ catalog:
   "@rsbuild/plugin-react": ^1.4.1
   "@rslib/core": ^0.16.0
   "@lynx-js/react-use": 0.0.7
-  "@types/react": "^18.3.8"
+  "@types/react": ^18.3.8
   clsx: ^2.1.1
-  "typescript": "^5.5.3"
+  typescript: ^5.5.3
 catalogs:
   utils:
     clsx: ^2.1.1

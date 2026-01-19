@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui
 
-`@lynx-js/lynx-ui` is the component library officially maintained by Lynx. As a **Headless** UI library long-term maintained by the Lynx team, we provide maximally flexible, universal and high-performance UI solutions.
+`@lynx-js/lynx-ui` is the component library officially maintained by Lynx. As a **Headless** UI library long-term maintained by the Lynx team, we provide maximally flexible, universal and high-performance UI solutions
 
 ## Introduction
 
