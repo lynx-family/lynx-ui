@@ -12,6 +12,9 @@ import './index.css'
 
 const LETTERS = 'L Y N X U I R E A C T L Y N X'.split(' ')
 
+// This example demonstrates how flex-grow consumes remaining space
+// inside a scrollable content container.
+
 function App() {
   return (
     <view className='container lunaris-dark'>

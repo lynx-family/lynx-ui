@@ -20,8 +20,8 @@ export const FlexItemCard = (props: FlexItemCardProps): ReactNode => {
         {variant === 'auto'
           ? (
             <>
-              <text className='auto-title'>Flex Basis:</text>
-              <text className='auto-title'>Auto</text>
+              <text className='auto-title'>Flex Grow: 1</text>
+              <text className='auto-subtitle'>Consumes remaining space</text>
             </>
           )
           : <text className='letter'>{letter}</text>}
