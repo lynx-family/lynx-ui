@@ -25,17 +25,13 @@ function App() {
     'S',
   ]
   return (
-    <view className='container lunaris-dark' main-thread:gesture={undefined}>
+    <view className='container lunaris-dark'>
       <ScrollView scrollOrientation='horizontal' className='scroll-view'>
-        <view
-          className='scroll-view-background'
-          main-thread:gesture={undefined}
-        >
+        <view className='scroll-view-background'>
           {topLetters.map((l, idx) => (
             <view
               key={`circle-${idx}`}
               style={{ marginRight: '24px' }}
-              main-thread:gesture={undefined}
             >
               <CircleLetterItem letter={l} />
             </view>
