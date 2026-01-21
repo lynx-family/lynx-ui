@@ -5,24 +5,18 @@
 import type { ReactNode } from '@lynx-js/react'
 import './index.css'
 
-interface CircleLetterItemProps {
+interface CircleLetterCardProps {
   letter: string
 }
 
-export const CircleLetterItem = (props: CircleLetterItemProps): ReactNode => {
+export const CircleLetterCard = (props: CircleLetterCardProps): ReactNode => {
   const { letter } = props
   return (
-    <view className='circle-letter-item'>
+    <view className='card'>
       <view className='circle'>
-        <text className='letter'>
-          {letter}
-        </text>
-        <text className='title'>
-          ScrollView
-        </text>
-        <text className='subtitle'>
-          @lynx-js/lynx-ui
-        </text>
+        <text className='letter'>{letter}</text>
+        <text className='title'>ScrollView</text>
+        <text className='subtitle'>@lynx-js/lynx-ui</text>
       </view>
     </view>
   )
