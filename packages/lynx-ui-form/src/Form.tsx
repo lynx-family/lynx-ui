@@ -13,8 +13,9 @@ import {
 import { Button } from '@lynx-js/lynx-ui-button'
 import { Checkbox } from '@lynx-js/lynx-ui-checkbox'
 import { noop, useMemoizedFn } from '@lynx-js/lynx-ui-common'
-import { Input } from '@lynx-js/lynx-ui-input'
+import { Input, TextArea } from '@lynx-js/lynx-ui-input'
 import { RadioGroupRoot } from '@lynx-js/lynx-ui-radio-group'
+import { Switch } from '@lynx-js/lynx-ui-switch'
 
 import { FormContext } from './FormContext'
 import type { FormContextType } from './FormContext'
@@ -154,7 +155,15 @@ export const FormField = ({
   } else if (as === 'Input') {
     return (
       <Input
-        value={value as string}
+        defaultValue={value as string}
+        onInput={handleChange}
+        {...componentProps}
+      />
+    )
+  } else if (as === 'TextArea') {
+    return (
+      <TextArea
+        defaultValue={value as string}
         onInput={handleChange}
         {...componentProps}
       />
@@ -162,7 +171,15 @@ export const FormField = ({
   } else if (as === 'Checkbox') {
     return (
       <Checkbox
-        checked={value as boolean}
+        defaultChecked={value as boolean}
+        onChange={handleChange}
+        {...componentProps}
+      />
+    )
+  } else if (as === 'Switch') {
+    return (
+      <Switch
+        defaultChecked={value as boolean}
         onChange={handleChange}
         {...componentProps}
       />

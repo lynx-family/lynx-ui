@@ -13,8 +13,8 @@
   width: 100%;
   max-width: 360px;
   padding: 64px;
-  padding-left: 48px;
-  padding-right: 48px;
+  padding-left: 40px;
+  padding-right: 40px;
   border-radius: 16px;
 
   display: flex;
@@ -69,7 +69,6 @@
   padding: 14px;
   border-radius: 12px;
 
-  background-color: var(--canvas);
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
@@ -80,8 +79,9 @@
 }
 
 .label {
-  font-size: 12px;
-  color: var(--content-muted);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--content-2);
 }
 
 /* =========================
@@ -93,7 +93,6 @@
   padding: 10px;
   border-radius: 12px;
 
-  background-color: var(--canvas);
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
@@ -115,7 +114,6 @@
   padding: 10px;
   border-radius: 12px;
 
-  background-color: var(--canvas);
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
@@ -123,6 +121,7 @@
 
 .textarea {
   width: 100%;
+  min-height: 72px;
   color: var(--content);
   caret-color: var(--primary);
 }

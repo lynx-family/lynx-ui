@@ -5,8 +5,8 @@
 import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
 const defaultConfig = exampleConfig({
-  Basic: './Basic/index.tsx',
-  InputInScrollView: './InputInScrollView/index.tsx',
+  FormBasic: './Basic/index.tsx',
+  FormKeyboardAware: './KeyboardAware/index.tsx',
 })
 
 export default defaultConfig

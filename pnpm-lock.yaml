@@ -1299,6 +1299,9 @@ importers:
       '@lynx-js/lynx-ui-radio-group':
         specifier: workspace:*
         version: link:../lynx-ui-radio-group
+      '@lynx-js/lynx-ui-switch':
+        specifier: workspace:*
+        version: link:../lynx-ui-switch
     devDependencies:
       '@lynx-js/react':
         specifier: 'catalog:'

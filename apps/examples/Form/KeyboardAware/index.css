@@ -17,19 +17,20 @@
 }
 
 .canvas {
-  height: 100%;
   width: 100%;
-  max-width: 360px;
+  height: 100%;
 
-  padding: 64px;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding: 36px;
+  padding-left: 16px;
+  padding-right: 16px;
   border-radius: 16px;
 
   display: flex;
   flex-direction: column;
   color: var(--content);
   background-color: var(--canvas);
+
+  gap: 16px;
 }
 
 .luna-gradient-berry {
@@ -46,6 +47,7 @@
 
 .form-container {
   width: 100%;
+
   display: flex;
   flex-direction: column;
 }
@@ -69,91 +71,64 @@
   margin: 16px 0;
 }
 
-.form-section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--content-2);
-  margin-bottom: 8px;
-}
+/* =========================
+ * Solid blocks
+ * ========================= */
 
-.form-field-description {
-  font-size: 14px;
-  color: var(--content-muted);
-  margin-bottom: 8px;
-}
+.block {
+  width: 100%;
+  height: 84px;
+  border-radius: 14px;
+  margin-top: 12px;
+  margin-bottom: 12px;
 
-.label {
-  font-size: 14px;
-  color: var(--content);
+  background: linear-gradient(
+    150deg,
+    var(--primary) 8.42%,
+    var(--primary-2) 81.71%
+  );
 }
 
 /* =========================
- * Radio group
+ * Card
  * ========================= */
 
-.radio-group-container {
+.card {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.radio-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  column-gap: 12px;
-
-  padding: 10px;
+  padding: 14px;
   border-radius: 12px;
 
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
-}
 
-/* Indicator */
-.radio-indicator {
   display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--line);
+  flex-direction: column;
+  gap: 8px;
 }
 
-.radio-indicator.ui-checked {
-  border-color: var(--primary);
-}
-
-.radio-indicator-checked-item {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background-color: var(--primary);
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--content-2);
 }
 
 /* =========================
- * Inputs
+ * Inputs (match Form/Basic)
  * ========================= */
 
 .input-container {
   width: 100%;
   border-radius: 12px;
 
+  background-color: var(--canvas);
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
-
-  margin-bottom: 16px;
 }
 
 .form-input {
+  width: 100%;
   font-size: 14px;
   padding: 12px;
   color: var(--content);
@@ -166,46 +141,33 @@
 }
 
 /* =========================
- * Checkbox
+ * TextArea
  * ========================= */
 
-.checkbox-item {
-  display: flex;
-  flex-direction: row;
-  column-gap: 10px;
-  align-items: center;
-  padding: 4px 0;
-}
+.textarea-wrap {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
 
-.checkbox-indicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-
+  background-color: var(--canvas);
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
 }
 
-.checkbox-indicator.ui-checked {
-  border-color: var(--primary);
-  background-color: var(--primary);
+.textarea {
+  height: 160px;
+  width: 100%;
+  color: var(--content);
+  caret-color: var(--primary);
 }
 
-.checkbox-indicator-checked-item {
-  width: 12px;
-  height: 6px;
-  border-left: 2px solid var(--primary-content);
-  border-bottom: 2px solid var(--primary-content);
-  transform: rotate(-45deg) translate(-1px, 1px);
+.textarea::placeholder {
+  color: var(--content-faint);
 }
 
 /* =========================
- * Submit
+ * Submit + Values
  * ========================= */
 
 .submit-button {
@@ -230,24 +192,28 @@
   color: var(--primary-content);
 }
 
-/* =========================
- * Values display
- * ========================= */
-
 .form-values-display {
   margin-top: 8px;
   padding: 12px;
 
   border-radius: 12px;
 
+  background-color: var(--canvas);
   border-width: 1px;
   border-style: dashed;
   border-color: var(--line);
 
+  opacity: 0.9;
+}
+
+.form-values-text {
   font-family: monospace;
   font-size: 12px;
   color: var(--content);
-
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+.bottom-spacer {
+  height: 24px;
 }
