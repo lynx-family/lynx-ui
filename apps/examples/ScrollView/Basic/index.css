@@ -1,26 +1,32 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.circle-letter-item {
-  width: 264px;
-  height: 472px;
-  padding-top: 128px;
-  padding-bottom: 128px;
-  padding-left: 24px;
-  padding-right: 24px;
+.container {
+  background-color: var(--canvas);
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 288px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .circle {
   width: 216px;
   height: 216px;
-  border-radius: 108px;
+  border-radius: 9999px;
   background-color: var(--canvas);
   padding-bottom: 45px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: end;
 }
 
 .letter {
@@ -43,30 +49,21 @@
   margin-top: 1px;
 }
 
-.container {
-  background-color: var(--canvas);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .scroll-view {
   width: 100%;
   height: 472px;
 }
 
-.scroll-view-background {
+.scroll-view-content {
   width: max-content;
   height: 100%;
   display: flex;
   flex-direction: row;
   background: linear-gradient(
     90deg,
-    var(--gradient-a) 0%,
-    var(--gradient-b) 31%,
-    var(--gradient-c) 65%,
-    var(--gradient-d) 100%
+    var(--gradient-a),
+    var(--gradient-b),
+    var(--gradient-c),
+    var(--gradient-d)
   );
 }

@@ -6,35 +6,25 @@ import { root } from '@lynx-js/react'
 
 import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
 
+import { FlexItemCard } from './FlexItemCard'
+
 import './index.css'
+
+const LETTERS = 'L Y N X U I R E A C T L Y N X'.split(' ')
 
 function App() {
   return (
-    <view style={{ height: '500px', width: '100%' }}>
-      <ScrollView
-        scrollviewId={'scrollview'}
-        lazyOptions={{
-          enableLazy: false,
-        }}
-        style={{ width: '100%', height: '500px' }}
-        scrollOrientation='horizontal'
-      >
-        <view class='container'>
-          <view style='flex-basis:auto;background-color:rgba(255,0,200,0.2);flex-grow:1'>
-            <text>flex-basis:auto</text>
-          </view>
-          <view style='margin-left:5px;background-color:rgba(0,0,255,0.2);flex-grow:1'>
-            <text>Item Two</text>
-          </view>
-          <view style='margin-left:5px;background-color:rgba(0,0,255,0.2);flex-grow:1'>
-            <text>Item Three</text>
-          </view>
-          <view style='margin-left:5px;background-color:rgba(0,0,255,0.2);flex-grow:1'>
-            <text>Item Four</text>
-          </view>
-          <view style='margin-left:5px;background-color:rgba(0,0,255,0.2);flex-grow:1'>
-            <text>Item Five</text>
-          </view>
+    <view className='container lunaris-dark'>
+      <ScrollView scrollOrientation='horizontal' className='scroll-view'>
+        <view className='scroll-view-content'>
+          <FlexItemCard variant='auto' />
+          {LETTERS.map((letter, i) => (
+            <FlexItemCard
+              key={`${letter}-${i}`}
+              letter={letter}
+              variant='fixed'
+            />
+          ))}
         </view>
       </ScrollView>
     </view>

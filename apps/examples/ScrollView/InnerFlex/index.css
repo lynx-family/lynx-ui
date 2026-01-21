@@ -1,14 +1,88 @@
+@import "@lynx-js/luna-styles/index.css";
+
 .container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--canvas);
+}
+
+.scroll-view {
+  width: 100%;
+  height: 472px;
+}
+
+.scroll-view-content {
+  width: max-content;
+  height: 100%;
+
   display: flex;
   flex-direction: row;
-  height: calc(100% - 2 * 2px - 2 * 5px);
-  width: 800px;
-  border-width: 2px;
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-top: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  align-items: center;
+  gap: 16px;
+
+  padding: 16px;
+
+  background: linear-gradient(
+    90deg,
+    var(--gradient-a),
+    var(--gradient-b),
+    var(--gradient-c),
+    var(--gradient-d)
+  );
+}
+
+.card {
+  width: 176px;
+  height: 100%;
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--canvas);
+}
+
+.auto {
+  width: 264px;
+}
+
+.card-content {
+  width: 100%;
+  height: 216px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+}
+
+.letter {
+  font-size: 84px;
+  font-weight: 600;
+  line-height: 84px;
+  color: var(--primary);
+}
+
+.auto-title {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  color: var(--primary);
+}
+
+.title {
+  margin-top: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--content);
+}
+
+.subtitle {
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--content-subtle);
 }

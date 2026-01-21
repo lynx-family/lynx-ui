@@ -6,39 +6,18 @@ import { root } from '@lynx-js/react'
 
 import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
 
-import { CircleLetterItem } from './CircleLetterItem'
+import { CircleLetterCard } from './CircleLetterCard'
 import './index.css'
 
+const LETTERS = ['L', 'Y', 'N', 'X', 'U', 'I', 'L', 'Y', 'N', 'X', 'J', 'S']
+
 function App() {
-  const topLetters = [
-    'L',
-    'Y',
-    'N',
-    'X',
-    'U',
-    'I',
-    'L',
-    'Y',
-    'N',
-    'X',
-    'J',
-    'S',
-  ]
   return (
-    <view className='container lunaris-dark' main-thread:gesture={undefined}>
+    <view className='container lunaris-dark'>
       <ScrollView scrollOrientation='horizontal' className='scroll-view'>
-        <view
-          className='scroll-view-background'
-          main-thread:gesture={undefined}
-        >
-          {topLetters.map((l, idx) => (
-            <view
-              key={`circle-${idx}`}
-              style={{ marginRight: '24px' }}
-              main-thread:gesture={undefined}
-            >
-              <CircleLetterItem letter={l} />
-            </view>
+        <view className='scroll-view-content'>
+          {LETTERS.map((letter, i) => (
+            <CircleLetterCard letter={letter} key={`circle-${i}`} />
           ))}
         </view>
       </ScrollView>
@@ -47,3 +26,5 @@ function App() {
 }
 
 root.render(<App />)
+
+export default App
