@@ -6,8 +6,9 @@ import type { ReactNode } from '@lynx-js/react'
 
 import type { ButtonProps } from '@lynx-js/lynx-ui-button'
 import type { CheckboxProps } from '@lynx-js/lynx-ui-checkbox'
-import type { InputProps } from '@lynx-js/lynx-ui-input'
+import type { InputProps, TextAreaProps } from '@lynx-js/lynx-ui-input'
 import type { RadioGroupRootProps } from '@lynx-js/lynx-ui-radio-group'
+import type { SwitchProps } from '@lynx-js/lynx-ui-switch'
 
 export interface FormRootProps {
   /**
@@ -72,7 +73,9 @@ export interface FormFieldBaseProps {
 }
 
 export interface FormFieldAsInput
-  extends FormFieldBaseProps, Omit<InputProps, 'value' | 'onInput'>
+  extends
+    FormFieldBaseProps,
+    Omit<InputProps, 'defaultValue' | 'value' | 'onInput'>
 {
   /**
    * Specifies the type of component to render.
@@ -84,10 +87,27 @@ export interface FormFieldAsInput
   as: 'Input'
 }
 
-export interface FormFieldAsRadioGroup
+export interface FormFieldAsTextArea
   extends
     FormFieldBaseProps,
-    Omit<RadioGroupRootProps, 'defaultValue' | 'onValueChange' | 'children'>
+    Omit<TextAreaProps, 'defaultValue' | 'value' | 'onInput'>
+{
+  /**
+   * Specifies the type of component to render.
+   * @zh 指定渲染的组件类型
+   * @iOS
+   * @Android
+   * @Harmony
+   */
+  as: 'TextArea'
+}
+
+export interface FormFieldAsRadioGroup extends
+  FormFieldBaseProps,
+  Omit<
+    RadioGroupRootProps,
+    'defaultValue' | 'value' | 'onValueChange' | 'children'
+  >
 {
   /**
    * Specifies the type of component to render.
@@ -102,7 +122,7 @@ export interface FormFieldAsRadioGroup
 export interface FormFieldAsCheckbox
   extends
     Omit<FormFieldBaseProps, 'children'>,
-    Omit<CheckboxProps, 'checked' | 'onChange'>
+    Omit<CheckboxProps, 'defaultChecked' | 'checked' | 'onChange'>
 {
   /**
    * Specifies the type of component to render.
@@ -114,10 +134,27 @@ export interface FormFieldAsCheckbox
   as: 'Checkbox'
 }
 
+export interface FormFieldAsSwitch
+  extends
+    Omit<FormFieldBaseProps, 'children'>,
+    Omit<SwitchProps, 'defaultChecked' | 'checked' | 'onChange'>
+{
+  /**
+   * Specifies the type of component to render.
+   * @zh 指定渲染的组件类型
+   * @iOS
+   * @Android
+   * @Harmony
+   */
+  as: 'Switch'
+}
+
 export type FormFieldProps =
   | FormFieldAsInput
   | FormFieldAsRadioGroup
   | FormFieldAsCheckbox
+  | FormFieldAsTextArea
+  | FormFieldAsSwitch
 
 export interface FormSubmitButtonProps extends Omit<ButtonProps, 'onClick'> {
   /**

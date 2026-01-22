@@ -32,7 +32,8 @@
     "@lynx-js/lynx-ui-checkbox": "workspace:*",
     "@lynx-js/lynx-ui-common": "workspace:*",
     "@lynx-js/lynx-ui-input": "workspace:*",
-    "@lynx-js/lynx-ui-radio-group": "workspace:*"
+    "@lynx-js/lynx-ui-radio-group": "workspace:*",
+    "@lynx-js/lynx-ui-switch": "workspace:*"
   },
   "devDependencies": {
     "@lynx-js/react": "catalog:",

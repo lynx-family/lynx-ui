@@ -13,32 +13,22 @@ import {
 
 import './index.css'
 
+type Item = 'block' | 'input' | 'textarea'
+
+const BLOCKS: Item[] = [
+  ...Array.from({ length: 5 }, () => ['block', 'input'] as const).flat(),
+  'block',
+  'textarea',
+  'block',
+  'input',
+]
+
 function App() {
-  type Item = 'block' | 'input' | 'textarea'
-
-  const contentArray: Item[] = [
-    'block',
-    'input',
-    'block',
-    'input',
-    'block',
-    'input',
-    'block',
-    'input',
-    'block',
-    'input',
-    'block',
-    'textarea',
-    'block',
-    'input',
-    'block',
-  ]
-
   return (
-    <view className='container lunaris-dark'>
+    <view className='container lunaris-dark luna-gradient-rose'>
       <KeyboardAwareRoot androidStatusBarPlusBottomBarHeight={74}>
-        <KeyboardAwareResponder as='ScrollView' className='scroll'>
-          {contentArray.map((item, index) => {
+        <KeyboardAwareResponder as='ScrollView' className='canvas'>
+          {BLOCKS.map((item, index) => {
             if (item === 'input') {
               return (
                 <KeyboardAwareTrigger key={`input-${index}`} offset={0}>
@@ -59,6 +49,8 @@ function App() {
                       <TextArea
                         className='textarea'
                         placeholder='Write something...'
+                        maxLength={600}
+                        maxLines={20}
                       />
                     </view>
                   </view>

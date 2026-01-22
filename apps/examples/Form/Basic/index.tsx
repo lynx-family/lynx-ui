@@ -17,8 +17,8 @@ function App() {
   const [formValues, setFormValues] = useState<Record<string, unknown>>({})
 
   return (
-    <view className='page lunaris-dark'>
-      <ScrollView scrollOrientation='vertical' className='scroll'>
+    <view className='container lunaris-dark luna-gradient-berry'>
+      <ScrollView scrollOrientation='vertical' className='canvas'>
         <FormRoot
           onChanged={(values: Record<string, unknown>) => setFormValues(values)}
           initialValues={{
@@ -41,7 +41,7 @@ function App() {
                     <RadioIndicator className='radio-indicator'>
                       <view className='radio-indicator-checked-item' />
                     </RadioIndicator>
-                    <text className='radio-label'>{label}</text>
+                    <text className='label'>{label}</text>
                   </Radio>
                 ))}
               </view>
@@ -68,7 +68,7 @@ function App() {
               <CheckboxIndicator className='checkbox-indicator'>
                 <view className='checkbox-indicator-checked-item' />
               </CheckboxIndicator>
-              <text className='checkbox-label'>
+              <text className='label'>
                 I agree to the terms and conditions
               </text>
             </FormField>
