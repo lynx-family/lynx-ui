@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/luna-styles",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CSS theme variables for the L.U.N.A project.",
   "license": "Apache-2.0",
   "author": "The Lynx Authors",
