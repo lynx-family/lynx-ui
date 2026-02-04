@@ -2,79 +2,43 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useRef } from '@lynx-js/react'
+import { root } from '@lynx-js/react'
 
-import { convertToPx } from '@lynx-js/lynx-ui-common'
 import { List } from '@lynx-js/lynx-ui-list'
-import type { ListRef } from '@lynx-js/lynx-ui-list'
+
+import { ListItemCard } from '../shared/ListItemCard'
+import './index.css'
+
+const data = ['L', 'Y', 'N', 'X', 'U', 'I']
 
 function App() {
-  const listRef = useRef<ListRef>(null)
-
-  const data = Array.from({ length: 2 }, (_, index) => index)
-  const orientation = 'vertical'
-  const listSize = '500px'
-
   return (
-    <view style={{ width: '100%', height: '100%' }}>
+    <view className='container lunaris-dark'>
       <List
-        ref={listRef}
-        style={{ width: '100vw' }}
+        className='list-container'
         listId='listBasic'
         listType='single'
         spanCount={1}
-        listMaxSize={convertToPx('750rpx')}
-        scrollOrientation={orientation}
+        listMaxSize={500}
+        scrollOrientation='vertical'
       >
-        {data.map((value: number) => (
+        {data.map((char, index) => (
           <list-item
-            item-key={value.toString()}
-            id={value.toString()}
-            key={value.toString()}
+            item-key={char}
+            id={char}
+            key={char}
           >
-            <view
-              style={{
-                width: orientation === 'vertical' ? '100vw' : listSize,
-                height: orientation === 'vertical' ? '100px' : listSize,
-                display: 'flex',
-                flexDirection: 'column',
-                borderWidth: '2px',
-                borderColor: 'red',
-              }}
-            >
-              <text>{value.toString()}</text>
-              <view
-                style={{
-                  width: '100vw',
-                  backgroundColor: 'green',
-                  flexGrow: 1,
-                }}
-                id={`inner${value.toString()}`}
-              />
-            </view>
+            <ListItemCard
+              letter={char}
+              height={index % 2 === 0 ? 360 : 240}
+            />
           </list-item>
         ))}
-        <list-item
-          item-key='footer'
-          id='footer'
-          key='footer'
-        >
-          <view
-            style={{
-              width: orientation === 'vertical' ? '100%' : listSize,
-              height: orientation === 'vertical' ? '100px' : listSize,
-              display: 'flex',
-              flexDirection: 'column',
-              borderWidth: '2px',
-              borderColor: 'red',
-            }}
-          >
-            <text>footer</text>
-            <view
-              style={{ width: '100%', backgroundColor: 'green', flexGrow: 1 }}
-              id={`footer`}
-            />
-          </view>
+        <list-item item-key='footer' id='footer'>
+          <ListItemCard
+            letter='footer'
+            height={200}
+          />
         </list-item>
       </List>
     </view>

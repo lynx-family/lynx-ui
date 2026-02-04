@@ -8,11 +8,13 @@ import { Button } from '@lynx-js/lynx-ui-button'
 import { List } from '@lynx-js/lynx-ui-list'
 import type { ListRef } from '@lynx-js/lynx-ui-list'
 
-import { ListItemCard } from './ListItemCard'
-
+import { ListItemCard } from '../shared/ListItemCard'
 import './index.css'
 
-const itemData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+const itemData = Array.from({ length: 16 }, (_, i) => ({
+  id: String(i),
+  label: String(i),
+}))
 const orientation = 'vertical'
 const scrollToIndex = 7
 
@@ -28,7 +30,7 @@ function App() {
   return (
     <view className='container lunaris-dark'>
       <List
-        className='list'
+        className='list-container'
         listId='ListBasic'
         ref={listRef}
         listType='single'
@@ -37,11 +39,10 @@ function App() {
         useRefactorList={true}
         bounces={false}
       >
-        {itemData.map((value: number) => (
-          <list-item key={value + ''} item-key={value + ''}>
+        {itemData.map((item) => (
+          <list-item key={item.id} item-key={item.id}>
             <ListItemCard
-              cardKey={value + ''}
-              letter={value + ''}
+              letter={item.label}
               height={300}
             />
           </list-item>
