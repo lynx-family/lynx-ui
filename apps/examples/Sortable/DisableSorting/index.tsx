@@ -9,40 +9,39 @@ import './index.css'
 import type { SortableData } from '@lynx-js/lynx-ui-sortable'
 import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui-sortable'
 
+import type { SortableDemoItem } from '../shared/data'
+import { createDemoData } from '../shared/data'
+
 export function App() {
-  const [data, setData] = useState<SortableData<string>[]>(
-    Array.from(
-      { length: 6 },
-      (_, i) => ({
-        dataItem: `${i}`,
-        getSortingKey: () => `${i}`,
-      }),
-    ),
+  const [data, setData] = useState<SortableData<SortableDemoItem>[]>(
+    createDemoData,
   )
 
   return (
-    <view className='sortable-root'>
-      <view id='sortableContainer' style={{ zIndex: '0' }}>
+    <view className='sortable-root lunaris-dark'>
+      <view
+        id='sortableContainer'
+        // Required: establish a stacking context for sortable drag layers
+        style={{ zIndex: '0' }}
+      >
         <SortableRoot
-          boundaryId='sortableContainer'
           data={data}
-          onSortEnd={(sortedData: SortableData<string>[]) => {
-            console.info('sortedData', sortedData)
-            setData(sortedData)
-          }}
+          boundaryId='sortableContainer'
+          onSortEnd={(sortedData: SortableData<SortableDemoItem>[]) =>
+            setData(sortedData)}
           enableSorting={false}
         >
-          {(item: SortableData<string>) => {
+          {(item: SortableData<SortableDemoItem>) => {
+            const { id, tone } = item.dataItem
+
             return (
               <SortableItem
-                className={`sortable-item ${
-                  Number(item.dataItem) % 2 === 0
-                    ? 'even'
-                    : 'odd'
-                }`}
+                className={`sortable-item sortable-item--${id}`}
                 sortingKey={item.getSortingKey()}
               >
-                <text>{item.dataItem}</text>
+                <text className={`drag-here-text drag-here-text--${tone}`}>
+                  {id}
+                </text>
               </SortableItem>
             )
           }}

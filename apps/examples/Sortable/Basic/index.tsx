@@ -13,43 +13,38 @@ import {
   SortableRoot,
 } from '@lynx-js/lynx-ui-sortable'
 
+import type { SortableDemoItem } from '../shared/data'
+import { createDemoData } from '../shared/data'
+
 export function App() {
-  const [data, setData] = useState<SortableData<string>[]>(
-    Array.from(
-      { length: 6 },
-      (_, i) => ({
-        dataItem: `${i}`,
-        getSortingKey: () => `${i}`,
-      }),
-    ),
+  const [data, setData] = useState<SortableData<SortableDemoItem>[]>(
+    createDemoData,
   )
 
   return (
     <view className='sortable-root lunaris-dark'>
-      <view id='sortableContainer' style={{ zIndex: '0' }}>
+      <view
+        id='sortableContainer'
+        // Required: establish a stacking context for sortable drag layers
+        style={{ zIndex: '0' }}
+      >
         <SortableRoot
           data={data}
-          onSortEnd={(sortedData: SortableData<string>[]) => {
-            console.info('sortedData', sortedData)
-            setData(sortedData)
-          }}
           boundaryId='sortableContainer'
+          onSortEnd={(sortedData: SortableData<SortableDemoItem>[]) =>
+            setData(sortedData)}
         >
-          {(item: SortableData<string>) => {
+          {(item: SortableData<SortableDemoItem>) => {
+            const { id, tone } = item.dataItem
+
             return (
               <SortableItem
                 as='DraggableRoot'
-                className={`sortable-item item-${Number(item.dataItem)}`}
+                className={`sortable-item sortable-item--${id}`}
                 sortingKey={item.getSortingKey()}
               >
                 <SortableItemArea className='sortable-item-area'>
-                  <text
-                    className={`drag-here-text ${
-                      (Number(item.dataItem) > 0 && Number(item.dataItem) < 4)
-                        ? 'primary'
-                        : (Number(item.dataItem) > 3 ? 'secondary' : 'neutral')
-                    }`}
-                  >
+                  <text className={`drag-here-text drag-here-text--${tone}`}>
                     Drag Here
                   </text>
                 </SortableItemArea>
