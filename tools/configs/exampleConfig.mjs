@@ -23,9 +23,8 @@ export const exampleConfig = (entry, needWeb = true) => {
       include: [
         /@lynx-js\/gesture-runtime/,
         /@lynx-js\/react-use/,
-        /@lynx-js\/motion-lynx/,
-        /@lynx-js\/motion-lynx-canary*./,
-        /@lynx-js\/motion-lynx-canary\/mini/,
+        /@lynx-js\/motion/,
+        /@lynx-js\/motion\/mini/,
         {
           and: [packagesDir, { not: /[\\/]node_modules[\\/]/ }],
         },

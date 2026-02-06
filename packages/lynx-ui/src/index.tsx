@@ -237,6 +237,22 @@ export type {
   SwitchRenderProps,
 } from '@lynx-js/lynx-ui-switch'
 
+export {
+  SheetRoot,
+  SheetContent,
+  SheetBackdrop,
+  SheetHandle,
+  SheetView,
+} from '@lynx-js/lynx-ui-sheet'
+export type {
+  SheetBackdropProps,
+  SheetContentProps,
+  SheetRootProps,
+  SheetViewProps,
+  SheetHandleProps,
+  SheetTransition,
+} from '@lynx-js/lynx-ui-sheet'
+
 // only presence types are exported
 export type {
   PresenceAnimationStatus,

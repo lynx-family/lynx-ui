@@ -60,6 +60,9 @@
       "path": "./packages/lynx-ui-swiper"
     },
     {
+      "path": "./packages/lynx-ui-sheet"
+    },
+    {
       "path": "./packages/lynx-ui-switch"
     },
     {

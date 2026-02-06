@@ -1,0 +1,79 @@
+// Copyright 2026 The Lynx Authors. All rights reserved.
+// Licensed under the Apache License Version 2.0 that can be found in the
+// LICENSE file in the root directory of this source tree.
+import { PresenceState } from '@lynx-js/lynx-ui-presence'
+
+export function toPxJS(value: number | string, screenHeight: number): number {
+  if (typeof value === 'number') return value
+  const s = String(value).trim()
+  // Handle 'fit' - return -1 as sentinel to be resolved after measurement
+  if (s === 'fit') return -1
+  const m = /^\d+(?:\.\d+)?%$/.exec(s)
+  if (m) {
+    return (Number.parseFloat(m[0]) / 100) * screenHeight
+  }
+  const px = /^\d+(?:\.\d+)?px$/.exec(s)
+  if (px) {
+    return Number.parseFloat(px[0])
+  }
+  const num = /^\d+(?:\.\d+)?$/.exec(s)
+  if (num) {
+    return Number.parseFloat(num[0])
+  }
+  throw new Error(`[Sheet] Invalid snap point: ${value}`)
+}
+
+export function rubberEffect(
+  original: number,
+  max: number,
+  coeff = 0.3,
+): number {
+  'main thread'
+  if (original === 0 || max === 0) return 0
+  const abs = Math.abs(original)
+  const target = (1.0 - 1.0 / ((abs * coeff) / max + 1.0)) * max
+  return Math.sign(original) * target
+}
+
+export function clamp(
+  targetY: number,
+  sheetHeight: number,
+) {
+  'main thread'
+  if (sheetHeight <= 0) return Math.max(0, targetY)
+  return Math.min(Math.max(targetY, 0), sheetHeight)
+}
+
+export function findNearestSnap(
+  value: number,
+  snapOffsets: number[],
+  sheetHeight: number,
+) {
+  'main thread'
+  if (snapOffsets.length === 0) return { index: 0, value: 0 }
+  let idx = 0
+  let best = Number.POSITIVE_INFINITY
+  for (let i = 0; i < snapOffsets.length; i++) {
+    const target = clamp(snapOffsets[i], sheetHeight)
+    const d = Math.abs(target - value)
+    if (d < best) {
+      best = d
+      idx = i
+    }
+  }
+  return {
+    index: idx,
+    value: clamp(snapOffsets[idx], sheetHeight),
+  }
+}
+
+export const resolveBusyState = (state: PresenceState) => {
+  switch (state) {
+    case PresenceState.Entering:
+    case PresenceState.DelayedEntering:
+    case PresenceState.Leaving:
+      return true
+    default:
+      return false
+  }
+}
