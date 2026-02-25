@@ -16,11 +16,10 @@
   "module": "./dist/index.jsx",
   "types": "./dist/index.d.ts",
   "files": [
-    "package.json",
     "src/**",
-    "types/**",
     "README.md",
     "CHANGELOG.md",
+    "LICENSE",
     "tsconfig.docs.json",
     "tsconfig.json",
     "dist/**"

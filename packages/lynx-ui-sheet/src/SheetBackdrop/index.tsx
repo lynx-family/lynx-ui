@@ -30,10 +30,12 @@ export function SheetBackdrop(props: SheetBackdropProps) {
   })
 
   const handleClick = useMemoizedFn(() => {
-    // onShowChange triggers the close animation flow via handleShowChange in SheetRoot
-    onShowChange?.(false)
-    // setUncontrolledShow updates state for uncontrolled mode
-    setUncontrolledShow(false)
+    if (clickToClose) {
+      // onShowChange triggers the close animation flow via handleShowChange in SheetRoot
+      onShowChange?.(false)
+      // setUncontrolledShow updates state for uncontrolled mode
+      setUncontrolledShow(false)
+    }
     onClick?.()
   })
 
@@ -43,10 +45,6 @@ export function SheetBackdrop(props: SheetBackdropProps) {
       presenceStateMTRef
       && presenceStateMTRef.current !== PresenceState.Entered
     ) {
-      return
-    }
-
-    if (!clickToClose) {
       return
     }
 

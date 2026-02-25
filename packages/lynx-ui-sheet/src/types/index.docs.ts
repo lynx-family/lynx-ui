@@ -32,6 +32,9 @@ export interface SheetBackdropProps extends ComponentBasicProps {
    * Whether to close the Sheet when the overlay is clicked.
    * @zh 点击遮罩时是否关闭 Sheet。
    * @defaultValue true
+   * @Android
+   * @iOS
+   * @Harmony
    */
   clickToClose?: boolean
 }
