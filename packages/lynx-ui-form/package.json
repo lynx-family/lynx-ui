@@ -19,6 +19,7 @@
     "src/**",
     "README.md",
     "CHANGELOG.md",
+    "LICENSE",
     "tsconfig.docs.json",
     "tsconfig.json",
     "dist/**"
