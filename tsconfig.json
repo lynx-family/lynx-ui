@@ -50,6 +50,9 @@
     {
       "path": "./packages/lynx-ui-scroll-view"
     },
+        {
+      "path": "./packages/lynx-ui-sheet"
+    },
     {
       "path": "./packages/lynx-ui-sortable"
     },
@@ -58,9 +61,6 @@
     },
     {
       "path": "./packages/lynx-ui-swiper"
-    },
-    {
-      "path": "./packages/lynx-ui-sheet"
     },
     {
       "path": "./packages/lynx-ui-switch"

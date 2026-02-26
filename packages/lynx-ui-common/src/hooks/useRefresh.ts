@@ -4,6 +4,10 @@
 
 import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
 
+import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
+import type { GestureChangeEvent, StateManager } from '@lynx-js/gesture-runtime'
+import type { MainThread, ScrollEvent } from '@lynx-js/types'
+
 import type {
   BounceableBasicProps,
   RefreshEvent,
@@ -12,12 +16,7 @@ import type {
   headerReleased,
   refreshOffsetEvent,
   scrollToBouncesInfo,
-} from '@/types'
-
-import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
-import type { GestureChangeEvent, StateManager } from '@lynx-js/gesture-runtime'
-import type { MainThread, ScrollEvent } from '@lynx-js/types'
-
+} from '../types'
 import { RefreshState } from '../types/interfaces/RefreshInterface'
 import { selectorMT } from '../utils/selector'
 import { mtsNativeLynxSDKVersionLessThan } from '../utils/version'
