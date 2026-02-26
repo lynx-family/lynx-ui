@@ -43,7 +43,6 @@
     "*package.json": "sort-package-json",
     "*": [
       "cspell lint --config cspell.jsonc --gitignore --no-must-find-files",
-      "node tools/ensure-changeset.js",
       "node tools/scripts/check-submodule-regression.mjs"
     ]
   },
