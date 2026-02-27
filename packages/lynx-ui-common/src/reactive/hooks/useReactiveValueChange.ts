@@ -5,7 +5,7 @@
 import type { MainThreadRef } from '@lynx-js/react'
 
 import { useReactiveValueEvent } from './useReactiveValueEvent'
-import type { ReactiveValue } from '../reactiveValue'
+import type { ReactiveValue } from '../hooks/useReactiveValue'
 
 export function useReactiveValueChange<T>(
   valueRef: MainThreadRef<ReactiveValue<T>>,
