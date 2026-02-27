@@ -30,8 +30,6 @@ export type { ListRef, ListProps }
 
 export const List = memo(forwardRef(ListImpl)) as ListType
 
-const ListExcludedJSXProperties: string[] = ['children']
-
 export const ListEventMapping: Record<string, string> = {
   onLayoutComplete: 'bindlayoutcomplete',
   onScrollStateChange: 'bindscrollstatechange',
@@ -44,6 +42,19 @@ enum DEBUG_LEVEL {
   Info = 2,
   Verbose = 3,
 }
+
+type boundingClientRectType =
+  | Promise<
+    {
+      top: number
+      left: number
+      bottom: number
+      right: number
+      height: number
+      width: number
+    }
+  >
+  | undefined
 
 /**
  * @example
@@ -118,10 +129,8 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
   } = props
   // exclude jsx properties from base props
   const legalBaseProps = { ...props }
-  for (const key of ListExcludedJSXProperties) {
-    if (key in legalBaseProps) {
-      delete legalBaseProps[key]
-    }
+  if ('children' in legalBaseProps) {
+    delete legalBaseProps.children
   }
   const listMainThreadRef = useMainThreadRef<MainThread.Element>(null)
 
@@ -232,7 +241,9 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
       // second step: get the bounding client rect of the element with the specified ID.
       const handleBoundingClientRect = lynx
         .querySelector(`#${id}`)
-        ?.invoke('boundingClientRect', { relativeTo: listItemID })
+        ?.invoke('boundingClientRect', {
+          relativeTo: listItemID,
+        }) as boundingClientRectType
       void handleBoundingClientRect?.then(
         (res: {
           top: number
@@ -391,13 +402,11 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
 
   const exposureProps = []
   if (exposureID) {
-    // @ts-expect-error error
     exposureProps.push({
       'exposure-id': exposureID,
     })
   }
   if (exposureScene) {
-    // @ts-expect-error error
     exposureProps.push({
       'exposure-scene': exposureScene,
     })

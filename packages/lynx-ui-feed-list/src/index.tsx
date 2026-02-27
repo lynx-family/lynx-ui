@@ -34,7 +34,7 @@ export type {
   RefreshProps,
 } from '@lynx-js/lynx-ui-common'
 
-const FeedListExcludedJSXProperties: string[] = [
+const FeedListExcludedJSXProperties: (keyof FeedListProps)[] = [
   'children',
   'refreshOptions',
   'bounceableOptions',
@@ -342,9 +342,6 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     inputProps: FeedListProps,
     hooksProps: Record<string, unknown>,
   ) => Record<string, unknown> = (inputProps: FeedListProps, hooksProps) => {
-    if (!useRefreshAndBounce) {
-      return inputProps
-    }
     const mainThreadRelatedEvents = [
       'main-thread:onTouchStart',
       'main-thread:onTouchEnd',
@@ -354,15 +351,18 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
       'main-thread:onScrollEnd',
       'main-thread:onLayoutComplete',
     ]
-    const combinedMTSProps = {}
+    const combinedMTSProps: Record<string, unknown> = {}
+    // biome-ignore lint/suspicious/noExplicitAny: accessing dynamic properties
+    const safeInputProps = inputProps as Record<string, any>
     mainThreadRelatedEvents.forEach((eventName) => {
-      if (inputProps[eventName] && hooksProps[eventName]) {
-        combinedMTSProps[eventName] = (e) => {
+      if (safeInputProps[eventName] && hooksProps?.[eventName]) {
+        // biome-ignore lint/suspicious/noExplicitAny: generic event handler
+        combinedMTSProps[eventName] = (e: any) => {
           'main thread'
           // @ts-expect-error error
           hooksProps[eventName](e)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          inputProps[eventName](e)
+          safeInputProps[eventName](e)
         }
       }
     })

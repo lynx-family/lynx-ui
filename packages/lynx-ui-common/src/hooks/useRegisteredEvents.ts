@@ -18,7 +18,7 @@ const useMainThreadifyEvents = (
   const dummyRef = useMainThreadRef()
   for (const event of Object.keys(events)) {
     if (event in mainThreadEvents) {
-      mainThreadifyEvents[mainThreadEvents[event]] = e => {
+      mainThreadifyEvents[mainThreadEvents[event]] = (e: unknown) => {
         'main thread'
         if (events[event]) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call

@@ -124,22 +124,24 @@ export const usePresenceGroup: (
 
   const renderChildren = useMemo(() => {
     return Array.isArray(children)
-      ? children.map((child: ReactNode, index: number) => {
-        return (
-          <Presence
-            show={show}
-            forceMount={forceMount}
-            state={stateGroup[index]}
-            setPresenceState={(state: PresenceState) =>
-              updateStateGroup(index, state)}
-            enableDelay={enableDelay}
-            onOpen={onChildOpen}
-            onClose={onChildClose}
-          >
-            {child}
-          </Presence>
-        )
-      })
+      ? children.map(
+        (child: ReactNode | PresenceChildrenType, index: number) => {
+          return (
+            <Presence
+              show={show}
+              forceMount={forceMount}
+              state={stateGroup[index]}
+              setPresenceState={(state: PresenceState) =>
+                updateStateGroup(index, state)}
+              enableDelay={enableDelay}
+              onOpen={onChildOpen}
+              onClose={onChildClose}
+            >
+              {child}
+            </Presence>
+          )
+        },
+      )
       : (children
         ? (
           <Presence

@@ -14,8 +14,8 @@ import {
 } from '@lynx-js/react'
 
 import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
+import type { NativeGestureChangeEvent } from '@lynx-js/gesture-runtime'
 import { noop, selectorMT } from '@lynx-js/lynx-ui-common'
-import type { MainThread } from '@lynx-js/types'
 
 import type {
   SwipeActionProps,
@@ -129,8 +129,7 @@ function SwipeActionImpl(
   const lastMovingDirection = useMainThreadRef<movingDirection>(0)
 
   const currentTransform = useMainThreadRef<number>(0)
-  const lastTouchMoveEvent = useMainThreadRef<MainThread.TouchEvent>()
-  const lastTouchMoveGestureEvent = useMainThreadRef(null)
+  const lastTouchMoveGestureEvent = useMainThreadRef<NativeGestureChangeEvent>()
   const transformInTouchStart = useMainThreadRef<number>(0)
 
   const transformStartPosition = useMainThreadRef<number>(0)
@@ -141,23 +140,18 @@ function SwipeActionImpl(
 
   const swipeGesture: NativeGesture = useGesture(NativeGesture)
 
-  const calculateVelocityGesture = (event) => {
+  const calculateVelocityGesture = (event: NativeGestureChangeEvent) => {
     'main thread'
     if (event == null || lastTouchMoveGestureEvent.current == null) {
       currentVelocity.current = 0
       return
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const deltaTime = event.params.timestamp
-      - (lastTouchMoveEvent.current?.timestamp ?? 0)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      - (lastTouchMoveGestureEvent.current?.params.timestamp ?? 0)
     const deltaX = event.params.clientX
-      // @ts-expect-error error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       - lastTouchMoveGestureEvent.current?.params.clientX
     const velocity = deltaX / deltaTime
     currentVelocity.current = velocity
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     lastTouchMoveGestureEvent.current = event
   }
 
@@ -218,11 +212,11 @@ function SwipeActionImpl(
     currentTransform.current = delta
   }
 
-  const isHorizontalTouchMoveGesture = (event) => {
+  const isHorizontalTouchMoveGesture = (event: NativeGestureChangeEvent) => {
     'main thread'
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     const deltaX = event.params.clientX - prevTouchPointX.current
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     const deltaY = event.params.clientY - prevTouchPointY.current
     return Math.abs(deltaX) >= Math.abs(deltaY)
   }

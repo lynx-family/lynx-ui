@@ -9,10 +9,10 @@ import type { NodesRef } from '@lynx-js/types'
 
 export const KeyboardAwareRootContext = createContext<{
   onAwareTriggerFocused?: (
-    triggerRef?: RefObject<NodesRef>,
+    triggerRef: RefObject<NodesRef>,
     offset?: number,
   ) => void
-  onAwareTriggerBlurred?: (triggerRef?: RefObject<NodesRef>) => void
+  onAwareTriggerBlurred?: (triggerRef: RefObject<NodesRef>) => void
   onAwareTriggerLayoutChanged?: (triggerRef: RefObject<NodesRef>) => void
   keyboardAwareResponder?: RefObject<NodesRef>
   keyboardAwareResponderScrollInfoCollected?: (

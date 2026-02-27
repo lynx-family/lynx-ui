@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ReactElement } from '@lynx-js/react'
+import type { ReactElement, ReactNode } from '@lynx-js/react'
 
 import type { BaseGesture } from '@lynx-js/gesture-runtime'
 import type {
@@ -124,7 +124,7 @@ export interface ScrollViewProps
    * @Android
    * @iOS
    */
-  children?: (ReactElement[] | ReactElement)[] | ReactElement | ReactElement[]
+  children?: ReactNode
   /**
    * exposure-screen-margin-top
    * @zh 曝光屏幕上方边距

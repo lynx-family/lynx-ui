@@ -64,7 +64,7 @@ export function useVelocity({ RTL }: { RTL: SwiperProps<unknown>['RTL'] }) {
     pruneQueue(50)
   }
 
-  function velocityTouchStart(_event) {
+  function velocityTouchStart() {
     'main thread'
     reset()
   }

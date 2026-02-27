@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { forwardRef, memo, useRef } from '@lynx-js/react'
-import type { ForwardedRef, ReactElement } from '@lynx-js/react'
+import type { ForwardedRef, ReactNode } from '@lynx-js/react'
 
 import '@lynx-js/gesture-runtime'
 import type { GestureKind } from '@lynx-js/gesture-runtime'
@@ -138,20 +138,15 @@ function ScrollViewImpl(
     return true
   }
 
-  type childrenType =
-    | (ReactElement[] | ReactElement)[]
-    | ReactElement
-    | ReactElement[]
-    | undefined
   const renderChildren = (
-    children: childrenType,
+    children: ReactNode,
     lazyOptions: LazyOptions | undefined,
   ) => {
     if (!Array.isArray(children)) {
       return children
     }
     const lazy = lazyOptions?.enableLazy
-    return children.map((item: ReactElement, index: number) => {
+    return children.map((item: ReactNode, index: number) => {
       if (lazy && index >= Number(lazyOptions?.firstScreenItemCount)) {
         return (
           <LazyComponent

@@ -4,7 +4,8 @@
 
 import { useCallback, useEffect, useMemo } from '@lynx-js/react'
 
-type noop = (...p: unknown[]) => void
+// biome-ignore lint/suspicious/noExplicitAny: generic type definition
+type noop = (...p: any) => void
 
 /**
  * Use this hook to register events

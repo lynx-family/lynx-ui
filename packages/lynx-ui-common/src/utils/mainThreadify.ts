@@ -7,7 +7,7 @@ export const mainThreadifyEventsMapping = (
 ) => {
   let mainThreadifyEvents: Record<string, string> = {}
   mainThreadifyEvents = Object.entries(rawEvents).reduce(
-    (EventsWithMainThread, [key, value]) => {
+    (EventsWithMainThread: Record<string, string>, [key, value]) => {
       EventsWithMainThread[`main-thread:${key}`] = `main-thread:${value}`
       return EventsWithMainThread
     },

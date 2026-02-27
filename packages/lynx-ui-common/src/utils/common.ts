@@ -21,6 +21,7 @@ export function get(obj: unknown, path: string, defaultValue?: unknown) {
   if (typeof obj !== 'object') {
     return defaultValue
   }
+  // @ts-expect-error: o is unknown
   return _basePath(path).reduce((o: unknown, k: string) => o?.[k], obj)
     ?? defaultValue
 }

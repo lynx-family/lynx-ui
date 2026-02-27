@@ -4,7 +4,7 @@
 
 import type { OffsetLimitResult } from '../types'
 
-function easeOut(progress) {
+function easeOut(progress: number) {
   'main thread'
   return 1 - Math.pow(1 - progress, 3)
 }

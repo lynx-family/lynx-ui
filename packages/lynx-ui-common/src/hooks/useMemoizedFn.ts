@@ -4,7 +4,8 @@
 
 import { useMemo, useRef } from '@lynx-js/react'
 
-type noop = (this: unknown, ...args: unknown[]) => void
+// biome-ignore lint/suspicious/noExplicitAny: generic type definition
+type noop = (this: any, ...args: any[]) => any
 
 type PickFunction<T extends noop> = (
   this: ThisParameterType<T>,

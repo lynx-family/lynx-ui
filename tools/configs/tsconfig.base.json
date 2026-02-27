@@ -5,6 +5,7 @@
       "ESNext"
     ],
     "module": "ESNext",
+    "strict": true,
     "strictNullChecks": true,
     "verbatimModuleSyntax": true,
     "target": "ESNext",

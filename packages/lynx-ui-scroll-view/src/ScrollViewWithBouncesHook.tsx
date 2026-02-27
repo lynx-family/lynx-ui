@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ForwardedRef, ReactElement } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement, ReactNode } from '@lynx-js/react'
 
 import '@lynx-js/gesture-runtime'
 import { useBounce } from '@lynx-js/lynx-ui-common'
@@ -19,18 +19,17 @@ export type { ScrollViewProps, ScrollViewRef }
 function ScrollViewWithBouncesHook(
   props: {
     elementProps: ScrollViewElementProps
-    children?:
-      | (ReactElement[] | ReactElement)[]
-      | ReactElement
-      | ReactElement[]
+    children?: ReactNode
     bounceableOptions?: BounceableBasicProps
     sticky?: ReactElement
   },
   _ref: ForwardedRef<ScrollViewRef>,
 ) {
   const { children, bounceableOptions, sticky, elementProps } = props
+  // @ts-expect-error Compatible with older versions
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const horizontal = elementProps['scroll-x']
+    // @ts-expect-error Compatible with older versions
     ?? elementProps['scroll-y'] === false
   const scrollViewId = elementProps.id
   const { style } = elementProps as { style: CSSProperties }

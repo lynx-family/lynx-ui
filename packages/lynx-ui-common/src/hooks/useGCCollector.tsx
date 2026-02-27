@@ -24,9 +24,9 @@ export function useGCCollector(options: UseGCCollectorOptions = {}) {
 
   const triggerGCMT = () => {
     'main thread'
-    if (typeof globalThis.lepusng_gc === 'function') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      globalThis.lepusng_gc()
+    const globalScope = globalThis as unknown as { lepusng_gc?: () => void }
+    if (typeof globalScope.lepusng_gc === 'function') {
+      globalScope.lepusng_gc()
     }
   }
 

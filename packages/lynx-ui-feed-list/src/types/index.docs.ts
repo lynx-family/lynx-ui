@@ -37,7 +37,7 @@ export interface FeedListRef extends ListRef {
   changeHasMoreStatus: (hasMore: boolean) => void
 }
 
-export interface FeedListProps extends ListProps {
+export interface FeedListProps extends Omit<ListProps, 'ref'> {
   ref?: ForwardedRef<FeedListRef>
   /**
    * Accept true for default options. If you need to customize the refresh effect, you can pass in the RefreshProps.

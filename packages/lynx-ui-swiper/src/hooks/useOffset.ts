@@ -498,7 +498,7 @@ function useOffset(
 
     touchStartCrossAxisRef.current = event.detail.y
     axisLockTouchStart(event)
-    velocityTouchStart(event)
+    velocityTouchStart()
     tapLockTouchStart(event)
     cancelAnimation()
     swipeCallbackTouchStart(event)

@@ -58,6 +58,7 @@ export const computePosition: ComputePosition = async (
       ...middlewareData,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       [name]: {
+        // @ts-expect-error maintain the original type
         ...middlewareData[name],
         ...data,
       },

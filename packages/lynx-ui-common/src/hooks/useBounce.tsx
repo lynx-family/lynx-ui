@@ -50,9 +50,13 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   )
 
   // The starting point of current touch procedure
-  const startTouch = useMainThreadRef({})
+  const startTouch = useMainThreadRef<MainThread.TouchEvent['touches'] | null>(
+    null,
+  )
   // Record the previous touch and clear it on touchEnd. If current is not empty, then it means that the scrollable object is being dragged.
-  const prevTouch = useMainThreadRef({})
+  const prevTouch = useMainThreadRef<MainThread.TouchEvent['touches'] | null>(
+    null,
+  )
 
   // Current scroll velocity.
   const scrollVelocity = useMainThreadRef(0)
@@ -60,7 +64,9 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   const bouncingPositionInfo = useMainThreadRef({})
 
   // If reaches edge and bouncing starts during dragging, save the touch point and calculate later touch delta for rubberEffect.
-  const startBouncingTouch = useMainThreadRef({})
+  const startBouncingTouch = useMainThreadRef<
+    MainThread.TouchEvent['touches'] | null
+  >(null)
   // If reaches edge and bouncing starts during dragging, save current bouncingPosition and continues rubberEffect's calculation from this point.
   const startTouchBouncingDelta = useMainThreadRef({})
   // when touch starts during bouncing, save current bouncingPosition and continues rubberEffect's calculation from this point.
@@ -149,10 +155,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     if (debugLog.current) {
       console.info('clearTouchInfo')
     }
-    startTouch.current = {}
+    startTouch.current = null
     bouncingTouchStartPosition.current = 0
-    prevTouch.current = {}
-    startBouncingTouch.current = {}
+    prevTouch.current = null
+    startBouncingTouch.current = null
     startTouchBouncingDelta.current = 0
   }
 
@@ -169,18 +175,14 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   // Calculate current touch delta based on 'startPoint'. The startPoint here should be startBouncingTouch which means this bouncing effect happens during a touch procedure.
   function getCurrentDelta(event: MainThread.TouchEvent) {
     'main thread'
-    if (!isEmpty(startTouch.current)) {
-      if (isEmpty(startBouncingTouch.current)) {
+    if (startTouch.current !== null) {
+      if (startBouncingTouch.current === null) {
         return scrollOrientation === 'vertical'
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           ? event.touches[0].pageY - startTouch.current[0].pageY
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           : event.touches[0].pageX - startTouch.current[0].pageX
       } else {
         return scrollOrientation === 'vertical'
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           ? event.touches[0].pageY - startBouncingTouch.current[0].pageY
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           : event.touches[0].pageX - startBouncingTouch.current[0].pageX
       }
     }
@@ -248,7 +250,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   function bouncingSetStyle(offset: number) {
     'main thread'
     if (isNaN(Number(offset))) {
-      console.error('ERROR! bouncingOffset is NaN')
+      console.info('ERROR! bouncingOffset is NaN')
       return
     }
     // update bouncingPositionInfo first
@@ -272,7 +274,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     // @ts-expect-error expected
     bouncingPositionInfo.current.timeStamp = Date.now()
     // When bouncing effect ends, clear startTouch and bouncingTouchStartPosition
-    if (offset === 0 && !isEmpty(prevTouch.current)) {
+    if (offset === 0 && prevTouch.current !== null) {
       startTouch.current = prevTouch.current
       bouncingTouchStartPosition.current = {}
     }
@@ -487,9 +489,8 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   function bounceableTouchMove(event: MainThread.TouchEvent) {
     'main thread'
     prevTouch.current = event.touches
-    if (isEmpty(startTouch.current)) {
+    if (startTouch.current === null) {
       // It means current situation is illegal. A touchMove event happens without a touchStart event beforehand. Or a touchMove event happens after a touchEnd event.
-
       console.info('ERROR! touch not started')
     } else {
       const delta = getCurrentDelta(event)
@@ -721,7 +722,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
       return
     }
     // reaches lower during dragging
-    if (!isEmpty(prevTouch.current)) {
+    if (prevTouch.current !== null) {
       startBouncingTouch.current = prevTouch.current
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       startTouchBouncingDelta.current =
