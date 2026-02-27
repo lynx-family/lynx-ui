@@ -5,7 +5,7 @@
 import { runOnMainThread, useEffect } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
-import type { ReactiveValue } from '../reactiveValue'
+import type { ReactiveValue } from '../hooks/useReactiveValue'
 import type { ReactiveEventName } from '../types'
 
 export function useReactiveValueEvent<T>(
