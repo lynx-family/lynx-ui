@@ -1,4 +1,4 @@
-# Lynx UI FeedList SKILL
+# lynx-ui-feed-list SKILL
 
 `FeedList` is a high-performance feed stream list component, built upon `List`. It encapsulates common feed scenarios such as **pull-to-refresh** and **load more**, allowing developers to quickly build feed list pages.
 

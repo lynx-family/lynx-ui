@@ -3,7 +3,7 @@ name: LazyComponent
 description: Provide the information about the `<LazyComponent>`. Show the common use cases, basic usage, and critical development Advises.
 ---
 
-# Lynx UI LazyComponent SKILL.md
+# lynx-ui-lazy-component SKILL
 
 `<LazyComponent>` is a component that lazy loads the content when it is visible in the viewport.
 

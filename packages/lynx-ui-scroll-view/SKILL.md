@@ -1,4 +1,4 @@
-# Lynx UI ScrollView SKILL
+# lynx-ui-scroll-view SKILL
 
 `ScrollView` is a general-purpose scroll container used to display content that exceeds the viewport in either vertical or horizontal direction. For massive datasets, prefer `List` or `FeedList` to ensure performance.
 

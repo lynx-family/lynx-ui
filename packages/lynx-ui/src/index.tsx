@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-// Aggregate re-exports for Lynx UI open-source packages.
+// Aggregate re-exports for lynx-ui open-source packages.
 // Excludes lynx-ui-overlay and lynx-ui-presence.
 
 // common (hooks, utils, const, reactive)

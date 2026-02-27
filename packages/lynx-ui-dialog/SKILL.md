@@ -1,4 +1,4 @@
-# Lynx UI Dialog SKILL
+# lynx-ui-dialog SKILL
 
 `Dialog` is a dialog component, used to display important information or require user interaction, interrupting the current workflow. `lynx-ui-dialog` is a composite component built on `primitives`, offering high flexibility and customizability.
 

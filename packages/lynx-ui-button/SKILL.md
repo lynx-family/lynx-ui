@@ -1,25 +1,25 @@
-# Lynx UI Primitives Button SKILL
+# lynx-ui-button SKILL
 
-`Primitives Button` is a member of the `lynx-ui-primitives` atomic library. It provides an unstyled, fully functional button "skeleton", focusing on handling interaction behaviors and accessibility.
+`Button` is a member of the `lynx-ui` atomic library. It provides an unstyled, fully functional button "skeleton", focusing on handling interaction behaviors and accessibility.
 
 ## 1. Core Capabilities
 
-Unlike `lynx-ui-button`, which is a high-level component providing complete styling and multiple variants, the goal of `Primitives Button` is to:
+Unlike `lynx-ui-button`, which is a high-level component providing complete styling and multiple variants, the goal of `Button` is to:
 
 - **Provide core button behavior**: Encapsulates `onClick` events, `disabled` state, and the active state during press (`active` state).
 - **Complete style freedom**: Comes with no background, border, color, or other styles, allowing developers to build buttons of any appearance from scratch.
 - **Expose state via Render Props**: It exposes whether the button is in the "pressed" state (`active`) through the `children` Render Prop pattern, facilitating the implementation of complex press effects.
 
-When you need an interactive element that is visually completely custom but behaviorally conforms to standard button specifications, you should use `Primitives Button`.
+When you need an interactive element that is visually completely custom but behaviorally conforms to standard button specifications, you should use `Button`.
 
 ## 2. AI Coding Guide
 
 ### Minimal Usable Example
 
-The core feature of `Primitives Button` is its Render Prop. You need to provide a function as `children` to receive the `active` state.
+The core feature of `Button` is its Render Prop. You need to provide a function as `children` to receive the `active` state.
 
 ```tsx
-import { Button } from '@lynx-js/lynx-ui-primitives-button'
+import { Button } from '@lynx-js/lynx-ui-button'
 
 function App() {
   const handleClick = () => {
@@ -47,19 +47,19 @@ function App() {
 
 ### Recommended Prompt Formula
 
-> **Scenario**: I want to use `Primitives Button` to create a custom button.
+> **Scenario**: I want to use `Button` to create a custom button.
 > **Appearance Requirement**: This button's background color is `[normal_color]` in its normal state, and when the user presses it (`active` state), the background color changes to `[active_color]`.
 > **Behavior Requirement**: In the [enabled/disabled] state, the button needs to [perform some action, e.g., "print a log"] when clicked.
 
 **Example Prompt**:
 
-> I want to use `Primitives Button` to create an icon button. It should be a circular button with no background color. When the user presses it, the entire button area's background should become semi-transparent gray (`rgba(0,0,0,0.1)`). When the button is clicked, it should call the `handleIconClick` function. Please provide the implementation code.
+> I want to use `Button` to create an icon button. It should be a circular button with no background color. When the user presses it, the entire button area's background should become semi-transparent gray (`rgba(0,0,0,0.1)`). When the button is clicked, it should call the `handleIconClick` function. Please provide the implementation code.
 
 ## 4. FAQ
 
 **Q: Why doesn’t the button react to the `active` state?**
 
-A: `Primitives Button` uses a Render Prop. Provide a function as `children` so you can receive `{ active }` and style accordingly.
+A: `Button` uses a Render Prop. Provide a function as `children` so you can receive `{ active }` and style accordingly.
 
 ```tsx
 // Correct usage
@@ -122,6 +122,6 @@ const GradientButton = ({ children, onClick }) => (
 
 ## 5. Sub components
 
-`Primitives Button` is a single component and does not contain sub components.
+`Button` is a single component and does not contain sub components.
 
 <!-- Removed the "More Examples" section to align with FeedList structure -->
