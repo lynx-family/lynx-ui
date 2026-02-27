@@ -1,12 +1,5 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
 import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin'
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-const packagesDir = path.resolve(__dirname, '../../packages')
 
 export const exampleConfig = (entry, needWeb = true) => {
   return {
@@ -20,15 +13,6 @@ export const exampleConfig = (entry, needWeb = true) => {
       },
     source: {
       entry: entry,
-      include: [
-        /@lynx-js\/gesture-runtime/,
-        /@lynx-js\/react-use/,
-        /@lynx-js\/motion/,
-        /@lynx-js\/motion\/mini/,
-        {
-          and: [packagesDir, { not: /[\\/]node_modules[\\/]/ }],
-        },
-      ],
     },
     output: {
       distPath: {
