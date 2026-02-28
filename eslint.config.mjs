@@ -48,6 +48,7 @@ export default tseslint.config(
       'packages/**/vitest.config.ts',
       'website/**',
       'tools/configs/**',
+      'tools/typings/**',
       '**/tools/make-new-component/examplesTemplate/**',
       '**/tools/make-new-component/template/**',
 
