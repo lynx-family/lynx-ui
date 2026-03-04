@@ -106,6 +106,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
     exposureID,
     exposureScene,
     iosEnableSimultaneousTouch = true,
+    iosScrollsToTop = true,
     shouldRequestStateRestore = false,
     enableScrollMonitor = false,
     scrollMonitorTag,
@@ -135,6 +136,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
   const listMainThreadRef = useMainThreadRef<MainThread.Element>(null)
 
   // generates binding events dynamically
+
   const listRegisteredEvents = useRef<Record<string, string>>({
     ...ScrollEventsMapping,
     ...ExposureEventsMapping,
@@ -142,6 +144,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
     ...LayoutEventsMapping,
     ...ListEventMapping,
   })
+
   const registerEvents = useRegisteredEvents(
     legalBaseProps,
     listRegisteredEvents.current,
@@ -452,6 +455,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
       scroll-orientation={scrollOrientation}
       scroll-bar-enable={enableScrollBar}
       ios-enable-simultaneous-touch={iosEnableSimultaneousTouch}
+      ios-scrolls-to-top={iosScrollsToTop}
       android-enable-gap-item-decoration={true}
       list-main-axis-gap={mainAxisGap}
       list-cross-axis-gap={crossAxisGap}
