@@ -77,6 +77,14 @@
   height: max-content;
 }
 
+.popover-positioner.ui-open {
+  animation: popover-in 180ms var(--ease-out-smooth) forwards;
+}
+
+.popover-positioner.ui-closed {
+  animation: popover-out 120ms var(--ease-in-exit) forwards;
+}
+
 /* =========================
  * Popover content
  * ========================= */
@@ -125,15 +133,6 @@
 
   /* avoid transform affecting layout during animation */
   transform-origin: top right;
-  opacity: 0;
-}
-
-.popover-content.ui-open {
-  animation: popover-in 180ms var(--ease-out-smooth) forwards;
-}
-
-.popover-content.ui-closed {
-  animation: popover-out 120ms var(--ease-in-exit) forwards;
 }
 
 /* =========================

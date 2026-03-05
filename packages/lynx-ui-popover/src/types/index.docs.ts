@@ -106,6 +106,37 @@ export interface PopoverTriggerProps extends ComponentBasicProps {
 }
 
 /**
+ * A transparent backdrop that can be used to close the Popover when clicked.
+ * @zh 一个透明的背景板，点击时可以关闭 Popover。
+ */
+export interface PopoverBackdropProps extends ComponentBasicProps {
+  /**
+   * children
+   * @zh 子元素
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  children?: ReactNode
+  /**
+   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名
+   */
+  transition?: boolean
+  /**
+   * Callback function triggered when the component is clicked
+   * @zh 组件被点击时触发的回调函数
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  onClick?: () => void
+}
+
+/**
  * If this component is used, the Popover will use it rather than PopoverTrigger as the real anchor.
  */
 export interface PopoverAnchorProps extends ComponentBasicProps {
@@ -332,6 +363,23 @@ export interface PopoverRootProps extends ComponentBasicProps {
    * @Harmony
    */
   onOpen?: () => void
+  /**
+   * Enable debug log for Popover and its sub-components.
+   * @zh 开启 Popover 及其子组件的调试日志。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  debugLog?: boolean
+  /**
+   * Callback fired when the visibility of the popover changes. This is only called in controlled mode.
+   * @zh Popover 显示状态改变时触发的回调，仅在受控模式下被调用。
+   * @param visible - The new visibility state.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  onVisibleChange?: (visible: boolean) => void
 }
 
 export interface PopoverContextType {
@@ -346,6 +394,9 @@ export interface PopoverContextType {
   setPresenceState: (state: SetStateAction<PresenceState>) => void
   onOpen?: () => void
   onClose?: () => void
+  isControlled?: boolean
+  onVisibleChange?: (visible: boolean) => void
+  debugLog?: boolean
 }
 
 export type UpdateRectsAction =

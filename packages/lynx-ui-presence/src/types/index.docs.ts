@@ -35,6 +35,7 @@ export interface PresenceProps {
   // Presence takes charge of sending the events.
   onClose?: () => void
   onOpen?: () => void
+  debugLog?: boolean
 }
 
 export interface usePresenceProps {
@@ -46,6 +47,7 @@ export interface usePresenceProps {
   // Presence takes charge of sending the events.
   onOpen?: () => void
   onClose?: () => void
+  debugLog?: boolean
 }
 
 export interface PresenceContextType {
@@ -59,6 +61,8 @@ export interface PresenceContextType {
   }
   animationHandlers: {
     handleKFStart: EventHandler<AnimationEvent>
+    handleKFCancel: EventHandler<AnimationEvent>
+    handleTransitionCancel: EventHandler<TransitionEvent>
     handleKFEnd: EventHandler<AnimationEvent>
     handleTransitionStart: EventHandler<TransitionEvent>
     handleTransitionEnd: EventHandler<TransitionEvent>

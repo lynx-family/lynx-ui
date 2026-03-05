@@ -38,6 +38,7 @@ import { size } from './floating/size'
 import type {
   PopoverAnchorProps,
   PopoverArrowProps,
+  PopoverBackdropProps,
   PopoverContentProps,
   PopoverOverlayProps,
   PopoverPositionerProps,
@@ -45,15 +46,20 @@ import type {
   PopoverTriggerProps,
 } from './types'
 import { PopoverContext, useElementInfoReducer } from './useElementInfoReducer'
+import './style.css'
 
-export const PopoverRoot = (props: PopoverRootProps) => {
+export const PopoverRoot = (
+  props: PopoverRootProps,
+) => {
   const {
     children,
     onClose,
     onOpen,
     show,
+    onVisibleChange,
     defaultShow = false,
     forceMount = false,
+    debugLog,
   } = props
 
   const [state, setPresenceState] = useState<PresenceState>(
@@ -78,6 +84,9 @@ export const PopoverRoot = (props: PopoverRootProps) => {
       setPresenceState,
       onOpen,
       onClose,
+      isControlled,
+      onVisibleChange,
+      debugLog,
     }),
     [
       sharedInfo,
@@ -91,6 +100,9 @@ export const PopoverRoot = (props: PopoverRootProps) => {
       setPresenceState,
       onOpen,
       onClose,
+      isControlled,
+      onVisibleChange,
+      debugLog,
     ],
   )
 
@@ -124,6 +136,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
     setPresenceState,
     onClose,
     onOpen,
+    debugLog,
   } = useContext(
     PopoverContext,
   )
@@ -220,6 +233,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
       enableDelay={true}
       onClose={onClose}
       onOpen={onOpen}
+      debugLog={debugLog}
     >
       <PopoverPositionerContext.Provider
         value={{ placement }}
@@ -248,7 +262,14 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
 
 export const PopoverTrigger = (props: PopoverTriggerProps) => {
   const { style, children, className, onClick, disabled, transition } = props
-  const { updateRects, setUncontrolledShow, state } = useContext(
+  const {
+    updateRects,
+    setUncontrolledShow,
+    state,
+    show,
+    isControlled,
+    onVisibleChange,
+  } = useContext(
     PopoverContext,
   )
 
@@ -275,7 +296,11 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
   }
 
   const handleTriggered = () => {
-    setUncontrolledShow?.(prev => !prev)
+    if (isControlled) {
+      onVisibleChange?.(!show)
+    } else {
+      setUncontrolledShow?.(prev => !prev)
+    }
     onClick?.()
   }
 
@@ -298,6 +323,50 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
     >
       {children}
     </Button>
+  )
+}
+
+export const PopoverBackdrop = (props: PopoverBackdropProps) => {
+  const { className, style, onClick, transition, ...restProps } = props
+  const { state, setUncontrolledShow, isControlled, onVisibleChange } =
+    useContext(PopoverContext)
+
+  const resolveBusyState = (currentState: PresenceState) => {
+    switch (currentState) {
+      case PresenceState.Entering:
+      case PresenceState.DelayedEntering:
+      case PresenceState.Leaving:
+        return true
+      default:
+        return false
+    }
+  }
+  const busy = resolveBusyState(state)
+
+  const handleTap = () => {
+    if (isControlled) {
+      onVisibleChange?.(false)
+    } else {
+      setUncontrolledShow?.(false)
+    }
+    onClick?.()
+  }
+
+  const presenceClassName = presenceClassVariants({
+    state,
+    enableDelay: true,
+    className,
+    transition,
+  })
+
+  return (
+    <Button
+      className={`popover-backdrop ${presenceClassName}`}
+      style={style}
+      onClick={handleTap}
+      disabled={busy}
+      {...restProps}
+    />
   )
 }
 
@@ -402,8 +471,10 @@ export const PopoverContent = (props: PopoverContentProps) => {
   const { maxContentSize } = sharedInfo
   const {
     handleKFStart,
+    handleKFCancel,
     handleKFEnd,
     handleTransitionStart,
+    handleTransitionCancel,
     handleTransitionEnd,
   } = animationHandlers
 
@@ -418,9 +489,10 @@ export const PopoverContent = (props: PopoverContentProps) => {
     <view
       bindanimationstart={handleKFStart}
       bindanimationend={handleKFEnd}
+      bindanimationcancel={handleKFCancel}
       bindtransitionstart={handleTransitionStart}
+      bindtransitioncancel={handleTransitionCancel}
       bindtransitionend={handleTransitionEnd}
-      bindanimationcancel={handleKFEnd}
       event-through={false}
       // turn off Android offscreen drawing so the animation with opacity can work properly
       overlap={false}

@@ -238,6 +238,14 @@ export interface DialogRootProps {
    * @Harmony
    */
   onClose?: () => void
+  /**
+   * Display debug logs. Open it when you find a bug.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 显示调试日志。发现 bug 时开启。
+   */
+  debugLog?: boolean
 }
 
 /**

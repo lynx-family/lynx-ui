@@ -13,6 +13,10 @@ const baseConfig = exampleConfig({
   PopoverExtraAnchor: './ExtraAnchor/index.tsx',
   PopoverWithScrollView: './WithScrollView/index.tsx',
   PopoverCustomArrow: './CustomArrow/index.tsx',
+  PopoverBackdrop: './Backdrop/index.tsx',
+  PopoverControlled: './Controlled/index.tsx',
+  PopoverFastToggle: './FastToggle/index.tsx',
+  PopoverAnimationCancel: './AnimationCancel/index.tsx',
 })
 
 const defaultConfig = defineConfig({

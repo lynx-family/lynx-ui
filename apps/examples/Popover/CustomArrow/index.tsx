@@ -11,8 +11,6 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from '@lynx-js/lynx-ui-popover'
-import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-popover'
-import { clsx } from 'clsx'
 import './index.css'
 
 function App() {
@@ -21,6 +19,7 @@ function App() {
       <PopoverRoot
         onClose={() => console.info('dismissed!!!!')}
         onOpen={() => console.info('shown!!!! ')}
+        debugLog={true}
       >
         <PopoverTrigger className='trigger'>
           <text>Click me to show Popover</text>
@@ -28,40 +27,27 @@ function App() {
             placement='right'
             placementOffset={5}
             className='popover-positioner'
+            transition={true}
           >
-            {(
-              { entering = false, leaving = false }: PresenceAnimationStatus,
-            ) => {
-              return (
-                <PopoverContent
-                  className={clsx(
-                    'popover-content',
-                    {
-                      'fade-enlarge': entering,
-                      'fade-shrink': leaving,
-                    },
-                  )}
+            <PopoverContent className='popover-content'>
+              <text style={{ wordBreak: 'normal' }}>
+                Popover Content
+              </text>
+              <PopoverArrow
+                size={{ width: 20, height: 30 }}
+                color='navajowhite'
+              >
+                <view
+                  style={{
+                    width: '20px',
+                    height: '30px',
+                    background:
+                      'linear-gradient(180deg, red 0%, PeachPuff 100%)',
+                  }}
                 >
-                  <text style={{ wordBreak: 'normal' }}>
-                    Popover Content
-                  </text>
-                  <PopoverArrow
-                    size={{ width: 20, height: 30 }}
-                    color='NavajoWhite'
-                  >
-                    <view
-                      style={{
-                        width: '20px',
-                        height: '30px',
-                        background:
-                          'linear-gradient(180deg, red 0%, PeachPuff 100%)',
-                      }}
-                    >
-                    </view>
-                  </PopoverArrow>
-                </PopoverContent>
-              )
-            }}
+                </view>
+              </PopoverArrow>
+            </PopoverContent>
           </PopoverPositioner>
         </PopoverTrigger>
       </PopoverRoot>

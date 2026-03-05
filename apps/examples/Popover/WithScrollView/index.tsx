@@ -58,7 +58,7 @@ function App() {
                       <PopoverArrow
                         size={10}
                         offset={16}
-                        color='NavajoWhite'
+                        color='navajowhite'
                       />
                     </PopoverContent>
                   )

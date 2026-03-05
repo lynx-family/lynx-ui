@@ -50,20 +50,22 @@
   }
 }
 
-.fade-enlarge {
-  animation: fade-and-enlarge 1s ease-out forwards;
+.popover-positioner.ui-entering {
+  animation: fade-and-enlarge 180ms ease-out forwards;
 }
 
-.fade-shrink {
-  animation: fade-and-shrink 1s ease-out forwards;
+.popover-positioner.ui-leaving {
+  animation: fade-and-shrink 180ms ease-out forwards;
+}
+
+.popover-positioner.ui-closed {
+  transform: scale(0);
 }
 
 .popover-content {
-  /* width: 400px; */
-  /* height: 50px; */
   border-radius: 16px;
   padding: 20px;
-  background-color: NavajoWhite;
+  background-color: navajowhite;
   display: flex;
   justify-content: center;
   align-items: center;
