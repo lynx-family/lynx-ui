@@ -161,6 +161,10 @@ function useOffset(
 
   function getCurrentIndex() {
     'main thread'
+    // Guard against dataCount=0 to prevent NaN from modulo by zero
+    if (dataCount === 0) {
+      return 0
+    }
     const totalWidth = fullSize * dataCount
     const currentIndex = ((-offsetRef.current + totalWidth) % totalWidth)
       / fullSize
@@ -509,6 +513,11 @@ function useOffset(
   function handleTouchMove(event: MainThread.TouchEvent) {
     'main thread'
 
+    // Guard against empty data to prevent state corruption
+    if (dataCount === 0) {
+      return
+    }
+
     if (axisLockTouchMove(event) || tapLockTouchMove(event)) {
       return
     }
@@ -566,10 +575,16 @@ function useOffset(
       })
     } else {
       const currentIndex = prevIndexRef.current
-
-      swipeToMTS(currentIndex, {
-        animate: false,
-      })
+      // Guard against NaN from previous empty data state
+      if (isNaN(currentIndex)) {
+        swipeToMTS(0, {
+          animate: false,
+        })
+      } else {
+        swipeToMTS(currentIndex, {
+          animate: false,
+        })
+      }
     }
   }
 
