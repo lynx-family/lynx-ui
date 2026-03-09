@@ -37,6 +37,10 @@ export function useOffsetLimit({
   dataCount,
 }: IOffsetLimit): OffsetLimitResult {
   const finalOffsetLimit = useMemo<OffsetLimitResult>(() => {
+    const epsilon = 0.000001
+    const fullSize = itemWidth + spaceBetween
+    const totalContentWidth = fullSize * dataCount - spaceBetween
+
     if (loop) {
       return {
         startLimit: 0,
@@ -51,12 +55,11 @@ export function useOffsetLimit({
       }
     } else {
       // If SwiperItem can not occupy the screen, do not apply offsetLimit.
-      if (
-        (itemWidth + spaceBetween) * dataCount - spaceBetween < containerWidth
-      ) {
+      if (totalContentWidth <= containerWidth + epsilon) {
         return {
           startLimit: 0,
-          endLimit: (itemWidth + spaceBetween) * (dataCount - 1) - spaceBetween,
+          // Lock both start/end to the same offset to disable scroll.
+          endLimit: Math.max(fullSize * (dataCount - 1), 0),
           isNotEnoughForScreen: true,
         }
       }
@@ -87,6 +90,7 @@ export function useOffsetLimit({
     modeConfig,
     loop,
     itemWidth,
+    spaceBetween,
     containerWidth,
   ])
 
