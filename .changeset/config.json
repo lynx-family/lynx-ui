@@ -13,7 +13,8 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@lynx-js/luna-*"
+    "@lynx-js/luna-*",
+    "lynx-ui-**-examples"
   ],
   "privatePackages": {
     "tag": false,
