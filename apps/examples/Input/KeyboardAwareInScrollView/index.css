@@ -11,18 +11,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px;
-  padding-left: 16px;
-  padding-right: 16px;
 }
 
 .canvas {
   height: 100%;
   width: 100%;
-
-  padding: 46px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 64px;
+  padding-left: 40px;
+  padding-right: 40px;
   border-radius: 16px;
 
   display: flex;
