@@ -1,5 +1,6 @@
 actived
 antialiasing
+amannn
 ARGB
 bindcontentsizechanged
 bindfirstframe
