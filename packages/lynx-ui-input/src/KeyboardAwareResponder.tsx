@@ -20,8 +20,15 @@ export const KeyboardAwareResponder = memo(
 ) as KeyboardAwareResponderType
 
 export function KeyboardAwareResponderImpl(props: KeyboardAwareResponderProps) {
-  const { as = 'View', scrollviewId = 'scrollview', style, children, ...rest } =
-    props
+  const {
+    as = 'View',
+    scrollviewId = 'scrollview',
+    style,
+    className,
+    children,
+    ...rest
+  } = props
+  const { width = '100%', height = '100%', ...restStyle } = style ?? {}
   const { keyboardAwareResponder, keyboardAwareResponderScrollInfoCollected } =
     useContext(KeyboardAwareRootContext)
 
@@ -35,13 +42,19 @@ export function KeyboardAwareResponderImpl(props: KeyboardAwareResponderProps) {
   }, [dummyRefAtKeyboardHeight, keyboardAwareResponder])
 
   return (
-    <view style={style} {...rest} ref={keyboardAwareResponder} flatten={false}>
+    <view
+      style={{ width, height, ...(as === 'ScrollView' ? {} : restStyle) }}
+      className={as === 'ScrollView' ? undefined : className}
+      {...rest}
+      ref={keyboardAwareResponder}
+      flatten={false}
+    >
       {as === 'ScrollView'
         ? (
           <ScrollView
-            style={style
-              ?? { width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', ...restStyle }}
             scrollviewId={scrollviewId}
+            className={className}
             {...rest}
             scrollOrientation='vertical'
           >

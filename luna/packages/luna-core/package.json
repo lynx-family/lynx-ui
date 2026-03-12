@@ -1,6 +1,7 @@
 {
   "name": "@lynx-js/luna-core",
   "version": "0.1.0",
+  "private": true,
   "description": "Core constants, types, and utilities for the L.U.N.A project.",
   "keywords": [
     "luna",

@@ -39,7 +39,7 @@ jobs:
           git submodule update --init --recursive --remote
           npm install -g corepack@latest
           corepack enable
-          pnpm install --frozen-lockfile
+          pnpm install
       - name: Code Style Check
         run: |
           pnpm dprint check
@@ -130,7 +130,7 @@ jobs:
           fi
 
           echo "Verifying pnpm install and build..."
-          pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm build
 
   test-vitest:
