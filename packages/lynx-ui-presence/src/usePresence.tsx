@@ -4,7 +4,7 @@
 
 import { createContext, useEffect, useRef, useState } from '@lynx-js/react'
 
-import { delayFrames } from '@lynx-js/lynx-ui-common'
+import { delayFrames, log } from '@lynx-js/lynx-ui-common'
 import type { AnimationEvent, TransitionEvent } from '@lynx-js/types'
 
 import type {
@@ -26,130 +26,269 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
     setPresenceState,
     onOpen,
     onClose,
+    debugLog = false,
   } = props
-
+  log(
+    debugLog,
+    `[lynx-ui-presence][usePresence] init, show: ${show}, state: ${state}, enableDelay: ${enableDelay}`,
+  )
   const enteringStateWithDelay = enableDelay
     ? PresenceState.DelayedEntering
     : PresenceState.Entering
 
   const isTransitionAnimating = useRef<boolean>(false)
   const isKFAnimating = useRef<boolean>(false)
+  // Track the initial render, to prevent effects from running on mount.
+  const isInitialRender = useRef(true)
+  const showRef = useRef(show)
+  // The core state to control the mounting and unmounting of the component.
   const [mount, setMount] = useState<boolean>(false)
+  // These three id record the loop ID for the entering progress animation and show state to prevent race conditions.
   const enteringLoopIdRef = useRef<number>(0)
   const leavingLoopIdRef = useRef<number>(0)
+  const showScheduleIdRef = useRef(0)
+  // Two timing windows to wait for the animation to start before forcing a state change.
   const enteringWaitFramesRef = useRef<number>(0)
   const leavingWaitFramesRef = useRef<number>(0)
+
+  // The maximum number of frames to wait for an animation to start before forcing a state change.
   const MAX_WAIT_FRAMES = 24
 
-  const changeToLeaving = () => {
-    if (
-      state === PresenceState.Entered && !show
-    ) {
-      setPresenceState(PresenceState.Leaving)
-    }
-  }
+  showRef.current = show
 
   const notAnimating = () => (isKFAnimating.current === false
     && isTransitionAnimating.current === false)
 
-  const changeToEnteredOrLeft = () => {
+  const handleAnimationStart = () => {
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] handleAnimationStart state:${state}, show:${show}, isTransition:${isTransitionAnimating.current}, isKFAnimating:${isKFAnimating.current}`,
+    )
+  }
+
+  const handleAnimationEnd = () => {
+    // still need to check if the other kind of animation is running.
     if (
-      state === PresenceState.Entering
-      || state === PresenceState.DelayedEntering
-        && notAnimating() && show
+      (state === PresenceState.Entering
+        || state === PresenceState.DelayedEntering)
+      && notAnimating()
     ) {
-      setPresenceState(PresenceState.Entered)
+      if (showRef.current) {
+        setPresenceState(PresenceState.Entered)
+      } else {
+        // Safeguard: entering animation may still fire after show turns false.
+        // Why not Left? Because Left will also cancel the ongoing leaving animation.
+        setPresenceState(PresenceState.Leaving)
+      }
     }
-    if (state === PresenceState.Leaving && notAnimating() && !show) {
+    if (state === PresenceState.Leaving && notAnimating()) {
       setPresenceState(PresenceState.Left)
     }
   }
 
+  // ==== Animation events =====
   const handleKFStart = () => {
     isKFAnimating.current = true
     enteringLoopIdRef.current += 1
     leavingLoopIdRef.current += 1
-    changeToLeaving()
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] KF start, loopId: ${leavingLoopIdRef.current}`,
+    )
+    handleAnimationStart()
   }
 
   const handleTransitionStart = () => {
     isTransitionAnimating.current = true
     enteringLoopIdRef.current += 1
     leavingLoopIdRef.current += 1
-    changeToLeaving()
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] Transition start, loopId: ${leavingLoopIdRef.current}`,
+    )
+    handleAnimationStart()
   }
 
   const handleKFEnd = (_e: AnimationEvent) => {
     isKFAnimating.current = false
-    changeToEnteredOrLeft()
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] KF end, loopId: ${leavingLoopIdRef.current}`,
+    )
+    handleAnimationEnd()
+  }
+
+  const handleKFCancel = () => {
+    isKFAnimating.current = false
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] KF cancel, loopId: ${leavingLoopIdRef.current}`,
+    )
+    handleAnimationEnd()
+  }
+
+  const handleTransitionCancel = () => {
+    isTransitionAnimating.current = false
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] Transition cancel, loopId: ${leavingLoopIdRef.current}`,
+    )
+    handleAnimationEnd()
   }
 
   const handleTransitionEnd = (_e: TransitionEvent) => {
     isTransitionAnimating.current = false
-    changeToEnteredOrLeft()
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] Transition end, loopId: ${leavingLoopIdRef.current}`,
+    )
+    handleAnimationEnd()
   }
 
-  const isInitialRender = useRef(true)
+  // ==== state controller ====
+  const handleStateEntered = () => {
+    onOpen?.()
+  }
 
-  useEffect(() => {
-    if (state === PresenceState.Entered) {
-      onOpen?.()
+  const handleStateLeft = () => {
+    if (!isInitialRender.current) {
+      onClose?.()
     }
-    if (state === PresenceState.Left) {
-      if (!isInitialRender.current) {
-        onClose?.()
-      }
-      setMount(false)
-    }
-    if (state === PresenceState.Leaving) {
-      leavingWaitFramesRef.current = 0
-      leavingLoopIdRef.current += 1
-      const loopId = leavingLoopIdRef.current
+    log(debugLog, '[lynx-ui-presence][usePresence] set mount=false (Left)')
+    setMount(false)
+  }
 
-      const tryLeft = () => {
-        if (loopId !== leavingLoopIdRef.current) return
-        if (!notAnimating()) return
-        if (leavingWaitFramesRef.current >= MAX_WAIT_FRAMES) {
-          setPresenceState(PresenceState.Left)
-          return
-        }
-        leavingWaitFramesRef.current += 1
-        delayFrames(1, tryLeft)
+  const handleStateLeaving = () => {
+    leavingWaitFramesRef.current = 0
+    leavingLoopIdRef.current += 1
+    const loopId = leavingLoopIdRef.current
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] leaving loop scheduled, loopId: ${loopId}`,
+    )
+    const tryLeft = () => {
+      // The loopId is inconsistent with the current animation state, means the animation started during the delay period, so we should stop this trying.
+      if (loopId !== leavingLoopIdRef.current) return
+      if (!notAnimating()) return
+      // timeout reached => treat as no animation
+      if (leavingWaitFramesRef.current >= MAX_WAIT_FRAMES) {
+        log(
+          debugLog,
+          `[lynx-ui-presence][usePresence] leaving timeout reached, loopId: ${loopId}, frames: ${leavingWaitFramesRef.current}`,
+        )
+        setPresenceState(PresenceState.Left)
+        return
       }
-
+      leavingWaitFramesRef.current += 1
       delayFrames(1, tryLeft)
     }
-    if (state === enteringStateWithDelay) {
-      enteringWaitFramesRef.current = 0
-      enteringLoopIdRef.current += 1
-      const loopId = enteringLoopIdRef.current
 
-      const tryEntered = () => {
-        if (loopId !== enteringLoopIdRef.current) return
-        if (!notAnimating()) return
-        if (enteringWaitFramesRef.current >= MAX_WAIT_FRAMES) {
-          setPresenceState(PresenceState.Entered)
-          return
-        }
-        enteringWaitFramesRef.current += 1
-        delayFrames(1, tryEntered)
+    delayFrames(1, tryLeft)
+  }
+
+  const handleStateEnteringWithDelay = () => {
+    enteringWaitFramesRef.current = 0
+    enteringLoopIdRef.current += 1
+    const loopId = enteringLoopIdRef.current
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] entering loop scheduled, loopId: ${loopId}`,
+    )
+    const tryEntered = () => {
+      // The loopId is inconsistent with the current animation state, means the animation started during the delay period, so we should stop this trying.
+      if (loopId !== enteringLoopIdRef.current) return
+      if (!notAnimating()) return
+      if (enteringWaitFramesRef.current >= MAX_WAIT_FRAMES) {
+        log(
+          debugLog,
+          `[lynx-ui-presence][usePresence] entering timeout reached, loopId: ${loopId}, frames: ${enteringWaitFramesRef.current}`,
+        )
+        setPresenceState(PresenceState.Entered)
+        return
       }
-
+      enteringWaitFramesRef.current += 1
       delayFrames(1, tryEntered)
+    }
+
+    delayFrames(1, tryEntered)
+  }
+
+  useEffect(() => {
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] state effect, state: ${state}, show: ${show}, enableDelay: ${enableDelay}, isTransitionAnimating: ${isTransitionAnimating.current}, isKFAnimating: ${isKFAnimating.current}`,
+    )
+    if (state === PresenceState.Entered) {
+      handleStateEntered()
+    }
+    if (state === PresenceState.Left) {
+      handleStateLeft()
+    }
+    if (state === PresenceState.Leaving) {
+      handleStateLeaving()
+    }
+    if (state === enteringStateWithDelay) {
+      handleStateEnteringWithDelay()
     }
   }, [state])
 
+  // ==== Show change part ====
+  const handleShow = (scheduleId: number) => {
+    log(
+      debugLog,
+      '[lynx-ui-presence][usePresence] set mount=true',
+    )
+    setMount(true)
+    log(
+      debugLog,
+      '[lynx-ui-presence][usePresence] schedule set Entering in 8 frames',
+    )
+    delayFrames(8, () => {
+      if (scheduleId !== showScheduleIdRef.current) return
+      setPresenceState(PresenceState.Entering)
+    })
+    if (enableDelay) {
+      log(
+        debugLog,
+        '[lynx-ui-presence][usePresence] schedule set DelayedEntering in 16 frames',
+      )
+      delayFrames(16, () => {
+        if (scheduleId !== showScheduleIdRef.current) return
+        setPresenceState(PresenceState.DelayedEntering)
+      })
+    }
+  }
+
+  const handleDismiss = () => {
+    if (
+      state === PresenceState.Entered || state === PresenceState.Entering
+      || state === PresenceState.DelayedEntering
+    ) {
+      log(
+        debugLog,
+        '[lynx-ui-presence][usePresence] show=false -> set PresenceState.Leaving',
+      )
+      setPresenceState(PresenceState.Leaving)
+    } else if (state === PresenceState.Initial && mount) {
+      log(
+        debugLog,
+        '[lynx-ui-presence][usePresence] show=false in Initial -> set mount=false',
+      )
+      setMount(false)
+    }
+  }
+
   useEffect(() => {
+    log(
+      debugLog,
+      `[lynx-ui-presence][usePresence] show effect show:${show}, enableDelay:${enableDelay}, state:${state}, mount:${mount}`,
+    )
+    showScheduleIdRef.current += 1
+    const scheduleId = showScheduleIdRef.current
     if (show) {
-      setMount(true)
-      delayFrames(8, () => setPresenceState(PresenceState.Entering))
-      if (enableDelay) {
-        delayFrames(16, () => setPresenceState(PresenceState.DelayedEntering))
-      }
+      handleShow(scheduleId)
     } else {
-      if (notAnimating() && state === PresenceState.Entered) {
-        setPresenceState(PresenceState.Leaving)
-      }
+      handleDismiss()
     }
   }, [show, enableDelay])
 
@@ -161,9 +300,11 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
     controllers: { state, mount, setPresenceState },
     animationHandlers: {
       handleKFStart,
+      handleKFCancel,
       handleKFEnd,
-      handleTransitionEnd,
       handleTransitionStart,
+      handleTransitionCancel,
+      handleTransitionEnd,
     },
   }
 }

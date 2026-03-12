@@ -16,6 +16,7 @@ export const DialogContext = createContext<{
   onOpen?: () => void
   onClose?: () => void
   onShowChange?: (show: boolean) => void
+  debugLog?: boolean
 }>({
   show: false,
   forceMount: false,

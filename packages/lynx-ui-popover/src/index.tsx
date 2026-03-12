@@ -7,6 +7,7 @@ export { PopoverContext, useElementInfoReducer } from './useElementInfoReducer'
 export {
   PopoverArrow,
   PopoverAnchor,
+  PopoverBackdrop,
   PopoverTrigger,
   PopoverContent,
   PopoverPositioner,
@@ -19,6 +20,7 @@ export type {
   PopoverOverlayProps,
   PopoverArrowProps,
   PopoverAnchorProps,
+  PopoverBackdropProps,
   PopoverContentProps,
   PopoverPositionerProps,
   PopoverRootProps,

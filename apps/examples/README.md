@@ -1,4 +1,4 @@
-# Lynx UI Examples
+# lynx-ui Examples
 
 This directory (`apps/examples`) contains example applications for `lynx-ui` components. Each component's examples are contained within its own package in `apps/examples/src`.
 

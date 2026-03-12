@@ -12,5 +12,12 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "@lynx-js/luna-*",
+    "lynx-ui-**-examples"
+  ],
+  "privatePackages": {
+    "tag": false,
+    "version": false
+  }
 }

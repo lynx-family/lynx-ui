@@ -1,4 +1,4 @@
-# Lynx UI Swiper SKILL
+# lynx-ui-swiper SKILL
 
 `Swiper` is a high-performance, fully customizable carousel. It supports horizontal swiping, looping, auto-play, RTL, edge bounces, and both built-in and custom layouts/animations. This guide is written for AI code agents to generate correct, production-ready code with minimal back-and-forth.
 

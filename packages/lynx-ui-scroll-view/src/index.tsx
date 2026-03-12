@@ -74,6 +74,7 @@ function ScrollViewImpl(
       enableBounces: true,
       singleSidedBounce: 'iOSBounces',
     },
+    enableScroll = true,
     enableScrollMonitor = false,
     scrollMonitorTag,
     sticky,
@@ -205,6 +206,7 @@ function ScrollViewImpl(
     'className': className,
     'style': style,
     'bounces': platformBounces,
+    'enable-scroll': enableScroll,
     ...(androidTouchSlop !== undefined
       && { 'android-touch-slop': androidTouchSlop }),
     ...registerEvents,

@@ -28,6 +28,7 @@ export interface usePresenceGroupProps {
     | Array<ReactNode | PresenceChildrenType>
   onOpen?: () => void
   onClose?: () => void
+  debugLog?: boolean
 }
 
 export interface usePresenceGroupReturnType {
@@ -47,6 +48,7 @@ export const usePresenceGroup: (
     onOpen,
     onClose,
     setGroupState,
+    debugLog,
   } = props
 
   const [_, setMountingChildrenCount] = useState<number>(
@@ -128,6 +130,7 @@ export const usePresenceGroup: (
         (child: ReactNode | PresenceChildrenType, index: number) => {
           return (
             <Presence
+              key={index}
               show={show}
               forceMount={forceMount}
               state={stateGroup[index]}
@@ -136,6 +139,7 @@ export const usePresenceGroup: (
               enableDelay={enableDelay}
               onOpen={onChildOpen}
               onClose={onChildClose}
+              debugLog={debugLog}
             >
               {child}
             </Presence>
@@ -153,12 +157,22 @@ export const usePresenceGroup: (
             enableDelay={enableDelay}
             onOpen={onChildOpen}
             onClose={onChildClose}
+            debugLog={debugLog}
           >
             {children}
           </Presence>
         )
         : null)
-  }, [show, children, stateGroup, onChildClose, onChildOpen, forceMount])
+  }, [
+    show,
+    children,
+    stateGroup,
+    onChildClose,
+    onChildOpen,
+    forceMount,
+    enableDelay,
+    debugLog,
+  ])
 
   useEffect(() => {
     if (show) {

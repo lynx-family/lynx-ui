@@ -46,6 +46,15 @@ export interface ScrollViewProps
    */
   scrollviewId?: string
   /**
+   * Enable scroll interaction.
+   * @zh 启用滚动。
+   * @defaultValue true
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  enableScroll?: boolean
+  /**
    * Open the bouncing effect on iOS. If you want to use it on Android, please refer to the bounceableOption. If the bounceableOption is set, the iOSBounces property will be invalid.
    * @zh 开启iOS上的回弹效果。如果想在安卓上使用，请参考bounceableOption。如果设置了bounceableOption，iOSBounces属性将失效。
    * @defaultValue true

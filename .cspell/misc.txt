@@ -9,6 +9,7 @@ bindmouseleave
 bindmouselongpress
 bindmousemove
 bindmouseup
+bindtransitioncancel
 bindscroll
 Bounceable
 bradlc

@@ -1,6 +1,6 @@
-# Contributing to Lynx UI
+# Contributing to lynx-ui
 
-Thank you for your interest in contributing to Lynx UI!
+Thank you for your interest in contributing to lynx-ui!
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ This repository uses a **Git submodule** to include the shared theming foundatio
 - **`lunarium/`**
   A Git submodule that contains L.U.N.A (tokens, theming, styles, Tailwind preset, React bindings, etc.)
 
-Most Lynx UI examples depend on code inside `lunarium`, so the submodule **must be initialized before development**.
+Most lynx-ui examples depend on code inside `lunarium`, so the submodule **must be initialized before development**.
 
 ## Setup Guide
 
@@ -182,5 +182,5 @@ pnpm genDoc lynx-ui-dialog lynx-ui-button
 
 ## License
 
-By contributing to Lynx UI, you agree that your contributions will be licensed under the
+By contributing to lynx-ui, you agree that your contributions will be licensed under the
 [Apache-2.0 License](./LICENSE).

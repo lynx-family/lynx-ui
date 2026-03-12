@@ -1,4 +1,4 @@
-# Lynx UI List SKILL
+# lynx-ui-list SKILL
 
 ## 1. Core Capabilities
 

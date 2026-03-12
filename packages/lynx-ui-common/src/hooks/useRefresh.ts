@@ -395,11 +395,14 @@ export function useRefreshAndBounce(
       bouncingPositionInfo.current.velocity = 0
     } else {
       // @ts-expect-error expected
-      bouncingPositionInfo.current.velocity =
+      const timeDuration = Date.now() - bouncingPositionInfo.current.timeStamp
+      const offsetDiff = offset
         // @ts-expect-error expected
-        (offset - bouncingPositionInfo.current.bouncingOffset || 0)
+        - Number(bouncingPositionInfo.current?.bouncingOffset ?? 0)
+      if (timeDuration > 0) {
         // @ts-expect-error expected
-        / (Date.now() - bouncingPositionInfo.current.timeStamp)
+        bouncingPositionInfo.current.velocity = offsetDiff / timeDuration
+      }
     }
     // @ts-expect-error expected
     bouncingPositionInfo.current.bouncingOffset = offset
@@ -686,7 +689,7 @@ export function useRefreshAndBounce(
     const startTime = Date.now()
     // @ts-expect-error expected
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const dragEndVelocity = bouncingPositionInfo.current?.velocity
+    const dragEndVelocity = bouncingPositionInfo.current?.velocity ?? 0
     // @ts-expect-error expected
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const dragEndPosition = bouncingPositionInfo.current?.bouncingOffset ?? 0
@@ -762,13 +765,17 @@ export function useRefreshAndBounce(
     if (!isEmpty(prevScroll.current)) {
       // @ts-expect-error expected
       const timeDuration = Date.now() - prevScroll.current.timestamp
-      const deltaY = isVertical() // @ts-expect-error expected
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        ? event.detail.scrollTop - prevScroll.current.detail.scrollTop // @ts-expect-error expected
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        : event.detail.scrollLeft - prevScroll.current.detail.scrollLeft
-      const velocity = deltaY / timeDuration
-      scrollVelocity.current = velocity
+      if (timeDuration > 0) {
+        const deltaY = isVertical() // @ts-expect-error expected
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          ? event.detail.scrollTop - prevScroll.current.detail.scrollTop // @ts-expect-error expected
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          : event.detail.scrollLeft - prevScroll.current.detail.scrollLeft
+        const velocity = deltaY / timeDuration
+        if (Number.isFinite(velocity)) {
+          scrollVelocity.current = velocity
+        }
+      }
     }
     prevScroll.current = event
   }
@@ -921,8 +928,10 @@ export function useRefreshAndBounce(
   // Used to get the size of scroll container.
   function bounceableLayoutChange(event: MainThread.LayoutChangeEvent) {
     'main thread'
-    height.current = isAndroid() ? event.params?.height : event.detail?.height
-    width.current = isAndroid() ? event.params?.width : event.detail?.width
+    height.current = (isAndroid() ? event.params?.height : event.detail?.height)
+      ?? 0
+    width.current = (isAndroid() ? event.params?.width : event.detail?.width)
+      ?? 0
   }
 
   const isHorizontalTouchMove = (event: GestureChangeEvent) => {

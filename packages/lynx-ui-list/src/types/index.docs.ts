@@ -333,6 +333,13 @@ export interface ListProps
    */
   iosEnableSimultaneousTouch?: boolean
   /**
+   * Whether tapping the iOS status bar should scroll to top.
+   * @zh 点击 iOS 状态栏时是否需要回顶。
+   * @defaultValue true
+   * @iOS
+   */
+  iosScrollsToTop?: boolean
+  /**
    * Paginated scrolling effects
    * @zh 分页滚动
    * @iOS

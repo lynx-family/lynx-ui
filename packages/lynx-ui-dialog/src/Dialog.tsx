@@ -51,6 +51,7 @@ export function DialogRoot(props: DialogRootProps) {
     onOpen,
     onClose,
     onShowChange,
+    debugLog,
   } = props
   const isControlled = show !== undefined
   const [uncontrolledShow, setUncontrolledShow] = useState<boolean>(defaultShow)
@@ -75,6 +76,7 @@ export function DialogRoot(props: DialogRootProps) {
     onOpen,
     onClose,
     onShowChange,
+    debugLog,
   }), [
     actualShow,
     forceMount,
@@ -84,6 +86,7 @@ export function DialogRoot(props: DialogRootProps) {
     onOpen,
     onClose,
     onShowChange,
+    debugLog,
   ])
 
   return (
@@ -195,10 +198,17 @@ export const DialogView = (props: DialogViewProps) => {
     dialogViewProps,
   } = props
 
-  const { show, forceMount, onClose, onOpen, groupState, setGroupState } =
-    useContext(
-      DialogContext,
-    )
+  const {
+    show,
+    forceMount,
+    onClose,
+    onOpen,
+    groupState,
+    setGroupState,
+    debugLog,
+  } = useContext(
+    DialogContext,
+  )
 
   const { mountView, renderChildren } = usePresenceGroup({
     show,
@@ -207,6 +217,7 @@ export const DialogView = (props: DialogViewProps) => {
     children,
     onOpen,
     onClose,
+    debugLog,
   })
   const presenceClassName = presenceClassVariants({
     state: groupState,

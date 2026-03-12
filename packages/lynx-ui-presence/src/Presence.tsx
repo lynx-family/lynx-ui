@@ -36,6 +36,7 @@ export function Presence(props: PresenceProps) {
     enableDelay = false,
     onOpen,
     onClose,
+    debugLog,
   } = props
   const [internalState, setInternalState] = useState<PresenceState>(
     PresenceState.Left,
@@ -47,6 +48,7 @@ export function Presence(props: PresenceProps) {
     enableDelay,
     onOpen,
     onClose,
+    debugLog,
   })
   const { mount } = presence.controllers
   const status = resolveAnimationStatus({

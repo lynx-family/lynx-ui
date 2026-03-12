@@ -20,6 +20,7 @@ function App() {
       <PopoverRoot
         onClose={() => console.info('dismissed!')}
         onOpen={() => console.info('shown!')}
+        debugLog={true}
       >
         <PopoverTrigger className='popover-trigger'>
           <text className='popover-trigger-text'>Show Popover</text>
