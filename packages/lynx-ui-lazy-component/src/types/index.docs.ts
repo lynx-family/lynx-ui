@@ -69,8 +69,17 @@ export interface LazyComponentProps {
    */
   right?: `${number}px` | `${number}rpx`
   /**
+   * Unmount child when dis-exposure to save mem-usage
+   * @zh 当元素不可见时卸载子元素以节省内存使用
+   * @defaultValue false
+   * @Android
+   * @iOS
+   */
+  unmountOnExit?: boolean
+  /**
    * Unload child when dis-exposure to save mem-usage
    * @zh 当元素不可见时卸载子元素以节省内存使用
+   * @deprecated Please use unmountOnExit instead.
    * @defaultValue false
    * @Android
    * @iOS
