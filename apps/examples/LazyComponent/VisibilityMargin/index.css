@@ -81,7 +81,7 @@
 }
 
 .restart-button-text {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--primary-content);
 }
 
@@ -135,11 +135,15 @@
 
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: var(--line);
+}
+
+.item-end {
+  border-bottom-width: 0px;
 }
 
 .item-text {
@@ -152,6 +156,5 @@
   width: 100%;
   height: 20px;
   border-radius: 6px;
-
   background-color: var(--primary-muted);
 }

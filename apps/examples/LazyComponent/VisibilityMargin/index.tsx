@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useEffect, useRef, useState } from '@lynx-js/react'
+import { root, useCallback, useEffect, useRef, useState } from '@lynx-js/react'
 
 import { Button } from '@lynx-js/lynx-ui-button'
 import { invokeById } from '@lynx-js/lynx-ui-common'
@@ -11,13 +11,14 @@ import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
 
 import './index.css'
 
-const replayDelay = 1000
+const restartDelay = 1000
+const itemCount = 30
 
-function Item() {
+function Item({ isEnd }: { isEnd?: boolean }) {
   return (
-    <view className='item'>
+    <view className={`item${isEnd ? ' item-end' : ''}`}>
       <text className='item-text'>Item</text>
-      {Array.from({ length: 6 }).map((_, index) => (
+      {Array.from({ length: 5 }).map((_, index) => (
         <view className='item-sub-block' key={index} />
       ))}
     </view>
@@ -25,10 +26,18 @@ function Item() {
 }
 
 function App() {
-  const [replayToken, setReplayToken] = useState(0)
+  const [mountEpoch, setMountEpoch] = useState(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleReplay = () => {
+  const restart = useCallback(() => {
+    setMountEpoch((value) => value + 1)
+  }, [])
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+
     void invokeById('scrollview1', 'autoScroll', {
       rate: 3000,
       start: false,
@@ -37,13 +46,6 @@ function App() {
       rate: 3000,
       start: false,
     }).catch(() => {/* empty */})
-    setReplayToken((token) => token + 1)
-  }
-
-  useEffect(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
 
     void invokeById('scrollview1', 'scrollTo', {
       index: 0,
@@ -65,21 +67,21 @@ function App() {
         rate: 3000,
         start: true,
       }).catch(() => {/* empty */})
-    }, replayDelay)
+    }, restartDelay)
 
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
     }
-  }, [replayToken])
+  }, [mountEpoch])
 
   return (
     <view className='container lunaris-dark luna-gradient-berry'>
       <view className='canvas'>
         <view className='toolbar'>
-          <Button className='restart-button' onClick={handleReplay}>
-            <text className='restart-button-text'>Restart</text>
+          <Button className='restart-button' onClick={restart}>
+            <text className='restart-button-text'>Run Again</text>
           </Button>
         </view>
 
@@ -102,15 +104,15 @@ function App() {
               lazyOptions={{ enableLazy: false }}
               className='scrollview'
             >
-              {Array.from({ length: 30 }).map((_, index) => (
+              {Array.from({ length: itemCount }).map((_, index) => (
                 <LazyComponent
-                  key={`${replayToken}-${index}`}
-                  scene={`scene_1_${replayToken}`}
-                  pid={`pid_${replayToken}_${index}`}
+                  key={`${mountEpoch}_${index}`}
+                  scene='scene_1'
+                  pid={`pid_1_${index}`}
                   bottom='0px'
                   estimatedStyle={{ width: '100%', height: '300px' }}
                 >
-                  <Item />
+                  <Item isEnd={index === itemCount - 1} />
                 </LazyComponent>
               ))}
             </ScrollView>
@@ -128,15 +130,15 @@ function App() {
               lazyOptions={{ enableLazy: false }}
               className='scrollview'
             >
-              {Array.from({ length: 30 }).map((_, index) => (
+              {Array.from({ length: itemCount }).map((_, index) => (
                 <LazyComponent
-                  key={`${replayToken}-${index}`}
-                  scene={`scene_2_${replayToken}`}
-                  pid={`pid_${replayToken}_${index}`}
+                  key={`${mountEpoch}_${index}`}
+                  scene='scene_2'
+                  pid={`pid_2_${index}`}
                   bottom='200px'
                   estimatedStyle={{ width: '100%', height: '300px' }}
                 >
-                  <Item />
+                  <Item isEnd={index === itemCount - 1} />
                 </LazyComponent>
               ))}
             </ScrollView>
