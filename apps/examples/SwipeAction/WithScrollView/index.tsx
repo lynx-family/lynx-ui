@@ -11,16 +11,10 @@ import './index.css'
 
 function App() {
   const swipeActionRef = useRef<SwipeActionRef>(null)
-  // const [showAction, setShowAction] = useState<boolean>(false)
   const letters = ['L', 'Y', 'N', 'X', 'U', 'I', 'S', 'W', 'I', 'P', 'A', 'C']
   const renderDisplayArea = (_letter: string) => (
     <view className='display-area-container'>
-      <view className='display-area-content'>
-        {
-          /* <text className='display-area-text'>{letter}</text>
-        <text className='display-area-text'>@lynx-js/lynx-ui</text> */
-        }
-      </view>
+      <view className='display-area-content' />
     </view>
   )
   const renderActionArea = () => (
