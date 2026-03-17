@@ -7,6 +7,8 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
   background-color: var(--canvas);
 }
 
@@ -15,7 +17,7 @@
   flex-direction: row;
   justify-content: end;
   align-items: center;
-  width: 320px;
+  width: 100%;
   height: 64px;
 }
 
