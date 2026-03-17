@@ -8,8 +8,13 @@
   ],
   "commit": false,
   "fixed": [],
-  "linked": [],
-  "access": "restricted",
+  "linked": [
+    [
+      "@lynx-js/lynx-ui",
+      "@lynx-js/lynx-ui-*"
+    ]
+  ],
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
