@@ -5,12 +5,7 @@
 import { root, useState } from '@lynx-js/react'
 import './index.css'
 
-import { Button } from '@lynx-js/lynx-ui-button'
-import {
-  Radio,
-  RadioGroupRoot,
-  RadioIndicator,
-} from '@lynx-js/lynx-ui-radio-group'
+import { Button, Radio, RadioGroupRoot, RadioIndicator } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
 const HitSlop = {

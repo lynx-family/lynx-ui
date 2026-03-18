@@ -4,10 +4,15 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { CheckboxIndicator } from '@lynx-js/lynx-ui-checkbox'
-import { FormField, FormRoot, FormSubmitButton } from '@lynx-js/lynx-ui-form'
-import { Radio, RadioIndicator } from '@lynx-js/lynx-ui-radio-group'
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import {
+  CheckboxIndicator,
+  FormField,
+  FormRoot,
+  FormSubmitButton,
+  Radio,
+  RadioIndicator,
+  ScrollView,
+} from '@lynx-js/lynx-ui'
 
 import { formPageData } from './data'
 

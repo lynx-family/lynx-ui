@@ -4,10 +4,7 @@
 
 import { root, useCallback, useEffect, useRef, useState } from '@lynx-js/react'
 
-import { Button } from '@lynx-js/lynx-ui-button'
-import { invokeById } from '@lynx-js/lynx-ui-common'
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { Button, LazyComponent, ScrollView, invokeById } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

@@ -4,9 +4,8 @@
 
 import { root, useRef, useState } from '@lynx-js/react'
 
-import { Button } from '@lynx-js/lynx-ui-button'
-import { List } from '@lynx-js/lynx-ui-list'
-import type { ListRef } from '@lynx-js/lynx-ui-list'
+import { Button, List } from '@lynx-js/lynx-ui'
+import type { ListRef } from '@lynx-js/lynx-ui'
 
 import { ListItemCard } from '../shared/ListItemCard'
 import './index.css'

@@ -4,8 +4,8 @@
 
 import { root, useRef } from '@lynx-js/react'
 
-import type { SwipeActionRef } from '@lynx-js/lynx-ui-swipe-action'
-import { SwipeAction } from '@lynx-js/lynx-ui-swipe-action'
+import { SwipeAction } from '@lynx-js/lynx-ui'
+import type { SwipeActionRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

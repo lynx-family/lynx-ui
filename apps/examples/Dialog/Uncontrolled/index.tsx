@@ -13,8 +13,8 @@ import {
   DialogRoot,
   DialogTrigger,
   DialogView,
-} from '@lynx-js/lynx-ui-dialog'
-import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-dialog'
+} from '@lynx-js/lynx-ui'
+import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
 function App() {

@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { Button as ButtonPrimitives } from '@lynx-js/lynx-ui-button'
+import { Button as ButtonPrimitives } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
 import './styles.css'

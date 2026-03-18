@@ -19,7 +19,7 @@
 ### Minimal Usable Example
 
 ```tsx
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function BasicScrollView() {
   return (
@@ -40,7 +40,7 @@ function BasicScrollView() {
 When you need `flex` layout, add a wrapper as the first child of `ScrollView`, and apply `flex` styles on that wrapper:
 
 ```tsx
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function FlexWrapperExample() {
   return (
@@ -80,7 +80,7 @@ function FlexWrapperExample() {
 ### Vertical Scrolling
 
 ```tsx
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function VerticalScrollView() {
   return (
@@ -98,7 +98,7 @@ function VerticalScrollView() {
 ### Horizontal Scrolling
 
 ```tsx
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function HorizontalScrollView() {
   return (
@@ -116,7 +116,7 @@ function HorizontalScrollView() {
 ### Listening for Scroll to Bottom (Load More)
 
 ```tsx
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function LoadMoreScrollView() {
   const loadMore = () => {

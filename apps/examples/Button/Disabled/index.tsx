@@ -4,7 +4,7 @@
 
 import { root, useEffect, useState } from '@lynx-js/react'
 
-import { Button } from '@lynx-js/lynx-ui-button'
+import { Button } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
 import './index.css'

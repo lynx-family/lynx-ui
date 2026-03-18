@@ -9,8 +9,9 @@ import {
   SheetHandle,
   SheetRoot,
   SheetView,
-} from '@lynx-js/lynx-ui-sheet'
-import type { SheetRootRef } from '@lynx-js/lynx-ui-sheet'
+} from '@lynx-js/lynx-ui'
+import type { SheetRootRef } from '@lynx-js/lynx-ui'
+
 import './index.css'
 
 /**

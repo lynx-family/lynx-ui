@@ -24,7 +24,7 @@ import {
   DialogContent,
   DialogTrigger,
   DialogClose,
-} from '@lynx-js/lynx-ui-dialog'
+} from '@lynx-js/lynx-ui'
 
 function UncontrolledDialog() {
   return (
@@ -65,7 +65,7 @@ function UncontrolledDialog() {
 Simple to use, with the component managing its own state.
 
 ```tsx
-import { DialogRoot, ... } from '@lynx-js/lynx-ui-dialog';
+import { DialogRoot, ... } from '@lynx-js/lynx-ui';
 
 function UncontrolledDialogExample() {
   return (
@@ -91,7 +91,7 @@ Suitable for scenarios that require interaction with external business logic, su
 
 ```tsx
 import { useState } from '@lynx-js/react';
-import { DialogRoot, ... } from '@lynx-js/lynx-ui-dialog';
+import { DialogRoot, ... } from '@lynx-js/lynx-ui';
 
 function ControlledConfirmDialog() {
   const [isOpen, setIsOpen] = useState(false);

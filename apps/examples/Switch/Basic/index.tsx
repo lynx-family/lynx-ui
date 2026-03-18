@@ -4,7 +4,7 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui-switch'
+import { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui'
 import './index.css'
 
 const HitSlop = {

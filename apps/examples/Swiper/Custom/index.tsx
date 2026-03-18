@@ -4,9 +4,13 @@
 
 import { root, useRef } from '@lynx-js/react'
 
-import { interpolate, interpolateJS } from '@lynx-js/lynx-ui-common'
-import { Swiper, SwiperItem } from '@lynx-js/lynx-ui-swiper'
-import type { SwiperRef } from '@lynx-js/lynx-ui-swiper'
+import {
+  Swiper,
+  SwiperItem,
+  interpolate,
+  interpolateJS,
+} from '@lynx-js/lynx-ui'
+import type { SwiperRef } from '@lynx-js/lynx-ui'
 
 import './styles.css'
 

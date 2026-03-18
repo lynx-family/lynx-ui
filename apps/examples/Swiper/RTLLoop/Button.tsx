@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import './styles.css'
-import { Button as ButtonInner } from '@lynx-js/lynx-ui-button'
+import { Button as ButtonInner } from '@lynx-js/lynx-ui'
 
 const ButtonStyle = {
   border: '1px solid',

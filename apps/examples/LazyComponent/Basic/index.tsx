@@ -4,8 +4,7 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { Button } from '@lynx-js/lynx-ui-button'
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
+import { Button, LazyComponent } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

@@ -21,7 +21,7 @@
 Each `<Swiper>` must provide `data`, `itemWidth`, and render children via a function that returns a `<SwiperItem>`. Use `realIndex` for React `key`, especially in loop mode.
 
 ```tsx
-import { Swiper, SwiperItem } from '@lynx-js/lynx-ui-swiper'
+import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
 const data = ['red', 'green', 'blue']
 
@@ -126,7 +126,7 @@ Examples:
 ### Custom Animation Example (`mode='custom'`)
 
 ```tsx
-import { interpolate, interpolateJS } from '@lynx-js/lynx-ui-common'
+import { interpolate, interpolateJS } from '@lynx-js/lynx-ui'
 
 const ITEM_WIDTH = 250
 

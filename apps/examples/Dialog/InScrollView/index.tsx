@@ -13,8 +13,8 @@ import {
   DialogRoot,
   DialogTrigger,
   DialogView,
-} from '@lynx-js/lynx-ui-dialog'
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+  ScrollView,
+} from '@lynx-js/lynx-ui'
 
 function App() {
   const handleDismissed = () => {

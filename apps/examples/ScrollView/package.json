@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@lynx-js/luna-styles": "workspace:*",
-    "@lynx-js/lynx-ui-scroll-view": "workspace:*",
+    "@lynx-js/lynx-ui": "workspace:*",
     "@lynx-js/react": "catalog:"
   },
   "devDependencies": {

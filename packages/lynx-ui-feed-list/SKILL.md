@@ -19,7 +19,7 @@ When using `FeedList`, you **MUST** provide `listId` and `listType`, and use `<l
 
 ```tsx
 import { useRef } from '@lynx-js/react'
-import { FeedList, FeedListRef } from '@lynx-js/lynx-ui-feed-list'
+import { FeedList, FeedListRef } from '@lynx-js/lynx-ui'
 
 function BasicFeedList() {
   const feedListRef = useRef<FeedListRef>(null)
@@ -74,7 +74,7 @@ A list with pull-to-refresh and load more functionality.
 
 ```tsx
 import { useRef, useState } from '@lynx-js/react';
-import { FeedList, FeedListRef } from '@lynx-js/lynx-ui-feed-list';
+import { FeedList, FeedListRef } from '@lynx-js/lynx-ui';
 
 function FullFeaturedFeedList() {
   const listRef = useRef<FeedListRef>(null);
@@ -146,7 +146,7 @@ Footers are controlled exclusively via `ref.current.changeHasMoreStatus(hasMore)
 
 ```tsx
 import { useRef, useState } from '@lynx-js/react'
-import { FeedList, FeedListRef } from '@lynx-js/lynx-ui-feed-list'
+import { FeedList, FeedListRef } from '@lynx-js/lynx-ui'
 
 function FooterStateExample() {
   const listRef = useRef<FeedListRef>(null)

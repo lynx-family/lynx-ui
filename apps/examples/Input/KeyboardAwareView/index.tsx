@@ -10,8 +10,8 @@ import {
   KeyboardAwareRoot,
   KeyboardAwareTrigger,
   TextArea,
-} from '@lynx-js/lynx-ui-input'
-import type { InputRef } from '@lynx-js/lynx-ui-input'
+} from '@lynx-js/lynx-ui'
+import type { InputRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

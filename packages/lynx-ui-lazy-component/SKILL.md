@@ -17,7 +17,7 @@ description: Provide the information about the `<LazyComponent>`. Show the commo
 `<LazyComponent>` is used to display the content of the page only when it is visible in the viewport.
 
 ```tsx
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
+import { LazyComponent } from '@lynx-js/lynx-ui'
 
 function App() {
   return (
@@ -39,8 +39,8 @@ function App() {
 You can build a virtualized list by embedding `<LazyComponent>` in the slot of `<ScrollView>`.
 
 ```tsx
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { LazyComponent } from '@lynx-js/lynx-ui'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function App() {
   return (
@@ -84,7 +84,7 @@ function App() {
 You can adjust the exposure margin of `<LazyComponent>` by setting the `bottom`, `top`, `left`, and `right` props. So that the content of the item is loaded earlier than it is visible in the viewport.
 
 ```tsx
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
+import { LazyComponent } from '@lynx-js/lynx-ui'
 
 function App() {
   return (

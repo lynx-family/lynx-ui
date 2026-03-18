@@ -6,8 +6,8 @@ import { root, useState } from '@lynx-js/react'
 
 import './index.css'
 
-import type { SortableData } from '@lynx-js/lynx-ui-sortable'
-import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui-sortable'
+import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui'
+import type { SortableData } from '@lynx-js/lynx-ui'
 
 import type { SortableDemoItem } from '../shared/data'
 import { createDemoData } from '../shared/data'

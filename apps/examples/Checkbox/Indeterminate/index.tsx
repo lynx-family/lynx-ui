@@ -4,7 +4,7 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { Checkbox, CheckboxIndicator } from '@lynx-js/lynx-ui-checkbox'
+import { Checkbox, CheckboxIndicator } from '@lynx-js/lynx-ui'
 
 import { CheckMark } from '../shared/Checkmark'
 import './index.css'
