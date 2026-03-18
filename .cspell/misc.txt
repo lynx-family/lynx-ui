@@ -25,6 +25,7 @@ dprint
 esbenp
 GCMT
 hasdir
+hintrc
 inittime
 jank
 jsnext

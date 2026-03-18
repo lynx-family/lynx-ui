@@ -1,0 +1,30 @@
+{
+  "extends": "./tools/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+  },
+  "include": [
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "tools/**/*.ts",
+    "tools/**/*.tsx",
+    "tools/**/*.d.ts",
+    "*.ts",
+    "*.tsx",
+    "*.d.ts",
+  ],
+  "exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/lib/**",
+    "**/.turbo/**",
+    "coverage/**",
+    "output/**",
+    "website/**",
+    "lunarium/**",
+  ],
+}
