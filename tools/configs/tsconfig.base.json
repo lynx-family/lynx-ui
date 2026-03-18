@@ -16,5 +16,8 @@
     "declarationMap": true,
     "incremental": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "files": [
+    "../typings/asset.d.ts"
+  ]
 }
