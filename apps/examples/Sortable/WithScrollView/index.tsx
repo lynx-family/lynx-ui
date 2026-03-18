@@ -40,6 +40,7 @@ export function App() {
 
       return (
         <SortableItem
+          key={item.getSortingKey()}
           as='DraggableRoot'
           className={`sortable-item sortable-item--${id}`}
           sortingKey={item.getSortingKey()}

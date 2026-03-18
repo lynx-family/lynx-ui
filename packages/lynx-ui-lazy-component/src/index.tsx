@@ -44,9 +44,11 @@ function LazyComponentImpl(
     bottom = '10px',
     left = '10px',
     right = '10px',
+    unmountOnExit,
     unloadable = false,
     children,
   } = props
+  const shouldUnmountOnExit = unmountOnExit ?? unloadable
   const [show, setShow] = useState<boolean>(false)
   const cacheSizeRef = useRef<{ width: string, height: string }>(undefined)
 
@@ -84,7 +86,7 @@ function LazyComponentImpl(
     (events: unknown[]) => {
       'background-only'
 
-      if (unloadable) {
+      if (shouldUnmountOnExit) {
         events.forEach(event => {
           if (
             // @ts-expect-error exposure-scene and exposure-id is currently not declared in eventProps
@@ -97,10 +99,10 @@ function LazyComponentImpl(
         })
       }
     },
-    [unloadable],
+    [shouldUnmountOnExit],
   )
 
-  if (unloadable) {
+  if (shouldUnmountOnExit) {
     const { width, height, ...restsStyles } = estimatedStyle
     return (
       <view

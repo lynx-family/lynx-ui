@@ -27,7 +27,6 @@ export const baseConfig: RslibConfig = {
         },
         sourceMap: true,
         emitCss: true,
-        overrideBrowserslist: 'esnext',
       },
       dts: true,
     },

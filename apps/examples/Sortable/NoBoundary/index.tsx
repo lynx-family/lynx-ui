@@ -29,6 +29,7 @@ export function App() {
           const { id, tone } = item.dataItem
           return (
             <SortableItem
+              key={item.getSortingKey()}
               className={`sortable-item sortable-item--${id}`}
               sortingKey={item.getSortingKey()}
             >

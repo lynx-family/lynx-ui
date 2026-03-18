@@ -22,9 +22,9 @@ function App() {
         <FormRoot
           onChanged={(values: Record<string, unknown>) => setFormValues(values)}
           initialValues={{
-            gender: '',
-            firstName: 'San',
-            lastName: 'Hamburger',
+            workspaceType: '',
+            workspaceName: 'My Workspace',
+            description: 'A place for collaboration',
           }}
         >
           <view className='form-container'>
@@ -33,10 +33,10 @@ function App() {
 
             <view className='divider' />
 
-            <text className='form-section-title'>Gender</text>
-            <FormField as='RadioGroupRoot' name='gender'>
+            <text className='form-section-title'>Workspace type</text>
+            <FormField as='RadioGroupRoot' name='workspaceType'>
               <view className='radio-group-container'>
-                {formPageData.genderOptions.map(({ label, value }) => (
+                {formPageData.workspaceTypeOptions.map(({ label, value }) => (
                   <Radio className='radio-item' key={value} value={value}>
                     <RadioIndicator className='radio-indicator'>
                       <view className='radio-indicator-checked-item' />
@@ -49,17 +49,18 @@ function App() {
 
             <view className='divider' />
 
-            <text className='form-section-title'>First name</text>
-            <text className='form-field-description'>
-              If you have a middle name, you can enter it here.
-            </text>
+            <text className='form-section-title'>Workspace name</text>
             <view className='input-container'>
-              <FormField as='Input' name='firstName' className='form-input' />
+              <FormField
+                as='Input'
+                name='workspaceName'
+                className='form-input'
+              />
             </view>
 
-            <text className='form-section-title'>Last name</text>
+            <text className='form-section-title'>Description</text>
             <view className='input-container'>
-              <FormField as='Input' name='lastName' className='form-input' />
+              <FormField as='Input' name='description' className='form-input' />
             </view>
 
             <view className='divider' />
@@ -82,7 +83,6 @@ function App() {
 
             <view className='divider' />
 
-            <text className='form-section-title'>onChanged Content</text>
             <text className='form-values-display'>
               {JSON.stringify(formValues, null, 2)}
             </text>
