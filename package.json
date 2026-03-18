@@ -1,5 +1,5 @@
 {
-  "name": "lynx-ui",
+  "name": "@lynx-js/lynx-ui",
   "private": true,
   "description": "lynx-ui repo",
   "license": "Apache-2.0",
