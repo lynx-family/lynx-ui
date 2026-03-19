@@ -34,6 +34,7 @@ laggy
 layoutchange
 lepusjs
 lepusng
+lintignore
 loadmore
 Lynxview
 manypkg

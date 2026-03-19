@@ -58,6 +58,16 @@ export default tseslint.config(
   },
   js.configs.recommended,
   cspellESLintPluginRecommended,
+  {
+    rules: {
+      '@cspell/spellchecker': [
+        'warn',
+        {
+          configFile: path.resolve(import.meta.dirname, 'cspell.jsonc'),
+        },
+      ],
+    },
+  },
   ...jsoncPlugin.configs['flat/recommended-with-jsonc'],
   regexpPlugin.configs['flat/recommended'],
   // // Rules from eslint-plugin-jsdoc

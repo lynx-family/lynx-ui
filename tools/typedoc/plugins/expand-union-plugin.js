@@ -7,13 +7,14 @@ import { Serializer } from 'typedoc'
 /**
  * A type guard to check if a JSON reflection is a declaration (like an interface or type alias).
  * - 1 : Project
-- 256 : Interface
-- 512 : Constructor
-- 1024 : Property
-- 2048 : Method
-- 4096 : Call Signature
-- 2097152 : Type alias
- * @param refl
+ * - 256 : Interface
+ * - 512 : Constructor
+ * - 1024 : Property
+ * - 2048 : Method
+ * - 4096 : Call Signature
+ * - 2097152 : Type alias
+ * @param {object} refl The reflection to check.
+ * @returns {boolean} True if the reflection is a declaration, False otherwise
  */
 function isDeclaration(
   refl,
@@ -34,7 +35,7 @@ function isDeclaration(
  * 4. Removing the original Type Alias and the now-merged member interfaces from the final output.
  * This "flattens" the union type into a single interface with a discriminator,
  * which is often easier for documentation tools to parse and display.
- * @param app
+ * @param {import('typedoc').Application} app The TypeDoc application instance.
  */
 export function load(app) {
   app.serializer.on(
