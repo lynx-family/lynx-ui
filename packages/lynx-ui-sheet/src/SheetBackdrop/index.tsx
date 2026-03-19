@@ -56,7 +56,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
       main-thread:ref={overlayMTRef}
       className={clsx('lynx-ui-sheet-backdrop', className)}
       main-thread:bindtap={handleClickMT}
-      event-through={true}
+      event-through={false}
       style={{
         width: '100%',
         height: '100%',
