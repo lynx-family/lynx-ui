@@ -1,5 +1,5 @@
 {
-  "name": "lynx-ui",
+  "name": "lynx-ui-repo",
   "private": true,
   "description": "lynx-ui repo",
   "license": "Apache-2.0",
@@ -10,7 +10,9 @@
     "build": "turbo build",
     "changeset": "changeset",
     "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
-    "check:all": "pnpm run check && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:all": "pnpm run check && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:changed": "sh tools/checkChanged/checkChanged.sh",
+    "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:sherif": "pnpm dlx sherif@latest",
     "check:submodule": "node tools/scripts/check-submodule-regression.mjs",

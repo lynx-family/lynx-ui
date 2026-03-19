@@ -19,7 +19,6 @@
 .canvas {
   height: 100%;
   width: 100%;
-  max-width: 360px;
 
   padding: 64px;
   padding-left: 40px;
@@ -182,9 +181,9 @@
   justify-content: center;
   align-items: center;
 
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
 
   border-width: 1px;
   border-style: solid;
@@ -197,11 +196,11 @@
 }
 
 .checkbox-indicator-checked-item {
-  width: 12px;
+  width: 11px;
   height: 6px;
   border-left: 2px solid var(--primary-content);
   border-bottom: 2px solid var(--primary-content);
-  transform: rotate(-45deg) translate(-1px, 1px);
+  transform: rotate(-45deg) translate(1px, -0.5px);
 }
 
 /* =========================
@@ -246,7 +245,7 @@
 
   font-family: monospace;
   font-size: 12px;
-  color: var(--content);
+  color: var(--content-subtle);
 
   white-space: pre-wrap;
   word-break: break-all;

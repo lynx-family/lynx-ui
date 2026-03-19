@@ -6,8 +6,8 @@ import { root, useState } from '@lynx-js/react'
 
 import './index.css'
 
-import type { SortableData } from '@lynx-js/lynx-ui-sortable'
-import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui-sortable'
+import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui'
+import type { SortableData } from '@lynx-js/lynx-ui'
 
 import type { SortableDemoItem } from '../shared/data'
 import { createDemoData } from '../shared/data'
@@ -18,35 +18,35 @@ export function App() {
   )
 
   return (
-    <view className='sortable-root lunaris-dark'>
-      <view
-        id='sortableContainer'
-        // Required: establish a stacking context for sortable drag layers
-        style={{ zIndex: '0' }}
+    <view
+      className='sortable-root lunaris-dark'
+      id='sortableContainer'
+      // Required: establish a stacking context for sortable drag layers
+      style={{ zIndex: '0' }}
+    >
+      <SortableRoot
+        data={data}
+        boundaryId='sortableContainer'
+        onSortEnd={(sortedData: SortableData<SortableDemoItem>[]) =>
+          setData(sortedData)}
+        enableSorting={false}
       >
-        <SortableRoot
-          data={data}
-          boundaryId='sortableContainer'
-          onSortEnd={(sortedData: SortableData<SortableDemoItem>[]) =>
-            setData(sortedData)}
-          enableSorting={false}
-        >
-          {(item: SortableData<SortableDemoItem>) => {
-            const { id, tone } = item.dataItem
+        {(item: SortableData<SortableDemoItem>) => {
+          const { id, tone } = item.dataItem
 
-            return (
-              <SortableItem
-                className={`sortable-item sortable-item--${id}`}
-                sortingKey={item.getSortingKey()}
-              >
-                <text className={`drag-here-text drag-here-text--${tone}`}>
-                  {id}
-                </text>
-              </SortableItem>
-            )
-          }}
-        </SortableRoot>
-      </view>
+          return (
+            <SortableItem
+              key={item.getSortingKey()}
+              className={`sortable-item sortable-item--${id}`}
+              sortingKey={item.getSortingKey()}
+            >
+              <text className={`drag-here-text drag-here-text--${tone}`}>
+                {id}
+              </text>
+            </SortableItem>
+          )
+        }}
+      </SortableRoot>
     </view>
   )
 }

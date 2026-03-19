@@ -93,7 +93,7 @@ jobs:
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date -u +'%Y-%m-%d %H:%M:%S')"
-      - name: attempt to release
+      - name: publish
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

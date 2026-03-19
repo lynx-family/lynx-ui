@@ -2,13 +2,14 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ReactElement } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 
 export type SwipeAction = (props: SwipeActionProps) => ReactElement
 
 export interface SwipeActionProps extends ComponentBasicProps {
+  ref?: ForwardedRef<SwipeActionRef>
   /**
    * Whether allow swipe action. When it set to false, this item can only be used to display content.
    * @zh 是否允许滑动操作。当设置为 false 时，SwipeAction 只能用来显示内容。

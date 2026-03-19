@@ -1,5 +1,6 @@
 actived
 antialiasing
+amannn
 ARGB
 bindcontentsizechanged
 bindfirstframe
@@ -24,6 +25,7 @@ dprint
 esbenp
 GCMT
 hasdir
+hintrc
 inittime
 jank
 jsnext

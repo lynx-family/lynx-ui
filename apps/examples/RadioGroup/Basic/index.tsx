@@ -4,11 +4,7 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import {
-  Radio,
-  RadioGroupRoot,
-  RadioIndicator,
-} from '@lynx-js/lynx-ui-radio-group'
+import { Radio, RadioGroupRoot, RadioIndicator } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 import './index.css'
 

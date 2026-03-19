@@ -6,12 +6,12 @@ import {
   Switch as SwitchPrimitive,
   SwitchThumb as SwitchThumbPrimitive,
   SwitchTrack as SwitchTrackPrimitive,
-} from '@lynx-js/lynx-ui-switch'
+} from '@lynx-js/lynx-ui'
 import type {
   SwitchProps,
   SwitchThumbProps,
   SwitchTrackProps,
-} from '@lynx-js/lynx-ui-switch'
+} from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
 const HitSlop = {

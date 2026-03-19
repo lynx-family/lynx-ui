@@ -10,8 +10,8 @@ import {
   KeyboardAwareRoot,
   KeyboardAwareTrigger,
   TextArea,
-} from '@lynx-js/lynx-ui-input'
-import type { InputRef } from '@lynx-js/lynx-ui-input'
+} from '@lynx-js/lynx-ui'
+import type { InputRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
 
@@ -21,7 +21,7 @@ function App() {
   return (
     <view className='container lunaris-dark luna-gradient-rose'>
       <KeyboardAwareRoot androidStatusBarPlusBottomBarHeight={74}>
-        <KeyboardAwareResponder className='canvas'>
+        <KeyboardAwareResponder className='canvas' style={{ height: 'auto' }}>
           <view className='section'>
             <text className='title'>Keyboard Aware</text>
             <text className='subtitle'>

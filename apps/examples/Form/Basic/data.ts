@@ -5,7 +5,7 @@
 export interface FormPageProps {
   title: string
   subtitle: string
-  genderOptions: RadioOption[]
+  workspaceTypeOptions: RadioOption[]
   initialFormData: FormData
 }
 
@@ -15,27 +15,21 @@ export interface RadioOption {
 }
 
 export interface FormData {
-  gender: string
-  name: string
-  email: string
-  phone: string
-  message: string
+  workspaceType: string
+  workspaceName: string
+  description: string
 }
 
 export const formPageData: FormPageProps = {
-  title: 'User Information Form',
-  subtitle:
-    'Please fill in the following information and we will contact you shortly',
-  genderOptions: [
-    { label: 'Male', value: 'male' },
-    { label: 'Female', value: 'female' },
-    { label: 'Other', value: 'other' },
+  title: 'Create a workspace',
+  subtitle: 'Set up your workspace to get started.',
+  workspaceTypeOptions: [
+    { label: 'Personal', value: 'personal' },
+    { label: 'Team', value: 'team' },
   ],
   initialFormData: {
-    gender: 'male',
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
+    workspaceType: '',
+    workspaceName: '',
+    description: '',
   },
 }

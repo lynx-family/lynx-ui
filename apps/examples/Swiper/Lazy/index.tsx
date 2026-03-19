@@ -4,8 +4,7 @@
 
 import { root } from '@lynx-js/react'
 
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
-import { Swiper, SwiperItem } from '@lynx-js/lynx-ui-swiper'
+import { LazyComponent, Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
 import './styles.css'
 

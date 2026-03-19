@@ -6,8 +6,8 @@ import { root, useState } from '@lynx-js/react'
 
 import './index.css'
 
-import type { SortableData } from '@lynx-js/lynx-ui-sortable'
-import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui-sortable'
+import { SortableItem, SortableRoot } from '@lynx-js/lynx-ui'
+import type { SortableData } from '@lynx-js/lynx-ui'
 
 import type { SortableDemoItem } from '../shared/data'
 import { createDemoData } from '../shared/data'
@@ -29,6 +29,7 @@ export function App() {
           const { id, tone } = item.dataItem
           return (
             <SortableItem
+              key={item.getSortingKey()}
               className={`sortable-item sortable-item--${id}`}
               sortingKey={item.getSortingKey()}
             >

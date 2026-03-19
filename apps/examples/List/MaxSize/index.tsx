@@ -4,7 +4,7 @@
 
 import { root } from '@lynx-js/react'
 
-import { List } from '@lynx-js/lynx-ui-list'
+import { List } from '@lynx-js/lynx-ui'
 
 import { ListItemCard } from '../shared/ListItemCard'
 import './index.css'

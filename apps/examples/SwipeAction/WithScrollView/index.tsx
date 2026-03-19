@@ -4,23 +4,17 @@
 
 import { root, useRef } from '@lynx-js/react'
 
-import type { SwipeActionRef } from '@lynx-js/lynx-ui-swipe-action'
-import { SwipeAction } from '@lynx-js/lynx-ui-swipe-action'
+import { SwipeAction } from '@lynx-js/lynx-ui'
+import type { SwipeActionRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
 
 function App() {
   const swipeActionRef = useRef<SwipeActionRef>(null)
-  // const [showAction, setShowAction] = useState<boolean>(false)
   const letters = ['L', 'Y', 'N', 'X', 'U', 'I', 'S', 'W', 'I', 'P', 'A', 'C']
   const renderDisplayArea = (_letter: string) => (
     <view className='display-area-container'>
-      <view className='display-area-content'>
-        {
-          /* <text className='display-area-text'>{letter}</text>
-        <text className='display-area-text'>@lynx-js/lynx-ui</text> */
-        }
-      </view>
+      <view className='display-area-content' />
     </view>
   )
   const renderActionArea = () => (

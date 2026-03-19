@@ -55,6 +55,13 @@ jobs:
       runs-on: lynx-ubuntu-24.04-medium
       run: pnpm eslint . --flag v10_config_lookup_from_file
 
+  check-exports:
+    needs: build
+    uses: ./.github/workflows/common-test.yml
+    with:
+      runs-on: lynx-ubuntu-24.04-medium
+      run: pnpm check:exports
+
   test-publish:
     needs: build
     uses: ./.github/workflows/common-test.yml
@@ -129,6 +136,7 @@ jobs:
   done:
     needs:
       - code-style-check
+      - check-exports
       - eslint
       - test-publish
       - test-typos

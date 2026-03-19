@@ -4,8 +4,8 @@
 
 import { root, useRef, useState } from '@lynx-js/react'
 
-import { Swiper, SwiperItem } from '@lynx-js/lynx-ui-swiper'
-import type { SwiperRef } from '@lynx-js/lynx-ui-swiper'
+import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
+import type { SwiperRef } from '@lynx-js/lynx-ui'
 
 import { Button } from '../Common/Button'
 import { Card } from '../Common/Card'

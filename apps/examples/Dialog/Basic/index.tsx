@@ -13,7 +13,7 @@ import {
   DialogRoot,
   DialogTrigger,
   DialogView,
-} from '@lynx-js/lynx-ui-dialog'
+} from '@lynx-js/lynx-ui'
 
 function App() {
   const handleDismissed = () => {

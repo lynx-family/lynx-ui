@@ -4,12 +4,14 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { FormField, FormRoot, FormSubmitButton } from '@lynx-js/lynx-ui-form'
 import {
+  FormField,
+  FormRoot,
+  FormSubmitButton,
   KeyboardAwareResponder,
   KeyboardAwareRoot,
   KeyboardAwareTrigger,
-} from '@lynx-js/lynx-ui-input'
+} from '@lynx-js/lynx-ui'
 
 import { demoItems } from './data'
 

@@ -67,6 +67,8 @@ export type {
   // common types
   useRefreshAndBounceReturn,
   bounceHandlers,
+  BounceableBasicProps,
+  RefreshProps,
 } from '@lynx-js/lynx-ui-common'
 export type {
   ReactiveValueOptions,
@@ -160,7 +162,7 @@ export type {
 } from '@lynx-js/lynx-ui-lazy-component'
 
 // list
-export { List } from '@lynx-js/lynx-ui-list'
+export { List, ListEventMapping } from '@lynx-js/lynx-ui-list'
 export type { ListRef, ListProps } from '@lynx-js/lynx-ui-list'
 
 // popover
@@ -245,11 +247,13 @@ export {
   SheetBackdrop,
   SheetHandle,
   SheetView,
+  useSnap,
 } from '@lynx-js/lynx-ui-sheet'
 export type {
   SheetBackdropProps,
   SheetContentProps,
   SheetRootProps,
+  SheetRootRef,
   SheetViewProps,
   SheetHandleProps,
   SheetTransition,

@@ -4,7 +4,7 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { Swiper, SwiperItem } from '@lynx-js/lynx-ui-swiper'
+import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
 import './styles.css'
 

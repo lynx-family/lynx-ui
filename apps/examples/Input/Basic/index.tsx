@@ -4,8 +4,8 @@
 
 import { root, useRef, useState } from '@lynx-js/react'
 
-import { Input, TextArea } from '@lynx-js/lynx-ui-input'
-import type { InputRef } from '@lynx-js/lynx-ui-input'
+import { Input, TextArea } from '@lynx-js/lynx-ui'
+import type { InputRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

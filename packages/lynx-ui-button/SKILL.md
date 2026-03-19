@@ -19,7 +19,7 @@ When you need an interactive element that is visually completely custom but beha
 The core feature of `Button` is its Render Prop. You need to provide a function as `children` to receive the `active` state.
 
 ```tsx
-import { Button } from '@lynx-js/lynx-ui-button'
+import { Button } from '@lynx-js/lynx-ui'
 
 function App() {
   const handleClick = () => {

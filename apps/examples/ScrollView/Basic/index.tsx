@@ -4,7 +4,7 @@
 
 import { root } from '@lynx-js/react'
 
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 import { CircleLetterCard } from './CircleLetterCard'
 import './index.css'

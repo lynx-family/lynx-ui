@@ -4,7 +4,7 @@
 
 import { root } from '@lynx-js/react'
 
-import { DraggableArea, DraggableRoot } from '@lynx-js/lynx-ui-draggable'
+import { DraggableArea, DraggableRoot } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

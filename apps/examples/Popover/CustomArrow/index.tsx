@@ -10,7 +10,7 @@ import {
   PopoverPositioner,
   PopoverRoot,
   PopoverTrigger,
-} from '@lynx-js/lynx-ui-popover'
+} from '@lynx-js/lynx-ui'
 import './index.css'
 
 function App() {

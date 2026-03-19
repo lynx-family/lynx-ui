@@ -17,7 +17,7 @@ description: Provide the information about the `<LazyComponent>`. Show the commo
 `<LazyComponent>` is used to display the content of the page only when it is visible in the viewport.
 
 ```tsx
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
+import { LazyComponent } from '@lynx-js/lynx-ui'
 
 function App() {
   return (
@@ -39,8 +39,8 @@ function App() {
 You can build a virtualized list by embedding `<LazyComponent>` in the slot of `<ScrollView>`.
 
 ```tsx
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
-import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+import { LazyComponent } from '@lynx-js/lynx-ui'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 function App() {
   return (
@@ -59,7 +59,7 @@ function App() {
               scene={'scene'}
               pid={`pid_${index}`}
               estimatedStyle={{ width: '100%', height: '100px' }} // make sure the estimated size is equal to the real size
-              unloadable
+              unmountOnExit
             >
               <view
                 style={{
@@ -84,7 +84,7 @@ function App() {
 You can adjust the exposure margin of `<LazyComponent>` by setting the `bottom`, `top`, `left`, and `right` props. So that the content of the item is loaded earlier than it is visible in the viewport.
 
 ```tsx
-import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
+import { LazyComponent } from '@lynx-js/lynx-ui'
 
 function App() {
   return (
@@ -110,4 +110,5 @@ function App() {
 - **MUST**: The `estimatedStyle` prop is required. It is an object that specifies the estimated size of the content of the item. The estimated size could be equal to or smaller than the real size of the content.
 - **MUST**: The `scene` and `pid` props are required. They are used to identify the item. Their combination must be unique.
 - **NOTICE**: The rule of `bottom`, `top`, `left`, and `right` props is that to expand the exposure margin of the item. The default value is `0px`.
-- **NOTICE**: The `unloadable` prop is used to specify whether the content of the item is unloadable. If it is set to `true`, the content of the item will be unloaded when it is out of the viewport.
+- **NOTICE**: Use `unmountOnExit` to specify whether the content of the item should be unmounted when it is out of the viewport.
+- **NOTICE**: `unloadable` is deprecated and kept only for backward compatibility. Prefer `unmountOnExit`.

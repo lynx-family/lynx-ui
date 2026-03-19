@@ -13,7 +13,7 @@
 When using `List`, you must provide a unique `listId`, specify the `listType`, and use `<list-item>` as the direct child. Each `<list-item>` **MUST** have a unique `item-key` and **MUST** also set a `key` prop. These two keys serve different purposes and both are required.
 
 ```tsx
-import { List } from '@lynx-js/lynx-ui-list'
+import { List } from '@lynx-js/lynx-ui'
 
 function BasicList() {
   const items = Array.from({ length: 100 }, (_, i) => `Item ${i + 1}`)
@@ -54,7 +54,7 @@ function BasicList() {
 The most basic list form.
 
 ```tsx
-import { List } from '@lynx-js/lynx-ui-list';
+import { List } from '@lynx-js/lynx-ui';
 
 function SingleColumnList() {
   const data = [...];
@@ -77,7 +77,7 @@ function SingleColumnList() {
 Set `listType` to `flow` and specify `spanCount` to create a grid layout.
 
 ```tsx
-import { List } from '@lynx-js/lynx-ui-list';
+import { List } from '@lynx-js/lynx-ui';
 
 function GridLayout() {
   const data = [...];
@@ -102,7 +102,7 @@ function GridLayout() {
 Set `listType` to `waterfall` for an unequal-height column layout.
 
 ```tsx
-import { List } from '@lynx-js/lynx-ui-list';
+import { List } from '@lynx-js/lynx-ui';
 
 function WaterfallList() {
   const data = [...]; // Data items usually have different heights

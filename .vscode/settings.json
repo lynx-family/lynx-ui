@@ -2,8 +2,10 @@
   "files.associations": {
     "renovate.json5": "jsonc",
     "OWNERS": "yaml",
+    ".hintrc": "json",
   },
   "editor.formatOnSave": true,
+  "files.insertFinalNewline": true,
   "eslint.nodePath": "node_modules",
   "eslint.trace.server": "verbose",
   "eslint.workingDirectories": [

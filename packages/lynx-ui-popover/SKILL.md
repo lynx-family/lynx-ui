@@ -41,7 +41,7 @@ import {
   PopoverContent,
   PopoverArrow,
   PopoverBackdrop,
-} from '@lynx-js/lynx-ui-popover'
+} from '@lynx-js/lynx-ui'
 import './style.css'
 
 export default function App() {

@@ -4,8 +4,8 @@
 
 import { root, useMemo, useRef, useState } from '@lynx-js/react'
 
-import { FeedList } from '@lynx-js/lynx-ui-feed-list'
-import type { FeedListRef } from '@lynx-js/lynx-ui-feed-list'
+import { FeedList } from '@lynx-js/lynx-ui'
+import type { FeedListRef } from '@lynx-js/lynx-ui'
 
 import { RectangleCard } from './RectangleCard'
 

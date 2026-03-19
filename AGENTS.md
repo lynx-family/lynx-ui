@@ -72,6 +72,8 @@ To test changes, run the specific example for the component.
    npx turbo watch dev --filter lynx-ui-<component-name>-examples
    ```
 
+Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of `@lynx-js/lynx-ui-<component>` or `@lynx-js/lynx-ui-common`, unless a symbol is intentionally excluded from the aggregate entry.
+
 ### 4. Build & Verify
 
 Before submitting changes, ensure the project builds and passes checks.
@@ -79,6 +81,9 @@ Before submitting changes, ensure the project builds and passes checks.
 ```bash
 # Build all packages
 pnpm build
+
+# Verify the aggregate lynx-ui entry re-exports the expected package surface
+pnpm check:exports
 
 # Run all checks (format, lint, manypkg, sherif, submodule regression)
 pnpm check:all
@@ -89,6 +94,7 @@ pnpm check:all
 - **`pnpm check:manypkg`**: Checks for dependency mismatches in the monorepo.
 - **`pnpm check:sherif`**: Lints `package.json` files for potential issues using Sherif.
 - **`pnpm check:submodule`**: Prevents submodule regression (ensures submodules don't point to older commits).
+- **`pnpm check:exports`**: Verifies that `@lynx-js/lynx-ui` re-exports the expected public surface from included sub-packages.
 - **`pnpm spell`**: Runs CSpell to check for spelling errors.
 
 ## Coding Standards

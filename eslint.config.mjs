@@ -48,7 +48,7 @@ export default tseslint.config(
       'packages/**/vitest.config.ts',
       'website/**',
       'tools/configs/**',
-      'tools/typings/**',
+      'tools/typings/**/*.d.ts',
       '**/tools/make-new-component/examplesTemplate/**',
       '**/tools/make-new-component/template/**',
 
@@ -268,7 +268,10 @@ export default tseslint.config(
         sourceType: 'module',
         projectService: {
           allowDefaultProject: ['*.js'],
-          defaultProject: path.resolve(import.meta.dirname, 'tsconfig.json'),
+          defaultProject: path.resolve(
+            import.meta.dirname,
+            'tsconfig.eslint.json',
+          ),
         },
       },
     },
