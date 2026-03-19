@@ -75,26 +75,26 @@ export interface SheetContentProps extends ComponentBasicProps {
    */
   exitAnimation?: SheetTransition
   /**
-   * CSS class name for the inner content layer.
-   * Use this for layout or sizing styles specific to the content area.
-   * @zh 内层内容的 CSS 类名。用于设置内容区域特定的布局或尺寸样式。
+   * CSS class name for the inner layer.
+   * Use this for layout or sizing styles specific to the inner area.
+   * @zh 内层容器的 CSS 类名。用于设置内层区域特定的布局或尺寸样式。
    * @Android
    * @iOS
    * @Harmony
    */
-  contentClassName?: string
+  innerClassName?: string
   /**
-   * Inline styles for the inner content layer.
-   * Use this for layout or sizing styles specific to the content area.
+   * Inline styles for the inner layer.
+   * Use this for layout or sizing styles specific to the inner area.
    * Note: Visual styles (background, borderRadius, etc.) should be set via
    * the main `style` prop which applies to the surface layer.
-   * @zh 内层内容的内联样式。用于设置内容区域特定的布局或尺寸样式。
+   * @zh 内层容器的内联样式。用于设置内层区域特定的布局或尺寸样式。
    * 注意：视觉样式（背景、圆角等）应通过主 `style` 属性设置，它会应用到 surface 层。
    * @Android
    * @iOS
    * @Harmony
    */
-  contentStyle?: ComponentBasicProps['style']
+  innerStyle?: ComponentBasicProps['style']
   /**
    * children
    * @zh 子元素

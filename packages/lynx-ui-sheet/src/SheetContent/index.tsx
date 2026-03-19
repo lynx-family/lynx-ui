@@ -24,8 +24,8 @@ export function SheetContent(props: SheetContentProps) {
     exitAnimation,
     className,
     style,
-    contentClassName,
-    contentStyle,
+    innerClassName,
+    innerStyle,
     ...rest
   } = props
 
@@ -193,11 +193,6 @@ export function SheetContent(props: SheetContentProps) {
         top: '100%',
         height: '100vh',
         overflow: 'hidden',
-        alignSelf: 'center',
-        padding: 0,
-        margin: 0,
-        border: 'none',
-        boxShadow: 'none',
         ...style,
       }}
       main-thread:ref={setSheetMTRef}
@@ -209,10 +204,10 @@ export function SheetContent(props: SheetContentProps) {
     >
       <view
         {...rest}
-        className={contentClassName}
+        className={innerClassName}
         style={{
           width: '100%',
-          ...contentStyle,
+          ...innerStyle,
         }}
         main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
       >
