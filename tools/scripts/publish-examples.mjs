@@ -25,7 +25,7 @@
  *   pnpm examples:publish [-- --dry-run] [-- --filter Button --filter Form]
  */
 
-import { execSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -38,16 +38,20 @@ const examplesRoot = path.join(repoRoot, 'apps/examples')
 const dryRun = process.argv.includes('--dry-run')
 const tagIdx = process.argv.indexOf('--tag')
 const tag = tagIdx === -1 ? 'latest' : process.argv[tagIdx + 1]
+const failFast = process.argv.includes('--fail-fast')
 
 // Dirs to never copy into a published package
 const IGNORE_DIRS = new Set(['node_modules', 'dist', '.rspeedy', '.turbo'])
 const IGNORE_FILES = new Set(['.DS_Store'])
 
 // Convert PascalCase/camelCase to kebab-case.
-// e.g. PropagateTapEvent → propagate-tap-event, RTL → r-t-l
+// e.g. PropagateTapEvent → propagate-tap-event, RTL → rtl
 function toKebab(s) {
   return s
-    .replace(/([A-Z])/g, (ch, _, i) => (i > 0 ? '-' : '') + ch.toLowerCase())
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-z\d])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase()
     .replace(/-{2,}/g, '-')
     .replace(/^-|-$/g, '')
 }
@@ -78,10 +82,22 @@ function copyDir(src, dest) {
   }
 }
 
+function runStdout(command, args, options = {}) {
+  const result = spawnSync(command, args, { ...options, encoding: 'utf8' })
+  if (result.error) throw result.error
+  if (result.status !== 0) {
+    const message = (result.stderr || '').toString().trim()
+    throw new Error(
+      message
+        || `${command} ${args.join(' ')} failed with code ${result.status}`,
+    )
+  }
+  return (result.stdout || '').toString()
+}
+
 // Version = 0.0.0-<short-commit-hash>.
 // Every push to main gets a unique, commit-addressable version.
-const commitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf8' })
-  .trim()
+const commitHash = runStdout('git', ['rev-parse', '--short', 'HEAD']).trim()
 const version = `0.0.0-${commitHash}`
 
 // When --filter is passed, only publish the listed components.
@@ -103,6 +119,7 @@ const componentDirs = fs.readdirSync(examplesRoot).filter((name) => {
 
 let published = 0
 let skipped = 0
+const failures = []
 
 for (const component of componentDirs) {
   const componentDir = path.join(examplesRoot, component)
@@ -193,19 +210,53 @@ for (const component of componentDirs) {
 
     if (dryRun) {
       console.log(`[dry-run] ${pkgName}@${version}`)
+      published++
     } else {
       console.log(`Publishing ${pkgName}@${version} ...`)
-      execSync(`npm publish --access public --tag ${tag}`, {
-        cwd: tmpDir,
-        stdio: 'inherit',
-      })
+      try {
+        const result = spawnSync('npm', [
+          'publish',
+          '--access',
+          'public',
+          '--tag',
+          tag,
+        ], {
+          cwd: tmpDir,
+          stdio: 'inherit',
+        })
+        if (result.error) throw result.error
+        if (result.status !== 0) {
+          throw new Error(`npm publish failed with code ${result.status}`)
+        }
+        published++
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        console.error(`  ✖ ${pkgName}: ${message}`)
+        failures.push({
+          component,
+          entryName,
+          variantDir,
+          pkgName,
+          message,
+        })
+        if (failFast) throw error
+      }
     }
-    published++
   }
+}
+
+if (failures.length > 0) {
+  console.error('\nFailed package(s):')
+  for (const f of failures) {
+    console.error(
+      `- ${f.pkgName} (${f.component}/${f.variantDir}): ${f.message}`,
+    )
+  }
+  process.exitCode = 1
 }
 
 console.log(
   `\n${dryRun ? '[dry-run] ' : ''}${published} package(s) ${
     dryRun ? 'would be ' : ''
-  }published, ${skipped} skipped.`,
+  }published, ${skipped} skipped, ${failures.length} failed.`,
 )

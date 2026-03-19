@@ -15,7 +15,7 @@
     "check:sherif": "pnpm dlx sherif@latest",
     "check:submodule": "node tools/scripts/check-submodule-regression.mjs",
     "coverage": "vitest --coverage",
-    "examples:build": "turbo build --filter 'examples'",
+    "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
     "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif",
     "fix:changed": "sh tools/checkChanged/checkChanged.sh",
