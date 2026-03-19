@@ -12,7 +12,11 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
+import { ControlButton, TriggerButton } from '../shared/index.js'
+
 import './index.css'
+
+const snapPoints = ['50%', '80%']
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -26,13 +30,15 @@ function App() {
         State: {show ? 'OPEN' : 'CLOSED'}
       </text>
 
-      <view className='button' bindtap={() => setShow(true)}>
-        <text className='button-text'>Open (setShow(true))</text>
-      </view>
+      <TriggerButton
+        onClick={() => setShow(true)}
+        text='Open (setShow(true))'
+      />
 
-      <view className='button' bindtap={() => setShow(false)}>
-        <text className='button-text'>Close (setShow(false))</text>
-      </view>
+      <TriggerButton
+        onClick={() => setShow(false)}
+        text='Close (setShow(false))'
+      />
 
       <SheetRoot
         ref={sheetRef}
@@ -43,23 +49,16 @@ function App() {
         }}
         onOpen={() => console.log('onOpen')}
         onClose={() => console.log('onClose')}
-        snapPoints={['50%', '80%']}
+        snapPoints={snapPoints}
         initialSnap={0}
       >
-        <SheetView className='action-sheet-viewport'>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
-          <SheetContent className='sheet-content'>
-            <SheetHandle
-              className='sheet-handle'
-              style={{
-                width: '40px',
-                height: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                alignSelf: 'center',
-                marginTop: '8px',
-                borderRadius: '2px',
-              }}
-            />
+          <SheetContent
+            className='sheet-content'
+            innerClassName='sheet-inner-content'
+          >
+            <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
                 Initially Open (Controlled)
@@ -68,15 +67,10 @@ function App() {
                 This sheet starts with show=true in controlled mode.
               </text>
 
-              <view
-                className='control-button'
-                style={{ backgroundColor: 'rgba(255, 100, 100, 0.2)' }}
-                bindtap={() => setShow(false)}
-              >
-                <text className='control-text' style={{ color: '#ff6b6b' }}>
-                  Close (via state)
-                </text>
-              </view>
+              <ControlButton
+                onClick={() => setShow(false)}
+                text='Close (via state)'
+              />
             </view>
           </SheetContent>
         </SheetView>

@@ -4,6 +4,7 @@
 import { root, useRef, useState } from '@lynx-js/react'
 
 import {
+  Button,
   SheetBackdrop,
   SheetContent,
   SheetHandle,
@@ -13,6 +14,8 @@ import {
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
+
+const snapPoints = ['25%', '50%', '75%']
 
 /**
  * Internal Testing Example
@@ -91,9 +94,9 @@ function App() {
       </view>
 
       <view className='button-row'>
-        <view
+        <Button
           className='small-button'
-          bindtap={() => {
+          onClick={() => {
             if (controlled) {
               setShow(true)
             } else {
@@ -102,10 +105,10 @@ function App() {
           }}
         >
           <text className='small-button-text'>Open</text>
-        </view>
-        <view
+        </Button>
+        <Button
           className='small-button'
-          bindtap={() => {
+          onClick={() => {
             if (controlled) {
               setShow(false)
             } else {
@@ -114,33 +117,33 @@ function App() {
           }}
         >
           <text className='small-button-text'>Close</text>
-        </view>
+        </Button>
       </view>
 
       <text className='section-title'>Edge Case Tests</text>
 
       <view className='button-row'>
-        <view className='test-button' bindtap={testRapidOpenClose}>
+        <Button className='test-button' onClick={testRapidOpenClose}>
           <text className='test-button-text'>Rapid Open/Close</text>
-        </view>
-        <view className='test-button' bindtap={testDoubleOpen}>
+        </Button>
+        <Button className='test-button' onClick={testDoubleOpen}>
           <text className='test-button-text'>Double Open</text>
-        </view>
+        </Button>
       </view>
 
       <view className='button-row'>
-        <view className='test-button' bindtap={testDoubleClose}>
+        <Button className='test-button' onClick={testDoubleClose}>
           <text className='test-button-text'>Double Close</text>
-        </view>
-        <view className='test-button' bindtap={testSnapDuringEntry}>
+        </Button>
+        <Button className='test-button' onClick={testSnapDuringEntry}>
           <text className='test-button-text'>Snap During Entry</text>
-        </view>
+        </Button>
       </view>
 
       <view className='button-row'>
-        <view className='test-button' bindtap={testCloseDuringEntry}>
+        <Button className='test-button' onClick={testCloseDuringEntry}>
           <text className='test-button-text'>Close During Entry</text>
-        </view>
+        </Button>
       </view>
 
       <text className='section-title'>Event Log</text>
@@ -161,29 +164,19 @@ function App() {
         }}
         onOpen={() => log('onOpen')}
         onClose={() => log('onClose')}
-        snapPoints={['25%', '50%', '75%']}
+        snapPoints={snapPoints}
         initialSnap={1}
         onSnapChange={(index, value) => {
           log(`onSnapChange: index=${index} value=${Math.round(value)}`)
         }}
       >
-        <SheetView className='action-sheet-viewport'>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
           <SheetContent
             className='sheet-content'
             snapAnimation={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            <SheetHandle
-              className='sheet-handle'
-              style={{
-                width: '40px',
-                height: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                alignSelf: 'center',
-                marginTop: '8px',
-                borderRadius: '2px',
-              }}
-            />
+            <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>Test Sheet</text>
               <text className='info-text'>
@@ -192,45 +185,44 @@ function App() {
               </text>
 
               <view className='snap-row'>
-                <view
+                <Button
                   className='snap-button'
-                  bindtap={() => sheetRef.current?.snapTo(0)}
+                  onClick={() => sheetRef.current?.snapTo(0)}
                 >
                   <text className='snap-text'>25%</text>
-                </view>
-                <view
+                </Button>
+                <Button
                   className='snap-button'
-                  bindtap={() => sheetRef.current?.snapTo(1)}
+                  onClick={() => sheetRef.current?.snapTo(1)}
                 >
                   <text className='snap-text'>50%</text>
-                </view>
-                <view
+                </Button>
+                <Button
                   className='snap-button'
-                  bindtap={() => sheetRef.current?.snapTo(2)}
+                  onClick={() => sheetRef.current?.snapTo(2)}
                 >
                   <text className='snap-text'>75%</text>
-                </view>
+                </Button>
               </view>
 
               <view className='snap-row'>
-                <view
+                <Button
                   className='snap-button'
-                  bindtap={() => sheetRef.current?.expand()}
+                  onClick={() => sheetRef.current?.expand()}
                 >
                   <text className='snap-text'>Expand</text>
-                </view>
-                <view
+                </Button>
+                <Button
                   className='snap-button'
-                  bindtap={() => sheetRef.current?.collapse()}
+                  onClick={() => sheetRef.current?.collapse()}
                 >
                   <text className='snap-text'>Collapse</text>
-                </view>
+                </Button>
               </view>
 
-              <view
+              <Button
                 className='control-button'
-                style={{ backgroundColor: 'rgba(255, 100, 100, 0.2)' }}
-                bindtap={() => {
+                onClick={() => {
                   if (controlled) {
                     setShow(false)
                   } else {
@@ -238,10 +230,10 @@ function App() {
                   }
                 }}
               >
-                <text className='control-text' style={{ color: '#ff6b6b' }}>
+                <text className='control-text'>
                   Close Sheet
                 </text>
-              </view>
+              </Button>
             </view>
           </SheetContent>
         </SheetView>

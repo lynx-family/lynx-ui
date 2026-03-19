@@ -12,7 +12,11 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
+import { ControlButton, TriggerButton } from '../shared/index.js'
+
 import './index.css'
+
+const snapPoints = ['50%', '80%']
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -21,13 +25,15 @@ function App() {
     <view className='container lunaris-dark'>
       <text className='title-text'>Uncontrolled - defaultShow=true</text>
 
-      <view className='button' bindtap={() => sheetRef.current?.show()}>
-        <text className='button-text'>Open Sheet</text>
-      </view>
+      <TriggerButton
+        onClick={() => sheetRef.current?.show()}
+        text='Open Sheet'
+      />
 
-      <view className='button' bindtap={() => sheetRef.current?.close()}>
-        <text className='button-text'>Close Sheet</text>
-      </view>
+      <TriggerButton
+        onClick={() => sheetRef.current?.close()}
+        text='Close Sheet'
+      />
 
       <SheetRoot
         ref={sheetRef}
@@ -35,23 +41,16 @@ function App() {
         onShowChange={(newShow) => console.log('onShowChange:', newShow)}
         onOpen={() => console.log('onOpen')}
         onClose={() => console.log('onClose')}
-        snapPoints={['50%', '80%']}
+        snapPoints={snapPoints}
         initialSnap={0}
       >
-        <SheetView className='action-sheet-viewport'>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
-          <SheetContent className='sheet-content'>
-            <SheetHandle
-              className='sheet-handle'
-              style={{
-                width: '40px',
-                height: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                alignSelf: 'center',
-                marginTop: '8px',
-                borderRadius: '2px',
-              }}
-            />
+          <SheetContent
+            className='sheet-content'
+            innerClassName='sheet-inner-content'
+          >
+            <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
                 Initially Open (defaultShow)
@@ -60,15 +59,10 @@ function App() {
                 This sheet starts with defaultShow=true in uncontrolled mode.
               </text>
 
-              <view
-                className='control-button'
-                style={{ backgroundColor: 'rgba(255, 100, 100, 0.2)' }}
-                bindtap={() => sheetRef.current?.close()}
-              >
-                <text className='control-text' style={{ color: '#ff6b6b' }}>
-                  Close (via ref)
-                </text>
-              </view>
+              <ControlButton
+                onClick={() => sheetRef.current?.close()}
+                text='Close (via ref)'
+              />
             </view>
           </SheetContent>
         </SheetView>

@@ -12,16 +12,21 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
+import { ControlButton, TriggerButton } from '../shared/index.js'
+
 import './index.css'
+
+const snapPoints = ['30%', '60%', '90%']
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
 
   return (
     <view className='container lunaris-dark'>
-      <view className='button' bindtap={() => sheetRef.current?.show()}>
-        <text className='button-text'>Open Sheet (via ref)</text>
-      </view>
+      <TriggerButton
+        text='Open Sheet (via ref)'
+        onClick={() => sheetRef.current?.show()}
+      />
 
       <SheetRoot
         ref={sheetRef}
@@ -34,78 +39,49 @@ function App() {
         onClose={() => {
           console.log('close change')
         }}
-        snapPoints={['30%', '60%', '90%']}
-        initialSnap={0}
+        snapPoints={snapPoints}
+        initialSnap={1}
         onSnapChange={(snapIndex, snapValue) => {
           console.log(snapIndex, snapValue)
         }}
       >
-        <SheetView className='action-sheet-viewport'>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
           <SheetContent
             className='sheet-content'
+            innerClassName='sheet-inner-content'
             snapAnimation={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
-            <SheetHandle
-              className='sheet-handle'
-              style={{
-                width: '40px',
-                height: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                alignSelf: 'center',
-                marginTop: '8px',
-                borderRadius: '2px',
-              }}
-            />
+            <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
                 Imperative Controls
               </text>
 
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.snapTo(0)}
-              >
-                <text className='control-text'>Snap to 30% (Index 0)</text>
-              </view>
-
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.snapTo(1)}
-              >
-                <text className='control-text'>Snap to 60% (Index 1)</text>
-              </view>
-
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.snapTo(2)}
-              >
-                <text className='control-text'>Snap to 90% (Index 2)</text>
-              </view>
-
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.expand()}
-              >
-                <text className='control-text'>Expand (Max)</text>
-              </view>
-
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.collapse()}
-              >
-                <text className='control-text'>Collapse (Min)</text>
-              </view>
-
-              <view
-                className='control-button'
-                style={{ backgroundColor: 'rgba(255, 100, 100, 0.2)' }}
-                bindtap={() => sheetRef.current?.close()}
-              >
-                <text className='control-text' style={{ color: '#ff6b6b' }}>
-                  Close via Ref
-                </text>
-              </view>
+              <ControlButton
+                text='Snap to 30% (Index 0)'
+                onClick={() => sheetRef.current?.snapTo(0)}
+              />
+              <ControlButton
+                text='Snap to 60% (Index 1)'
+                onClick={() => sheetRef.current?.snapTo(1)}
+              />
+              <ControlButton
+                text='Snap to 90% (Index 2)'
+                onClick={() => sheetRef.current?.snapTo(2)}
+              />
+              <ControlButton
+                text='Expand (Max)'
+                onClick={() => sheetRef.current?.expand()}
+              />
+              <ControlButton
+                text='Collapse (Min)'
+                onClick={() => sheetRef.current?.collapse()}
+              />
+              <ControlButton
+                text='Close via Ref'
+                onClick={() => sheetRef.current?.close()}
+              />
             </view>
           </SheetContent>
         </SheetView>

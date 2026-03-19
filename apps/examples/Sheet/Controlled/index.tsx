@@ -12,7 +12,11 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
+import { ControlButton, TriggerButton } from '../shared/index.js'
+
 import './index.css'
+
+const snapPoints = ['40%', '80%']
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -26,17 +30,17 @@ function App() {
         State: {show ? 'OPEN' : 'CLOSED'}
       </text>
 
-      <view className='button' bindtap={() => setShow(true)}>
-        <text className='button-text'>Open (setShow(true))</text>
-      </view>
+      <TriggerButton
+        onClick={() => setShow(true)}
+        text='Open (setShow(true))'
+      />
 
-      <view className='button' bindtap={() => setShow(false)}>
-        <text className='button-text'>Close (setShow(false))</text>
-      </view>
+      <TriggerButton
+        onClick={() => setShow(false)}
+        text='Close (setShow(false))'
+      />
 
-      <view className='button' bindtap={() => setShow(s => !s)}>
-        <text className='button-text'>Toggle</text>
-      </view>
+      <TriggerButton onClick={() => setShow(s => !s)} text='Toggle' />
 
       <SheetRoot
         ref={sheetRef}
@@ -51,29 +55,20 @@ function App() {
         onClose={() => {
           console.log('onClose - sheet fully closed')
         }}
-        snapPoints={['40%', '80%']}
+        snapPoints={snapPoints}
         initialSnap={0}
         onSnapChange={(snapIndex, snapValue) => {
           console.log('onSnapChange:', snapIndex, snapValue)
         }}
       >
-        <SheetView className='action-sheet-viewport'>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
           <SheetContent
             className='sheet-content'
+            innerClassName='sheet-inner-content'
             snapAnimation={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            <SheetHandle
-              className='sheet-handle'
-              style={{
-                width: '40px',
-                height: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                alignSelf: 'center',
-                marginTop: '8px',
-                borderRadius: '2px',
-              }}
-            />
+            <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
                 Controlled Mode
@@ -83,29 +78,20 @@ function App() {
                 and gestures trigger `onShowChange`.
               </text>
 
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.snapTo(0)}
-              >
-                <text className='control-text'>Snap to 40% (Index 0)</text>
-              </view>
+              <ControlButton
+                onClick={() => sheetRef.current?.snapTo(0)}
+                text='Snap to 40% (Index 0)'
+              />
 
-              <view
-                className='control-button'
-                bindtap={() => sheetRef.current?.snapTo(1)}
-              >
-                <text className='control-text'>Snap to 80% (Index 1)</text>
-              </view>
+              <ControlButton
+                onClick={() => sheetRef.current?.snapTo(1)}
+                text='Snap to 80% (Index 1)'
+              />
 
-              <view
-                className='control-button'
-                style={{ backgroundColor: 'rgba(255, 100, 100, 0.2)' }}
-                bindtap={() => setShow(false)}
-              >
-                <text className='control-text' style={{ color: '#ff6b6b' }}>
-                  Close (via state)
-                </text>
-              </view>
+              <ControlButton
+                onClick={() => setShow(false)}
+                text='Close (via state)'
+              />
             </view>
           </SheetContent>
         </SheetView>
