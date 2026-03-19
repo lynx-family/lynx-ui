@@ -17,7 +17,7 @@ export const baseConfig: RslibConfig = {
     {
       bundle: false,
       format: 'esm',
-      syntax: 'es6',
+      syntax: 'esnext',
       output: {
         distPath: {
           root: './dist',
