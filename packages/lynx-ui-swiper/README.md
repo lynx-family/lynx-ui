@@ -45,4 +45,4 @@ This component is part of `@lynx-js/lynx-ui`, a headless UI library officially m
 
 ## License
 
-[**lynx-ui**](https://github.com/lynx-family/lynx-ui) is [Apache License 2.0](./LICENSE) licensed.
+[**lynx-ui**](https://github.com/lynx-family/lynx-ui) is [**Apache License 2.0**](./LICENSE) licensed.

@@ -90,4 +90,4 @@ If you are interested in contributing to `lynx-ui`, please read our [Contributin
 
 ## License
 
-[Apache-2.0](./LICENSE)
+[**lynx-ui**](https://github.com/lynx-family/lynx-ui) is [**Apache License 2.0**](./LICENSE) licensed.

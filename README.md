@@ -98,4 +98,4 @@ If you are interested in contributing to `lynx-ui`, please read our [Contributin
 
 ## License
 
-[Apache-2.0](./LICENSE)
+lynx-ui is licensed under the **Apache License 2.0**. You can find the full license details in the [LICENSE](./LICENSE) file.
