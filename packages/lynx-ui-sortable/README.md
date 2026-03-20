@@ -31,9 +31,16 @@ The `Sortable` component is composed of the following sub-components:
 
 ```tsx
 <SortableRoot>
-  <SortableItem>
-    <SortableItemArea />
-  </SortableItem>
+  {(item) => (
+    <SortableItem
+      key={item.getSortingKey()}
+      sortingKey={item.getSortingKey()}
+    >
+      <SortableItemArea>
+        {/* Your item content */}
+      </SortableItemArea>
+    </SortableItem>
+  )}
 </SortableRoot>
 ```
 
