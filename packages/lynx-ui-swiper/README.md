@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-swiper
 
-A Swiper (carousel) component for Lynx. It provides pagination and gesture handling primitives.
+A Swiper (carousel) component for ReactLynx. It provides pagination and gesture-handling primitives.
 
 ## Installation
 
@@ -41,7 +41,7 @@ The `Swiper` component is composed of the following sub-components:
 
 ## About @lynx-js/lynx-ui
 
-This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## License
 

@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-form
 
-A headless Form component for Lynx. It provides form context and a submit button that collects field values.
+A headless Form component for ReactLynx. It provides form context and a submit button that collects field values.
 
 ## Installation
 
@@ -42,7 +42,7 @@ The `Form` component is composed of the following sub-components:
 
 ## About @lynx-js/lynx-ui
 
-This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## License
 

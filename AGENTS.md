@@ -6,7 +6,7 @@ This document provides context, conventions, and guidelines for AI agents workin
 
 ## Project Overview
 
-**lynx-ui** is a UI component library for Lynx, built as a Monorepo using TurboRepo.
+**lynx-ui** is a UI component library for ReactLynx, built as a Monorepo using TurboRepo.
 
 - **Framework**: React (Lynx bindings)
 - **Language**: TypeScript

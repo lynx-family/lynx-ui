@@ -21,7 +21,7 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ## About @lynx-js/lynx-ui
 
-This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## License
 

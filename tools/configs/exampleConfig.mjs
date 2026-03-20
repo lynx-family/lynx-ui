@@ -40,7 +40,6 @@ export const exampleConfig = (entry, options = {}) => {
       }),
       pluginReactLynx({
         enableCSSSelector: true,
-        targetSdkVersion: '2.14',
         enableCSSInheritance: true,
         enableNewGesture: true,
       }),

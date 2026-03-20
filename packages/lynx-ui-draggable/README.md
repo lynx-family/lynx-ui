@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-draggable
 
-A headless Draggable component for Lynx. It provides drag-and-drop primitives via main-thread execution.
+A headless Draggable component for ReactLynx. It provides drag-and-drop primitives via main-thread execution.
 
 ## Installation
 
@@ -44,7 +44,7 @@ The `Draggable` component is composed of several specialized sub-components to g
 
 ## About @lynx-js/lynx-ui
 
-This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## License
 

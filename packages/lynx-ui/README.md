@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui
 
-`@lynx-js/lynx-ui` is the official headless UI library for Lynx, built for maximum flexibility, universality, and performance.
+`@lynx-js/lynx-ui` is the official headless UI library for ReactLynx, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## Introduction
 
@@ -71,7 +71,6 @@ import { defineConfig } from '@lynx-js/rspeedy'
 export default defineConfig({
   plugins: [
     pluginReactLynx({
-      targetSdkVersion: '2.14',
       enableNewGesture: true,
     }),
   ],

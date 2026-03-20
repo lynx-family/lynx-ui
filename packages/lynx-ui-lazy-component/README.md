@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-lazy-component
 
-A LazyComponent for Lynx. It defers the loading of non-critical UI elements.
+A LazyComponent for ReactLynx. It defers the loading of non-critical UI elements.
 
 ## Installation
 
@@ -38,7 +38,7 @@ The `LazyComponent` component is composed of the following sub-components:
 
 ## About @lynx-js/lynx-ui
 
-This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## License
 

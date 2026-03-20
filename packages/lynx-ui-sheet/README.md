@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-sheet
 
-A Bottom Sheet component for Lynx. It provides drag interactions and snap point primitives.
+A Bottom Sheet component for ReactLynx. It provides drag interactions and snap point primitives.
 
 ## Installation
 
@@ -42,13 +42,13 @@ The `Sheet` component is composed of several specialized sub-components to give 
 
 - **`SheetRoot`**: The root container that manages the state, snap points, and drag logic.
 - **`SheetView`**: The viewport container for the sheet components.
-- **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on click.
+- **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.
 - **`SheetHandle`**: (Optional) A draggable visual indicator (usually a small bar) at the top of the sheet content.
 
 ## About @lynx-js/lynx-ui
 
-This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## License
 
