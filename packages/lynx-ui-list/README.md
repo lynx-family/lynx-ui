@@ -29,11 +29,9 @@ The `lynx-ui-list` follows a headless composition pattern.
 
 ```tsx
 <List>
-  {items.map((item) => (
-    <list-item item-key={item.id} key={item.id}>
-      <view>{/* Your item content */}</view>
-    </list-item>
-  ))}
+  <list-item item-key={item.id} key={item.id}>
+    <view>{/* Your item content */}</view>
+  </list-item>
 </List>
 ```
 

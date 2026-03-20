@@ -31,11 +31,9 @@ The `FeedList` component is composed of the following sub-components:
 
 ```tsx
 <FeedList>
-  {items.map((item) => (
-    <list-item item-key={item.itemKey} key={item.itemKey}>
-      <view>{/* Your item content */}</view>
-    </list-item>
-  ))}
+  <list-item item-key={item.id} key={item.id}>
+    <view>{/* Your item content */}</view>
+  </list-item>
 </FeedList>
 ```
 
