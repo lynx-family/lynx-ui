@@ -28,7 +28,9 @@ The `lynx-ui-list` follows a headless composition pattern.
 ## Component Structure
 
 ```tsx
-<List />
+<List>
+  <list-item />
+</List>
 ```
 
 - **`List`**: The virtualized list container.
