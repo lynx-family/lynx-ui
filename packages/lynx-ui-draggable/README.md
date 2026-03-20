@@ -43,6 +43,10 @@ The `Draggable` component is composed of several specialized sub-components to g
 - **`DraggableArea`**: The defined area where items can be dragged.
 - **`Draggable`**: The actual draggable item.
 
+### Hooks
+
+- **`useDraggable`**: A hook for custom draggable implementations with main-thread callbacks.
+
 ---
 
 ## About @lynx-js/lynx-ui

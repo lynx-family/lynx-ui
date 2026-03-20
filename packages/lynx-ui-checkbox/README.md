@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-checkbox
 
-A headless Checkbox component for Lynx. It provides unstyled primitives for state management.
+A headless Checkbox component for Lynx. It supports controlled/uncontrolled checked state and indeterminate mode.
 
 ## Installation
 

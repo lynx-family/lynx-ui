@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-overlay
 
-An Overlay component for Lynx. It provides the stacking context and portal behavior for dialogs, popovers, and sheets.
+An Overlay component for Lynx. It renders content in a native overlay layer above the main view tree.
 
 ## Installation
 

@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-radio-group
 
-A headless RadioGroup component for Lynx. It provides primitives for selection state and keyboard navigation.
+A headless RadioGroup component for Lynx. It manages single-selection state across a group of radio buttons.
 
 ## Installation
 
@@ -30,16 +30,16 @@ The `lynx-ui-radio-group` follows a headless composition pattern.
 The `RadioGroup` component is composed of the following sub-components:
 
 ```tsx
-<RadioGroup>
+<RadioGroupRoot>
   <Radio>
     <RadioIndicator />
   </Radio>
-</RadioGroup>
+</RadioGroupRoot>
 ```
 
-- **`RadioGroup`**: The main group container.
-- **`Radio`**: The individual radio button.
-- **`RadioIndicator`**: The visual indicator for the radio button.
+- **`RadioGroupRoot`**: The root container that manages the selection state.
+- **`Radio`**: An individual radio button.
+- **`RadioIndicator`**: The visual indicator for the selected state.
 
 ---
 

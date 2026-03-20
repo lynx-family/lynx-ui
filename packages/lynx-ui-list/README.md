@@ -27,18 +27,18 @@ The `lynx-ui-list` follows a headless composition pattern.
 
 ## Component Structure
 
-The `List` component is composed of the following sub-components:
+The `List` component uses a render-prop pattern for items:
 
 ```tsx
-<List>
-  <ListItem>
-    {/* Your custom content */}
-  </ListItem>
-</List>
+<List
+  data={items}
+  renderItem={({ item }) => (
+    <view>{/* Your item content */}</view>
+  )}
+/>
 ```
 
-- **`List`**: The main list container.
-- **`ListItem`**: The list item component.
+- **`List`**: The virtualized list container. Uses `renderItem` prop for item rendering.
 
 ---
 

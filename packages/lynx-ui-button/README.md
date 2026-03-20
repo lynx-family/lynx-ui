@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-button
 
-A headless Button component for Lynx. It provides unstyled primitives for various interaction states.
+A headless Button component for Lynx. It provides press state tracking (`active`) and render props for custom styling.
 
 ## Installation
 

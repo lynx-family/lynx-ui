@@ -30,12 +30,24 @@ The `lynx-ui-popover` follows a headless composition pattern.
 The `Popover` component is composed of the following sub-components:
 
 ```tsx
-<Popover>
-  {/* Your custom content */}
-</Popover>
+<PopoverRoot>
+  <PopoverTrigger />
+  <PopoverPositioner>
+    <PopoverContent>
+      <PopoverArrow />
+      {/* Your custom content */}
+    </PopoverContent>
+  </PopoverPositioner>
+</PopoverRoot>
 ```
 
-- **`Popover`**: The main popover component.
+- **`PopoverRoot`**: The root container that manages open/close state.
+- **`PopoverTrigger`**: The element that toggles the popover.
+- **`PopoverAnchor`**: (Optional) An alternative anchor element for positioning.
+- **`PopoverPositioner`**: Handles floating positioning relative to the anchor.
+- **`PopoverContent`**: The popover panel content.
+- **`PopoverArrow`**: (Optional) An arrow pointing to the anchor.
+- **`PopoverBackdrop`**: (Optional) A backdrop overlay.
 
 ---
 

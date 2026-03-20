@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-dialog
 
-A headless Dialog (modal) component for Lynx. It provides primitives for focus management, backdrop interactions, and stacking order.
+A headless Dialog (modal) component for Lynx. It provides backdrop overlay, open/close state management, and enter/exit animations via Presence.
 
 ## Installation
 

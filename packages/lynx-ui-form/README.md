@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-form
 
-A headless Form component for Lynx. It provides primitives for state management, validation, and submission logic.
+A headless Form component for Lynx. It provides form context and a submit button that collects field values.
 
 ## Installation
 
@@ -30,12 +30,17 @@ The `lynx-ui-form` follows a headless composition pattern.
 The `Form` component is composed of the following sub-components:
 
 ```tsx
-<Form>
-  {/* Your custom content */}
-</Form>
+<FormRoot>
+  <FormField name="username">
+    <Input />
+  </FormField>
+  <FormSubmitButton />
+</FormRoot>
 ```
 
-- **`Form`**: The main form component.
+- **`FormRoot`**: The root container that provides form context.
+- **`FormField`**: Wraps an input and registers it with the form.
+- **`FormSubmitButton`**: A button that triggers form submission.
 
 ---
 

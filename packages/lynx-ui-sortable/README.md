@@ -30,12 +30,18 @@ The `lynx-ui-sortable` follows a headless composition pattern.
 The `Sortable` component is composed of the following sub-components:
 
 ```tsx
-<Sortable>
-  {/* Your custom content */}
-</Sortable>
+<SortableRoot>
+  <SortableItem>
+    <SortableItemArea>
+      {/* Your custom content */}
+    </SortableItemArea>
+  </SortableItem>
+</SortableRoot>
 ```
 
-- **`Sortable`**: The main sortable container.
+- **`SortableRoot`**: The root container that manages the sortable state.
+- **`SortableItem`**: An individual sortable item.
+- **`SortableItemArea`**: The draggable area within a sortable item.
 
 ---
 

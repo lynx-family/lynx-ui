@@ -31,11 +31,15 @@ The `Switch` component is composed of the following sub-components:
 
 ```tsx
 <Switch>
-  {/* Your custom content */}
+  <SwitchTrack>
+    <SwitchThumb />
+  </SwitchTrack>
 </Switch>
 ```
 
-- **`Switch`**: The main switch component.
+- **`Switch`**: The root container that manages the toggle state.
+- **`SwitchTrack`**: The track/rail of the switch.
+- **`SwitchThumb`**: The sliding thumb indicator.
 
 ---
 
