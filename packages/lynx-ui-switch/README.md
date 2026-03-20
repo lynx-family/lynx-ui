@@ -31,9 +31,8 @@ The `Switch` component is composed of the following sub-components:
 
 ```tsx
 <Switch>
-  <SwitchTrack>
-    <SwitchThumb />
-  </SwitchTrack>
+  <SwitchTrack />
+  <SwitchThumb />
 </Switch>
 ```
 
