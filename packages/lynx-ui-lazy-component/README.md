@@ -31,6 +31,7 @@ The `LazyComponent` component is composed of the following sub-components:
 
 ```tsx
 <LazyComponent>
+  {/* Your content */}
 </LazyComponent>
 ```
 

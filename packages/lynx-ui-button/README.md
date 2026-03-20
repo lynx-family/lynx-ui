@@ -27,6 +27,7 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ```tsx
 <Button>
+  {/* Your content */}
 </Button>
 ```
 

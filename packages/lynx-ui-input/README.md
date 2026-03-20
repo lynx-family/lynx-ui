@@ -35,10 +35,14 @@ The `Input` component is composed of several specialized sub-components to give 
 
 ```tsx
 <KeyboardAwareRoot>
-  <KeyboardAwareTrigger>
-    <Input />
-  </KeyboardAwareTrigger>
-  <KeyboardAwareResponder />
+  <KeyboardAwareResponder>
+    <KeyboardAwareTrigger>
+      <Input />
+    </KeyboardAwareTrigger>
+    <KeyboardAwareTrigger>
+      <TextArea />
+    </KeyboardAwareTrigger>
+  </KeyboardAwareResponder>
 </KeyboardAwareRoot>
 ```
 

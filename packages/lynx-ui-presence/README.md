@@ -21,9 +21,13 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ## Usage
 
-The `lynx-ui-presence` follows a headless composition pattern.
+`@lynx-js/lynx-ui-presence` is an internal primitive used by higher-level components (for example, `@lynx-js/lynx-ui-dialog`, `@lynx-js/lynx-ui-popover`, and `@lynx-js/lynx-ui-sheet`) to control mount/unmount with enter/exit animation states.
 
-[View Full Examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Presence)
+It is not expected to be consumed directly in application code, and its API may change without notice. If you need enter/exit animations for overlays and panels, prefer using `Dialog`, `Popover`, or `Sheet` from `@lynx-js/lynx-ui`.
+
+- [Dialog examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Dialog)
+- [Popover examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Popover)
+- [Sheet examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sheet)
 
 ## Component Structure
 

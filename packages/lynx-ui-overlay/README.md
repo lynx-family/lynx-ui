@@ -21,20 +21,23 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ## Usage
 
-The `lynx-ui-overlay` follows a headless composition pattern.
+`@lynx-js/lynx-ui-overlay` is an internal primitive used by higher-level components (for example, `@lynx-js/lynx-ui-dialog`, `@lynx-js/lynx-ui-popover`, and `@lynx-js/lynx-ui-sheet`) to render content above the normal view tree.
 
-[View Full Examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Overlay)
+It is not expected to be consumed directly in application code, and its API may change without notice. If you need an overlay-based UI, prefer using `Dialog`, `Popover`, or `Sheet` from `@lynx-js/lynx-ui`.
+
+- [Dialog examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Dialog)
+- [Popover examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Popover)
+- [Sheet examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sheet)
 
 ## Component Structure
 
-The `Overlay` component is composed of the following sub-components:
+The `OverlayView` component is the main overlay container:
 
 ```tsx
 <OverlayView>
+  {children}
 </OverlayView>
 ```
-
-- **`OverlayView`**: The main overlay container.
 
 ## About @lynx-js/lynx-ui
 

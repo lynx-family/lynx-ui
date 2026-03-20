@@ -32,8 +32,7 @@ The `Sortable` component is composed of the following sub-components:
 ```tsx
 <SortableRoot>
   <SortableItem>
-    <SortableItemArea>
-    </SortableItemArea>
+    <SortableItemArea />
   </SortableItem>
 </SortableRoot>
 ```
