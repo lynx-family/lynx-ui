@@ -36,7 +36,6 @@ The `Dialog` component is composed of several specialized sub-components to give
     <DialogBackdrop />
     <DialogContent>
       <DialogClose />
-
     </DialogContent>
   </DialogView>
 </DialogRoot>
@@ -49,12 +48,10 @@ The `Dialog` component is composed of several specialized sub-components to give
 - **`DialogTrigger`**: A button that opens the dialog.
 - **`DialogClose`**: A button that closes the dialog.
 
----
-
 ## About @lynx-js/lynx-ui
 
-This component is a part of the `@lynx-js/lynx-ui` library, which is officially maintained by Lynx. As a **Headless** UI library long-term maintained by the Lynx team, we provide maximally flexible, universal and high-performance UI solutions.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
 
 ## License
 
-lynx-ui is Apache License 2.0 licensed.
+[**lynx-ui**](https://github.com/lynx-family/lynx-ui) is [**Apache License 2.0**](./LICENSE) licensed.
