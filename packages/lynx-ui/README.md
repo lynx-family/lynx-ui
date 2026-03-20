@@ -1,14 +1,14 @@
 # @lynx-js/lynx-ui
 
-`@lynx-js/lynx-ui` is the component library officially maintained by Lynx. As a **Headless** UI library long-term maintained by the Lynx team, we provide maximally flexible, universal and high-performance UI solutions.
+`@lynx-js/lynx-ui` is the official headless UI library for Lynx, built for maximum flexibility, universality, and performance.
 
 ## Introduction
 
-We aim to complement native components' adaptation capabilities through frontend components, building a high-performance, native-like Lynx component ecosystem with excellent compatibility.
+We extend native components' capabilities through frontend components, building a high-performance, native-like Lynx component ecosystem with broad compatibility.
 
-UI characteristics within the same platform often exhibit significant differences in behavior, APIs, and even design philosophies—especially for advanced features. Cross-platform frameworks must strive to reconcile these discrepancies, and Lynx is no exception.
+UI characteristics on the same platform often differ in behavior, APIs, and even design philosophy, especially for advanced features. Cross-platform frameworks must bridge these gaps, and Lynx is no exception.
 
-Frontend components will organize and standardize these numerous underlying atomic APIs, reconciling their behaviors and limitations to achieve ultimate consistency on the frontend layer.
+This is where lynx-ui comes in. By streamlining and unifying disparate atomic APIs, its frontend components reconcile underlying behaviors and limitations to deliver a consistent experience across platforms.
 
 ## Installation
 
@@ -16,7 +16,7 @@ Frontend components will organize and standardize these numerous underlying atom
 
 ### Option 1: Full-Library Import (Recommended)
 
-You can import the entire `lynx-ui` package. `lynx-ui` supports tree-shaking, so unused components won't increase your final build size.
+Import the entire `lynx-ui` package. Tree-shaking is supported, so unused components won't increase your final build size.
 
 ```bash
 pnpm add @lynx-js/lynx-ui
@@ -38,7 +38,7 @@ export default function App() {
 
 ### Option 2: Importing Individual Components
 
-Each `lynx-ui` component is published as a separate package. This method is available for compatibility or specific use cases.
+Each `lynx-ui` component is distributed as a separate package. Use this approach for compatibility or specific requirements.
 
 **Example with `<Button>`:**
 
@@ -62,7 +62,7 @@ export default function App() {
 
 ## Configuration
 
-If you are using `rspeedy`, you might need to configure the `pluginReactLynx`.
+If you are using `rspeedy`, configure the `pluginReactLynx` as follows:
 
 ```typescript
 // lynx.config.ts
@@ -80,9 +80,9 @@ export default defineConfig({
 
 ## Compatibility
 
-- **LynxSDK**: > 2.16
+- **LynxSDK**: >= 3.2
 
-> These are full-library requirements. Individual components may have lower version requirements.
+> These are full-library requirements. Individual components may have different version requirements.
 
 ## Development
 

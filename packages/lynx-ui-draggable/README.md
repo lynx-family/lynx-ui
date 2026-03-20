@@ -42,12 +42,10 @@ The `Draggable` component is composed of several specialized sub-components to g
 - **`Draggable`**: The actual draggable item.
 - **`useDraggable`**: A hook for custom draggable implementations.
 
----
-
 ## About @lynx-js/lynx-ui
 
-This component is a part of the `@lynx-js/lynx-ui` library, which is officially maintained by Lynx. As a **Headless** UI library long-term maintained by the Lynx team, we provide maximally flexible, universal and high-performance UI solutions.
+This component is part of `@lynx-js/lynx-ui`, a headless UI library officially maintained by the Lynx team, built for maximum flexibility, universality, and performance.
 
 ## License
 
-lynx-ui is Apache License 2.0 licensed.
+[**lynx-ui**](https://github.com/lynx-family/lynx-ui) is [Apache License 2.0](./LICENSE) licensed.
