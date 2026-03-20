@@ -4,11 +4,11 @@
 
 ## Introduction
 
-We extend native components' capabilities through frontend components, building a high-performance, native-like Lynx component ecosystem with broad compatibility.
+We extend native components' capabilities through frontend components, toward a high-performance, native-like Lynx component ecosystem with broad compatibility.
 
 UI characteristics on the same platform often differ in behavior, APIs, and even design philosophy, especially for advanced features. Cross-platform frameworks must bridge these gaps, and Lynx is no exception.
 
-This is where lynx-ui comes in. By streamlining and unifying disparate atomic APIs, its frontend components reconcile underlying behaviors and limitations to deliver a consistent experience across platforms.
+This is where `lynx-ui` comes in, streamlining and unifying disparate atomic APIs to reconcile underlying behaviors and limitations, delivering a consistent experience across platforms.
 
 ## Installation
 
