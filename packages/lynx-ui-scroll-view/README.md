@@ -31,7 +31,7 @@ The `ScrollView` component is composed of the following sub-components:
 
 ```tsx
 <ScrollView>
-  {/* Your custom content */}
+  
 </ScrollView>
 ```
 

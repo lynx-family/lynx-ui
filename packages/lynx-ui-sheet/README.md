@@ -35,7 +35,7 @@ The `Sheet` component is composed of several specialized sub-components to give 
     <SheetBackdrop />
     <SheetContent>
       <SheetHandle />
-      {/* Your custom content */}
+
     </SheetContent>
   </SheetView>
 </SheetRoot>

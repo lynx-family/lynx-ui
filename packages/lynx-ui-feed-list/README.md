@@ -31,7 +31,7 @@ The `FeedList` component is composed of the following sub-components:
 
 ```tsx
 <FeedList>
-  {/* Your custom content */}
+  
 </FeedList>
 ```
 

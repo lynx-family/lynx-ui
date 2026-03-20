@@ -33,7 +33,7 @@ The `Sortable` component is composed of the following sub-components:
 <SortableRoot>
   <SortableItem>
     <SortableItemArea>
-      {/* Your custom content */}
+
     </SortableItemArea>
   </SortableItem>
 </SortableRoot>

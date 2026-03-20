@@ -32,7 +32,7 @@ The `Swiper` component is composed of the following sub-components:
 ```tsx
 <Swiper>
   <SwiperItem>
-    {/* Your custom content */}
+    
   </SwiperItem>
 </Swiper>
 ```

@@ -32,10 +32,11 @@ The `Popover` component is composed of the following sub-components:
 ```tsx
 <PopoverRoot>
   <PopoverTrigger />
+  <PopoverAnchor />
   <PopoverPositioner>
+    <PopoverBackdrop />
     <PopoverContent>
       <PopoverArrow />
-      {/* Your custom content */}
     </PopoverContent>
   </PopoverPositioner>
 </PopoverRoot>
@@ -43,11 +44,11 @@ The `Popover` component is composed of the following sub-components:
 
 - **`PopoverRoot`**: The root container that manages open/close state.
 - **`PopoverTrigger`**: The element that toggles the popover.
-- **`PopoverAnchor`**: (Optional) An alternative anchor element for positioning.
+- **`PopoverAnchor`**: An alternative anchor element for positioning.
 - **`PopoverPositioner`**: Handles floating positioning relative to the anchor.
+- **`PopoverBackdrop`**: A backdrop overlay.
 - **`PopoverContent`**: The popover panel content.
-- **`PopoverArrow`**: (Optional) An arrow pointing to the anchor.
-- **`PopoverBackdrop`**: (Optional) A backdrop overlay.
+- **`PopoverArrow`**: An arrow pointing to the anchor.
 
 ---
 

@@ -31,15 +31,13 @@ The `Form` component is composed of the following sub-components:
 
 ```tsx
 <FormRoot>
-  <FormField name="username">
-    <Input />
-  </FormField>
+  <FormField />
   <FormSubmitButton />
 </FormRoot>
 ```
 
 - **`FormRoot`**: The root container that provides form context.
-- **`FormField`**: Wraps an input and registers it with the form.
+- **`FormField`**: A form field container.
 - **`FormSubmitButton`**: A button that triggers form submission.
 
 ---

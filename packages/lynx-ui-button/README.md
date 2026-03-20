@@ -31,7 +31,7 @@ The `Button` component is composed of the following sub-components:
 
 ```tsx
 <Button>
-  {/* Your custom content */}
+  
 </Button>
 ```
 

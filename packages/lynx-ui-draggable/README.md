@@ -32,9 +32,7 @@ The `Draggable` component is composed of several specialized sub-components to g
 ```tsx
 <DraggableRoot>
   <DraggableArea>
-    <Draggable>
-      {/* Your custom content */}
-    </Draggable>
+    <Draggable />
   </DraggableArea>
 </DraggableRoot>
 ```
@@ -42,10 +40,7 @@ The `Draggable` component is composed of several specialized sub-components to g
 - **`DraggableRoot`**: The root container that manages the state and logic.
 - **`DraggableArea`**: The defined area where items can be dragged.
 - **`Draggable`**: The actual draggable item.
-
-### Hooks
-
-- **`useDraggable`**: A hook for custom draggable implementations with main-thread callbacks.
+- **`useDraggable`**: A hook for custom draggable implementations.
 
 ---
 

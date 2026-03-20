@@ -28,21 +28,14 @@ The `lynx-ui-presence` follows a headless composition pattern.
 ## Component Structure
 
 ```tsx
-<Presence show={isVisible}>
-  {(status) => (
-    <view className={status === 'entering' ? 'fade-in' : 'fade-out'}>
-      {/* Your content */}
-    </view>
-  )}
+<Presence>
+  
 </Presence>
 ```
 
 - **`Presence`**: Controls mount/unmount with enter/exit animation states.
-
-### Hooks
-
-- **`usePresenceGroup`**: Manages presence for a list of items.
-- **`useVisibilityFromPresence`**: Derives visibility from presence context.
+- **`usePresenceGroup`**: Hook for managing presence of a list of items.
+- **`useVisibilityFromPresence`**: Hook for deriving visibility from presence context.
 
 ---
 

@@ -31,7 +31,7 @@ The `Overlay` component is composed of the following sub-components:
 
 ```tsx
 <OverlayView>
-  {/* Your custom content */}
+  
 </OverlayView>
 ```
 

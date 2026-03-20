@@ -36,7 +36,7 @@ The `Dialog` component is composed of several specialized sub-components to give
     <DialogBackdrop />
     <DialogContent>
       <DialogClose />
-      {/* Your custom content */}
+
     </DialogContent>
   </DialogView>
 </DialogRoot>

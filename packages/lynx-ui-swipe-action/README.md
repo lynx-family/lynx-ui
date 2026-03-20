@@ -31,7 +31,7 @@ The `SwipeAction` component is composed of the following sub-components:
 
 ```tsx
 <SwipeAction>
-  {/* Your custom content */}
+  
 </SwipeAction>
 ```
 
