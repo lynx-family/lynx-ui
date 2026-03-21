@@ -1,3 +1,5 @@
+name: Common Test
+
 on:
   workflow_call:
     inputs:
@@ -46,7 +48,7 @@ jobs:
           fail-on-cache-miss: true
       - name: Install
         run: |
-          git submodule update --init --recursive --remote
+          git submodule update --init --recursive
           npm install -g corepack@latest
           corepack enable
           pnpm install --frozen-lockfile
