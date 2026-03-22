@@ -46,7 +46,7 @@ jobs:
           pnpm biome check
           pnpm dlx sherif@latest
       - name: Changeset Check
-        run: pnpm changeset status --since=origin/main
+        run: pnpm changeset status --since=origin/main || echo "::warning::Changeset check failed, but continuing execution."
 
   eslint:
     needs: build

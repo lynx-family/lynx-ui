@@ -55,6 +55,7 @@ sherif
 Sortableitem
 startrefresh
 svitejs
+swipeable
 taiki
 Threadify
 ufra
