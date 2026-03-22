@@ -6,9 +6,9 @@ This directory contains examples for the Sheet component.
 
 - **Basic**: Basic usage of Sheet.
 - **Controlled**: Controlled usage of Sheet.
-- **ControlledInitialOpen**: Controlled usage of Sheet with initial open state.
-- **DefaultShowOpen**: Sheet with default show open.
+- **ControlledOpen**: Controlled usage of Sheet with initial open state.
+- **DefaultOpen**: Uncontrolled Sheet with `defaultShow` enabled.
 - **Imperative**: Imperative usage of Sheet.
 - **AutoHeight**: Sheet with auto height.
-- **Pad**: Sheet usage on Pad.
+- **Tablet**: Tablet-friendly Sheet layout.
 - **InternalTest**: Internal test for Sheet.

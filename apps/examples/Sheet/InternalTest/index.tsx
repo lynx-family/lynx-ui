@@ -13,6 +13,8 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
+import { ActionButton, SnapButton } from '../shared/index.js'
+
 import './index.css'
 
 const snapPoints = ['25%', '50%', '75%']
@@ -174,6 +176,7 @@ function App() {
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
           <SheetContent
             className='sheet-content'
+            innerClassName='sheet-inner-content'
             snapAnimation={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
             <SheetHandle className='sheet-handle' />
@@ -184,44 +187,31 @@ function App() {
                 test rapid snap point changes.
               </text>
 
-              <view className='snap-row'>
-                <Button
-                  className='snap-button'
+              <view className='button-group'>
+                <SnapButton
+                  text='25%'
                   onClick={() => sheetRef.current?.snapTo(0)}
-                >
-                  <text className='snap-text'>25%</text>
-                </Button>
-                <Button
-                  className='snap-button'
+                />
+                <SnapButton
+                  text='50%'
                   onClick={() => sheetRef.current?.snapTo(1)}
-                >
-                  <text className='snap-text'>50%</text>
-                </Button>
-                <Button
-                  className='snap-button'
+                />
+                <SnapButton
+                  text='75%'
                   onClick={() => sheetRef.current?.snapTo(2)}
-                >
-                  <text className='snap-text'>75%</text>
-                </Button>
-              </view>
-
-              <view className='snap-row'>
-                <Button
-                  className='snap-button'
+                />
+                <SnapButton
+                  text='Expand'
                   onClick={() => sheetRef.current?.expand()}
-                >
-                  <text className='snap-text'>Expand</text>
-                </Button>
-                <Button
-                  className='snap-button'
+                />
+                <SnapButton
+                  text='Collapse'
                   onClick={() => sheetRef.current?.collapse()}
-                >
-                  <text className='snap-text'>Collapse</text>
-                </Button>
+                />
               </view>
 
-              <Button
-                className='control-button'
+              <ActionButton
+                text='Close Sheet'
                 onClick={() => {
                   if (controlled) {
                     setShow(false)
@@ -229,11 +219,7 @@ function App() {
                     sheetRef.current?.close()
                   }
                 }}
-              >
-                <text className='control-text'>
-                  Close Sheet
-                </text>
-              </Button>
+              />
             </view>
           </SheetContent>
         </SheetView>
