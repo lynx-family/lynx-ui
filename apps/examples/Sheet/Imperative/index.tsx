@@ -12,17 +12,19 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ControlButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, SnapButton, TriggerButton } from '../shared/index.js'
 
 import './index.css'
 
-const snapPoints = ['30%', '60%', '90%']
+const snapPoints = ['40%', '60%', '90%']
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
 
   return (
     <view className='container lunaris-dark'>
+      <text className='title-text'>Imperative Sheet</text>
+
       <TriggerButton
         text='Open Sheet (via ref)'
         onClick={() => sheetRef.current?.show()}
@@ -40,7 +42,7 @@ function App() {
           console.log('close change')
         }}
         snapPoints={snapPoints}
-        initialSnap={1}
+        initialSnap={0}
         onSnapChange={(snapIndex, snapValue) => {
           console.log(snapIndex, snapValue)
         }}
@@ -55,31 +57,34 @@ function App() {
             <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
-                Imperative Controls
+                Imperative Methods
               </text>
 
-              <ControlButton
-                text='Snap to 30% (Index 0)'
-                onClick={() => sheetRef.current?.snapTo(0)}
-              />
-              <ControlButton
-                text='Snap to 60% (Index 1)'
-                onClick={() => sheetRef.current?.snapTo(1)}
-              />
-              <ControlButton
-                text='Snap to 90% (Index 2)'
-                onClick={() => sheetRef.current?.snapTo(2)}
-              />
-              <ControlButton
-                text='Expand (Max)'
-                onClick={() => sheetRef.current?.expand()}
-              />
-              <ControlButton
-                text='Collapse (Min)'
-                onClick={() => sheetRef.current?.collapse()}
-              />
-              <ControlButton
-                text='Close via Ref'
+              <view className='button-group'>
+                <SnapButton
+                  text='40%'
+                  onClick={() => sheetRef.current?.snapTo(0)}
+                />
+                <SnapButton
+                  text='60%'
+                  onClick={() => sheetRef.current?.snapTo(1)}
+                />
+                <SnapButton
+                  text='90%'
+                  onClick={() => sheetRef.current?.snapTo(2)}
+                />
+                <SnapButton
+                  text='Expand (Max)'
+                  onClick={() => sheetRef.current?.expand()}
+                />
+                <SnapButton
+                  text='Collapse (Min)'
+                  onClick={() => sheetRef.current?.collapse()}
+                />
+              </view>
+
+              <ActionButton
+                text='Close'
                 onClick={() => sheetRef.current?.close()}
               />
             </view>

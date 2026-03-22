@@ -12,7 +12,7 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ControlButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, SnapButton, TriggerButton } from '../shared/index.js'
 
 import './index.css'
 
@@ -25,23 +25,14 @@ function App() {
 
   return (
     <view className='container lunaris-dark'>
-      <text className='title-text'>Fully Controlled Sheet</text>
+      <text className='title-text'>Controlled Sheet</text>
       <text className='subtitle-text'>
-        State: {show ? 'OPEN' : 'CLOSED'}
+        show: {show ? 'true' : 'false'}
       </text>
-
       <TriggerButton
-        onClick={() => setShow(true)}
-        text='Open (setShow(true))'
+        onClick={() => setShow(s => !s)}
+        text={show ? 'Opened' : 'Open (setShow(true))'}
       />
-
-      <TriggerButton
-        onClick={() => setShow(false)}
-        text='Close (setShow(false))'
-      />
-
-      <TriggerButton onClick={() => setShow(s => !s)} text='Toggle' />
-
       <SheetRoot
         ref={sheetRef}
         show={show}
@@ -71,26 +62,26 @@ function App() {
             <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
-                Controlled Mode
+                Controlled Sheet
               </text>
               <text className='info-text'>
-                The parent component manages the `show` state. Backdrop clicks
-                and gestures trigger `onShowChange`.
+                The parent component manages the `show` state. Backdrop taps and
+                gestures trigger `onShowChange`.
               </text>
+              <view className='button-group'>
+                <SnapButton
+                  onClick={() => sheetRef.current?.snapTo(0)}
+                  text='Snap to 40%'
+                />
+                <SnapButton
+                  onClick={() => sheetRef.current?.snapTo(1)}
+                  text='Snap to 80%'
+                />
+              </view>
 
-              <ControlButton
-                onClick={() => sheetRef.current?.snapTo(0)}
-                text='Snap to 40% (Index 0)'
-              />
-
-              <ControlButton
-                onClick={() => sheetRef.current?.snapTo(1)}
-                text='Snap to 80% (Index 1)'
-              />
-
-              <ControlButton
+              <ActionButton
                 onClick={() => setShow(false)}
-                text='Close (via state)'
+                text='Close (setShow(false))'
               />
             </view>
           </SheetContent>

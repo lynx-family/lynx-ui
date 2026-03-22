@@ -12,7 +12,7 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ControlButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, TriggerButton } from '../shared/index.js'
 
 import './index.css'
 
@@ -25,19 +25,14 @@ function App() {
 
   return (
     <view className='container lunaris-dark'>
-      <text className='title-text'>Controlled - Initially Open</text>
+      <text className='title-text'>Sheet Controlled Open</text>
       <text className='subtitle-text'>
         State: {show ? 'OPEN' : 'CLOSED'}
       </text>
 
       <TriggerButton
-        onClick={() => setShow(true)}
-        text='Open (setShow(true))'
-      />
-
-      <TriggerButton
-        onClick={() => setShow(false)}
-        text='Close (setShow(false))'
+        onClick={() => setShow(s => !s)}
+        text={show ? 'Close (setShow(false))' : 'Open (setShow(true))'}
       />
 
       <SheetRoot
@@ -61,13 +56,13 @@ function App() {
             <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
-                Initially Open (Controlled)
+                Controlled Open
               </text>
               <text className='info-text'>
                 This sheet starts with show=true in controlled mode.
               </text>
 
-              <ControlButton
+              <ActionButton
                 onClick={() => setShow(false)}
                 text='Close (via state)'
               />

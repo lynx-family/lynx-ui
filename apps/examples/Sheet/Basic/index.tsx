@@ -12,7 +12,7 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ControlButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, TriggerButton } from '../shared/index.js'
 import './index.css'
 
 const snapPoints = ['50%']
@@ -21,8 +21,8 @@ function App() {
   const sheetRef = useRef<SheetRootRef>(null)
 
   return (
-    <view className='container lunaris-light'>
-      <text className='title-text'>Basic Sheet Example</text>
+    <view className='container lunaris-dark'>
+      <text className='title-text'>Basic Sheet</text>
       <TriggerButton
         onClick={() => sheetRef.current?.show()}
         text='Open Sheet'
@@ -46,7 +46,7 @@ function App() {
               <text className='info-text'>
                 Simple uncontrolled sheet. Drag or tap backdrop to dismiss.
               </text>
-              <ControlButton
+              <ActionButton
                 onClick={() => sheetRef.current?.close()}
                 text='Close'
               />

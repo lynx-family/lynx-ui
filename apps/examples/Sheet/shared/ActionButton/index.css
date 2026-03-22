@@ -1,6 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.control-button {
+.action-button {
   height: 48px;
   width: 100%;
   padding-left: 24px;
@@ -10,13 +10,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 8px;
 }
 
-.control-button.ui-active {
+.action-button.ui-active {
   background-color: var(--primary-2);
 }
 
-.control-button-text {
+.action-button-text {
   color: var(--primary-content);
   font-size: 14px;
   font-weight: 500;

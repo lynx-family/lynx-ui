@@ -12,17 +12,23 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ControlButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, TriggerButton } from '../shared/index.js'
 import './index.css'
 
 const snapPoints = ['fit']
 const claimedGestureAngles: [number, number][] = [[-135, -45], [45, 135]]
+
+const longText =
+  'The Sheet component supports autoHeight mode, where the height is dynamically calculated based on its content. '
+    .repeat(10)
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
 
   return (
     <view className='container lunaris-dark'>
+      <text className='title-text'>Sheet Auto Height</text>
+
       <TriggerButton
         onClick={() => sheetRef.current?.show()}
         text='Open Sheet (via ref)'
@@ -55,9 +61,10 @@ function App() {
             <SheetHandle className='sheet-handle' />
             <view className='control-panel'>
               <text className='header-text'>
-                Long Content
+                Sheet with Long Content
               </text>
-              <ControlButton
+              <text className='info-text'>{longText}</text>
+              <ActionButton
                 onClick={() => sheetRef.current?.close()}
                 text='Close via Ref'
               />

@@ -1,14 +1,1 @@
-@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
-
-.subtitle-text {
-  color: var(--gradient-content-faded);
-  font-size: 14px;
-  font-weight: 500;
-  opacity: 0.7;
-  margin-bottom: 16px;
-}
-
-.sheet-content {
-  width: 100%;
-}

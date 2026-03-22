@@ -3,8 +3,7 @@
 .trigger-button {
   padding: 12px 24px;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  margin: 8px;
+  border-radius: 999px;
 }
 
 .trigger-button-text {

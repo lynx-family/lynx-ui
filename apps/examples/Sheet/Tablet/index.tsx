@@ -12,26 +12,26 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ControlButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, TriggerButton } from '../shared/index.js'
 
 import './index.css'
 
 const snapPoints = ['fit']
 const claimedGestureAngles: [number, number][] = [[-135, -45], [45, 135]]
 
+const longText =
+  'This example demonstrates a tablet-friendly Sheet layout. The content is constrained with a max-width so it stays readable on larger screens. '
+    .repeat(10)
+
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
 
   return (
     <view className='container lunaris-dark'>
+      <text className='title-text'>Sheet Tablet</text>
       <TriggerButton
         onClick={() => sheetRef.current?.show()}
         text='Open Sheet (via ref)'
-      />
-
-      <TriggerButton
-        onClick={() => sheetRef.current?.close()}
-        text='Close Sheet (via ref)'
       />
 
       <SheetRoot
@@ -54,14 +54,15 @@ function App() {
       >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
-          <SheetContent className='sheet-content'>
+          <SheetContent
+            className='sheet-content'
+            innerClassName='sheet-inner-content'
+          >
             <SheetHandle className='sheet-handle' />
-            <view className='control-panel' style='height: 700px'>
-              <text className='header-text'>
-                Long Content
-              </text>
-
-              <ControlButton
+            <view className='control-panel'>
+              <text className='header-text'>Sheet with Long Content</text>
+              <text className='info-text'>{longText}</text>
+              <ActionButton
                 onClick={() => sheetRef.current?.close()}
                 text='Close via Ref'
               />

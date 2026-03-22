@@ -1,23 +1,5 @@
-@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
 
-.sheet-content {
-  width: 100%;
-  height: 100%;
-  background-color: var(--canvas);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
-  border-top-left-radius: 36px;
-  border-top-right-radius: 36px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.control-panel {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+.header-text {
+  margin-bottom: 0px;
 }

@@ -12,8 +12,8 @@ const defaultConfig = exampleConfig(
     SheetControlled: './Controlled/index.tsx',
     SheetImperative: './Imperative/index.tsx',
     // For Internal Tests
-    SheetControlledInitialOpen: './ControlledInitialOpen/index.tsx',
-    SheetDefaultShowOpen: './DefaultShowOpen/index.tsx',
+    SheetControlledOpen: './ControlledOpen/index.tsx',
+    SheetDefaultOpen: './DefaultOpen/index.tsx',
     SheetTablet: './Tablet/index.tsx',
     SheetInternalTest: './InternalTest/index.tsx',
   },

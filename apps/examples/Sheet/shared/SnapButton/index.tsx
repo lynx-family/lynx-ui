@@ -6,18 +6,18 @@ import { Button } from '@lynx-js/lynx-ui'
 import type { ButtonProps } from '@lynx-js/lynx-ui'
 import './index.css'
 
-export interface ControlButtonProps
+export interface SnapButtonProps
   extends Omit<ButtonProps, 'children' | 'className'>
 {
   text: string
 }
 
-export function ControlButton(props: ControlButtonProps) {
+export function SnapButton(props: SnapButtonProps) {
   const { text, ...rest } = props
 
   return (
-    <Button className='control-button' {...rest}>
-      <text className='control-button-text'>{text}</text>
+    <Button className='snap-button' {...rest}>
+      <text className='snap-button-text'>{text}</text>
     </Button>
   )
 }
