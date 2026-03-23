@@ -15,7 +15,6 @@ env:
   GITHUB_BASE_REF: ${{ github.base_ref }}
   GITHUB_HEAD_REF: ${{ github.head_ref }}
   GITHUB_REF: ${{ github.ref }}
-  NPM_CONFIG_PROVENANCE: true
 jobs:
   build:
     runs-on: ubuntu-latest
