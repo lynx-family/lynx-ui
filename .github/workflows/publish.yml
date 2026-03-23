@@ -72,7 +72,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: "22"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       - name: Install
@@ -87,6 +87,10 @@ jobs:
         with:
           name: deploy-${{ github.sha }}
           path: .turbo
+      - name: Print npm and pnpm version
+        run: |
+          npm --version
+          corepack pnpm --version
       - name: build
         run: |
           corepack pnpm turbo build --summarize
