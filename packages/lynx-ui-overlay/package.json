@@ -43,5 +43,8 @@
     "@lynx-js/types": "*",
     "@types/react": "^18"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "jsnext:source": "./src/index.tsx"
 }
