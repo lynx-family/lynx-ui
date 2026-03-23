@@ -32,7 +32,7 @@ function App() {
 
       <TriggerButton
         disabled={show}
-        onClick={() => sheetRef.current?.show()}
+        onClick={() => sheetRef.current?.open()}
         text={show ? 'Opened' : 'Open (via ref)'}
       />
 

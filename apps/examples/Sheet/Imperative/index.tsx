@@ -27,7 +27,7 @@ function App() {
 
       <TriggerButton
         text='Open Sheet (via ref)'
-        onClick={() => sheetRef.current?.show()}
+        onClick={() => sheetRef.current?.open()}
       />
 
       <SheetRoot

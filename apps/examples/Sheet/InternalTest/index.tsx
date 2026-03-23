@@ -44,18 +44,18 @@ function App() {
   // Test: Rapid open/close
   const testRapidOpenClose = () => {
     log('TEST: Rapid open/close')
-    sheetRef.current?.show()
+    sheetRef.current?.open()
     setTimeout(() => sheetRef.current?.close(), 100)
-    setTimeout(() => sheetRef.current?.show(), 200)
+    setTimeout(() => sheetRef.current?.open(), 200)
     setTimeout(() => sheetRef.current?.close(), 300)
-    setTimeout(() => sheetRef.current?.show(), 400)
+    setTimeout(() => sheetRef.current?.open(), 400)
   }
 
   // Test: Double open
   const testDoubleOpen = () => {
     log('TEST: Double open (should ignore second)')
-    sheetRef.current?.show()
-    setTimeout(() => sheetRef.current?.show(), 50)
+    sheetRef.current?.open()
+    setTimeout(() => sheetRef.current?.open(), 50)
   }
 
   // Test: Double close
@@ -68,14 +68,14 @@ function App() {
   // Test: Snap during entry
   const testSnapDuringEntry = () => {
     log('TEST: snapTo during entry animation')
-    sheetRef.current?.show()
+    sheetRef.current?.open()
     setTimeout(() => sheetRef.current?.snapTo(2), 100)
   }
 
   // Test: Close during entry
   const testCloseDuringEntry = () => {
     log('TEST: close during entry animation')
-    sheetRef.current?.show()
+    sheetRef.current?.open()
     setTimeout(() => sheetRef.current?.close(), 150)
   }
 
@@ -102,7 +102,7 @@ function App() {
             if (controlled) {
               setShow(true)
             } else {
-              sheetRef.current?.show()
+              sheetRef.current?.open()
             }
           }}
         >

@@ -24,7 +24,7 @@ function App() {
     <view className='container lunaris-dark'>
       <text className='title-text'>Basic Sheet</text>
       <TriggerButton
-        onClick={() => sheetRef.current?.show()}
+        onClick={() => sheetRef.current?.open()}
         text='Open Sheet'
       />
       <SheetRoot

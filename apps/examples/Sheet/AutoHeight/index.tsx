@@ -30,7 +30,7 @@ function App() {
       <text className='title-text'>Sheet Auto Height</text>
 
       <TriggerButton
-        onClick={() => sheetRef.current?.show()}
+        onClick={() => sheetRef.current?.open()}
         text='Open Sheet (via ref)'
       />
 

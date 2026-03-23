@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 
 export { SheetRoot } from './SheetRoot'
-export type { SheetRootRef } from './SheetRoot'
 export { SheetBackdrop } from './SheetBackdrop'
 export { SheetContent } from './SheetContent'
 export { SheetHandle } from './SheetHandle'
@@ -17,4 +16,5 @@ export type {
   SheetViewProps,
   SheetHandleProps,
   SheetTransition,
+  SheetRootRef,
 } from './types'

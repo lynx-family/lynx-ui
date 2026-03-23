@@ -18,26 +18,7 @@ import { useMotionValueRef } from '@lynx-js/motion/mini'
 
 import { SheetContext } from '../context'
 import type { SheetMethods } from '../context'
-import type { SheetRootProps, SheetTransition } from '../types'
-
-export interface SheetRootRef {
-  snapTo: (
-    index: number,
-    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
-  ) => void
-  expand: (
-    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
-  ) => void
-  collapse: (
-    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
-  ) => void
-  close: (
-    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
-  ) => void
-  show: (
-    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
-  ) => void
-}
+import type { SheetRootProps, SheetRootRef } from '../types'
 
 export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
   (props, ref) => {
@@ -107,7 +88,6 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
     }, [])
 
     // Imperative handle methods
-    // Imperative handle methods
     useImperativeHandle(ref, () => {
       const queueAction = (action: () => void) => {
         if (mounted && sheetMethodsRef.current) {
@@ -137,7 +117,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
             queueAction(() => sheetMethodsRef.current?.close(opts))
           }
         },
-        show: (opts) => {
+        open: (opts) => {
           handleShowChange(true)
           queueAction(() => sheetMethodsRef.current?.show?.(opts))
         },

@@ -30,7 +30,7 @@ function App() {
     <view className='container lunaris-dark'>
       <text className='title-text'>Sheet Tablet</text>
       <TriggerButton
-        onClick={() => sheetRef.current?.show()}
+        onClick={() => sheetRef.current?.open()}
         text='Open Sheet (via ref)'
       />
 

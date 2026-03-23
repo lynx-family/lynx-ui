@@ -7,6 +7,25 @@ import type { ReactNode } from '@lynx-js/react'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
+export interface SheetRootRef {
+  snapTo: (
+    index: number,
+    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
+  ) => void
+  expand: (
+    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
+  ) => void
+  collapse: (
+    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
+  ) => void
+  close: (
+    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
+  ) => void
+  open: (
+    opts?: { animate?: boolean, snapAnimation?: SheetTransition },
+  ) => void
+}
+
 /**
  * The backdrop mask of the Sheet.
  * @zh Sheet 的背景遮罩。
