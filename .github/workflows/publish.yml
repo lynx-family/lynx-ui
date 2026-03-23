@@ -15,6 +15,7 @@ env:
   GITHUB_BASE_REF: ${{ github.base_ref }}
   GITHUB_HEAD_REF: ${{ github.head_ref }}
   GITHUB_REF: ${{ github.ref }}
+  NPM_CONFIG_PROVENANCE: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -96,7 +97,6 @@ jobs:
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN_LYNX_EXAMPLES }}
         with:
           publish: pnpm changeset publish
           title: "chore: Release ${{ steps.date.outputs.date }}"
