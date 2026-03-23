@@ -2,14 +2,6 @@
 
 `@lynx-js/lynx-ui` is the official headless UI library for ReactLynx, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
-> **Status**: Public repository · npm release pending
->
-> This repository is public as part of our upstream preparation and documentation process.
-> The @lynx-js/lynx-ui package has not been published to the public npm registry yet.
->
-> As a result, installing via pnpm add @lynx-js/lynx-ui will return 404.
-> This is expected. npm packages will be released at the official launch.
-
 ## Introduction
 
 We extend native components' capabilities through frontend components, toward a high-performance, native-like Lynx component ecosystem with broad compatibility.
