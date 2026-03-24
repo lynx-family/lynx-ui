@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useState } from '@lynx-js/react'
+import { root } from '@lynx-js/react'
 
 import {
   PopoverBackdrop,
@@ -12,18 +12,23 @@ import {
   PopoverTrigger,
 } from '@lynx-js/lynx-ui'
 
-import { EllipsisIcon, OptionsMenu } from '../shared/index.js'
+import { EllipsisIcon, OptionsMenu } from '../../shared/index.js'
 import './index.css'
 
 function App() {
-  const [internalVisible, setInternalVisible] = useState(true)
-
   return (
     <view className='container lunaris-dark'>
-      <PopoverRoot
-        show={internalVisible}
-        onVisibleChange={visible => setInternalVisible(visible)}
-      >
+      {
+        /*
+        Known issue (Popover Backdrop in uncontrolled mode):
+        - When PopoverBackdrop/PopoverPositioner are nested inside PopoverTrigger, tapping the backdrop can bubble to the trigger.
+        - Uncontrolled (`defaultShow`) may end up toggling twice (close then re-open), so the popover doesn't close cleanly.
+        - Observed: iOS cannot close via backdrop; Android may close-open-close.
+        Workaround: use controlled mode (`show` + `onVisibleChange`) until the upstream fix lands.
+        Tracking issue: lynx-family/lynx-ui#84
+      */
+      }
+      <PopoverRoot defaultShow={true}>
         <PopoverTrigger className='popover-trigger'>
           <EllipsisIcon />
           <PopoverPositioner

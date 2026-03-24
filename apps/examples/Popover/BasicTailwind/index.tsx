@@ -12,6 +12,8 @@ import {
 } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
+import { OptionsMenu } from '../shared/index.js'
+
 import './index.css'
 
 function App() {
@@ -33,18 +35,11 @@ function App() {
           >
             <PopoverContent
               className={clsx(
-                'flex flex-col items-start justify-center w-[264px] h-[192px] px-[36px] py-[24px] gap-[16px] rounded-[24px] bg-canvas shadow',
+                'flex flex-col items-start justify-start w-[264px] min-h-[192px] h-auto px-[36px] py-[24px] gap-[12px] rounded-[24px] bg-canvas shadow-lg',
                 'ui-open:animate-popover-in ui-closed:animate-popover-out origin-top-right',
               )}
             >
-              <text className='text-lg font-semibold text-content'>
-                Popover Content
-              </text>
-              <text className='text-base text-content'>
-                A temporary floating container used to display contextual
-                information or lightweight actions without interrupting the
-                current flow.
-              </text>
+              <OptionsMenu />
             </PopoverContent>
           </PopoverPositioner>
         </PopoverTrigger>

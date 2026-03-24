@@ -12,11 +12,14 @@ const baseConfig = exampleConfig({
   PopoverOffsetAdjustment: './OffsetAdjustment/index.tsx',
   PopoverExtraAnchor: './ExtraAnchor/index.tsx',
   PopoverWithScrollView: './WithScrollView/index.tsx',
-  PopoverCustomArrow: './CustomArrow/index.tsx',
   PopoverBackdrop: './Backdrop/index.tsx',
   PopoverControlled: './Controlled/index.tsx',
-  PopoverFastToggle: './FastToggle/index.tsx',
-  PopoverAnimationCancel: './AnimationCancel/index.tsx',
+  PopoverCustomArrow: './CustomArrow/index.tsx',
+  PopoverInternalTestFastToggle: './InternalTest/FastToggle/index.tsx',
+  PopoverInternalTestAnimationCancel:
+    './InternalTest/AnimationCancel/index.tsx',
+  PopoverInternalTestWithScrollView: './InternalTest/WithScrollView/index.tsx',
+  PopoverInternalTestBackdrop: './InternalTest/Backdrop/index.tsx',
 })
 
 const defaultConfig = defineConfig({

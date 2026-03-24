@@ -5,7 +5,6 @@
 import { root, useState } from '@lynx-js/react'
 
 import {
-  PopoverArrow,
   PopoverBackdrop,
   PopoverContent,
   PopoverPositioner,
@@ -13,13 +12,19 @@ import {
   PopoverTrigger,
 } from '@lynx-js/lynx-ui'
 
-import './style.css'
+import { OptionsMenu } from '../../shared/index.js'
+import './index.css'
 
 function App() {
   const [show, setShow] = useState(false)
   const [animationClass, setAnimationClass] = useState('popover-content')
+  const [running, setRunning] = useState(false)
 
   const handleStartTest = () => {
+    if (running) {
+      return
+    }
+    setRunning(true)
     // 1. Show the popover (starts entering animation)
     setShow(true)
     setAnimationClass('popover-content')
@@ -33,48 +38,53 @@ function App() {
       setTimeout(() => {
         console.log('Now try to close popover')
         setShow(false)
+        setRunning(false)
       }, 1000)
     }, 300) // Trigger mid-animation (assuming 300ms duration)
   }
 
   return (
-    <view className='container'>
-      <view bindtap={handleStartTest} className='test-btn'>
-        <text>Start Cancel Test (Change Animation)</text>
-      </view>
+    <view className='container lunaris-dark'>
+      <PopoverRoot show={show} onVisibleChange={setShow} debugLog={true}>
+        <view className='info-panel'>
+          <text className='info-panel-text'>
+            Status: {show ? 'Visible' : 'Hidden'}
+          </text>
 
-      <view className='wrapper'>
-        <PopoverRoot
-          show={show}
-          onVisibleChange={setShow}
-          debugLog={true}
-        >
-          <PopoverTrigger className='trigger'>
-            <text>Trigger</text>
+          <text className='animation-cancel-note'>
+            Scenario: Change animation class during enter animation -&gt;
+            triggers cancel. If bug exists: state might stall in
+            Entering/Leaving because cancel didn't trigger completion logic.
+          </text>
+
+          <PopoverTrigger
+            className='popover-trigger'
+            onClick={handleStartTest}
+            disabled={running}
+          >
+            <text className='popover-trigger-text'>
+              Animation Cancel Test
+            </text>
             <PopoverPositioner
               placement='bottom'
-              placementOffset={5}
+              placementOffset={12}
+              autoAdjust='shift'
+              className='popover-positioner'
+              transition={true}
             >
               <>
-                <PopoverBackdrop className='popover-backdrop' />
-                <PopoverContent
+                <PopoverBackdrop
+                  className='popover-backdrop'
                   transition={true}
-                  className={animationClass}
-                >
-                  <text>Content</text>
-                  <PopoverArrow size={10} color='navajowhite' />
+                />
+                <PopoverContent transition={true} className={animationClass}>
+                  <OptionsMenu />
                 </PopoverContent>
               </>
             </PopoverPositioner>
           </PopoverTrigger>
-        </PopoverRoot>
-      </view>
-
-      <text style={{ marginTop: 20, fontSize: 12, color: '#666' }}>
-        Scenario: Change animation class during enter animation -&gt; triggers
-        cancel. If bug exists: State might stall in Entering/Leaving because
-        cancel didn't trigger completion logic.
-      </text>
+        </view>
+      </PopoverRoot>
     </view>
   )
 }

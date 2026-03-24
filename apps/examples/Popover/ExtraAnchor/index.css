@@ -1,73 +1,34 @@
+@import "../shared/base.css";
+
 .container {
-  width: 100%;
-  height: 100%;
+  padding-bottom: 200px;
+}
+
+.popover-trigger {
+  align-self: flex-end;
+}
+
+.popover-positioner {
+  transform-origin: top left;
+}
+
+.popover-anchor {
+  align-self: flex-start;
+  height: 48px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-}
-
-.trigger {
-  width: 200px;
-  height: 200px;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  background-color: olivedrab;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-radius: 24px;
+  background-color: var(--canvas);
+  box-shadow: var(--shadow);
 }
 
-.anchor {
-  width: 200px;
-  height: 100px;
-  margin-top: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: beige;
-}
-
-@keyframes fade-and-enlarge {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fade-and-shrink {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-}
-
-.fade-enlarge {
-  animation: fade-and-enlarge 1s ease-out forwards;
-}
-
-.fade-shrink {
-  animation: fade-and-shrink 1s ease-out forwards;
-}
-
-.popover-content {
-  /* width: 400px; */
-  /* height: 50px; */
-  border-radius: 16px;
-  padding: 20px;
-  background-color: navajowhite;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
+.popover-anchor-text {
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  color: var(--content);
+  text-align: center;
 }

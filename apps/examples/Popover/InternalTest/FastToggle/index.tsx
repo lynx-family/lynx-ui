@@ -5,17 +5,17 @@
 import { root, useEffect, useState } from '@lynx-js/react'
 
 import {
-  PopoverAnchor,
   PopoverBackdrop,
   PopoverContent,
   PopoverPositioner,
   PopoverRoot,
+  PopoverTrigger,
 } from '@lynx-js/lynx-ui'
 
-import { EllipsisIcon, OptionsMenu } from '../shared/index.js'
+import { OptionsMenu } from '../../shared/index.js'
 import './index.css'
 
-const flipDuration = 2000
+const flipDuration = 10 // Trigger toggle in 10ms (less than 8 frames ~ 130ms)
 
 function App() {
   const [internalVisibleControlled, setInternalVisibleControlled] = useState(
@@ -23,11 +23,20 @@ function App() {
   )
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setInternalVisibleControlled(pre => !pre)
-    }, flipDuration)
+    // Simulate rapid open -> close
+    // This should reproduce the issue where mount remains true if closed before Entering starts
+    const timer = setTimeout(() => {
+      console.log('Toggling ON')
+      setInternalVisibleControlled(true)
+
+      setTimeout(() => {
+        console.log('Toggling OFF rapidly')
+        setInternalVisibleControlled(false)
+      }, flipDuration)
+    }, 1000)
+
     return () => {
-      clearInterval(timer)
+      clearTimeout(timer)
     }
   }, [])
 
@@ -36,31 +45,36 @@ function App() {
       <PopoverRoot
         show={internalVisibleControlled}
         onVisibleChange={setInternalVisibleControlled}
+        debugLog={true} // Enable debug log to observe state transitions
       >
         <view className='info-panel'>
           <text className='info-panel-text'>
-            Visible changed to {internalVisibleControlled ? 'true' : 'false'}
-            {' '}
-            in every {flipDuration}ms
+            Status: {internalVisibleControlled ? 'Visible' : 'Hidden'}
           </text>
 
-          {/* use trigger style but function as an anchor */}
-          <PopoverAnchor className='popover-trigger'>
-            <EllipsisIcon />
+          <text className='fast-toggle-note'>
+            Check console logs for [lynx-ui-presence] messages. If bug exists:
+            mount stays true after toggle off.
+          </text>
+          <PopoverTrigger className='popover-trigger'>
+            <text className='popover-trigger-text'>
+              Fast Toggle Test ({flipDuration}ms)
+            </text>
             <PopoverPositioner
               placement='bottom'
               placementOffset={12}
               autoAdjust='shift'
               className='popover-positioner'
+              transition={true}
             >
               <>
                 <PopoverBackdrop className='popover-backdrop' />
                 <PopoverContent className='popover-content'>
-                  <OptionsMenu description='Moments persist. Actions are transient.' />
+                  <OptionsMenu />
                 </PopoverContent>
               </>
             </PopoverPositioner>
-          </PopoverAnchor>
+          </PopoverTrigger>
         </view>
       </PopoverRoot>
     </view>

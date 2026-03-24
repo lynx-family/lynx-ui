@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from '@lynx-js/lynx-ui'
 
-import { EllipsisIcon, OptionsMenu } from '../shared/index.js'
+import { EllipsisIcon, OptionsMenu } from '../../shared/index.js'
 import './index.css'
 
 function App() {
@@ -23,6 +23,11 @@ function App() {
         className='scroll-view'
         style={{ zIndex: '1000' }}
       >
+        {
+          /* NOTE: Known issue — vertical ScrollView + vertical (column) flex centering in `.scroll-view-content`
+            (e.g. `flex-direction: column; justify-content: center;`) can cause the PopoverPositioner placement to be incorrectly calculated.
+            Tracking issue: lynx-family/lynx-ui#85 */
+        }
         <view className='scroll-view-content'>
           <PopoverRoot
             onClose={() => console.info('dismissed!')}

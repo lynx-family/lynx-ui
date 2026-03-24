@@ -1,4 +1,3 @@
-// Popover/index.tsx
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
@@ -12,32 +11,27 @@ import {
   PopoverTrigger,
 } from '@lynx-js/lynx-ui'
 
+import { EllipsisIcon, OptionsMenu } from '../shared/index.js'
 import './index.css'
 
 function App() {
   return (
     <view className='container lunaris-dark'>
       <PopoverRoot
+        defaultShow={true}
         onClose={() => console.info('dismissed!')}
         onOpen={() => console.info('shown!')}
-        debugLog={true}
       >
         <PopoverTrigger className='popover-trigger'>
-          <text className='popover-trigger-text'>Show Popover</text>
-
+          <EllipsisIcon />
           <PopoverPositioner
-            placement='bottom-end'
+            placement='bottom'
             placementOffset={12}
             autoAdjust='shift'
             className='popover-positioner'
           >
             <PopoverContent className='popover-content'>
-              <text className='popover-title'>Popover Content</text>
-              <text className='popover-desc'>
-                A temporary floating container used to display contextual
-                information or lightweight actions without interrupting the
-                current flow.
-              </text>
+              <OptionsMenu />
             </PopoverContent>
           </PopoverPositioner>
         </PopoverTrigger>

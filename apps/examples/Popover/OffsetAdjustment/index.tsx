@@ -5,55 +5,34 @@
 import { root } from '@lynx-js/react'
 
 import {
-  PopoverArrow,
   PopoverContent,
   PopoverPositioner,
   PopoverRoot,
   PopoverTrigger,
 } from '@lynx-js/lynx-ui'
-import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui'
-import { clsx } from 'clsx'
 
+import { EllipsisIcon, OptionsMenu } from '../shared/index.js'
 import './index.css'
 
 function App() {
   return (
-    <view className='container'>
+    <view className='container lunaris-dark'>
       <PopoverRoot
-        onClose={() => console.info('dismissed!!!!')}
-        onOpen={() => console.info('shown!!!! ')}
+        onClose={() => console.info('dismissed!')}
+        onOpen={() => console.info('shown!')}
       >
-        <PopoverTrigger className='trigger'>
-          <text>Click me to show Popover</text>
+        <PopoverTrigger className='popover-trigger'>
+          <EllipsisIcon />
           <PopoverPositioner
-            placement='top'
-            placementOffset={5}
-            crossAxisOffset={10}
+            placement='bottom'
+            placementOffset={12}
+            crossAxisOffset={40}
+            autoAdjust='shift'
             className='popover-positioner'
           >
-            {(
-              { entering = false, leaving = false }: PresenceAnimationStatus,
-            ) => {
-              return (
-                <PopoverContent
-                  className={clsx(
-                    'popover-content',
-                    {
-                      'fade-enlarge': entering,
-                      'fade-shrink': leaving,
-                    },
-                  )}
-                >
-                  <text style={{ wordBreak: 'normal' }}>
-                    Popover Content
-                  </text>
-                  <PopoverArrow
-                    size={10}
-                    color='navajowhite'
-                  />
-                </PopoverContent>
-              )
-            }}
+            <PopoverContent className='popover-content'>
+              <OptionsMenu />
+            </PopoverContent>
           </PopoverPositioner>
         </PopoverTrigger>
       </PopoverRoot>

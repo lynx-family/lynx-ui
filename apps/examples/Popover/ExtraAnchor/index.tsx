@@ -6,56 +6,41 @@ import { root } from '@lynx-js/react'
 
 import {
   PopoverAnchor,
-  PopoverArrow,
   PopoverContent,
   PopoverPositioner,
   PopoverRoot,
   PopoverTrigger,
 } from '@lynx-js/lynx-ui'
-import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui'
-import { clsx } from 'clsx'
 
+import { EllipsisIcon, OptionsMenu } from '../shared/index.js'
 import './index.css'
 
 function App() {
   return (
-    <view className='container'>
+    <view className='container lunaris-dark'>
       <PopoverRoot
-        onClose={() => console.info('dismissed!!!!')}
-        onOpen={() => console.info('shown!!!! ')}
+        onClose={() => console.info('dismissed!')}
+        onOpen={() => console.info('shown!')}
       >
-        <PopoverTrigger className='trigger'>
-          <text>Click me to show Popover</text>
+        <PopoverTrigger className='popover-trigger'>
+          <EllipsisIcon />
         </PopoverTrigger>
-        <PopoverAnchor className='anchor'>
-          <text>I'm the real Anchor for Popover</text>
+        <PopoverAnchor className='popover-anchor'>
+          <text className='popover-anchor-text'>Anchor</text>
           <PopoverPositioner
-            placement='top'
-            placementOffset={5}
+            placement='bottom-start'
+            placementOffset={12}
+            autoAdjust='shift'
+            className='popover-positioner'
           >
-            {(
-              { entering = false, leaving = false }: PresenceAnimationStatus,
-            ) => {
-              return (
-                <PopoverContent
-                  className={clsx(
-                    'popover-content',
-                    {
-                      'fade-enlarge': entering,
-                      'fade-shrink': leaving,
-                    },
-                  )}
-                >
-                  <text style={{ wordBreak: 'normal' }}>
-                    Popover Content
-                  </text>
-                  <PopoverArrow
-                    size={10}
-                    color='navajowhite'
-                  />
-                </PopoverContent>
-              )
-            }}
+            <PopoverContent className='popover-content'>
+              {
+                /* In ExtraAnchor scenario, PopoverContent is not wrapped by PopoverTrigger,
+               *  so tap-to-close is not supported. Use a different description accordingly.
+               */
+              }
+              <OptionsMenu description='Only the trigger dismisses this popover. Tapping the anchor or content has no effect.' />
+            </PopoverContent>
           </PopoverPositioner>
         </PopoverAnchor>
       </PopoverRoot>
