@@ -327,7 +327,7 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
 }
 
 export const PopoverBackdrop = (props: PopoverBackdropProps) => {
-  const { className, style, onClick, transition, ...restProps } = props
+  const { className, style, onClick, transition } = props
   const { state, setUncontrolledShow, isControlled, onVisibleChange } =
     useContext(PopoverContext)
 
@@ -344,6 +344,8 @@ export const PopoverBackdrop = (props: PopoverBackdropProps) => {
   const busy = resolveBusyState(state)
 
   const handleTap = () => {
+    if (busy) return
+
     if (isControlled) {
       onVisibleChange?.(false)
     } else {
@@ -363,9 +365,8 @@ export const PopoverBackdrop = (props: PopoverBackdropProps) => {
     <Button
       className={`popover-backdrop ${presenceClassName}`}
       style={style}
-      onClick={handleTap}
       disabled={busy}
-      {...restProps}
+      buttonProps={{ catchtap: handleTap }}
     />
   )
 }
