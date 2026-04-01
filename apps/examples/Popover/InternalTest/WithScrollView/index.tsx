@@ -32,6 +32,7 @@ function App() {
           <PopoverRoot
             onClose={() => console.info('dismissed!')}
             onOpen={() => console.info('shown!')}
+            defaultShow={true}
           >
             <PopoverTrigger className='popover-trigger'>
               <EllipsisIcon />

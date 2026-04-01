@@ -32,12 +32,20 @@ function App() {
             autoAdjust='shift'
             className='popover-positioner'
           >
-            <>
-              <PopoverBackdrop className='popover-backdrop' />
-              <PopoverContent className='popover-content'>
-                <OptionsMenu description='Moments persist. Actions are transient. Tap outside to close.' />
-              </PopoverContent>
-            </>
+            {/* Override to `position: absolute` (instead of default `fixed`) and oversize with viewport units so the backdrop stays under the popover and still covers the screen. */}
+            <PopoverBackdrop
+              className='popover-backdrop'
+              style={{
+                position: 'absolute',
+                top: '-100vh',
+                left: '-100vw',
+                width: '300vw',
+                height: '300vh',
+              }}
+            />
+            <PopoverContent className='popover-content'>
+              <OptionsMenu description='Moments persist. Actions are transient. Tap outside to close.' />
+            </PopoverContent>
           </PopoverPositioner>
         </PopoverTrigger>
       </PopoverRoot>

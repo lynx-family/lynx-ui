@@ -37,12 +37,30 @@ function App() {
             autoAdjust='shift'
             className='popover-positioner'
           >
-            <>
-              <PopoverBackdrop className='popover-backdrop' />
-              <PopoverContent className='popover-content'>
-                <OptionsMenu description='Moments persist. Actions are transient. Tap outside to close.' />
-              </PopoverContent>
-            </>
+            {
+              /*
+              NOTE (PopoverBackdrop stacking/sizing in Lynx):
+              - PopoverBackdrop uses `position: fixed` by default, which creates a new stacking context.
+              - This example needs the backdrop under the popover content, so we override it to `position: absolute`.
+              - Use `top/left/width/height` with viewport units to cover the full screen without hard-coding an arbitrary scale.
+              - After switching to `position: absolute`, the backdrop moves together with the PopoverPositioner/PopoverContent, so we oversize it (e.g. `300vw/300vh` with negative offsets) to keep it covering the whole viewport.
+              TODO: Move this behavior into PopoverBackdrop (absolute positioning + viewport-based size) so consumers don't need overrides.
+              Tracking issue: lynx-family/lynx-ui#90
+              */
+            }
+            <PopoverBackdrop
+              className='popover-backdrop'
+              style={{
+                position: 'absolute',
+                top: '-100vh',
+                left: '-100vw',
+                width: '300vw',
+                height: '300vh',
+              }}
+            />
+            <PopoverContent className='popover-content'>
+              <OptionsMenu description='Moments persist. Actions are transient. Tap outside to close.' />
+            </PopoverContent>
           </PopoverPositioner>
         </PopoverTrigger>
       </PopoverRoot>

@@ -5,7 +5,6 @@
 import { root, useState } from '@lynx-js/react'
 
 import {
-  PopoverBackdrop,
   PopoverContent,
   PopoverPositioner,
   PopoverRoot,
@@ -72,15 +71,9 @@ function App() {
               className='popover-positioner'
               transition={true}
             >
-              <>
-                <PopoverBackdrop
-                  className='popover-backdrop'
-                  transition={true}
-                />
-                <PopoverContent transition={true} className={animationClass}>
-                  <OptionsMenu />
-                </PopoverContent>
-              </>
+              <PopoverContent transition={true} className={animationClass}>
+                <OptionsMenu />
+              </PopoverContent>
             </PopoverPositioner>
           </PopoverTrigger>
         </view>

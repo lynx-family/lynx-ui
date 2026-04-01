@@ -6,7 +6,6 @@ import { root, useEffect, useState } from '@lynx-js/react'
 
 import {
   PopoverAnchor,
-  PopoverBackdrop,
   PopoverContent,
   PopoverPositioner,
   PopoverRoot,
@@ -19,7 +18,7 @@ const flipDuration = 2000
 
 function App() {
   const [internalVisibleControlled, setInternalVisibleControlled] = useState(
-    false,
+    true,
   )
 
   useEffect(() => {
@@ -53,12 +52,9 @@ function App() {
               autoAdjust='shift'
               className='popover-positioner'
             >
-              <>
-                <PopoverBackdrop className='popover-backdrop' />
-                <PopoverContent className='popover-content'>
-                  <OptionsMenu description='Moments persist. Actions are transient.' />
-                </PopoverContent>
-              </>
+              <PopoverContent className='popover-content'>
+                <OptionsMenu description='Moments persist. Actions are transient.' />
+              </PopoverContent>
             </PopoverPositioner>
           </PopoverAnchor>
         </view>
