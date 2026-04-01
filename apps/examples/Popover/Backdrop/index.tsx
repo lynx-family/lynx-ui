@@ -32,7 +32,14 @@ function App() {
             autoAdjust='shift'
             className='popover-positioner'
           >
-            {/* Override to `position: absolute` (instead of default `fixed`) and oversize with viewport units so the backdrop stays under the popover and still covers the screen. */}
+            {
+              /*
+              Workaround for issue #90: the default `fixed` PopoverBackdrop can stack above
+              PopoverContent in this layout, so we use `position: absolute` and oversize
+              with viewport units to keep the backdrop under the content while still
+              covering the screen.
+            */
+            }
             <PopoverBackdrop
               className='popover-backdrop'
               style={{
