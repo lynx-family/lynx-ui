@@ -17,7 +17,6 @@
   color: var(--gradient-content-faded);
   font-size: 14px;
   font-weight: 600;
-  opacity: 0.8;
   margin-top: 12px;
   margin-bottom: 8px;
 }
@@ -38,7 +37,7 @@
 
 .toggle-button {
   padding: 6px 12px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.12);
   border-radius: 8px;
 }
 
@@ -55,7 +54,7 @@
 
 .small-button {
   padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   margin: 4px;
 }
@@ -82,7 +81,7 @@
 .log-container {
   width: 100%;
   flex: 1;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 8px;
   margin-top: 8px;
