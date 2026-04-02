@@ -11,7 +11,7 @@ const outRoot = path.resolve(__dirname, '..')
 syncPackage({
   upstreamPackage: '@dugyu/luna-tokens',
   outRoot,
-  dropJsSourceMaps: true,
-  syncDist: true,
-  syncReadme: false,
+  syncDist: false,
+  syncReadme: true,
+  requireReadme: true,
 })

@@ -1,8 +1,22 @@
 {
   "name": "@lynx-js/luna-styles",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
-  "description": "CSS theme variables for the L.U.N.A project.",
+  "description": "CSS theme variables for the L.U.N.A project",
+  "keywords": [
+    "luna",
+    "styles",
+    "css",
+    "theme",
+    "tokens",
+    "variables"
+  ],
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/packages/luna-styles#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lynx-family/lynx-ui",
+    "directory": "luna/packages/luna-styles"
+  },
   "license": "Apache-2.0",
   "author": "The Lynx Authors",
   "sideEffects": [
@@ -29,10 +43,18 @@
       "default": "./dist/lunaris-dark.css"
     }
   },
+  "main": "./dist/index.css",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
-    "build": "node ./scripts/sync-dist.mjs"
+    "build": "node ./scripts/sync-dist.mjs",
+    "sync:readme": "node ./scripts/sync-readme.mjs"
+  },
+  "devDependencies": {
+    "@dugyu/luna-styles": "0.3.1"
   }
 }

@@ -1,8 +1,8 @@
 {
   "name": "@lynx-js/luna-tokens",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
-  "description": "Design tokens for the L.U.N.A project.",
+  "description": "Design tokens for the L.U.N.A project",
   "keywords": [
     "luna",
     "tokens",
@@ -10,6 +10,12 @@
     "theme",
     "colors"
   ],
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/packages/luna-tokens#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lynx-family/lynx-ui",
+    "directory": "luna/packages/luna-tokens"
+  },
   "license": "Apache-2.0",
   "author": "The Lynx Authors",
   "sideEffects": false,
@@ -41,10 +47,20 @@
       "require": "./dist/lunaris-dark.cjs"
     }
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
-    "build": "node ./scripts/sync-dist.mjs"
+    "build": "node ./scripts/sync-dist.mjs",
+    "sync:readme": "node ./scripts/sync-readme.mjs"
+  },
+  "devDependencies": {
+    "@dugyu/luna-tokens": "0.3.1"
   }
 }

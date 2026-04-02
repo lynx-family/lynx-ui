@@ -9,9 +9,9 @@ const __dirname = path.dirname(__filename)
 const outRoot = path.resolve(__dirname, '..')
 
 syncPackage({
-  upstreamPackage: '@dugyu/luna-tokens',
+  upstreamPackage: '@dugyu/luna-core',
   outRoot,
-  dropJsSourceMaps: true,
-  syncDist: true,
-  syncReadme: false,
+  syncDist: false,
+  syncReadme: true,
+  requireReadme: true,
 })

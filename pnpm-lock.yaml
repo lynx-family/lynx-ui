@@ -731,33 +731,52 @@ importers:
         specifier: catalog:tailwind
         version: 3.4.17
 
-  luna/packages/luna-core: {}
+  luna/packages/luna-core:
+    devDependencies:
+      '@dugyu/luna-core':
+        specifier: 0.3.1
+        version: 0.3.1
 
   luna/packages/luna-reactlynx:
     dependencies:
       '@lynx-js/luna-core':
         specifier: workspace:*
         version: link:../luna-core
-    devDependencies:
       '@lynx-js/react':
-        specifier: catalog:lynx
+        specifier: '>=0.100.0'
         version: 0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27)
       '@lynx-js/types':
         specifier: '*'
         version: 3.6.0
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^18
         version: 18.3.27
+    devDependencies:
+      '@dugyu/luna-reactlynx':
+        specifier: 0.3.1
+        version: 0.3.1(@lynx-js/react@0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/types@3.6.0)(@types/react@18.3.27)
 
-  luna/packages/luna-styles: {}
+  luna/packages/luna-styles:
+    devDependencies:
+      '@dugyu/luna-styles':
+        specifier: 0.3.1
+        version: 0.3.1
 
   luna/packages/luna-tailwind:
-    devDependencies:
+    dependencies:
       tailwindcss:
-        specifier: ^3.4.17
+        specifier: ^3.4.0
         version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
+    devDependencies:
+      '@dugyu/luna-tailwind':
+        specifier: 0.3.1
+        version: 0.3.1(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
 
-  luna/packages/luna-tokens: {}
+  luna/packages/luna-tokens:
+    devDependencies:
+      '@dugyu/luna-tokens':
+        specifier: 0.3.1
+        version: 0.3.1
 
   lunarium/apps/stage:
     dependencies:
@@ -2159,6 +2178,27 @@ packages:
     resolution: {integrity: sha512-9JOKWWngo5vPBFxJgFogAS4rfFC2GaB9Yew6JZbRBUik7j5Num2muuw5p1tMYnl2NUBdS2W4EgsSLM3uUDyhBQ==}
     cpu: [x64]
     os: [win32]
+
+  '@dugyu/luna-core@0.3.1':
+    resolution: {integrity: sha512-rhzP99G0ElhKRtfaa5E8R6OOwdOfwfnrXBAeFQLqj4sCtaQTI9fIPlFUg3juzsaE+RufivkHQHSlXtqii4UMAQ==}
+
+  '@dugyu/luna-reactlynx@0.3.1':
+    resolution: {integrity: sha512-+Scqzz7escKWCPxap15x7OYUmo+15Hn3IKX3AYC0He8y6Bs5ePpKFlqIk1HX2Xu7HSj4uyU4Q1PhCVUojI9Ovg==}
+    peerDependencies:
+      '@lynx-js/react': '>=0.100.0'
+      '@lynx-js/types': '*'
+      '@types/react': ^18
+
+  '@dugyu/luna-styles@0.3.1':
+    resolution: {integrity: sha512-uxBPHXtuuW6XAUGUTyp67LC297zagkfuaQxgfi0r6VCT6EA+1oiZkJ4gOltspQx6NSmMBDDNCYPkduy+jQSwOQ==}
+
+  '@dugyu/luna-tailwind@0.3.1':
+    resolution: {integrity: sha512-PvHXmOpw+ZhYe5YASsGq8QAZgXChvEU8GH+zkn3TiNdwSCSZxi/BaLsNlsof4Nvf7ISI8NcbkyNKRfLjdJBxyQ==}
+    peerDependencies:
+      tailwindcss: ^3.4.0
+
+  '@dugyu/luna-tokens@0.3.1':
+    resolution: {integrity: sha512-ZUUiIfJCWJBv0Pye2vB14lurg2urm2ubtyt6Xck/Q05a49ymQmMvVb3cgF2gnoHYJokayFBYsHhmRIG+GyS1jg==}
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -8048,6 +8088,24 @@ snapshots:
 
   '@dprint/win32-x64@0.48.0':
     optional: true
+
+  '@dugyu/luna-core@0.3.1': {}
+
+  '@dugyu/luna-reactlynx@0.3.1(@lynx-js/react@0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/types@3.6.0)(@types/react@18.3.27)':
+    dependencies:
+      '@dugyu/luna-core': 0.3.1
+      '@lynx-js/react': 0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27)
+      '@lynx-js/types': 3.6.0
+      '@types/react': 18.3.27
+
+  '@dugyu/luna-styles@0.3.1': {}
+
+  '@dugyu/luna-tailwind@0.3.1(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))':
+    dependencies:
+      '@dugyu/luna-core': 0.3.1
+      tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
+
+  '@dugyu/luna-tokens@0.3.1': {}
 
   '@emnapi/core@1.8.1':
     dependencies:

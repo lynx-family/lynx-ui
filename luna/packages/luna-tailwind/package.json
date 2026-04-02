@@ -1,8 +1,8 @@
 {
   "name": "@lynx-js/luna-tailwind",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
-  "description": "TailwindCSS preset for the L.U.N.A project.",
+  "description": "TailwindCSS preset for the L.U.N.A project",
   "keywords": [
     "luna",
     "tailwind",
@@ -10,6 +10,12 @@
     "colors",
     "tokens"
   ],
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/packages/luna-tailwind#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lynx-family/lynx-ui",
+    "directory": "luna/packages/luna-tailwind"
+  },
   "license": "Apache-2.0",
   "author": "The Lynx Authors",
   "sideEffects": false,
@@ -25,13 +31,17 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
-    "build": "node ./scripts/sync-dist.mjs"
+    "build": "node ./scripts/sync-dist.mjs",
+    "sync:readme": "node ./scripts/sync-readme.mjs"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
+    "@dugyu/luna-tailwind": "0.3.1"
   },
   "peerDependencies": {
     "tailwindcss": "^3.4.0"
