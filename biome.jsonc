@@ -15,9 +15,7 @@
     "enabled": false,
   },
   "files": {
-    "ignore": [
-      "lunarium",
-    ],
+    "ignore": [".vscode"],
   },
   "linter": {
     "enabled": true,
@@ -35,7 +33,6 @@
       "__snapshots__/**",
       "packages/web-platform/web-test/**",
       "website/**",
-      "lunarium/**",
     ],
     "rules": {
       // We are migrating from ESLint to Biome

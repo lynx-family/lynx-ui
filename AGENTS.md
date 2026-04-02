@@ -32,18 +32,17 @@ This repository follows a standard Monorepo structure. Understanding this is cru
     - `index.css`: Styles for the example.
   - Example: `apps/examples/Button/Basic/` contains a basic usage example of the Button.
 
-- **`lunarium/`**: A Git submodule containing shared design tokens, themes, and base styles (L.U.N.A).
-  - **Note**: This is an external dependency managed as a submodule. Do not modify files here directly unless you know what you are doing.
+- **`luna/`**: The in-repo theming foundation (L.U.N.A) used by lynx-ui (tokens, styles, Tailwind preset, ReactLynx bindings).
 
 ## Development Workflow
 
 ### 1. Initial Setup
 
-**ALWAYS** ensure dependencies are up to date and submodules are initialized.
+**ALWAYS** ensure dependencies are up to date.
 
 ```bash
-# Install dependencies and submodules
-pnpm install:all
+# Install dependencies
+pnpm install
 ```
 
 ### 2. Creating a New Component
@@ -85,7 +84,7 @@ pnpm build
 # Verify the aggregate lynx-ui entry re-exports the expected package surface
 pnpm check:exports
 
-# Run all checks (format, lint, manypkg, sherif, submodule regression)
+# Run all checks (format, lint, manypkg, sherif)
 pnpm check:all
 ```
 
@@ -93,7 +92,6 @@ pnpm check:all
 
 - **`pnpm check:manypkg`**: Checks for dependency mismatches in the monorepo.
 - **`pnpm check:sherif`**: Lints `package.json` files for potential issues using Sherif.
-- **`pnpm check:submodule`**: Prevents submodule regression (ensures submodules don't point to older commits).
 - **`pnpm check:exports`**: Verifies that `@lynx-js/lynx-ui` re-exports the expected public surface from included sub-packages.
 - **`pnpm spell`**: Runs CSpell to check for spelling errors.
 
@@ -107,7 +105,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 - **Composition**: Use sub-components (e.g., `Checkbox` + `CheckboxIndicator`) to allow flexible layout and styling.
 - **State via Context**: Share state between parent and child components using React Context (e.g., `CheckboxContext`).
 - **Render Props / Children**: Support `children` as a function (render props) or standard children to pass state down for dynamic styling.
-- **Styling API**: Provide `className` and `style` props on all components to allow users to apply their own design system (or `lunarium` tokens).
+- **Styling API**: Provide `className` and `style` props on all components to allow users to apply their own design system (or L.U.N.A tokens).
 - **State-based Class Names**: Components should not apply default class names, but users can use `className` props to apply state-based class names.
 
 ### General
@@ -127,7 +125,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 
 - Use `clsx` for conditional class names.
 - Follow the existing pattern of separating styles into `.css` files or using Tailwind if configured in the specific package.
-- Respect the `lunarium` design tokens.
+- Respect the L.U.N.A design tokens.
 
 ### Main Thread Script (MTS)
 
@@ -176,7 +174,6 @@ This project uses **Biome** for linting and formatting, and **dprint** for Markd
 ## Contribution Rules
 
 1. **Changesets**: All changes that affect package versions must include a changeset (`pnpm changeset`).
-2. **Submodules**: Ensure `lunarium` submodule is initialized (`pnpm update:submodules`).
 
 ## Documentation Maintenance
 

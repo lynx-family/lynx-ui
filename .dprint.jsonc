@@ -31,6 +31,7 @@
     "**/node_modules",
     "pnpm-lock.yaml",
     ".pnpm-store",
+    ".vscode/**",
 
     // Outputs
     ".nx",
@@ -66,9 +67,7 @@
     ".codebase/pipelines/**",
 
     // self
-    ".dprint.jsonc",
-
-    "lunarium/**"
+    ".dprint.jsonc"
   ],
   "plugins": [
     "https://github.com/dprint/dprint-plugin-typescript/releases/download/0.93.3/plugin.wasm",

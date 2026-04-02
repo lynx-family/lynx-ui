@@ -31,7 +31,6 @@ jobs:
           persist-credentials: false
       - name: Install
         run: |
-          git submodule update --init --recursive
           npm install -g corepack@latest
           corepack enable && corepack prepare
           corepack pnpm install --frozen-lockfile
@@ -77,7 +76,6 @@ jobs:
           package-manager-cache: false
       - name: Install
         run: |
-          git submodule update --init --recursive
           npm install -g corepack@latest
           corepack enable && corepack prepare
           corepack pnpm install --frozen-lockfile

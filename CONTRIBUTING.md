@@ -11,26 +11,18 @@ Thank you for your interest in contributing to lynx-ui!
 
 ## Repository Structure
 
-This repository uses a **Git submodule** to include the shared theming foundation.
+This repository includes the shared theming foundation in-repo.
 
-- **`lunarium/`**
-  A Git submodule that contains L.U.N.A (tokens, theming, styles, Tailwind preset, React bindings, etc.)
-
-Most lynx-ui examples depend on code inside `lunarium`, so the submodule **must be initialized before development**.
+- **`luna/`**
+  Contains L.U.N.A (tokens, theming, styles, Tailwind preset, ReactLynx bindings, etc.)
 
 ## Setup Guide
 
-1. **Clone the repository (with submodules):**
+1. **Clone the repository:**
 
    ```bash
-   git clone --recurse-submodules https://github.com/lynx-family/lynx-ui.git
+   git clone https://github.com/lynx-family/lynx-ui.git
    cd lynx-ui
-   ```
-
-   If you already cloned the repo without submodules:
-
-   ```bash
-   pnpm update:submodules
    ```
 
 2. **Install dependencies:**
@@ -44,9 +36,6 @@ Most lynx-ui examples depend on code inside `lunarium`, so the submodule **must 
    ```bash
    pnpm build
    ```
-
-> If you encounter missing packages under `lunarium/`,
-> make sure the submodule is initialized.
 
 ## Development Workflow
 
@@ -162,17 +151,6 @@ pnpm genDoc lynx-ui-dialog lynx-ui-button
   ```bash
   pnpm changeset
   ```
-
-- **Submodule Pointer Updates**\
-  Changes to Git submodule pointers (e.g. `lunarium`) are treated as
-  infrastructure-level changes and must be handled separately from
-  regular component work.
-
-  - Do not update submodule pointers in regular component PRs.
-  - Changes to submodules should be made in the corresponding submodule
-    repositories first.
-  - Submodule pointer updates must be submitted as a dedicated PR
-    with clear intent.
 
 ### Versioning
 

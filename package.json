@@ -15,7 +15,6 @@
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:sherif": "pnpm dlx sherif@latest",
-    "check:submodule": "node tools/scripts/check-submodule-regression.mjs",
     "coverage": "vitest --coverage",
     "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
@@ -25,14 +24,12 @@
     "fix:manypkg": "pnpm dlx @manypkg/cli fix",
     "fix:sherif": "pnpm dlx sherif@latest --fix",
     "format": "dprint fmt",
-    "install:all": "pnpm run update:submodules && pnpm install",
+    "install:all": "pnpm install",
     "knip": "knip",
     "make-new-component": "tsx tools/make-new-component/index.ts",
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
-    "test": "vitest",
-    "update:submodules": "git submodule update --init --recursive",
-    "update:submodules-remote": "git submodule update --init --recursive --remote"
+    "test": "vitest"
   },
   "nano-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
@@ -45,8 +42,7 @@
     ],
     "*package.json": "sort-package-json",
     "*": [
-      "cspell lint --config cspell.jsonc --gitignore --no-must-find-files",
-      "node tools/scripts/check-submodule-regression.mjs"
+      "cspell lint --config cspell.jsonc --gitignore --no-must-find-files"
     ]
   },
   "devDependencies": {

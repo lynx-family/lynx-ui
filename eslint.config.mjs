@@ -21,6 +21,7 @@ export default tseslint.config(
       '**/node_modules/**',
       '.pnpm-store/**',
       '.codebase/**',
+      '.vscode/**',
 
       // Outputs
       '**/.turbo/**',
@@ -51,9 +52,6 @@ export default tseslint.config(
       'tools/typings/**/*.d.ts',
       '**/tools/make-new-component/examplesTemplate/**',
       '**/tools/make-new-component/template/**',
-
-      // Submodule
-      'lunarium/**',
     ],
   },
   js.configs.recommended,

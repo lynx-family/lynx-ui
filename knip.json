@@ -61,7 +61,6 @@
   },
   "ignore": [
     "luna/**",
-    "lunarium/**",
     "**/dist/**"
   ],
   "ignoreBinaries": [

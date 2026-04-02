@@ -55,8 +55,6 @@
     "/renovate.json5",
     "**/*.json",
     "/pnpm-workspace.yaml",
-    // Submodule
-    "lunarium/**",
   ],
   "enableFiletypes": [
     "mdx",
