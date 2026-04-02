@@ -41,7 +41,8 @@
     "sync:readme": "node ./scripts/sync-readme.mjs"
   },
   "devDependencies": {
-    "@dugyu/luna-tailwind": "0.3.1"
+    "@dugyu/luna-tailwind": "0.3.1",
+    "tailwindcss": "catalog:tailwind"
   },
   "peerDependencies": {
     "tailwindcss": "^3.4.0"

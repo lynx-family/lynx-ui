@@ -2,8 +2,6 @@ packages:
   - packages/*
   - apps/examples/*
   - luna/packages/*
-  - lunarium/apps/*
-  - lunarium/packages/**
   - tools/rsbuild-plugin-select-entry
   - tools/canary-release
   - "!**/node_modules/**"

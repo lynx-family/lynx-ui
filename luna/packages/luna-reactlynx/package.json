@@ -57,7 +57,10 @@
     "@lynx-js/luna-core": "workspace:*"
   },
   "devDependencies": {
-    "@dugyu/luna-reactlynx": "0.3.1"
+    "@dugyu/luna-reactlynx": "0.3.1",
+    "@lynx-js/react": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@types/react": "catalog:"
   },
   "peerDependencies": {
     "@lynx-js/react": ">=0.100.0",
