@@ -30,12 +30,6 @@ export const Button = (prop: ButtonProps) => {
   } = prop
   const [active, setActive] = useState(false)
 
-  const rawButtonProps = buttonProps ?? {}
-  const { catchtap, ...restButtonProps } = rawButtonProps as unknown as {
-    catchtap?: unknown
-  } & Record<string, unknown>
-  const hasCatchTap = typeof catchtap === 'function'
-
   // Only when the button is active and not disabled, the active style will be applied
   const isEffectiveActive = active && !disabled
 
@@ -53,14 +47,8 @@ export const Button = (prop: ButtonProps) => {
     if (disabled) return
   })
 
-  const handleTap = useMemoizedFn((_e?: unknown) => {
+  const handleTap = useMemoizedFn(() => {
     if (disabled) return
-    onClick?.()
-  })
-
-  const handleCatchTap = useMemoizedFn((_e?: unknown) => {
-    if (disabled) return
-    ;(catchtap as undefined | ((_e?: unknown) => void))?.(_e)
     onClick?.()
   })
 
@@ -72,9 +60,7 @@ export const Button = (prop: ButtonProps) => {
   return (
     <ButtonContext.Provider value={contextValue}>
       <view
-        {...(hasCatchTap
-          ? { catchtap: handleCatchTap }
-          : { bindtap: handleTap })}
+        bindtap={handleTap}
         bindtouchstart={handleTouchStart}
         bindtouchend={handleTouchEnd}
         bindtouchcancel={handleTouchEnd}
@@ -84,7 +70,7 @@ export const Button = (prop: ButtonProps) => {
           'ui-active': isEffectiveActive,
           'ui-disabled': disabled,
         })}
-        {...restButtonProps}
+        {...buttonProps}
       >
         {renderedChildren}
       </view>
