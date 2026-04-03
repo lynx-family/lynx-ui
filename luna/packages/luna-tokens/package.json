@@ -1,7 +1,6 @@
 {
   "name": "@lynx-js/luna-tokens",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Design tokens for the L.U.N.A project",
   "keywords": [
     "luna",
@@ -62,5 +61,8 @@
   },
   "devDependencies": {
     "@dugyu/luna-tokens": "0.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

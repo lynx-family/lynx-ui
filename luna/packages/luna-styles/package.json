@@ -1,7 +1,6 @@
 {
   "name": "@lynx-js/luna-styles",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "CSS theme variables for the L.U.N.A project",
   "keywords": [
     "luna",
@@ -56,5 +55,8 @@
   },
   "devDependencies": {
     "@dugyu/luna-styles": "0.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -7,7 +7,15 @@
     }
   ],
   "commit": false,
-  "fixed": [],
+  "fixed": [
+    [
+      "@lynx-js/luna-core",
+      "@lynx-js/luna-reactlynx",
+      "@lynx-js/luna-styles",
+      "@lynx-js/luna-tailwind",
+      "@lynx-js/luna-tokens"
+    ]
+  ],
   "linked": [
     [
       "@lynx-js/lynx-ui",
@@ -18,7 +26,6 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@lynx-js/luna-*",
     "lynx-ui-**-examples"
   ],
   "privatePackages": {

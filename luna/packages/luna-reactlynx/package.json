@@ -1,7 +1,6 @@
 {
   "name": "@lynx-js/luna-reactlynx",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Reactlynx theming primitives (provider/hooks) and optional runtime wrappers for the L.U.N.A project",
   "keywords": [
     "luna",
@@ -66,5 +65,8 @@
     "@lynx-js/react": ">=0.100.0",
     "@lynx-js/types": "*",
     "@types/react": "^18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
