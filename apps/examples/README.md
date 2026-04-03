@@ -20,12 +20,12 @@ We use `turbo` to run examples for specific components.
 
 First, find the package name for the component you want to run. You can check the `package.json` inside the component's example folder (`apps/examples/src/<Component>/package.json`).
 
-Common pattern: `lynx-ui-<component-name>-examples`
+Common pattern: `@lynx-example/lynx-ui-<component-name>`
 
 **Examples:**
 
-- Button: `lynx-ui-button-examples`
-- Checkbox: `lynx-ui-checkbox-examples`
+- Button: `@lynx-example/lynx-ui-button`
+- Checkbox: `@lynx-example/lynx-ui-checkbox`
 
 ### 2. Run with Turbo
 
@@ -42,7 +42,7 @@ npx turbo watch dev --filter <package-name>
 To run the **Button** examples:
 
 ```bash
-npx turbo watch dev --filter lynx-ui-button-examples
+npx turbo watch dev --filter '@lynx-example/lynx-ui-button'
 ```
 
 ## Troubleshooting

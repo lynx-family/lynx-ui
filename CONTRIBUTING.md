@@ -84,7 +84,7 @@ apps/examples/src/<Component>/package.json
 
    ```bash
    # Example: Run button examples
-   npx turbo watch dev --filter lynx-ui-button-examples
+   npx turbo watch dev --filter '@lynx-example/lynx-ui-button'
    ```
 
 ## Code Quality

@@ -330,8 +330,8 @@ function copyAndModifyForExample(
 
       if (file === 'package.json') {
         newContent = newContent.replace(
-          'lynx-ui-new-component-examples',
-          `lynx-ui-${toKebabCase(componentName)}-examples`,
+          '@lynx-example/lynx-ui-new-component',
+          `@lynx-example/lynx-ui-${toKebabCase(componentName)}`,
         )
         newContent = newContent.replace(
           'NewComponent',

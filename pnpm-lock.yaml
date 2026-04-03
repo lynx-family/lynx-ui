@@ -209,6 +209,9 @@ importers:
         specifier: 'catalog:'
         version: 0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27)
     devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -237,6 +240,9 @@ importers:
       '@lynx-js/luna-tailwind':
         specifier: workspace:*
         version: link:../../../luna/packages/luna-tailwind
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -324,6 +330,9 @@ importers:
         specifier: 'catalog:'
         version: 0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27)
     devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -346,6 +355,9 @@ importers:
         specifier: 'catalog:'
         version: 0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27)
     devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -368,6 +380,9 @@ importers:
         specifier: 'catalog:'
         version: 0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27)
     devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -427,6 +442,9 @@ importers:
       '@lynx-js/luna-tailwind':
         specifier: workspace:*
         version: link:../../../luna/packages/luna-tailwind
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -464,6 +482,9 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
@@ -641,6 +662,9 @@ importers:
       '@lynx-js/luna-tailwind':
         specifier: workspace:*
         version: link:../../../luna/packages/luna-tailwind
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.3.3
       '@lynx-js/react-rsbuild-plugin':
         specifier: 'catalog:'
         version: 0.11.2(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)

@@ -1,6 +1,6 @@
 {
-  "name": "lynx-ui-new-component-examples",
-  "version": "0.0.4",
+  "name": "@lynx-example/lynx-ui-new-component",
+  "version": "0.0.0",
   "private": true,
   "repository": {
     "type": "git",

@@ -68,7 +68,7 @@ To test changes, run the specific example for the component.
    Check `apps/examples/README.md` or `package.json` in the example folder for the exact filter name. Typically:
 
    ```bash
-   npx turbo watch dev --filter lynx-ui-<component-name>-examples
+   npx turbo watch dev --filter '@lynx-example/lynx-ui-<component-name>'
    ```
 
 Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of `@lynx-js/lynx-ui-<component>` or `@lynx-js/lynx-ui-common`, unless a symbol is intentionally excluded from the aggregate entry.
