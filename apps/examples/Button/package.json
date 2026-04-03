@@ -1,7 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-button",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Example app demonstrating Button usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Button#readme",
   "repository": {
@@ -10,6 +9,9 @@
     "directory": "apps/examples/Button"
   },
   "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
   "type": "module",
   "files": [
     "LICENSE",
@@ -36,5 +38,8 @@
     "@lynx-js/rspeedy": "catalog:",
     "@lynx-js/types": "catalog:",
     "@types/react": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

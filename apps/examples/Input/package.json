@@ -1,7 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-input",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Example app demonstrating Input usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Input#readme",
   "repository": {
@@ -10,6 +9,9 @@
     "directory": "apps/examples/Input"
   },
   "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
   "type": "module",
   "files": [
     "LICENSE",
@@ -34,5 +36,8 @@
     "@lynx-js/react-rsbuild-plugin": "catalog:",
     "@lynx-js/rspeedy": "catalog:",
     "@types/react": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

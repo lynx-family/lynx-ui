@@ -1,7 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-switch",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Example app demonstrating Switch usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Switch#readme",
   "repository": {
@@ -10,6 +9,9 @@
     "directory": "apps/examples/Switch"
   },
   "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
   "type": "module",
   "files": [
     "LICENSE",
@@ -39,5 +41,8 @@
     "@types/react": "catalog:",
     "rsbuild-plugin-tailwindcss": "catalog:tailwind",
     "tailwindcss": "catalog:tailwind"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

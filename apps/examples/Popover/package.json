@@ -1,7 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-popover",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Example app demonstrating Popover usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Popover#readme",
   "repository": {
@@ -10,6 +9,9 @@
     "directory": "apps/examples/Popover"
   },
   "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
   "type": "module",
   "files": [
     "LICENSE",
@@ -40,5 +42,8 @@
     "@types/react": "catalog:",
     "rsbuild-plugin-tailwindcss": "catalog:tailwind",
     "tailwindcss": "catalog:tailwind"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
