@@ -26,7 +26,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "lynx-ui-**-examples"
+    "@lynx-example/lynx-ui-*"
   ],
   "privatePackages": {
     "tag": false,

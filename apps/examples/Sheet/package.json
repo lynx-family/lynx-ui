@@ -1,7 +1,9 @@
 {
-  "name": "lynx-ui-sheet-examples",
-  "version": "0.0.4",
+  "name": "@lynx-example/lynx-ui-sheet",
+  "version": "0.0.0",
   "private": true,
+  "description": "Example app demonstrating Sheet usage in lynx-ui",
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sheet#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lynx-family/lynx-ui.git",
@@ -9,6 +11,13 @@
   },
   "license": "Apache-2.0",
   "type": "module",
+  "files": [
+    "LICENSE",
+    "CHANGELOG.md",
+    "dist/",
+    "src/",
+    "lynx.config.mjs"
+  ],
   "scripts": {
     "build": "rspeedy build",
     "build:dev": "rspeedy build --mode=development",
