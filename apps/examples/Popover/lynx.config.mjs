@@ -15,11 +15,12 @@ const baseConfig = exampleConfig({
   PopoverBackdrop: './Backdrop/index.tsx',
   PopoverControlled: './Controlled/index.tsx',
   PopoverCustomArrow: './CustomArrow/index.tsx',
-  PopoverInternalTestFastToggle: './InternalTest/FastToggle/index.tsx',
+  // Uncomment entries below when running internal tests for Popover.
+  /* PopoverInternalTestFastToggle: './InternalTest/FastToggle/index.tsx',
   PopoverInternalTestAnimationCancel:
     './InternalTest/AnimationCancel/index.tsx',
   PopoverInternalTestWithScrollView: './InternalTest/WithScrollView/index.tsx',
-  PopoverInternalTestBackdrop: './InternalTest/Backdrop/index.tsx',
+  PopoverInternalTestBackdrop: './InternalTest/Backdrop/index.tsx', */
 })
 
 const defaultConfig = defineConfig({

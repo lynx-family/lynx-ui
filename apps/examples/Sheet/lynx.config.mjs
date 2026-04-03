@@ -12,10 +12,11 @@ const defaultConfig = exampleConfig(
     SheetControlled: './Controlled/index.tsx',
     SheetImperative: './Imperative/index.tsx',
     // For Internal Tests
-    SheetControlledOpen: './ControlledOpen/index.tsx',
+    // Uncomment entries below when running internal tests for Sheet.
+    /*     SheetControlledOpen: './ControlledOpen/index.tsx',
     SheetDefaultOpen: './DefaultOpen/index.tsx',
     SheetTablet: './Tablet/index.tsx',
-    SheetInternalTest: './InternalTest/index.tsx',
+    SheetInternalTest: './InternalTest/index.tsx', */
   },
   false,
 )
