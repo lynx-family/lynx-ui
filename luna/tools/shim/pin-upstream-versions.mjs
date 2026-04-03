@@ -175,10 +175,6 @@ function isUpstreamPackageName(name) {
   return typeof name === 'string' && name.startsWith('@dugyu/luna-')
 }
 
-function isLocalLunaPackageName(name) {
-  return typeof name === 'string' && name.startsWith('@lynx-js/luna-')
-}
-
 function mapUpstreamToLocalPackageName(upstreamName) {
   if (isUpstreamPackageName(upstreamName) === false) return null
   return `@lynx-js/luna-${upstreamName.slice('@dugyu/luna-'.length)}`
@@ -404,38 +400,29 @@ function syncMetadataFromUpstream({
     )
     : []
 
-  if (upstreamDepEntries.length > 0) {
-    const prevDeps = localPkgJson.dependencies
-        && typeof localPkgJson.dependencies === 'object'
-      ? localPkgJson.dependencies
-      : {}
-
-    const nextDeps = {}
-    for (const [name, spec] of Object.entries(prevDeps)) {
-      if (isLocalLunaPackageName(name)) continue
-      if (isUpstreamPackageName(name)) continue
-      if (typeof spec !== 'string') continue
-      nextDeps[name] = spec
+  const nextDeps = {}
+  for (const [name, spec] of upstreamDepEntries) {
+    if (isUpstreamPackageName(name)) {
+      const localName = mapUpstreamToLocalPackageName(name)
+      if (!localName) continue
+      nextDeps[localName] = 'workspace:*'
+      continue
     }
 
-    for (const [name, spec] of upstreamDepEntries) {
-      if (isUpstreamPackageName(name)) {
-        const localName = mapUpstreamToLocalPackageName(name)
-        if (!localName) continue
-        nextDeps[localName] = 'workspace:*'
-        continue
-      }
+    const nextSpec = catalogIndex?.get(name) || spec
+    nextDeps[name] = nextSpec
+  }
 
-      const nextSpec = catalogIndex?.get(name) || spec
-      nextDeps[name] = nextSpec
-    }
-
-    const prevDepsJson = JSON.stringify(prevDeps ?? null)
-    const nextDepsJson = JSON.stringify(nextDeps)
-    if (prevDepsJson !== nextDepsJson) {
+  const prevDepsJson = JSON.stringify(localPkgJson.dependencies ?? null)
+  const nextDepsValue = Object.keys(nextDeps).length > 0 ? nextDeps : null
+  const nextDepsJson = JSON.stringify(nextDepsValue)
+  if (prevDepsJson !== nextDepsJson) {
+    if (nextDepsValue) {
       localPkgJson.dependencies = nextDeps
-      changed = true
+    } else {
+      delete localPkgJson.dependencies
     }
+    changed = true
   }
 
   return changed
