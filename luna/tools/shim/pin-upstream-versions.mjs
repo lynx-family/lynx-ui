@@ -413,6 +413,18 @@ function syncMetadataFromUpstream({
     nextDeps[name] = nextSpec
   }
 
+  const localDeps = localPkgJson.dependencies
+      && typeof localPkgJson.dependencies === 'object'
+    ? localPkgJson.dependencies
+    : null
+  if (localDeps) {
+    for (const [name, spec] of Object.entries(localDeps)) {
+      if (nextDeps[name] !== undefined) continue
+      if (typeof spec !== 'string') continue
+      nextDeps[name] = spec
+    }
+  }
+
   const prevDepsJson = JSON.stringify(localPkgJson.dependencies ?? null)
   const nextDepsValue = Object.keys(nextDeps).length > 0 ? nextDeps : null
   const nextDepsJson = JSON.stringify(nextDepsValue)
