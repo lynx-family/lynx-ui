@@ -692,6 +692,10 @@ importers:
         version: 0.3.1
 
   luna/packages/luna-tailwind:
+    dependencies:
+      '@lynx-js/luna-core':
+        specifier: workspace:*
+        version: link:../luna-core
     devDependencies:
       '@dugyu/luna-tailwind':
         specifier: 0.3.1
