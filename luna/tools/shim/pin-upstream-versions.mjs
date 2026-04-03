@@ -68,6 +68,74 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n')
 }
 
+function unquoteYamlString(value) {
+  if (typeof value !== 'string') return value
+  const trimmed = value.trim()
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"'))
+    || (trimmed.startsWith('\'') && trimmed.endsWith('\''))
+  ) {
+    return trimmed.slice(1, -1)
+  }
+  return trimmed
+}
+
+function readPnpmWorkspaceCatalogIndex(repoRoot) {
+  const workspacePath = path.join(repoRoot, 'pnpm-workspace.yaml')
+  if (fs.existsSync(workspacePath) === false) return new Map()
+
+  const text = fs.readFileSync(workspacePath, 'utf8')
+  const lines = text.split('\n')
+
+  const index = new Map()
+  let section = null
+  let catalogGroup = null
+
+  for (const rawLine of lines) {
+    const line = rawLine.replace(/\r$/, '')
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+
+    const indent = line.length - line.trimStart().length
+
+    if (indent === 0 && trimmed === 'catalog:') {
+      section = 'catalog'
+      catalogGroup = null
+      continue
+    }
+
+    if (indent === 0 && trimmed === 'catalogs:') {
+      section = 'catalogs'
+      catalogGroup = null
+      continue
+    }
+
+    if (section === 'catalog' && indent === 2) {
+      const i = trimmed.indexOf(':')
+      if (i <= 0) continue
+      const key = unquoteYamlString(trimmed.slice(0, i))
+      if (!key) continue
+      index.set(key, 'catalog:')
+      continue
+    }
+
+    if (section === 'catalogs' && indent === 2 && trimmed.endsWith(':')) {
+      catalogGroup = unquoteYamlString(trimmed.slice(0, -1))
+      continue
+    }
+
+    if (section === 'catalogs' && catalogGroup && indent === 4) {
+      const i = trimmed.indexOf(':')
+      if (i <= 0) continue
+      const key = unquoteYamlString(trimmed.slice(0, i))
+      if (!key) continue
+      index.set(key, `catalog:${catalogGroup}`)
+    }
+  }
+
+  return index
+}
+
 function listLunaPackageJsonPaths(repoRoot) {
   const lunaPackagesDir = path.join(repoRoot, 'luna', 'packages')
   if (fs.existsSync(lunaPackagesDir) === false) {
@@ -105,6 +173,15 @@ function findRepoRoot(startDir) {
 
 function isUpstreamPackageName(name) {
   return typeof name === 'string' && name.startsWith('@dugyu/luna-')
+}
+
+function isLocalLunaPackageName(name) {
+  return typeof name === 'string' && name.startsWith('@lynx-js/luna-')
+}
+
+function mapUpstreamToLocalPackageName(upstreamName) {
+  if (isUpstreamPackageName(upstreamName) === false) return null
+  return `@lynx-js/luna-${upstreamName.slice('@dugyu/luna-'.length)}`
 }
 
 function normalizeMode(mode) {
@@ -229,6 +306,7 @@ function rewriteRepoString(value, { localDirectory }) {
 
 function syncMetadataFromUpstream({
   repoRoot,
+  catalogIndex,
   localPkgDir,
   localPkgJson,
   upstreamPkgJson,
@@ -319,6 +397,47 @@ function syncMetadataFromUpstream({
     changed = true
   }
 
+  const upstreamDeps = upstreamPkgJson.dependencies
+  const upstreamDepEntries = upstreamDeps && typeof upstreamDeps === 'object'
+    ? Object.entries(upstreamDeps).filter(([, spec]) =>
+      typeof spec === 'string'
+    )
+    : []
+
+  if (upstreamDepEntries.length > 0) {
+    const prevDeps = localPkgJson.dependencies
+        && typeof localPkgJson.dependencies === 'object'
+      ? localPkgJson.dependencies
+      : {}
+
+    const nextDeps = {}
+    for (const [name, spec] of Object.entries(prevDeps)) {
+      if (isLocalLunaPackageName(name)) continue
+      if (isUpstreamPackageName(name)) continue
+      if (typeof spec !== 'string') continue
+      nextDeps[name] = spec
+    }
+
+    for (const [name, spec] of upstreamDepEntries) {
+      if (isUpstreamPackageName(name)) {
+        const localName = mapUpstreamToLocalPackageName(name)
+        if (!localName) continue
+        nextDeps[localName] = 'workspace:*'
+        continue
+      }
+
+      const nextSpec = catalogIndex?.get(name) || spec
+      nextDeps[name] = nextSpec
+    }
+
+    const prevDepsJson = JSON.stringify(prevDeps ?? null)
+    const nextDepsJson = JSON.stringify(nextDeps)
+    if (prevDepsJson !== nextDepsJson) {
+      localPkgJson.dependencies = nextDeps
+      changed = true
+    }
+  }
+
   return changed
 }
 
@@ -328,6 +447,7 @@ export function pinUpstreamVersions({
   setVersion,
   dryRun = false,
 }) {
+  const catalogIndex = readPnpmWorkspaceCatalogIndex(repoRoot)
   const packageJsonPaths = listLunaPackageJsonPaths(repoRoot)
   const updates = []
 
@@ -355,6 +475,7 @@ export function pinUpstreamVersions({
     )
     const changedByMetadata = syncMetadataFromUpstream({
       repoRoot,
+      catalogIndex,
       localPkgDir: pkgDir,
       localPkgJson: pkgJson,
       upstreamPkgJson,

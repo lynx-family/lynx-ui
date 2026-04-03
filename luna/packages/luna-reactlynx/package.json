@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/luna-reactlynx",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Reactlynx theming primitives (provider/hooks) and optional runtime wrappers for the L.U.N.A project",
   "keywords": [
     "luna",
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/packages/luna-reactlynx#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lynx-family/lynx-ui",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
     "directory": "luna/packages/luna-reactlynx"
   },
   "license": "Apache-2.0",

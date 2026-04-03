@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/luna-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Core constants, types, and utilities for the L.U.N.A project",
   "keywords": [
     "luna",
@@ -12,7 +12,7 @@
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/packages/luna-core#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lynx-family/lynx-ui",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
     "directory": "luna/packages/luna-core"
   },
   "license": "Apache-2.0",
