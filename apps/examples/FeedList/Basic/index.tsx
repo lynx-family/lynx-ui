@@ -7,16 +7,16 @@ import { root, useMemo, useRef, useState } from '@lynx-js/react'
 import { FeedList } from '@lynx-js/lynx-ui'
 import type { FeedListRef } from '@lynx-js/lynx-ui'
 
+import { FEED_INITIAL, FEED_MORE, FEED_REFRESH } from './data'
+import type { LetterItem } from './data'
 import { RectangleCard } from './RectangleCard'
 
 import './index.css'
 
-const INITIAL_LETTERS = ['F', 'E', 'E', 'D', 'L', 'I', 'S', 'T']
-const MORE_LETTERS = ['L', 'Y', 'N', 'X', 'U', 'I']
-
 function App() {
   const feedListRef = useRef<FeedListRef>(null)
-  const [letters, setLetters] = useState(INITIAL_LETTERS)
+  const [items, setItems] = useState<LetterItem[]>(FEED_INITIAL)
+  const noMoreData = useRef(false)
 
   const renderRefreshHeader = useMemo(
     () => (
@@ -70,14 +70,20 @@ function App() {
 
   const handleRefresh = () => {
     setTimeout(() => {
+      // Reset so load-more can fire again after refresh
+      noMoreData.current = false
+      setItems(prev =>
+        prev[0]?.key.startsWith('refresh-') ? FEED_INITIAL : FEED_REFRESH
+      )
       feedListRef.current?.finishRefresh()
-      setLetters(INITIAL_LETTERS)
     }, 2000)
   }
 
   const handleLoadMore = () => {
+    if (noMoreData.current) return
     setTimeout(() => {
-      setLetters(prev => [...prev, ...MORE_LETTERS])
+      noMoreData.current = true
+      setItems(prev => [...prev, ...FEED_MORE])
       feedListRef.current?.changeHasMoreStatus(false)
     }, 2000)
   }
@@ -107,9 +113,13 @@ function App() {
         <list-item item-key='demo-header'>
           <view className='demo-header' />
         </list-item>
-        {letters.map((letter, i) => (
-          <list-item key={`item-${i}`} item-key={`item-${i}`}>
-            <RectangleCard cardKey={`item-${i}`} letter={letter} height={500} />
+        {items.map((item: LetterItem) => (
+          <list-item key={item.key} item-key={item.key}>
+            <RectangleCard
+              cardKey={item.key}
+              letter={item.letter}
+              height={500}
+            />
           </list-item>
         ))}
         <list-item item-key='demo-footer'>
@@ -121,5 +131,4 @@ function App() {
 }
 
 root.render(<App />)
-
 export default App
