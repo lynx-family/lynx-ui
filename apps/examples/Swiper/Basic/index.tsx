@@ -65,7 +65,7 @@ function SwiperEntry(): JSX.Element {
           count={itemArr.length}
         />
       </view>
-      <view class='operation'>
+      <view className='operation'>
         <Button
           onClick={() => {
             swiperRef.current?.swipePrev()
@@ -82,7 +82,7 @@ function SwiperEntry(): JSX.Element {
           text='SwipeNext'
         />
       </view>
-      <view class='sub-operation'>
+      <view className='sub-operation'>
         <Button
           onClick={() => {
             setItemWidthsIndex(prev => (prev + 1) % itemWidths.length)
