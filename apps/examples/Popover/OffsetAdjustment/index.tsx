@@ -16,7 +16,7 @@ import './index.css'
 
 function App() {
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <PopoverRoot
         onClose={() => console.info('dismissed!')}
         onOpen={() => console.info('shown!')}

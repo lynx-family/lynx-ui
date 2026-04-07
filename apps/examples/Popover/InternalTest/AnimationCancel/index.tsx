@@ -43,7 +43,7 @@ function App() {
   }
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <PopoverRoot show={show} onVisibleChange={setShow} debugLog={true}>
         <view className='info-panel'>
           <text className='info-panel-text'>

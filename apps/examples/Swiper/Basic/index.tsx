@@ -27,9 +27,9 @@ function SwiperEntry(): JSX.Element {
   const swiperRef = useRef<SwiperRef>(null)
 
   return (
-    <view class='container lunaris-dark'>
-      <view class='top-area' />
-      <view class='content-area'>
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area'>
         <Swiper
           ref={swiperRef}
           data={itemArr}

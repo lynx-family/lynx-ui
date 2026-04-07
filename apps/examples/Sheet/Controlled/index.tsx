@@ -24,7 +24,7 @@ function App() {
   const [show, setShow] = useState(false)
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <text className='title-text'>Controlled Sheet</text>
       <text className='subtitle-text'>
         show: {show ? 'true' : 'false'}

@@ -31,19 +31,19 @@ function App() {
   )
 
   return (
-    <view className='container lunaris-dark luna-gradient-berry'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
       <KeyboardAwareRoot androidStatusBarPlusBottomBarHeight={74}>
         <FormRoot
           initialValues={initialValues}
         >
-          <KeyboardAwareResponder as='ScrollView' className='canvas'>
+          <KeyboardAwareResponder as='ScrollView' className='demo-canvas'>
             <view className='form-container'>
               <text className='form-title'>Keyboard-aware Form</text>
               <text className='form-subtitle'>
                 Form fields stay visible while typing in a long scroll.
               </text>
 
-              <view className='divider' />
+              <view className='form-divider' />
 
               {demoItems.map((item) => {
                 if (item.type === 'block') {
@@ -53,8 +53,8 @@ function App() {
                 if (item.type === 'input') {
                   return (
                     <KeyboardAwareTrigger key={item.key} offset={0}>
-                      <view className='card'>
-                        <text className='label'>{item.label}</text>
+                      <view className='form-card'>
+                        <text className='form-label'>{item.label}</text>
                         <view className='input-container'>
                           <FormField
                             as='Input'
@@ -70,13 +70,13 @@ function App() {
 
                 return (
                   <KeyboardAwareTrigger key={item.key} offset={0}>
-                    <view className='card'>
-                      <text className='label'>{item.label}</text>
-                      <view className='textarea-wrap'>
+                    <view className='form-card'>
+                      <text className='form-label'>{item.label}</text>
+                      <view className='form-textarea-wrap'>
                         <FormField
                           as='TextArea'
                           name={item.name}
-                          className='textarea'
+                          className='form-textarea'
                           placeholder={item.placeholder}
                           maxLines={12}
                           maxLength={600}
@@ -87,7 +87,7 @@ function App() {
                 )
               })}
 
-              <view className='divider' />
+              <view className='form-divider' />
 
               <FormSubmitButton
                 className='submit-button'

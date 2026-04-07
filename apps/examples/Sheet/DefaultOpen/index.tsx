@@ -27,7 +27,7 @@ function App() {
   const [show, setShow] = useState(defaultShow)
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <text className='title-text'>Sheet Default Open</text>
 
       <TriggerButton

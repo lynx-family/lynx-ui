@@ -10,7 +10,7 @@ import './index.css'
 
 function App() {
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <Draggable
         className='draggable'
         resetOnEnd={true}

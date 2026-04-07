@@ -11,38 +11,12 @@ import { RectangleCard } from './RectangleCard'
 
 import './index.css'
 
+const INITIAL_LETTERS = ['F', 'E', 'E', 'D', 'L', 'I', 'S', 'T']
+const MORE_LETTERS = ['L', 'Y', 'N', 'X', 'U', 'I']
+
 function App() {
   const feedListRef = useRef<FeedListRef>(null)
-  const letters1 = [
-    { itemKey: 'F', letter: 'F' },
-    { itemKey: 'E', letter: 'E' },
-    { itemKey: 'E-2', letter: 'E' },
-    { itemKey: 'D', letter: 'D' },
-    { itemKey: 'L', letter: 'L' },
-    { itemKey: 'I', letter: 'I' },
-    { itemKey: 'S', letter: 'S' },
-    { itemKey: 'T', letter: 'T' },
-  ]
-  const letters2 = [
-    { itemKey: 'L-2', letter: 'L' },
-    { itemKey: 'Y', letter: 'Y' },
-    { itemKey: 'N', letter: 'N' },
-    { itemKey: 'X', letter: 'X' },
-    { itemKey: 'U', letter: 'U' },
-    { itemKey: 'I-2', letter: 'I' },
-  ]
-  const letters3 = [
-    { itemKey: 'R', letter: 'R' },
-    { itemKey: 'E-3', letter: 'E' },
-    { itemKey: 'F-2', letter: 'F' },
-    { itemKey: 'R-2', letter: 'R' },
-    { itemKey: 'E-4', letter: 'E' },
-    { itemKey: 'S-2', letter: 'S' },
-    { itemKey: 'H', letter: 'H' },
-  ]
-  const [contentArray, setContentArray] = useState(letters1)
-
-  const orientation = 'vertical'
+  const [letters, setLetters] = useState(INITIAL_LETTERS)
 
   const renderRefreshHeader = useMemo(
     () => (
@@ -75,10 +49,7 @@ function App() {
           <text style={{ marginBottom: '10px' }}>loading more...</text>
           <image
             src='https://lf-lynx.tiktok-cdns.com/obj/lynx-artifacts-oss-sg/plugin/static/loading.gif'
-            style={{
-              width: '50px',
-              height: '50px',
-            }}
+            style={{ width: '50px', height: '50px' }}
           />
         </view>
       </list-item>
@@ -97,41 +68,33 @@ function App() {
     [],
   )
 
-  const handleRefreshEvent = () => {
+  const handleRefresh = () => {
     setTimeout(() => {
-      feedListRef?.current?.finishRefresh()
-      setContentArray(letters2)
+      feedListRef.current?.finishRefresh()
+      setLetters(INITIAL_LETTERS)
     }, 2000)
   }
 
-  const noMoreData = useRef(false) // Flag to determine whether the data is over.
-
-  const addDataToLower = () => {
+  const handleLoadMore = () => {
     setTimeout(() => {
-      if (noMoreData.current) {
-        feedListRef?.current?.changeHasMoreStatus(false)
-      } else {
-        setContentArray(letters1.concat(letters3))
-        noMoreData.current = true
-      }
+      setLetters(prev => [...prev, ...MORE_LETTERS])
+      feedListRef.current?.changeHasMoreStatus(false)
     }, 2000)
   }
-
-  console.info('render', contentArray)
 
   return (
-    <view className='lunaris-dark container'>
+    <view className='lunaris-dark demo-container'>
       <FeedList
         className='feed-list'
         listId='feedListBasic'
         ref={feedListRef}
         listType='single'
         spanCount={1}
-        scrollOrientation={orientation}
+        scrollOrientation='vertical'
         refreshOptions={{
           enableRefresh: true,
           headerContent: renderRefreshHeader,
-          onStartRefresh: handleRefreshEvent,
+          onStartRefresh: handleRefresh,
         }}
         loadMoreFooter={renderLoadMoreFooter}
         noMoreDataFooter={renderNoMoreFooter}
@@ -139,19 +102,19 @@ function App() {
         bounces={false}
         upperThresholdItemCount={1}
         lowerThresholdItemCount={1}
-        onScrollToLower={() => {
-          addDataToLower()
-        }}
+        onScrollToLower={handleLoadMore}
       >
-        {contentArray.map((value: { itemKey: string, letter: string }) => (
-          <list-item key={value.itemKey} item-key={value.itemKey}>
-            <RectangleCard
-              cardKey={value.itemKey}
-              letter={value.letter}
-              height={500}
-            />
+        <list-item item-key='demo-header'>
+          <view className='demo-header' />
+        </list-item>
+        {letters.map((letter, i) => (
+          <list-item key={`item-${i}`} item-key={`item-${i}`}>
+            <RectangleCard cardKey={`item-${i}`} letter={letter} height={500} />
           </list-item>
         ))}
+        <list-item item-key='demo-footer'>
+          <view className='demo-footer' />
+        </list-item>
       </FeedList>
     </view>
   )

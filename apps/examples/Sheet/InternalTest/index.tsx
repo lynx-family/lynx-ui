@@ -80,7 +80,7 @@ function App() {
   }
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <text className='title-text'>Internal Testing</text>
 
       <view className='mode-toggle'>

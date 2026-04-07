@@ -22,14 +22,15 @@ function App() {
   const [checked, setChecked] = useState(false)
 
   return (
-    <view className='container lunaris-dark luna-gradient-ocean'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-dark luna-gradient-ocean'>
+      <view className='demo-canvas'>
         {/* Uncontrolled */}
         <view className='section'>
           <text className='title'>Uncontrolled</text>
           <view className='row'>
             <Checkbox
               className='checkbox'
+              defaultChecked={true}
               onChange={(value) => console.log('Uncontrolled changed:', value)}
               checkboxProps={HitSlop}
             >

@@ -17,7 +17,7 @@ import './index.css'
 
 function App() {
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       {
         /*
         Known issue (Popover Backdrop in uncontrolled mode):

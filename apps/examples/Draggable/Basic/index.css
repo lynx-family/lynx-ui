@@ -1,6 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.container {
+.demo-container {
   background-color: var(--canvas);
   width: 100%;
   height: 100%;

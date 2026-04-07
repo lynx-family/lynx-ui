@@ -24,7 +24,7 @@ function App() {
   const [show, setShow] = useState(true)
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <text className='title-text'>Sheet Controlled Open</text>
       <text className='subtitle-text'>
         State: {show ? 'OPEN' : 'CLOSED'}

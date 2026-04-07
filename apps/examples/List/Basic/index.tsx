@@ -27,7 +27,7 @@ function App() {
   }
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <List
         className='list-container'
         listId='ListBasic'
@@ -38,6 +38,9 @@ function App() {
         useRefactorList={true}
         bounces={false}
       >
+        <list-item item-key='demo-header'>
+          <view className='demo-header' />
+        </list-item>
         {itemData.map((item) => (
           <list-item key={item.id} item-key={item.id}>
             <ListItemCard
@@ -46,6 +49,9 @@ function App() {
             />
           </list-item>
         ))}
+        <list-item item-key='demo-footer'>
+          <view className='demo-footer' />
+        </list-item>
       </List>
       <view className='button-container'>
         <Button

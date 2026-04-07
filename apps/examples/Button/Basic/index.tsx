@@ -13,26 +13,24 @@ import './index.css'
 
 function App() {
   return (
-    <view className='container lunaris-dark luna-gradient-rose'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-dark luna-gradient-rose'>
+      <view className='demo-canvas'>
+        {/* Usage 1: render props to read `active` state and toggle `.active` for styling */}
         <Button onClick={() => console.info('clicked')} className='button-root'>
           {({ active = false }) => (
             <view className={clsx('button', { 'active': active })}>
-              <text className='text'>
+              <text className='button-text'>
                 Button
               </text>
             </view>
           )}
         </Button>
-        <Button className='button-root'>
-          {({ active = false }) => (
-            <view className={clsx('button', { 'active': active })}>
-              <Heart />
-              <text className='text'>
-                Button
-              </text>
-            </view>
-          )}
+        {/* Usage 2: regular children; styles rely on the primitives-injected `ui-active` state class */}
+        <Button className='button'>
+          <Heart />
+          <text className='button-text'>
+            Button
+          </text>
         </Button>
       </view>
     </view>

@@ -25,7 +25,7 @@ function App() {
   const [show, setShow] = useState(true)
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <DialogRoot
         onClose={handleDismissed}
         onOpen={handleShowed}

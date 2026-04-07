@@ -21,7 +21,7 @@ function App() {
   const sheetRef = useRef<SheetRootRef>(null)
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <text className='title-text'>Basic Sheet</text>
       <TriggerButton
         onClick={() => sheetRef.current?.open()}

@@ -20,8 +20,8 @@ function App() {
   const [checked, setChecked] = useState(true)
 
   return (
-    <view className='container lunaris-dark luna-gradient-berry'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
+      <view className='demo-canvas'>
         {/* Uncontrolled */}
         <view className='section'>
           <view className='row'>

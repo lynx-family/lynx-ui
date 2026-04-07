@@ -13,7 +13,7 @@ const LETTERS = ['L', 'Y', 'N', 'X', 'U', 'I', 'L', 'Y', 'N', 'X', 'J', 'S']
 
 function App() {
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <ScrollView scrollOrientation='horizontal' className='scroll-view'>
         <view className='scroll-view-content'>
           {LETTERS.map((letter, i) => (

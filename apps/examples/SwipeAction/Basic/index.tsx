@@ -24,7 +24,7 @@ function App() {
   )
 
   return (
-    <view className='app-container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <view className='swipe-action-container'>
         <SwipeAction
           className='swipe-action'

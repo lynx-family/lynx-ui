@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--canvas, #ffffff);
+  background-color: var(--canvas);
 
   border-radius: 8px;
   box-shadow:
@@ -15,7 +15,7 @@
 }
 
 .card-text {
-  color: var(--primary, #ff1a6e);
+  color: var(--primary);
   font-size: 64px;
   font-weight: 600;
 }

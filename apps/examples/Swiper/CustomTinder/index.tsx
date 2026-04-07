@@ -70,7 +70,7 @@ const customAnimationFirstScreen = (value: number, _index: number) => {
 
 function SwiperEntry() {
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <Swiper
         data={itemArr}
         itemWidth={ITEM_WIDTH}

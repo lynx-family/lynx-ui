@@ -28,7 +28,7 @@
   justify-content: center;
   width: 64px;
   height: 100%;
-  background-color: var(--neutral-film);
+  background-color: var(--paper-film);
 }
 
 .drag-here-text {

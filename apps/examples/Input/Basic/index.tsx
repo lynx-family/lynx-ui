@@ -16,11 +16,11 @@ function App() {
   const [controlledValue, setControlledValue] = useState<string>(
     'controlledValue',
   )
-  const uncontrolledValueRef = useRef<string>('uncontrolledValue')
+  const uncontrolledValueRef = useRef<string>('demo-uncontrolledValue')
 
   return (
-    <view className='container lunaris-dark luna-gradient-rose'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-dark luna-gradient-rose'>
+      <view className='demo-canvas'>
         {/* Input */}
         <view className='section'>
           <text className='title'>Input</text>

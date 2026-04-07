@@ -6,23 +6,24 @@
   border-radius: 9999px;
   justify-content: center;
   align-items: center;
-  background-color: var(--neutral-ambient, #eeeeee);
+  background-color: var(--neutral-ambient);
   transition: opacity 0.15s ease-in-out;
-  &:active {
-    opacity: 0.5;
-  }
+}
+
+.button.ui-active {
+  opacity: 0.5;
 }
 
 .button .text {
-  color: var(--content, #010101);
+  color: var(--content);
 }
 
 .button.primary {
-  background-color: var(--primary, #ff1a6e);
+  background-color: var(--primary);
 }
 
 .button.primary .text {
-  color: var(--primary-content, #ffffff);
+  color: var(--primary-content);
 }
 
 .text {
@@ -36,5 +37,5 @@
   font-size: 11px;
   line-height: 14px;
   text-align: center;
-  color: var(--content-muted, #5d5d5d);
+  color: var(--content-muted);
 }

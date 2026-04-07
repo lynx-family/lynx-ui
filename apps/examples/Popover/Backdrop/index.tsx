@@ -19,7 +19,7 @@ function App() {
   const [internalVisible, setInternalVisible] = useState(true)
 
   return (
-    <view className='container lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <PopoverRoot
         show={internalVisible}
         onVisibleChange={visible => setInternalVisible(visible)}

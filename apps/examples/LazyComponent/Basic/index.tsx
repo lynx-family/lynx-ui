@@ -32,8 +32,8 @@ function App() {
   const [nonLazyVisible, setNonLazyVisible] = useState<boolean>(false)
 
   return (
-    <view className='container lunaris-dark luna-gradient-berry'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
+      <view className='demo-canvas'>
         <text className='description'>
           Click the button. With 'Lazy', the solid block appears after the
           border. With 'Non-lazy', both appear at the same time.

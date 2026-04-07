@@ -12,10 +12,10 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--primary-content-faded, rgba(255, 255, 255, 0.4));
+  background: var(--primary-content-faded);
   margin: 4px;
 }
 
 .indicator-item.active {
-  background: var(--primary-content, #ffffff);
+  background: var(--primary-content);
 }

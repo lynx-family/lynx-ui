@@ -2,8 +2,12 @@
 
 .trigger-button {
   padding: 12px 24px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--gradient-content-trace);
   border-radius: 999px;
+}
+
+.trigger-button.ui-active {
+  opacity: 0.5;
 }
 
 .trigger-button-text {
