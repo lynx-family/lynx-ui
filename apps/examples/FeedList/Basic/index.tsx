@@ -17,17 +17,14 @@ function App() {
   const feedListRef = useRef<FeedListRef>(null)
   const [items, setItems] = useState<LetterItem[]>(FEED_INITIAL)
   const noMoreData = useRef(false)
+  const isLoadingMore = useRef(false)
 
   const renderRefreshHeader = useMemo(
     () => (
       <view className='refresh-header'>
         <image
           src='https://lf-lynx.tiktok-cdns.com/obj/lynx-artifacts-oss-sg/plugin/static/loading.gif'
-          style={{
-            width: '50px',
-            height: '50px',
-            relativeCenter: 'horizontal',
-          }}
+          className='refresh-header__spinner'
         />
       </view>
     ),
@@ -37,19 +34,10 @@ function App() {
   const renderLoadMoreFooter = useMemo(
     () => (
       <list-item key='footer' item-key='footer' full-span>
-        <view
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-          }}
-        >
-          <text style={{ marginBottom: '10px' }}>loading more...</text>
+        <view className='load-more-footer'>
           <image
             src='https://lf-lynx.tiktok-cdns.com/obj/lynx-artifacts-oss-sg/plugin/static/loading.gif'
-            style={{ width: '50px', height: '50px' }}
+            className='load-more-footer__spinner'
           />
         </view>
       </list-item>
@@ -60,7 +48,7 @@ function App() {
   const renderNoMoreFooter = useMemo(
     () => (
       <list-item key='noMore' item-key='noMore' full-span>
-        <text style={{ width: '100%', height: '30px', textAlign: 'center' }}>
+        <text className='no-more-data-footer'>
           That's everything!
         </text>
       </list-item>
@@ -72,19 +60,23 @@ function App() {
     setTimeout(() => {
       // Reset so load-more can fire again after refresh
       noMoreData.current = false
+      isLoadingMore.current = false
       setItems(prev =>
         prev[0]?.key.startsWith('refresh-') ? FEED_INITIAL : FEED_REFRESH
       )
+      feedListRef.current?.changeHasMoreStatus(true)
       feedListRef.current?.finishRefresh()
     }, 2000)
   }
 
   const handleLoadMore = () => {
-    if (noMoreData.current) return
+    if (noMoreData.current || isLoadingMore.current) return
+    isLoadingMore.current = true
     setTimeout(() => {
       noMoreData.current = true
       setItems(prev => [...prev, ...FEED_MORE])
       feedListRef.current?.changeHasMoreStatus(false)
+      isLoadingMore.current = false
     }, 2000)
   }
 
