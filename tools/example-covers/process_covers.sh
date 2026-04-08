@@ -25,7 +25,7 @@ WIDTH=480
 HEIGHT=960
 QUALITY=85
 VIDEO_CRF=30
-PREFIX=""
+PREFIX="lynx-ui-cover-"
 CROP_TOP=44
 CROP_BOTTOM=20
 DRY_RUN=false
@@ -126,21 +126,24 @@ check_dep() {
 }
 
 check_dep ffmpeg ffmpeg
-check_dep magick imagemagick
+check_dep ffprobe ffmpeg
 
-MAGICK_CMD="magick"
-if ! command -v magick &>/dev/null; then
-  if command -v convert &>/dev/null; then
-    MAGICK_CMD="convert"
-  else
-    echo "Error: ImageMagick not found (neither 'magick' nor 'convert')"
-    exit 1
-  fi
+if command -v magick &>/dev/null; then
+  MAGICK_CMD=(magick)
+  IDENTIFY_CMD=(magick identify)
+elif command -v convert &>/dev/null && command -v identify &>/dev/null; then
+  MAGICK_CMD=(convert)
+  IDENTIFY_CMD=(identify)
+else
+  echo "Error: ImageMagick not found (need 'magick' or both 'convert' and 'identify'). Install it first."
+  echo "  macOS:  brew install imagemagick"
+  echo "  Linux:  sudo apt install imagemagick"
+  exit 1
 fi
 
 # ── Helper: get source dimensions ────────────────────────────
 get_image_dims() {
-  $MAGICK_CMD identify -format "%w %h" "$1" 2>/dev/null | head -1
+  "${IDENTIFY_CMD[@]}" -format "%w %h" "$1" 2>/dev/null | head -1
 }
 
 get_video_dims() {
@@ -159,7 +162,10 @@ compute_crop() {
   local filename="$3"
 
   had_overflow=false
-  scale_display=$(echo "scale=2; ${src_w} / ${WIDTH}" | bc)
+  local scale_display_hundredths=$(( (src_w * 100 + WIDTH / 2) / WIDTH ))
+  scale_display=$(printf "%d.%02d" \
+    $(( scale_display_hundredths / 100 )) \
+    $(( scale_display_hundredths % 100 )))
 
   local requested_top=$(( CROP_TOP * src_w / WIDTH ))
   local requested_bot=$(( CROP_BOTTOM * src_w / WIDTH ))
@@ -283,7 +289,7 @@ for file in "$INPUT_DIR"/*; do
     if [[ "$DRY_RUN" == false ]]; then
       if [[ "$HAS_PRE_CROP" == true ]]; then
         # Crop to computed region, then resize to target
-        $MAGICK_CMD "$file" \
+        "${MAGICK_CMD[@]}" "$file" \
           -crop "${src_w}x${crop_h}+0+${crop_y}" +repage \
           -resize "${WIDTH}x${HEIGHT}^" \
           -gravity center \
@@ -294,7 +300,7 @@ for file in "$INPUT_DIR"/*; do
           -interlace Plane \
           "$out_file"
       else
-        $MAGICK_CMD "$file" \
+        "${MAGICK_CMD[@]}" "$file" \
           -resize "${WIDTH}x${HEIGHT}^" \
           -gravity center \
           -extent "${WIDTH}x${HEIGHT}" \

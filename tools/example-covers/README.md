@@ -35,7 +35,7 @@ This tool does **not** do video trimming — make sure the timeline is trimmed b
 
 Name raw files to match the component name:
 
-```
+```text
 raw/
 ├── button.mov
 ├── checkbox.mov
@@ -47,7 +47,7 @@ raw/
 
 For additional examples beyond the component's default demo, append `_ExampleName`:
 
-```
+```text
 raw/
 ├── input.mov                    → lynx-ui-cover-input.webm
 ├── input_KeyboardAwareView.mov  → lynx-ui-cover-input_keyboard-aware-view.webm
@@ -101,7 +101,7 @@ If the crop values are too aggressive for the source (not enough height left), t
 
 ## Sample Output
 
-```
+```text
 🎬 button.mov      → lynx-ui-cover-button.webm
 🎬 checkbox.mov    → lynx-ui-cover-checkbox.webm
 🎬 dialog.mov      → lynx-ui-cover-dialog.webm
