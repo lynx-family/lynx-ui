@@ -30,6 +30,44 @@ CROP_TOP=44
 CROP_BOTTOM=20
 DRY_RUN=false
 VERBOSE=false
+DEVICE=""
+
+# ── Device presets ───────────────────────────────────────────
+# Format: "top_crop bottom_crop description"
+declare -A DEVICE_PRESETS=(
+  [iphone-13]="44 20 iPhone 13 / 13 Pro (1170x2532)"
+  [iphone-16]="60 20 iPhone 16 (1179x2556)"
+  [iphone-16-pro]="61 16 iPhone 16 Pro / Pro Max (1206x2622)"
+)
+
+list_devices() {
+  echo "Available device presets:"
+  echo ""
+  for key in $(echo "${!DEVICE_PRESETS[@]}" | tr ' ' '\n' | sort); do
+    local preset="${DEVICE_PRESETS[$key]}"
+    local t b desc
+    read -r t b desc <<< "$preset"
+    # shellcheck disable=SC2086
+    desc="${preset#$t $b }"
+    printf "  %-20s -t %-4s -b %-4s  %s\n" "$key" "$t" "$b" "$desc"
+  done
+}
+
+apply_device_preset() {
+  local device="$1"
+  if [[ -z "${DEVICE_PRESETS[$device]+x}" ]]; then
+    echo "Error: Unknown device '$device'"
+    echo ""
+    list_devices
+    exit 1
+  fi
+
+  local preset="${DEVICE_PRESETS[$device]}"
+  local t b
+  read -r t b _ <<< "$preset"
+  CROP_TOP="$t"
+  CROP_BOTTOM="$b"
+}
 
 # ── Usage ────────────────────────────────────────────────────
 usage() {
@@ -47,9 +85,18 @@ Options:
   -p STR    Filename prefix (default: "lynx-ui-cover-")
   -t NUM    Top crop in output-space pixels (default: 44)
   -b NUM    Bottom crop in output-space pixels (default: 20)
+  --device  Device preset for -t/-b values (overrides -t/-b if set before)
+  --devices List available device presets
   -d        Dry run — print actions without executing
   -v        Verbose — show ffmpeg/ImageMagick warnings (default: errors only)
   --help    Show this help
+
+Device presets:
+  --device iphone-13       -t 44 -b 20  (default)
+  --device iphone-16       -t 60 -b 20
+  --device iphone-16-pro   -t 61 -b 16
+
+  Explicit -t/-b after --device overrides the preset values.
 
 Crop behavior:
   -t and -b are specified in the output coordinate system.
@@ -66,6 +113,8 @@ Crop behavior:
 
 Examples:
   ./process_covers.sh -i ./screenshots -w 1280 -h 720
+  ./process_covers.sh -i ./raw --device iphone-16-pro
+  ./process_covers.sh -i ./raw --device iphone-16 -t 50
   ./process_covers.sh -i ./raw -w 480 -h 920 -t 40 -b 20
   ./process_covers.sh -i ./raw -o ./covers -p "lynx-" -w 960 -h 540
   ./process_covers.sh -i ./raw -d
@@ -113,6 +162,8 @@ while [[ $# -gt 0 ]]; do
     -p) require_arg "$@"; PREFIX="$2"; shift 2 ;;
     -t) require_arg "$@"; CROP_TOP="$2"; validate_non_negative_int "-t" "$CROP_TOP"; shift 2 ;;
     -b) require_arg "$@"; CROP_BOTTOM="$2"; validate_non_negative_int "-b" "$CROP_BOTTOM"; shift 2 ;;
+    --device) require_arg "$@"; DEVICE="$2"; apply_device_preset "$DEVICE"; shift 2 ;;
+    --devices) list_devices; exit 0 ;;
     -d) DRY_RUN=true; shift ;;
     -v) VERBOSE=true; shift ;;
     --help) usage 0 ;;
@@ -167,9 +218,17 @@ check_dep ffprobe ffmpeg
 if command -v magick &>/dev/null; then
   MAGICK_CMD=(magick)
   IDENTIFY_CMD=(magick identify)
+  # IM7: -quiet suppresses warnings
+  if [[ "$VERBOSE" == true ]]; then
+    MAGICK_FLAGS=()
+  else
+    MAGICK_FLAGS=(-quiet)
+  fi
 elif command -v convert &>/dev/null && command -v identify &>/dev/null; then
   MAGICK_CMD=(convert)
   IDENTIFY_CMD=(identify)
+  # IM6: no -quiet flag; redirect stderr in the commands instead
+  MAGICK_FLAGS=()
 else
   echo "Error: ImageMagick not found (need 'magick' or both 'convert' and 'identify'). Install it first."
   echo "  macOS:  brew install imagemagick"
@@ -320,12 +379,18 @@ img_count=0
 vid_count=0
 skip_count=0
 
+# Build device label for banner
+DEVICE_LABEL=""
+if [[ -n "$DEVICE" ]]; then
+  DEVICE_LABEL=" (--device $DEVICE)"
+fi
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  lynx-ui cover processor"
 echo "  Input:   $INPUT_DIR"
 echo "  Output:  $OUTPUT_DIR"
 echo "  Size:    ${WIDTH}x${HEIGHT}"
-echo "  Pre-crop (output-space): top=${CROP_TOP}px  bottom=${CROP_BOTTOM}px"
+echo "  Pre-crop (output-space): top=${CROP_TOP}px  bottom=${CROP_BOTTOM}px${DEVICE_LABEL}"
 echo "  Quality: JPEG ${QUALITY}% / Video CRF ${VIDEO_CRF}"
 echo "  Prefix:  ${PREFIX:-"(none)"}"
 echo "  Dry run: $DRY_RUN"
@@ -375,7 +440,7 @@ for file in "$INPUT_DIR"/*; do
     if [[ "$DRY_RUN" == false ]]; then
       if [[ "$HAS_PRE_CROP" == true ]]; then
         # Crop to computed region, then resize to target
-        "${MAGICK_CMD[@]}" "$file" \
+        "${MAGICK_CMD[@]}" "${MAGICK_FLAGS[@]}" "$file" \
           -crop "${src_w}x${crop_h}+0+${crop_y}" +repage \
           -resize "${WIDTH}x${HEIGHT}^" \
           -gravity center \
@@ -386,7 +451,7 @@ for file in "$INPUT_DIR"/*; do
           -interlace Plane \
           "$out_file"
       else
-        "${MAGICK_CMD[@]}" "$file" \
+        "${MAGICK_CMD[@]}" "${MAGICK_FLAGS[@]}" "$file" \
           -resize "${WIDTH}x${HEIGHT}^" \
           -gravity center \
           -extent "${WIDTH}x${HEIGHT}" \

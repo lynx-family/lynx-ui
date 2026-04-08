@@ -63,9 +63,32 @@ Filenames are auto-converted to kebab-case. Underscores are preserved as the com
 | `popover_ExtraAnchor.mov` | `popover_extra-anchor.webm` |
 | `swiper_RTLLoop.mov`      | `swiper_rtl-loop.webm`      |
 
+## Device Presets
+
+Use `--device` to automatically set `-t` and `-b` for a specific device's status bar and home indicator:
+
+| Preset          | `-t` | `-b` | Device                              |
+| --------------- | ---- | ---- | ----------------------------------- |
+| `iphone-13`     | 44   | 20   | iPhone 13 / 13 Pro (1170×2532)      |
+| `iphone-16`     | 60   | 20   | iPhone 16 (1179×2556)               |
+| `iphone-16-pro` | 61   | 16   | iPhone 16 Pro / Pro Max (1206×2622) |
+
+```bash
+# Use iPhone 16 Pro preset
+./process_covers.sh -i ./raw --device iphone-16-pro
+
+# Use a preset but override just the top crop
+./process_covers.sh -i ./raw --device iphone-16 -t 50
+
+# List all available presets
+./process_covers.sh --devices
+```
+
+Explicit `-t`/`-b` flags after `--device` override the preset values.
+
 ## Default Configuration
 
-The script ships with defaults tuned for **iPhone 13** screen recordings (1170 × 2532, viewport 390 × 844 @3x):
+Without `--device`, the script uses defaults tuned for **iPhone 13** screen recordings (1170 × 2532, viewport 390 × 844 @3x):
 
 | Parameter | Default | Description                                         |
 | --------- | ------- | --------------------------------------------------- |
@@ -86,6 +109,9 @@ If the crop values are too aggressive for the source (not enough height left), t
 # Custom output directory
 ./process_covers.sh -i ./raw -o ./covers
 
+# iPhone 16 Pro preset
+./process_covers.sh -i ./raw --device iphone-16-pro
+
 # Adjust crop (less top, no bottom)
 ./process_covers.sh -i ./raw -t 30 -b 0
 
@@ -102,13 +128,18 @@ If the crop values are too aggressive for the source (not enough height left), t
 ## Sample Output
 
 ```text
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  lynx-ui cover processor
+  Input:   ./raw
+  Output:  ./raw/processed
+  Size:    480x960
+  Pre-crop (output-space): top=61px  bottom=16px (--device iphone-16-pro)
+  Quality: JPEG 85% / Video CRF 30
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 🎬 button.mov      → lynx-ui-cover-button.webm
 🎬 checkbox.mov    → lynx-ui-cover-checkbox.webm
 🎬 dialog.mov      → lynx-ui-cover-dialog.webm
 🎬 sheet.mov       → lynx-ui-cover-sheet.webm
 🎬 switch.mov      → lynx-ui-cover-switch.webm
 ```
-
-## TODO
-
-- [ ] Device presets (`--device iphone-16-pro` etc.) for per-model `-t`/`-b` values
