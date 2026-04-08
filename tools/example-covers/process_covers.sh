@@ -33,6 +33,7 @@ VERBOSE=false
 
 # ── Usage ────────────────────────────────────────────────────
 usage() {
+  local exit_code="${1:-0}"
   cat <<EOF
 Usage: $(basename "$0") [options]
 
@@ -69,31 +70,39 @@ Examples:
   ./process_covers.sh -i ./raw -o ./covers -p "lynx-" -w 960 -h 540
   ./process_covers.sh -i ./raw -d
 EOF
-  exit 0
+  exit "$exit_code"
 }
 
 # ── Parse args ───────────────────────────────────────────────
+require_arg() {
+  local option="$1"
+  if [[ $# -lt 2 ]]; then
+    echo "Error: Option '$option' requires an argument"
+    usage 1
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -i) INPUT_DIR="$2"; shift 2 ;;
-    -o) OUTPUT_DIR="$2"; shift 2 ;;
-    -w) WIDTH="$2"; shift 2 ;;
-    -h) HEIGHT="$2"; shift 2 ;;
-    -q) QUALITY="$2"; shift 2 ;;
-    -c) VIDEO_CRF="$2"; shift 2 ;;
-    -p) PREFIX="$2"; shift 2 ;;
-    -t) CROP_TOP="$2"; shift 2 ;;
-    -b) CROP_BOTTOM="$2"; shift 2 ;;
+    -i) require_arg "$@"; INPUT_DIR="$2"; shift 2 ;;
+    -o) require_arg "$@"; OUTPUT_DIR="$2"; shift 2 ;;
+    -w) require_arg "$@"; WIDTH="$2"; shift 2 ;;
+    -h) require_arg "$@"; HEIGHT="$2"; shift 2 ;;
+    -q) require_arg "$@"; QUALITY="$2"; shift 2 ;;
+    -c) require_arg "$@"; VIDEO_CRF="$2"; shift 2 ;;
+    -p) require_arg "$@"; PREFIX="$2"; shift 2 ;;
+    -t) require_arg "$@"; CROP_TOP="$2"; shift 2 ;;
+    -b) require_arg "$@"; CROP_BOTTOM="$2"; shift 2 ;;
     -d) DRY_RUN=true; shift ;;
     -v) VERBOSE=true; shift ;;
-    --help) usage ;;
-    *) echo "Unknown option: $1"; usage ;;
+    --help) usage 0 ;;
+    *) echo "Unknown option: $1"; usage 1 ;;
   esac
 done
 
 if [[ -z "$INPUT_DIR" ]]; then
   echo "Error: -i INPUT_DIR is required"
-  usage
+  usage 1
 fi
 
 if [[ ! -d "$INPUT_DIR" ]]; then
@@ -229,6 +238,23 @@ compute_crop() {
   fi
 }
 
+# ── Helper: collision guard ───────────────────────────────────
+# Usage: check_collision <out_file> <src_filename>
+# Prints a warning to stderr and returns 1 if out_file already
+# exists (written by a previous file in this run), so the caller
+# can skip processing. Returns 0 if the path is free.
+check_collision() {
+  local out_file="$1"
+  local src_filename="$2"
+  if [[ -e "$out_file" ]]; then
+    echo "  ⚠️  collision: $(basename "$out_file") already exists (from a previous input file)." >&2
+    echo "      Skipping '$src_filename' to avoid silent overwrite." >&2
+    echo "      Rename the source file so it normalizes to a unique basename." >&2
+    return 1
+  fi
+  return 0
+}
+
 # ── Setup ────────────────────────────────────────────────────
 mkdir -p "$OUTPUT_DIR"
 
@@ -276,6 +302,8 @@ for file in "$INPUT_DIR"/*; do
   if echo "$ext_lower" | grep -qE "^($IMAGE_EXTS)$"; then
     out_file="$OUTPUT_DIR/${clean_name}.jpg"
 
+    check_collision "$out_file" "$filename" || { ((skip_count+=1)); continue; }
+
     if [[ "$HAS_PRE_CROP" == true ]]; then
       dims=$(get_image_dims "$file")
       src_w=$(echo "$dims" | awk '{print $1}')
@@ -312,11 +340,13 @@ for file in "$INPUT_DIR"/*; do
       fi
     fi
 
-    ((img_count++))
+    ((img_count+=1))
 
   # ── Video ──────────────────────────────────────────────────
   elif echo "$ext_lower" | grep -qE "^($VIDEO_EXTS)$"; then
     out_file="$OUTPUT_DIR/${clean_name}.webm"
+
+    check_collision "$out_file" "$filename" || { ((skip_count+=1)); continue; }
 
     if [[ "$HAS_PRE_CROP" == true ]]; then
       vid_dims=$(get_video_dims "$file")
@@ -354,12 +384,12 @@ for file in "$INPUT_DIR"/*; do
       fi
     fi
 
-    ((vid_count++))
+    ((vid_count+=1))
 
   # ── Skip ───────────────────────────────────────────────────
   else
     echo "⏭️  $filename (unsupported format, skipped)"
-    ((skip_count++))
+    ((skip_count+=1))
   fi
 
 done
