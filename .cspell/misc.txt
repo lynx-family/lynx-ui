@@ -23,6 +23,7 @@ commitlintrc
 dbaeumer
 dprint
 esbenp
+ffprobe
 GCMT
 hasdir
 hintrc
@@ -34,13 +35,20 @@ laggy
 layoutchange
 lepusjs
 lepusng
+libvpx
 lintignore
 loadmore
+loglevel
+LOGLEVEL
 Lynxview
 manypkg
 maxlines
+magick
+MAGICK
 mktemp
 npmjs
+nokey
+noprint
 Promisable
 qrcode
 refreshheader
@@ -62,6 +70,7 @@ ufra
 uivariants
 Unexposure
 vitest
+webp
 worklet
 xlarge
 yoavbls
