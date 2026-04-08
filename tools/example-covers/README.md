@@ -67,11 +67,13 @@ Filenames are auto-converted to kebab-case. Underscores are preserved as the com
 
 Use `--device` to automatically set `-t` and `-b` for a specific device's status bar and home indicator:
 
-| Preset          | `-t` | `-b` | Device                              |
-| --------------- | ---- | ---- | ----------------------------------- |
-| `iphone-13`     | 44   | 20   | iPhone 13 / 13 Pro (1170×2532)      |
-| `iphone-16`     | 60   | 20   | iPhone 16 (1179×2556)               |
-| `iphone-16-pro` | 61   | 16   | iPhone 16 Pro / Pro Max (1206×2622) |
+| Preset              | `-t` | `-b` | Device                              |
+| ------------------- | ---- | ---- | ----------------------------------- |
+| `iphone-11-pro`     | 38   | 16   | iPhone 11 Pro (1080x2338)           |
+| `iphone-12-pro-max` | 41   | 18   | iPhone 12 Pro Max (1284x2778)       |
+| `iphone-13`         | 44   | 20   | iPhone 13 / 13 Pro (1170x2532)      |
+| `iphone-16`         | 60   | 20   | iPhone 16 (1179x2556)               |
+| `iphone-16-pro`     | 61   | 16   | iPhone 16 Pro / Pro Max (1206x2622) |
 
 ```bash
 # Use iPhone 16 Pro preset

@@ -18,6 +18,51 @@
 
 set -euo pipefail
 
+# ── Device presets (bash 3 compatible) ───────────────────────
+# Each entry: "top bottom description"
+# Looked up by device_preset_lookup(); avoids declare -A.
+DEVICE_PRESET_KEYS="iphone-11-pro iphone-12-pro-max iphone-13 iphone-16 iphone-16-pro"
+
+device_preset_lookup() {
+  case "$1" in
+    iphone-11-pro)     echo "38 16 iPhone 11 Pro (1080x2338)" ;;
+    iphone-12-pro-max) echo "41 18 iPhone 12 Pro Max (1284x2778)" ;;
+    iphone-13)         echo "44 20 iPhone 13 / 13 Pro (1170x2532)" ;;
+    iphone-16)         echo "60 20 iPhone 16 (1179x2556)" ;;
+    iphone-16-pro)     echo "61 16 iPhone 16 Pro / Pro Max (1206x2622)" ;;
+    *) return 1 ;;
+  esac
+}
+
+list_devices() {
+  echo "Available device presets:"
+  echo ""
+  for key in $DEVICE_PRESET_KEYS; do
+    local preset
+    preset=$(device_preset_lookup "$key")
+    local t b
+    read -r t b _ <<< "$preset"
+    local desc="${preset#$t $b }"
+    printf "  %-20s -t %-4s -b %-4s  %s\n" "$key" "$t" "$b" "$desc"
+  done
+}
+
+apply_device_preset() {
+  local device="$1"
+  local preset
+  if ! preset=$(device_preset_lookup "$device"); then
+    echo "Error: Unknown device '$device'"
+    echo ""
+    list_devices
+    exit 1
+  fi
+
+  local t b
+  read -r t b _ <<< "$preset"
+  CROP_TOP="$t"
+  CROP_BOTTOM="$b"
+}
+
 # ── Configuration ────────────────────────────────────────────
 INPUT_DIR=""
 OUTPUT_DIR=""
@@ -31,43 +76,6 @@ CROP_BOTTOM=20
 DRY_RUN=false
 VERBOSE=false
 DEVICE=""
-
-# ── Device presets ───────────────────────────────────────────
-# Format: "top_crop bottom_crop description"
-declare -A DEVICE_PRESETS=(
-  [iphone-13]="44 20 iPhone 13 / 13 Pro (1170x2532)"
-  [iphone-16]="60 20 iPhone 16 (1179x2556)"
-  [iphone-16-pro]="61 16 iPhone 16 Pro / Pro Max (1206x2622)"
-)
-
-list_devices() {
-  echo "Available device presets:"
-  echo ""
-  for key in $(echo "${!DEVICE_PRESETS[@]}" | tr ' ' '\n' | sort); do
-    local preset="${DEVICE_PRESETS[$key]}"
-    local t b desc
-    read -r t b desc <<< "$preset"
-    # shellcheck disable=SC2086
-    desc="${preset#$t $b }"
-    printf "  %-20s -t %-4s -b %-4s  %s\n" "$key" "$t" "$b" "$desc"
-  done
-}
-
-apply_device_preset() {
-  local device="$1"
-  if [[ -z "${DEVICE_PRESETS[$device]+x}" ]]; then
-    echo "Error: Unknown device '$device'"
-    echo ""
-    list_devices
-    exit 1
-  fi
-
-  local preset="${DEVICE_PRESETS[$device]}"
-  local t b
-  read -r t b _ <<< "$preset"
-  CROP_TOP="$t"
-  CROP_BOTTOM="$b"
-}
 
 # ── Usage ────────────────────────────────────────────────────
 usage() {
@@ -92,9 +100,11 @@ Options:
   --help    Show this help
 
 Device presets:
-  --device iphone-13       -t 44 -b 20  (default)
-  --device iphone-16       -t 60 -b 20
-  --device iphone-16-pro   -t 61 -b 16
+  --device iphone-11-pro     -t 38 -b 16
+  --device iphone-12-pro-max -t 41 -b 18
+  --device iphone-13         -t 44 -b 20  (default)
+  --device iphone-16         -t 60 -b 20
+  --device iphone-16-pro     -t 61 -b 16
 
   Explicit -t/-b after --device overrides the preset values.
 
@@ -227,7 +237,7 @@ if command -v magick &>/dev/null; then
 elif command -v convert &>/dev/null && command -v identify &>/dev/null; then
   MAGICK_CMD=(convert)
   IDENTIFY_CMD=(identify)
-  # IM6: no -quiet flag; redirect stderr in the commands instead
+  # IM6: no -quiet flag
   MAGICK_FLAGS=()
 else
   echo "Error: ImageMagick not found (need 'magick' or both 'convert' and 'identify'). Install it first."
@@ -370,7 +380,9 @@ check_collision() {
 }
 
 # ── Setup ────────────────────────────────────────────────────
-mkdir -p "$OUTPUT_DIR"
+if [[ "$DRY_RUN" == false ]]; then
+  mkdir -p "$OUTPUT_DIR"
+fi
 
 IMAGE_EXTS="jpg|jpeg|png|bmp|tiff|tif|webp|heic|heif|avif"
 VIDEO_EXTS="mp4|mov|avi|mkv|webm|m4v|gif"
