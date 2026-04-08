@@ -82,23 +82,50 @@ require_arg() {
   fi
 }
 
+validate_positive_int() {
+  local option="$1"
+  local value="$2"
+
+  if [[ ! "$value" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Error: Option '$option' requires a positive integer, got '$value'"
+    usage 1
+  fi
+}
+
+validate_non_negative_int() {
+  local option="$1"
+  local value="$2"
+
+  if [[ ! "$value" =~ ^[0-9]+$ ]]; then
+    echo "Error: Option '$option' requires a non-negative integer, got '$value'"
+    usage 1
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -i) require_arg "$@"; INPUT_DIR="$2"; shift 2 ;;
     -o) require_arg "$@"; OUTPUT_DIR="$2"; shift 2 ;;
-    -w) require_arg "$@"; WIDTH="$2"; shift 2 ;;
-    -h) require_arg "$@"; HEIGHT="$2"; shift 2 ;;
-    -q) require_arg "$@"; QUALITY="$2"; shift 2 ;;
-    -c) require_arg "$@"; VIDEO_CRF="$2"; shift 2 ;;
+    -w) require_arg "$@"; WIDTH="$2"; validate_positive_int "-w" "$WIDTH"; shift 2 ;;
+    -h) require_arg "$@"; HEIGHT="$2"; validate_positive_int "-h" "$HEIGHT"; shift 2 ;;
+    -q) require_arg "$@"; QUALITY="$2"; validate_positive_int "-q" "$QUALITY"; shift 2 ;;
+    -c) require_arg "$@"; VIDEO_CRF="$2"; validate_positive_int "-c" "$VIDEO_CRF"; shift 2 ;;
     -p) require_arg "$@"; PREFIX="$2"; shift 2 ;;
-    -t) require_arg "$@"; CROP_TOP="$2"; shift 2 ;;
-    -b) require_arg "$@"; CROP_BOTTOM="$2"; shift 2 ;;
+    -t) require_arg "$@"; CROP_TOP="$2"; validate_non_negative_int "-t" "$CROP_TOP"; shift 2 ;;
+    -b) require_arg "$@"; CROP_BOTTOM="$2"; validate_non_negative_int "-b" "$CROP_BOTTOM"; shift 2 ;;
     -d) DRY_RUN=true; shift ;;
     -v) VERBOSE=true; shift ;;
     --help) usage 0 ;;
     *) echo "Unknown option: $1"; usage 1 ;;
   esac
 done
+
+validate_positive_int "-w" "$WIDTH"
+validate_positive_int "-h" "$HEIGHT"
+validate_positive_int "-q" "$QUALITY"
+validate_positive_int "-c" "$VIDEO_CRF"
+validate_non_negative_int "-t" "$CROP_TOP"
+validate_non_negative_int "-b" "$CROP_BOTTOM"
 
 if [[ -z "$INPUT_DIR" ]]; then
   echo "Error: -i INPUT_DIR is required"
@@ -152,13 +179,41 @@ fi
 
 # ── Helper: get source dimensions ────────────────────────────
 get_image_dims() {
-  "${IDENTIFY_CMD[@]}" -format "%w %h" "$1" 2>/dev/null | head -1
+  local file="$1"
+  local dims=""
+
+  if ! dims=$("${IDENTIFY_CMD[@]}" -format "%w %h" "$file" 2>/dev/null); then
+    dims=""
+  fi
+
+  if [[ "$dims" =~ ^[[:space:]]*([0-9]+)[[:space:]]+([0-9]+)[[:space:]]*$ ]]; then
+    printf '%s %s\n' "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+    return 0
+  fi
+
+  echo "  ⚠️  $(basename "$file"): unable to read image dimensions, skipping." >&2
+  return 0
 }
 
 get_video_dims() {
-  ffprobe -v error -select_streams v:0 \
+  local file="$1"
+  local dims=""
+
+  if ! dims=$(ffprobe -v error -select_streams v:0 \
     -show_entries stream=width,height \
-    -of default=noprint_wrappers=1:nokey=1 "$1" 2>/dev/null | tr '\n' ' '
+    -of default=noprint_wrappers=1:nokey=1 "$file" 2>/dev/null); then
+    dims=""
+  fi
+
+  dims="${dims//$'\n'/ }"
+
+  if [[ "$dims" =~ ^[[:space:]]*([0-9]+)[[:space:]]+([0-9]+)[[:space:]]*$ ]]; then
+    printf '%s %s\n' "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+    return 0
+  fi
+
+  echo "  ⚠️  $(basename "$file"): unable to read video dimensions, skipping." >&2
+  return 0
 }
 
 # ── Helper: compute crop with overflow handling ──────────────
@@ -306,8 +361,11 @@ for file in "$INPUT_DIR"/*; do
 
     if [[ "$HAS_PRE_CROP" == true ]]; then
       dims=$(get_image_dims "$file")
-      src_w=$(echo "$dims" | awk '{print $1}')
-      src_h=$(echo "$dims" | awk '{print $2}')
+      if [[ -z "$dims" ]]; then
+        ((skip_count+=1))
+        continue
+      fi
+      read -r src_w src_h <<< "$dims"
       compute_crop "$src_w" "$src_h" "$filename"
       echo "📷 $filename → $(basename "$out_file")  [crop: y=${crop_y} h=${crop_h} @ scale=${scale_display}x]"
     else
@@ -350,8 +408,11 @@ for file in "$INPUT_DIR"/*; do
 
     if [[ "$HAS_PRE_CROP" == true ]]; then
       vid_dims=$(get_video_dims "$file")
-      src_w=$(echo "$vid_dims" | awk '{print $1}')
-      src_h=$(echo "$vid_dims" | awk '{print $2}')
+      if [[ -z "$vid_dims" ]]; then
+        ((skip_count+=1))
+        continue
+      fi
+      read -r src_w src_h <<< "$vid_dims"
       compute_crop "$src_w" "$src_h" "$filename"
       echo "🎬 $filename → $(basename "$out_file")  [crop: y=${crop_y} h=${crop_h} @ scale=${scale_display}x]"
     else
