@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-popover",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Example app demonstrating Popover usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Popover#readme",
   "repository": {
