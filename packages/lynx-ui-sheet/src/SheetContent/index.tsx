@@ -191,7 +191,7 @@ export function SheetContent(props: SheetContentProps) {
       className={className}
       style={{
         top: '100%',
-        height: '100vh',
+        height: '200vh',
         overflow: 'hidden',
         ...style,
       }}
