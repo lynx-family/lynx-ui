@@ -1,0 +1,136 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 48px;
+  padding-bottom: 24px;
+  padding-left: 48px;
+  padding-right: 48px;
+}
+
+.demo-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 64px;
+  padding-left: 48px;
+  padding-right: 48px;
+  border-radius: 16px;
+  overflow: hidden;
+  color: var(--content);
+  background-color: var(--canvas);
+}
+
+.luna-gradient-berry {
+  background: linear-gradient(
+    0deg,
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.title {
+  font-size: 16px;
+  color: var(--content-2);
+}
+
+.desc {
+  font-size: 14px;
+  color: var(--content-subtle);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.slider-label {
+  font-size: 16px;
+  color: var(--content-2);
+}
+
+.slider-root {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.slider-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--neutral-faint);
+}
+
+.slider-range {
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  margin-top: 16px;
+  background: var(--primary);
+}
+
+.slider-thumb-wrapper {
+  position: absolute;
+  top: 0;
+  right: -18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.width-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.width-chip {
+  min-width: 52px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 9999px;
+  background-color: var(--neutral-faint);
+}
+
+.width-chip-active {
+  background-color: var(--primary);
+}
+
+.width-label {
+  font-size: 14px;
+  color: var(--content-2);
+}
+
+.width-label-active {
+  color: var(--primary-content);
+}

@@ -45,6 +45,7 @@
     "@lynx-js/lynx-ui-radio-group": "workspace:*",
     "@lynx-js/lynx-ui-scroll-view": "workspace:*",
     "@lynx-js/lynx-ui-sheet": "workspace:*",
+    "@lynx-js/lynx-ui-slider": "workspace:*",
     "@lynx-js/lynx-ui-sortable": "workspace:*",
     "@lynx-js/lynx-ui-swipe-action": "workspace:*",
     "@lynx-js/lynx-ui-swiper": "workspace:*",

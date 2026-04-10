@@ -1,0 +1,120 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 48px;
+  padding-bottom: 24px;
+  padding-left: 48px;
+  padding-right: 48px;
+}
+
+.demo-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 64px;
+  padding-left: 48px;
+  padding-right: 48px;
+  border-radius: 16px;
+  overflow: hidden;
+  color: var(--content);
+  background-color: var(--canvas);
+}
+
+.luna-gradient-berry {
+  background: linear-gradient(
+    0deg,
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.title {
+  font-size: 16px;
+  color: var(--content-2);
+}
+
+.desc {
+  font-size: 14px;
+  color: var(--content-subtle);
+}
+
+.progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.progress-meta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-label {
+  font-size: 16px;
+  color: var(--content-2);
+}
+
+.progress-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--content-2);
+}
+
+.progress-root {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--neutral-faint);
+}
+
+.progress-range {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--primary);
+}
+
+.progress-range-secondary {
+  background: var(--secondary);
+}
+
+.static-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.static-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--content-subtle);
+  width: 40px;
+  text-align: right;
+}
+
+.static-bar-wrapper {
+  flex: 1;
+}
