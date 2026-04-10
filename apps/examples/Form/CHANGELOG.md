@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-form
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.130.1
+
 ## 0.0.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-sheet
 
+## 3.130.1
+
+### Patch Changes
+
+- Update `@lynx-js/motion` to 0.0.3. ([#106](https://github.com/lynx-family/lynx-ui/pull/106))
+
 ## 3.130.0
 
 ### Minor Changes

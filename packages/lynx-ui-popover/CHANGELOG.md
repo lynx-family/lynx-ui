@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-popover
 
+## 3.130.1
+
+### Patch Changes
+
+- Add debugLog for Popover ([#108](https://github.com/lynx-family/lynx-ui/pull/108))
+
 ## 3.130.0
 
 ### Minor Changes
