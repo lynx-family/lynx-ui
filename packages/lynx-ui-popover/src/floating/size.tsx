@@ -2,6 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import { log } from '@lynx-js/lynx-ui-common'
+
 import { detectOverflow } from './detectOverflow'
 import type {
   Derivable,
@@ -116,6 +118,12 @@ export const size = (
     //     },
     //   }
     // }
+
+    log(
+      !!state.debugLog,
+      '[lynx-ui-popover] size middleware result:',
+      { availableWidth, availableHeight },
+    )
 
     return {
       data: { availableWidth, availableHeight },

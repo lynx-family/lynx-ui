@@ -136,6 +136,7 @@ export interface MiddlewareState extends Coords {
   elements: Elements
   rects: ElementRects
   platform: Platform
+  debugLog?: boolean
 }
 
 export interface Platform {
@@ -182,6 +183,10 @@ export interface ComputePositionConfig {
    * rendering.
    */
   middleware?: Array<Middleware | null | undefined | false>
+  /**
+   * Whether to output debug logs.
+   */
+  debugLog?: boolean
 }
 
 export interface MiddlewareReturn extends Partial<Coords> {
