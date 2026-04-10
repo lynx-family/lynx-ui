@@ -18,7 +18,7 @@ catalog:
   "@rsbuild/plugin-react": ^1.4.1
   "@rslib/core": ^0.16.0
   "@lynx-js/react-use": 0.0.7
-  "@lynx-js/motion": 0.0.2
+  "@lynx-js/motion": 0.0.3
   "@types/react": "^18.3.8"
   clsx: ^2.1.1
   "typescript": "^5.5.3"
