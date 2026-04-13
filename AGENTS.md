@@ -113,6 +113,61 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 - **TypeScript**: Use strict typing. Avoid `any`.
 - **Comments**: All code comments **MUST** be written in English.
 - **Functional Components**: Use React Functional Components with Hooks.
+- **Controlled & Uncontrolled Modes**: We encourage all interactive components to support both **controlled** and **uncontrolled** modes. This provides flexibility for users who want to manage state externally (controlled) or let the component manage its own internal state (uncontrolled). Typically, you should provide a `value` (or `show`, etc.) prop for the controlled mode, and a `defaultValue` (or `defaultShow`, etc.) prop for the uncontrolled mode.
+  - **Example**:
+    ```tsx
+    // Popover.tsx
+    function PopoverRoot(props) {
+      const { show, defaultShow = false, onVisibleChange, children } = props
+
+      // Determine mode
+      const isControlled = show !== undefined
+
+      // Internal state for uncontrolled mode
+      const [uncontrolledShow, setUncontrolledShow] = useState(defaultShow)
+
+      // The actual value used for rendering
+      const actualShow = isControlled ? show : uncontrolledShow
+
+      // Internal handler to trigger state updates
+      const handleVisibleChange = (visible: boolean) => {
+        if (isControlled) {
+          onVisibleChange?.(visible)
+        } else {
+          setUncontrolledShow(visible)
+        }
+      }
+
+      // Pass `actualShow` and `handleVisibleChange` to children via Context...
+    }
+    ```
+- **Explicit Props Spreading**: We DO NOT recommend components blindly spreading all raw props (`...rest`) to the underlying view. Instead, use a dedicated prop (e.g., `buttonProps`, `wrapperProps`) to pass raw element properties. This prevents unexpected behavior, avoids polluting the component API surface, and explicitly declares intent.
+  - **Bad**:
+    ```tsx
+    // App.tsx
+    <Button style={...} className={...} onTap={...} force-can-scroll={true} />
+
+    // Button.tsx
+    function Button(props) {
+       const { style, className, onTap, ...rest } = props
+       return (
+         <view style={style} className={className} onTap={onTap} {...rest} />
+       )
+    }
+    ```
+  - **Good**:
+    ```tsx
+    // App.tsx
+    <Button style={...} className={...} onTap={...} buttonProps={{ 'force-can-scroll': true }} />
+
+    // Button.tsx
+    function Button(props) {
+       const { style, className, onTap, buttonProps } = props
+       return (
+         <view style={style} className={className} onTap={onTap} {...buttonProps} />
+       )
+    }
+    ```
 - **File Headers**: All source files must include the copyright header (checked by ESLint):
 
   ```typescript
