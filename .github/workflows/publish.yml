@@ -2,9 +2,8 @@ name: Deploy
 
 on:
   push:
-    branches: [
-      "main",
-    ]
+    branches:
+      - "**"
 
 # Set default minimum permissions to prevent unnecessary access
 permissions: {}
@@ -52,7 +51,7 @@ jobs:
     timeout-minutes: 30
     needs: build
     runs-on: ubuntu-latest
-    if: github.repository == 'lynx-family/lynx-ui'
+    if: github.repository == 'lynx-family/lynx-ui' && github.ref == 'refs/heads/main'
     concurrency:
       group: ${{ github.workflow }}-publish-${{ github.ref }}
       cancel-in-progress: false
