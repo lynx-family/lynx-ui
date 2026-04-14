@@ -99,6 +99,59 @@ jobs:
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_LYNX_EXAMPLES }}
         with:
           publish: pnpm changeset publish
           title: "chore: Release ${{ steps.date.outputs.date }}"
+
+  publish-canary:
+    timeout-minutes: 30
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.repository == 'lynx-family/lynx-ui'
+    concurrency:
+      group: ${{ github.workflow }}-publish-canary-${{ github.ref }}
+      cancel-in-progress: false
+    environment: npm
+    permissions:
+      contents: read
+      statuses: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      - name: Install
+        run: |
+          npm install -g corepack@latest
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile
+      - name: Download Turbo Cache
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        timeout-minutes: 5
+        with:
+          name: deploy-${{ github.sha }}
+          path: .turbo
+      - name: Print npm and pnpm version
+        run: |
+          npm --version
+          corepack pnpm --version
+      - name: build
+        run: |
+          corepack pnpm turbo build --summarize
+      - name: Publish canary packages
+        env:
+          CI_COMMIT_SHA: ${{ github.sha }}
+          FORCE_SNAPSHOT: 1
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_LYNX_EXAMPLES }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_LYNX_EXAMPLES }}
+        run: |
+          corepack pnpm changeset version --snapshot canary
+          node tools/canary-release/snapshot.js
+          corepack pnpm --recursive publish --no-git-checks --access public
