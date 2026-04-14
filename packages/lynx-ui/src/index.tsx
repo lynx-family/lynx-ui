@@ -252,6 +252,7 @@ export {
 export type {
   SheetBackdropProps,
   SheetContentProps,
+  SheetDirection,
   SheetRootProps,
   SheetRootRef,
   SheetViewProps,

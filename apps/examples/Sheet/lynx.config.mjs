@@ -10,6 +10,7 @@ const defaultConfig = exampleConfig(
     SheetBasic: './Basic/index.tsx',
     SheetAutoHeight: './AutoHeight/index.tsx',
     SheetControlled: './Controlled/index.tsx',
+    SheetDirectional: './Directional/index.tsx',
     SheetImperative: './Imperative/index.tsx',
     // For Internal Tests
     // Uncomment entries below when running internal tests for Sheet.

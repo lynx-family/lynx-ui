@@ -20,8 +20,15 @@ import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
 import { useSheetController } from './useSheetController'
-import type { SheetTransition } from '../types'
-import { clamp, findNearestSnap, toPxJS } from '../utils'
+import type { SheetDirection, SheetTransition } from '../types'
+import {
+  clamp,
+  findNearestSnap,
+  getMainAxisLayoutSize,
+  getMainAxisSize,
+  getSheetTransform,
+  toPxJS,
+} from '../utils'
 
 export interface SnappingOptions {
   animate?: boolean
@@ -33,7 +40,9 @@ export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
   snapAnimation?: SheetTransition
+  direction?: SheetDirection
   screenHeight?: number
+  screenWidth?: number
   onSnapChange?: (index: number, value: number) => void
   onDismiss?: () => void
   enterAnimation?: SheetTransition
@@ -50,7 +59,9 @@ export function useSnap({
   snapPoints = [],
   initialSnap = 0,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
+  direction = 'bottom',
   screenHeight: userScreenHeight,
+  screenWidth: userScreenWidth,
   onSnapChange = noop,
   onDismiss,
   enterAnimation = {
@@ -74,7 +85,7 @@ export function useSnap({
 }: SnapOptions) {
   const sheetMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const yRef = useMotionValueRef<number>(0)
-  const sheetHeightMTRef = useMainThreadRef<number>(0)
+  const sheetSizeMTRef = useMainThreadRef<number>(0)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -82,6 +93,15 @@ export function useSnap({
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenHeight
     ?? 500
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const screenWidth: number = userScreenWidth
+    // @ts-expect-error expected
+    ?? lynx.__globalProps?.screenWidth
+    ?? 375
+  const viewportSize = getMainAxisSize(direction, {
+    screenHeight,
+    screenWidth,
+  })
 
   // Track resolved snapPoints (for 'fit' support)
   const resolvedSnapPointMTRef = useMainThreadRef<number[]>([])
@@ -93,10 +113,10 @@ export function useSnap({
 
   // Keep snap points order stable: indices should match `snapPoints` order.
   const { snapPointValues, snapOffsets } = useMemo(() => {
-    const values = snapPoints.map(p => toPxJS(p, screenHeight))
+    const values = snapPoints.map(p => toPxJS(p, viewportSize))
     const offsets = values.map(p => (p === -1 ? -1 : p))
     return { snapPointValues: values, snapOffsets: offsets }
-  }, [snapPoints, screenHeight])
+  }, [snapPoints, viewportSize])
 
   const validOffsets = snapOffsets.filter(o => o !== -1)
   const minOffset = validOffsets.length > 0
@@ -125,7 +145,7 @@ export function useSnap({
     const offsets = getResolvedSnapOffsets()
     const maxSnap = offsets.length > 0 ? Math.max(...offsets) : 0
     // Allow snapping up to the max snap point, even if content is shorter
-    return clamp(targetY, Math.max(sheetHeightMTRef.current, maxSnap))
+    return clamp(targetY, Math.max(sheetSizeMTRef.current, maxSnap))
   }
 
   function setSheetMTRef(el: MainThread.Element) {
@@ -137,14 +157,17 @@ export function useSnap({
     'main thread'
     const el = sheetMTRef.current
     if (el) {
+      const offsets = getResolvedSnapOffsets()
+      const maxSnap = offsets.length > 0 ? Math.max(...offsets) : 0
+      const opened = Math.max(sheetSizeMTRef.current, maxSnap)
+      const transformValue = direction === 'bottom'
+        ? v
+        : Math.min(v, opened)
       el.setStyleProperties({
-        transform: `translate(0px, ${-v}px)`,
+        transform: getSheetTransform(direction, transformValue, viewportSize),
         transition: 'none',
       })
       if (sheetProgress?.current) {
-        const offsets = getResolvedSnapOffsets()
-        const maxSnap = offsets.length > 0 ? Math.max(...offsets) : 0
-        const opened = Math.max(sheetHeightMTRef.current, maxSnap)
         const closed = 0
         let progress = 1
         if (v < opened && opened > 0) {
@@ -192,7 +215,7 @@ export function useSnap({
     return findNearestSnap(
       value,
       offsets,
-      Math.max(sheetHeightMTRef.current, maxSnap),
+      Math.max(sheetSizeMTRef.current, maxSnap),
     )
   }
 
@@ -289,11 +312,16 @@ export function useSnap({
     },
   )
 
-  function handleSheetLayoutChangeMT(e: { detail: { height: number } }) {
+  function handleSheetLayoutChangeMT(
+    e: {
+      detail?: { height?: number, width?: number }
+      params?: { height?: number, width?: number }
+    },
+  ) {
     'main thread'
 
-    const height = e.detail.height ?? 0
-    sheetHeightMTRef.current = height
+    const layoutSize = getMainAxisLayoutSize(direction, e)
+    sheetSizeMTRef.current = layoutSize
 
     // The rename is required, to prevent from xx.map is not a function
     const innerSnapPointValues = snapPointValues
@@ -301,10 +329,10 @@ export function useSnap({
 
     if (hasFitSnapPoint) {
       resolvedSnapPointMTRef.current = innerSnapPointValues.map(v =>
-        v === -1 ? height : v
+        v === -1 ? layoutSize : v
       )
       resolvedSnapOffsetsMTRef.current = innerSnapOffsets.map(o =>
-        o === -1 ? height : o
+        o === -1 ? layoutSize : o
       )
 
       // Resolve any pending snap operation
@@ -327,7 +355,10 @@ export function useSnap({
     showMT: controller.showMT,
     // internals for gesture hook
     yRef,
+    direction,
     screenHeight,
+    screenWidth,
+    viewportSize,
     snapOffsets,
     snapPointValues,
     minOffset,
@@ -336,7 +367,8 @@ export function useSnap({
     animateToMT,
     nearestSnapMT,
     onSnapChangeMT,
-    sheetHeightMTRef,
+    sheetHeightMTRef: sheetSizeMTRef,
+    sheetSizeMTRef,
     // Getters for resolved snapPoints (after 'fit' is resolved)
     getResolvedSnapOffsets,
     getResolvedSnapPointValues,

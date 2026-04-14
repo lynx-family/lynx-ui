@@ -7,6 +7,8 @@ import type { ReactNode } from '@lynx-js/react'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
+export type SheetDirection = 'bottom' | 'left' | 'right'
+
 export interface SheetRootRef {
   snapTo: (
     index: number,
@@ -96,6 +98,8 @@ export interface SheetContentProps extends ComponentBasicProps {
   /**
    * CSS class name for the inner layer.
    * Use this for layout or sizing styles specific to the inner area.
+   * In horizontal drawer mode, prefer sizing the drawer surface with `className`
+   * / `style` on `SheetContent` itself instead of `innerClassName`.
    * @zh 内层容器的 CSS 类名。用于设置内层区域特定的布局或尺寸样式。
    * @Android
    * @iOS
@@ -107,6 +111,8 @@ export interface SheetContentProps extends ComponentBasicProps {
    * Use this for layout or sizing styles specific to the inner area.
    * Note: Visual styles (background, borderRadius, etc.) should be set via
    * the main `style` prop which applies to the surface layer.
+   * In horizontal drawer mode, prefer sizing the drawer surface with `style`
+   * on `SheetContent` itself instead of `innerStyle`.
    * @zh 内层容器的内联样式。用于设置内层区域特定的布局或尺寸样式。
    * 注意：视觉样式（背景、圆角等）应通过主 `style` 属性设置，它会应用到 surface 层。
    * @Android
@@ -130,16 +136,26 @@ export interface SheetContentProps extends ComponentBasicProps {
  */
 export interface SheetRootProps extends ComponentBasicProps {
   /**
+   * The edge from which the sheet enters.
+   * `bottom` preserves the existing bottom-sheet behavior.
+   * `left` and `right` provide drawer-like behavior.
+   * @defaultValue 'bottom'
+   * @zh Sheet 进入的边缘。`bottom` 保持现有底部弹层行为，`left` 和 `right` 提供抽屉式行为。
+   */
+  direction?: SheetDirection
+  /**
    * The snap points of the Sheet. Can be pixel numbers, percentages, or 'fit'.
    * - Numbers are treated as pixel values
-   * - Percentages (e.g., '50%') are relative to screen height
-   * - 'fit' dynamically resolves to the measured content height
+   * - Percentages (e.g., '50%') are relative to screen height for `bottom`,
+   *   and relative to screen width for `left` / `right`
+   * - 'fit' dynamically resolves to the measured content height for `bottom`,
+   *   and the measured content width for `left` / `right`
    * The index order follows the order of this array.
    * @example snapPoints={['fit', '80%']} // First snap fits content, second is 80% of screen
    * @zh Sheet 的吸附点。可以是像素数值、百分比或 'fit'。
    * - 数字被视为像素值
-   * - 百分比（例如 '50%'）相对于屏幕高度
-   * - 'fit' 动态解析为测量的内容高度
+   * - 百分比（例如 '50%'）在 `bottom` 模式下相对于屏幕高度，在 `left` / `right` 模式下相对于屏幕宽度
+   * - 'fit' 在 `bottom` 模式下动态解析为测量的内容高度，在 `left` / `right` 模式下动态解析为测量的内容宽度
    * 索引顺序与该数组顺序一致。
    */
   snapPoints?: Array<number | string>
@@ -160,6 +176,13 @@ export interface SheetRootProps extends ComponentBasicProps {
    * @zh Sheet 容器的高度（屏幕高度）。
    */
   screenHeight?: number
+  /**
+   * The width of the Sheet container (screen width).
+   * Used in horizontal drawer mode (`left` / `right`) for percentage snap points
+   * and dismissal calculations.
+   * @zh Sheet 容器的宽度（屏幕宽度）。在水平抽屉模式（`left` / `right`）中用于百分比吸附点和关闭计算。
+   */
+  screenWidth?: number
   /**
    * The rubber band effect configuration.
    * If true, enables default rubber band effect (coefficient 0.5).
@@ -204,6 +227,7 @@ export interface SheetRootProps extends ComponentBasicProps {
    * will trigger sheet movement, while gestures outside these ranges are passed through.
    * see https://lynxjs.org/api/elements/built-in/view#consume-slide-event for more
    * @example [[-134, -46],[46, 134]] for claiming vertical gesture
+   * @example [[-45, 45],[135, -135]] for claiming horizontal gesture
    * @zh Sheet 声明处理的手势角度范围（度数）。每个条目为 [最小角度, 最大角度]。在这些角度范围内的手势会触发 Sheet 移动，范围外的手势会传递给子组件。
    */
   claimedGestureAngles?: [number, number][]
