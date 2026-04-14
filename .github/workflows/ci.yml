@@ -75,7 +75,7 @@ jobs:
         sleep 10
 
         printf '\n//localhost:4873/:_authToken="this-is-a-fake-token"\n' >> ~/.npmrc
-        pnpm changeset version --snapshot canary
+        pnpm changeset version --snapshot regression
         CI_COMMIT_SHA=${GITHUB_SHA} FORCE_SNAPSHOT=1 node tools/canary-release/snapshot.js
         pnpm --recursive publish --no-git-checks --access public --registry=http://localhost:4873
         PKG_NAME=$(node -p "require('./packages/lynx-ui-button/package.json').name")
