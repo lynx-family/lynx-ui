@@ -19,6 +19,7 @@ interface ComputeFloatingOptions {
   elements: ElementRects
   open?: boolean | undefined
   transform?: boolean | undefined
+  debugLog?: boolean | undefined
 }
 
 export function computeFloating(
@@ -29,12 +30,14 @@ export function computeFloating(
     middleware = [],
     platform,
     elements,
+    debugLog,
   } = options
 
   const config: ComputePositionConfig = {
     placement,
     platform,
     middleware,
+    debugLog,
   }
 
   const { reference, floating, alternativeReference } = elements

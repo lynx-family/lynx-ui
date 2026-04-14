@@ -11,7 +11,7 @@ import {
 } from '@lynx-js/react'
 
 import { Button } from '@lynx-js/lynx-ui-button'
-import { getEventDetail } from '@lynx-js/lynx-ui-common'
+import { getEventDetail, log } from '@lynx-js/lynx-ui-common'
 import { OverlayView } from '@lynx-js/lynx-ui-overlay'
 import {
   Presence,
@@ -197,15 +197,29 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
       ])
 
   const handleDelayedEntering = () => {
-    computeFloating({
+    const computeFloatingParams = {
       placement,
       platform,
       elements: hasAnchor
         ? { floating, reference, alternativeReference }
         : { floating, reference },
       middleware,
-    })
+      debugLog,
+    }
+
+    log(
+      !!debugLog,
+      '[lynx-ui-popover] Compute Floating Params:',
+      computeFloatingParams,
+    )
+
+    computeFloating(computeFloatingParams)
       .then((floatingResult: ComputePositionReturn) => {
+        log(
+          !!debugLog,
+          '[lynx-ui-popover] Compute Floating Result:',
+          floatingResult,
+        )
         const { x, y, middlewareData } = floatingResult
         const arrowData = middlewareData.arrow as
           | { x: number, y: number }

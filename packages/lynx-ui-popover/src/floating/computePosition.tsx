@@ -19,13 +19,14 @@ export const computePosition: ComputePosition = async (
     strategy = 'absolute',
     middleware = [],
     platform,
+    debugLog,
   } = config
 
   const validMiddleware = middleware.filter(Boolean) as Middleware[]
   const rtl = await platform.isRTL?.(floating)
 
   let rects = await platform.getElementRects()
-  let { x, y } = computeCoordsFromPlacement(rects, placement, rtl)
+  let { x, y } = computeCoordsFromPlacement(rects, placement, rtl, debugLog)
   let statefulPlacement = placement
   let middlewareData: MiddlewareData = {}
   let resetCount = 0
@@ -49,6 +50,7 @@ export const computePosition: ComputePosition = async (
       rects,
       platform,
       elements: { reference, floating },
+      debugLog,
     })
 
     x = nextX ?? x
@@ -80,7 +82,12 @@ export const computePosition: ComputePosition = async (
             : reset.rects
         }
 
-        ;({ x, y } = computeCoordsFromPlacement(rects, statefulPlacement, rtl))
+        ;({ x, y } = computeCoordsFromPlacement(
+          rects,
+          statefulPlacement,
+          rtl,
+          debugLog,
+        ))
       }
 
       i = -1

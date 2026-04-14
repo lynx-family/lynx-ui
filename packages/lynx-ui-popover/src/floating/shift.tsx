@@ -2,6 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import { log } from '@lynx-js/lynx-ui-common'
+
 import { detectOverflow } from './detectOverflow'
 import type {
   Coords,
@@ -60,7 +62,7 @@ export const shift = (
       [crossAxis]: crossAxisCoord,
     })
 
-    return {
+    const result = {
       ...limitedCoords,
       data: {
         x: limitedCoords.x - x,
@@ -71,6 +73,14 @@ export const shift = (
         },
       },
     }
+
+    log(
+      !!state.debugLog,
+      '[lynx-ui-popover] shift middleware result:',
+      result,
+    )
+
+    return result
   },
 })
 

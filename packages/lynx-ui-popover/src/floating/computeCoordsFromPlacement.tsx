@@ -2,6 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import { log } from '@lynx-js/lynx-ui-common'
+
 import type { Coords, ElementRects, Placement } from './floatingTypes'
 import {
   getAlignment,
@@ -19,6 +21,7 @@ export function computeCoordsFromPlacement(
   { reference, floating }: ElementRects,
   placement: Placement,
   rtl?: boolean,
+  debugLog?: boolean,
 ): Coords {
   const sideAxis = getSideAxis(placement)
   const alignmentAxis = getAlignmentAxis(placement)
@@ -61,6 +64,12 @@ export function computeCoordsFromPlacement(
       break
     default:
   }
+
+  log(
+    !!debugLog,
+    '[lynx-ui-popover] computeCoordsFromPlacement result:',
+    coords,
+  )
 
   return coords
 }

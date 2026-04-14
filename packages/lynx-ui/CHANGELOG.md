@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui
 
+## 3.130.1
+
+### Patch Changes
+
+- Updated dependencies [[`b9673a1`](https://github.com/lynx-family/lynx-ui/commit/b9673a1f38fbfe4471094de9e70e9fad79c3ea40), [`8194dce`](https://github.com/lynx-family/lynx-ui/commit/8194dce49773622d36e69fbd42b07b33060be962)]:
+  - @lynx-js/lynx-ui-popover@3.130.1
+  - @lynx-js/lynx-ui-sheet@3.130.1
+
 ## 3.130.0
 
 ### Patch Changes
