@@ -1,0 +1,45 @@
+@import "../shared/base.css";
+
+.demo-container {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.drawer-content {
+  height: 100%;
+  background-color: var(--canvas);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+
+.drawer-content-fit {
+  width: 280px;
+  border-top-right-radius: 36px;
+  border-bottom-right-radius: 36px;
+}
+
+.drawer-content-percent {
+  width: 72%;
+  border-top-left-radius: 36px;
+  border-bottom-left-radius: 36px;
+}
+
+.drawer-inner-content {
+  height: 100%;
+  padding-top: 96px;
+  padding-bottom: 48px;
+  padding-left: 32px;
+  padding-right: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.drawer-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: start;
+  row-gap: 24px;
+}

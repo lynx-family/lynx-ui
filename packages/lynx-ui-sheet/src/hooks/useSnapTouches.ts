@@ -7,11 +7,19 @@ import type { MainThreadRef } from '@lynx-js/react'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import { clamp, findNearestSnap, rubberEffect } from '../utils'
+import {
+  clamp,
+  findNearestSnap,
+  getMainAxisTouchCoordinate,
+  getNextMainAxisOffset,
+  rubberEffect,
+} from '../utils'
 import { useDrag } from './useDrag'
 import type { SnappingOptions } from './useSnap'
+import type { SheetDirection } from '../types'
 
 export interface SnapTouchOptions {
+  direction?: SheetDirection
   dragDisabled?: boolean
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   flingEnabled?: boolean
@@ -21,12 +29,12 @@ export interface SnapTouchOptions {
   enableDragToClose?: boolean
   claimedGestureAngles?: [number, number][]
   yRef: MainThreadRef<MotionValue<number>>
-  screenHeight: number
+  viewportSize: number
   snapOffsets: number[]
   snapPointValues: number[]
   minOffset: number
   maxOffset: number
-  sheetHeightMTRef: MainThreadRef<number>
+  sheetSizeMTRef: MainThreadRef<number>
   getResolvedSnapOffsets: () => number[]
   getResolvedSnapPointValues: () => number[]
   // Controller handlers
@@ -41,6 +49,7 @@ export interface SnapTouchOptions {
 }
 
 export function useSnapTouches({
+  direction = 'bottom',
   dragDisabled = false,
   rubberBand = true,
   flingEnabled = true,
@@ -49,8 +58,8 @@ export function useSnapTouches({
   dismissThreshold = 0.15,
   enableDragToClose = true,
   yRef,
-  screenHeight,
-  sheetHeightMTRef,
+  viewportSize,
+  sheetSizeMTRef,
   getResolvedSnapOffsets,
   claimedGestureAngles,
   // Controller handlers
@@ -58,7 +67,7 @@ export function useSnapTouches({
   onDragEndSnapMT,
   onDragEndCloseMT,
 }: SnapTouchOptions) {
-  const startTouchYRef = useMainThreadRef<number>(0)
+  const startTouchMainAxisRef = useMainThreadRef<number>(0)
   const startOffsetRef = useMainThreadRef<number>(0)
   const isDraggingMTRef = useMainThreadRef<boolean>(false)
 
@@ -69,8 +78,11 @@ export function useSnapTouches({
     if (offsets.length === 0) return
 
     // Only record start position - don't stop animation or change state yet
-    // Wait for handleFirstMoveMT to confirm this is a vertical drag
-    startTouchYRef.current = e.detail.y
+    // Wait for handleFirstMoveMT to confirm this is a sheet drag
+    startTouchMainAxisRef.current = getMainAxisTouchCoordinate(
+      direction,
+      e.detail,
+    )
     startOffsetRef.current = yRef.current.get()
   }
 
@@ -91,19 +103,20 @@ export function useSnapTouches({
     if (dragDisabled) return
     const offsets = getResolvedSnapOffsets()
     if (offsets.length === 0) return
-    const dy = e.detail.y - startTouchYRef.current
-    let next = startOffsetRef.current - dy
+    const delta = getMainAxisTouchCoordinate(direction, e.detail)
+      - startTouchMainAxisRef.current
+    let next = getNextMainAxisOffset(direction, startOffsetRef.current, delta)
 
     const validOffsets = offsets.filter(o => o !== -1)
     const min = validOffsets.length > 0 ? Math.min(...validOffsets) : 0
     // Use the actual max snap point, not clamped to sheet height yet
     const maxSnap = validOffsets.length > 0 ? Math.max(...validOffsets) : 0
-    const max = clamp(maxSnap, Math.max(sheetHeightMTRef.current, maxSnap))
+    const max = clamp(maxSnap, Math.max(sheetSizeMTRef.current, maxSnap))
 
     // Use max snap offset (not DOM height) for rubber band calculation
     const { enabled, coeff, max: rubberMax } = getRubberBandConfig(
       rubberBand,
-      screenHeight,
+      viewportSize,
       max,
     )
 
@@ -132,7 +145,7 @@ export function useSnapTouches({
     const validOffsets = offsets.filter(o => o !== -1)
     const min = validOffsets.length > 0 ? Math.min(...validOffsets) : 0
     const closed = 0
-    const dismissLine = Math.max(min - dismissThreshold * screenHeight, closed)
+    const dismissLine = Math.max(min - dismissThreshold * viewportSize, closed)
 
     if (enableDragToClose && current <= dismissLine) {
       onDragEndCloseMT()
@@ -142,7 +155,7 @@ export function useSnapTouches({
     const { index } = findNearestSnap(
       current,
       offsets,
-      Math.max(sheetHeightMTRef.current, Math.max(...validOffsets, 0)),
+      Math.max(sheetSizeMTRef.current, Math.max(...validOffsets, 0)),
     )
     if (flingEnabled && Math.abs(velocity) >= flingMinVelocity) {
       const travel = (Math.abs(velocity) * Math.abs(velocity))
@@ -150,7 +163,7 @@ export function useSnapTouches({
       let projected = current + Math.sign(velocity) * travel
       const min2 = 0
       const maxSnap = validOffsets.length > 0 ? Math.max(...validOffsets) : 0
-      const max2 = clamp(maxSnap, Math.max(sheetHeightMTRef.current, maxSnap))
+      const max2 = clamp(maxSnap, Math.max(sheetSizeMTRef.current, maxSnap))
 
       if (projected < min2) projected = min2
       if (projected > max2) projected = max2
@@ -162,7 +175,7 @@ export function useSnapTouches({
       const n = findNearestSnap(
         projected,
         candidates,
-        Math.max(sheetHeightMTRef.current, maxSnap),
+        Math.max(sheetSizeMTRef.current, maxSnap),
       )
       if (n.value === closed) {
         onDragEndCloseMT()
@@ -179,6 +192,7 @@ export function useSnapTouches({
     handleTouchMoveMT: handleTouchMoveW,
     handleTouchEndMT: handleTouchEndW,
   } = useDrag({
+    direction,
     claimedGestureAngles,
     onStartMT: handleTouchStartMT,
     onFirstMoveMT: handleFirstMoveMT,
@@ -195,8 +209,8 @@ export function useSnapTouches({
 
 function getRubberBandConfig(
   rubberBand: SnapTouchOptions['rubberBand'],
-  screenHeight: number,
-  sheetHeight: number,
+  viewportSize: number,
+  sheetSize: number,
 ) {
   'main thread'
   const enabled = rubberBand !== false
@@ -212,7 +226,7 @@ function getRubberBandConfig(
     0,
     Math.min(
       80,
-      screenHeight - sheetHeight,
+      viewportSize - sheetSize,
     ),
   )
 

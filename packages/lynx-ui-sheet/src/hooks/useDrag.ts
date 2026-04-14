@@ -5,9 +5,13 @@ import { useMainThreadRef } from '@lynx-js/react'
 
 import type { MainThread } from '@lynx-js/types'
 
+import type { SheetDirection } from '../types'
+import { getDefaultClaimedGestureAngles } from '../utils'
+
 const GESTURE_THRESHOLD = 8
 
 export interface UseDragOptions {
+  direction?: SheetDirection
   claimedGestureAngles?: [number, number][]
   onStartMT?: (e: MainThread.TouchEvent) => void
   onFirstMoveMT?: (e: MainThread.TouchEvent) => void
@@ -26,13 +30,9 @@ function isAngleInRanges(angle: number, ranges: [number, number][]) {
   })
 }
 
-const DEFAULT_CLAIMED_GESTURE_ANGLES: [number, number][] = [
-  [-134, -46],
-  [46, 134],
-]
-
 export function useDrag({
-  claimedGestureAngles = DEFAULT_CLAIMED_GESTURE_ANGLES,
+  direction = 'bottom',
+  claimedGestureAngles = getDefaultClaimedGestureAngles(direction),
   onStartMT,
   onFirstMoveMT,
   onMoveMT,

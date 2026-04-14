@@ -34,12 +34,14 @@ export function SheetContent(props: SheetContentProps) {
     registerMethods,
     snapPoints = DEFAULT_SNAP_POINTS,
     initialSnap = 0,
+    direction,
     rubberBand = true,
     dragDisabled = false,
     dismissThreshold = 0.15,
     handleOnly,
     enableDragToClose = true,
     screenHeight,
+    screenWidth,
     onSnapChange,
     onShowChange,
     claimedGestureAngles,
@@ -49,6 +51,7 @@ export function SheetContent(props: SheetContentProps) {
     onClose,
     show: showFromContext,
   } = useSheetContext()
+  const isHorizontal = direction !== 'bottom'
 
   // Track if show state changes are internal (from controller) vs external (from prop/context)
   const isInternalChangeRef = useRef(false)
@@ -82,11 +85,11 @@ export function SheetContent(props: SheetContentProps) {
     show: showSheet,
     // internals for touch handling
     yRef,
-    screenHeight: resolvedScreenHeight,
+    viewportSize,
     snapOffsets,
     snapPointValues,
     minOffset,
-    sheetHeightMTRef,
+    sheetSizeMTRef,
     maxOffset,
     getResolvedSnapOffsets,
     getResolvedSnapPointValues,
@@ -99,7 +102,9 @@ export function SheetContent(props: SheetContentProps) {
     snapPoints,
     initialSnap,
     snapAnimation,
+    direction,
     screenHeight,
+    screenWidth,
     onSnapChange,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,
@@ -115,6 +120,7 @@ export function SheetContent(props: SheetContentProps) {
   // Touch-based input handling (can be swapped with gesture-handler variant)
   const { handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT } =
     useSnapTouches({
+      direction,
       dragDisabled,
       rubberBand,
       flingEnabled: true,
@@ -123,12 +129,12 @@ export function SheetContent(props: SheetContentProps) {
       dismissThreshold,
       enableDragToClose,
       yRef,
-      screenHeight: resolvedScreenHeight,
+      viewportSize,
       snapOffsets,
       snapPointValues,
       minOffset,
       maxOffset,
-      sheetHeightMTRef,
+      sheetSizeMTRef,
       getResolvedSnapOffsets,
       getResolvedSnapPointValues,
       claimedGestureAngles,
@@ -185,6 +191,63 @@ export function SheetContent(props: SheetContentProps) {
     }),
     [handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT],
   )
+
+  const horizontalSurface = (
+    <view
+      className={className}
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        ...style,
+      }}
+      event-through={false}
+      main-thread:bindtouchstart={handleOnly ? undefined : handleTouchStartMT}
+      main-thread:bindtouchmove={handleOnly ? undefined : handleTouchMoveMT}
+      main-thread:bindtouchend={handleOnly ? undefined : handleTouchEndMT}
+      main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
+    >
+      <view
+        {...rest}
+        className={innerClassName}
+        style={{
+          height: '100%',
+          ...innerStyle,
+        }}
+      >
+        <SheetDragContext.Provider value={contextValue}>
+          {children}
+        </SheetDragContext.Provider>
+      </view>
+    </view>
+  )
+
+  if (isHorizontal) {
+    return (
+      <view
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100%',
+          overflow: 'hidden',
+          transform: direction === 'left'
+            ? `translate(${-viewportSize}px, 0px)`
+            : `translate(${viewportSize}px, 0px)`,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: direction === 'left' ? 'flex-end' : 'flex-start',
+        }}
+        main-thread:ref={setSheetMTRef}
+        implicit-animation='false'
+        event-through={true}
+      >
+        {horizontalSurface}
+      </view>
+    )
+  }
 
   return (
     <view

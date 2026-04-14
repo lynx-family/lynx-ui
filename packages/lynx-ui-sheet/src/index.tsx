@@ -17,4 +17,5 @@ export type {
   SheetHandleProps,
   SheetTransition,
   SheetRootRef,
+  SheetDirection,
 } from './types'
