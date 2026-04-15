@@ -24,6 +24,12 @@ This repository follows a standard Monorepo structure. Understanding this is cru
     - `package.json`: Dependency management.
     - `README.md`: Documentation.
   - Example: `packages/lynx-ui-button/` contains the Button component.
+  - Special case: `packages/lynx-ui-skills/` is not a runtime UI component package. It is the umbrella skill/reference package for curated lynx-ui component docs.
+    - `SKILL.md`: The package-level umbrella skill entry.
+    - `reference.md` and `examples.md`: Generated top-level skill payload indexes.
+    - `references/` and `examples/`: Generated skill payload content, git ignored by design.
+    - Keep repo-only generator, test, and eval assets under `tools/lynx-ui-skills/`, not inside the published package payload.
+    - Do not add `src/`, rslib config, or runtime build plumbing unless the package becomes an actual executable/library again.
 
 - **`apps/examples/`**: Contains runnable examples for development and testing.
   - Structure: `apps/examples/<Component>/<UseCase>/`
@@ -170,6 +176,28 @@ This project uses **Biome** for linting and formatting, and **dprint** for Markd
 - Use **Vitest** for unit testing.
 - Test files should be located alongside source files or in a `__tests__` directory (follow existing pattern).
 - Run tests: `pnpm test`
+- For `packages/lynx-ui-skills`, run both:
+  - `pnpm --filter @lynx-js/lynx-ui-skills test`
+  - `pnpm --filter @lynx-js/lynx-ui-skills check:references`
+
+## lynx-ui-skills Maintenance
+
+- `packages/lynx-ui-skills/SKILL.md` must stay concise and act only as the umbrella router.
+- Detailed component content belongs in generated payload files, not in the umbrella `SKILL.md`.
+- `reference.md` is the hand-authored top-level routing guide for the skill payload.
+- `examples.md` is the top-level generated example catalog for the skill payload.
+- `references/` and `examples/` are generated and git ignored.
+- `guide.md` is generated from component package `SKILL.md`.
+- `api.md` is generated from `src/types/index.docs.ts`.
+- `references/components/*/examples.md` and `examples/<Component>/<Case>/index.tsx` are generated from `apps/examples/<Component>/**/index.tsx`.
+- When component skills, public API docs, or example entry files change, regenerate and verify:
+
+```bash
+pnpm --filter @lynx-js/lynx-ui-skills generate:references
+pnpm --filter @lynx-js/lynx-ui-skills check:references
+```
+
+- Repo-only maintenance assets for this package live under `tools/lynx-ui-skills/`.
 
 ## Contribution Rules
 

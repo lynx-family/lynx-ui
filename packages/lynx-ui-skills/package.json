@@ -1,0 +1,35 @@
+{
+  "name": "@lynx-js/lynx-ui-skills",
+  "version": "3.130.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "packages/lynx-ui-skills"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "files": [
+    "SKILL.md",
+    "references",
+    "examples",
+    "template",
+    "reference.md",
+    "examples.md"
+  ],
+  "scripts": {
+    "check:references": "node ../../tools/lynx-ui-skills/check-references.mjs",
+    "clean:generated": "node ../../tools/lynx-ui-skills/clean-generated.mjs",
+    "generate:references": "node ../../tools/lynx-ui-skills/generate-references.mjs",
+    "prepack": "pnpm run generate:references",
+    "postpack": "pnpm run clean:generated",
+    "test": "vitest run --config ../../tools/lynx-ui-skills/vitest.config.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "vitest": "2.1.8"
+  }
+}

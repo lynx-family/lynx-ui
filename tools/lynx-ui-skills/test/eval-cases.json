@@ -1,0 +1,191 @@
+[
+  {
+    "id": "route-dialog-confirm",
+    "category": "routing",
+    "prompt": "I need a blocking confirm modal in lynx-ui with cancel and confirm actions.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "dialog",
+      "should_read_first": "references/components/dialog/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-popover-anchor",
+    "category": "routing",
+    "prompt": "I need a floating menu anchored to a trigger button in lynx-ui.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "popover",
+      "should_read_first": "references/components/popover/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-list-repeated-cards",
+    "category": "routing",
+    "prompt": "I have a long repeated card list in lynx-ui and need the right component choice.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "list",
+      "should_read_first": "references/components/list/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-feedlist-refresh",
+    "category": "routing",
+    "prompt": "I need a scrollable feed in lynx-ui with refresh and load more behavior.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "feed-list",
+      "should_read_first": "references/components/feed-list/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-scrollview-mixed-content",
+    "category": "routing",
+    "prompt": "I need a scrollable mixed-content page in lynx-ui with a few static sections.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "scroll-view",
+      "should_read_first": "references/components/scroll-view/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-swiper-carousel",
+    "category": "routing",
+    "prompt": "I need a horizontal carousel in lynx-ui with paging behavior.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "swiper",
+      "should_read_first": "references/components/swiper/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-button-action",
+    "category": "routing",
+    "prompt": "I need a pressable action control in lynx-ui with a custom visual style.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "button",
+      "should_read_first": "references/components/button/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "route-lazycomponent-heavy-module",
+    "category": "routing",
+    "prompt": "I want a heavy lynx-ui module to mount only when it gets near the viewport.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "lazy-component",
+      "should_read_first": "references/components/lazy-component/guide.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "api-dialog-controlled-mode",
+    "category": "api",
+    "prompt": "Does Dialog support controlled mode in lynx-ui? Which props are involved?",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "dialog",
+      "should_read_first": "references/components/dialog/guide.md",
+      "should_verify_with_api": "references/components/dialog/api.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "api-button-pressed-state",
+    "category": "api",
+    "prompt": "How does Button expose pressed state in lynx-ui?",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "button",
+      "should_read_first": "references/components/button/guide.md",
+      "should_verify_with_api": "references/components/button/api.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "api-popover-root-props",
+    "category": "api",
+    "prompt": "What public props does PopoverRoot expose in lynx-ui?",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "popover",
+      "should_read_first": "references/components/popover/guide.md",
+      "should_verify_with_api": "references/components/popover/api.md",
+      "should_not_claim_unsupported_api": true
+    }
+  },
+  {
+    "id": "example-adapt-dialog",
+    "category": "example-adaptation",
+    "prompt": "Adapt the Dialog basic example into a confirm dialog with confirm and cancel buttons.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "dialog",
+      "should_read_first": "references/components/dialog/guide.md",
+      "should_read_examples": "references/components/dialog/examples.md",
+      "should_remove_irrelevant_demo_code": true
+    }
+  },
+  {
+    "id": "example-adapt-scrollview",
+    "category": "example-adaptation",
+    "prompt": "Show me a lynx-ui ScrollView pattern for a page with mixed sections and a small amount of content.",
+    "expected": {
+      "should_trigger_skill": true,
+      "primary_component": "scroll-view",
+      "should_read_first": "references/components/scroll-view/guide.md",
+      "should_read_examples": "references/components/scroll-view/examples.md",
+      "should_remove_irrelevant_demo_code": true
+    }
+  },
+  {
+    "id": "negative-checkbox",
+    "category": "negative",
+    "prompt": "Help me implement Checkbox with lynx-ui.",
+    "expected": {
+      "should_trigger_skill": true,
+      "covered_by_skill": false,
+      "should_state_coverage_limit": true,
+      "should_not_invent_guide": true
+    }
+  },
+  {
+    "id": "negative-bottom-sheet",
+    "category": "negative",
+    "prompt": "I need a bottom sheet component in lynx-ui.",
+    "expected": {
+      "should_trigger_skill": true,
+      "covered_by_skill": false,
+      "should_state_coverage_limit": true,
+      "should_not_pretend_popup_is_covered": true
+    }
+  },
+  {
+    "id": "negative-tabs",
+    "category": "negative",
+    "prompt": "How should I build tabs in lynx-ui?",
+    "expected": {
+      "should_trigger_skill": true,
+      "covered_by_skill": false,
+      "should_state_coverage_limit": true,
+      "should_not_invent_guide": true
+    }
+  },
+  {
+    "id": "negative-non-lynx-ui",
+    "category": "negative",
+    "prompt": "How do I create a PostgreSQL migration?",
+    "expected": {
+      "should_trigger_skill": false
+    }
+  }
+]
