@@ -3,23 +3,71 @@
 // LICENSE file in the root directory of this source tree.
 
 import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
+import type { ReactElement } from '@lynx-js/react'
 
 import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
 import type { GestureChangeEvent, StateManager } from '@lynx-js/gesture-runtime'
+import {
+  mtsNativeLynxSDKVersionLessThan,
+  selectorMT,
+} from '@lynx-js/lynx-ui-common'
 import type { MainThread, ScrollEvent } from '@lynx-js/types'
 
-import type {
-  BounceableBasicProps,
-  RefreshEvent,
-  RefreshProps,
-  RefreshStateChange,
-  headerReleased,
-  refreshOffsetEvent,
-  scrollToBouncesInfo,
-} from '../types'
-import { RefreshState } from '../types/interfaces/RefreshInterface'
-import { selectorMT } from '../utils/selector'
-import { mtsNativeLynxSDKVersionLessThan } from '../utils/version'
+export interface RefreshEvent {
+  triggeredBy: 'startRefresh' | 'drag'
+}
+export interface refreshOffsetEvent {
+  offset: number
+  headerSize: number
+  isDragging: boolean
+}
+export interface headerReleased {
+  offset: number
+  headerSize: number
+}
+export interface RefreshStateChange {
+  state: RefreshState
+}
+export interface scrollToBouncesInfo {
+  direction: 'upper' | 'lower'
+}
+
+export interface BounceableBasicProps {
+  enableBounces: boolean
+  enableBounceEventInFling?: boolean
+  startBounceTriggerDistance?: number
+  endBounceTriggerDistance?: number
+  upperBounceItem?: ReactElement
+  lowerBounceItem?: ReactElement
+  alwaysBouncing?: boolean
+  singleSidedBounce?: 'upper' | 'lower' | 'both' | 'iOSBounces' | 'none'
+  estimatedHeight?: number
+  estimatedWidth?: number
+  debugLog?: boolean
+  validAnimationVersion?: boolean
+  onScrollToBounces?: (e: { direction: 'upper' | 'lower' }) => void
+}
+
+export interface RefreshProps {
+  enableRefresh: boolean
+  // biome-ignore lint/suspicious/noExplicitAny: expected
+  headerContent: any
+  debugLog?: boolean
+  validAnimationVersion?: boolean
+  onStartRefresh?: (e: { triggeredBy: 'startRefresh' | 'drag' }) => void
+  onRefreshOffsetChange?: (
+    e: { offset: number, headerSize: number, isDragging: boolean },
+  ) => void
+  onRefreshStateChange?: (e: { state: number }) => void
+  onHeaderReleased?: (e: { offset: number, headerSize: number }) => void
+}
+
+export enum RefreshState {
+  IDLE = 0,
+  OVER_DRAG_RELEASE = 1,
+  REFRESHING = 2,
+  DRAGGING = 3,
+}
 
 export interface useRefreshAndBounceOptions {
   refreshOptions: RefreshProps

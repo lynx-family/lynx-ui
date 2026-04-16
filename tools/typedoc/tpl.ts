@@ -117,8 +117,13 @@ const doGenTplWithData = async (
   let hasProcessedFirstProps = false
   let content
 
+  const saveDir = savePath.substring(0, savePath.lastIndexOf('/'))
+  if (!fs.existsSync(saveDir)) {
+    fs.mkdirSync(saveDir, { recursive: true })
+  }
+
   if (multipleProps) {
-    content = `import { UIApiTable } from "@lynx/index";
+    content = `import { UIApiTable } from "@lynx-ui/index";
   ${
       sortedData.map(item => {
         if (!titleOrder.includes(item.title.replace(/Props$/, ''))) {
@@ -137,9 +142,7 @@ const doGenTplWithData = async (
 
     fs.writeFileSync(savePath, content)
   } else {
-    content = `
-
-import { UIApiTable } from "@lynx/index";
+    content = `import { UIApiTable } from "@lynx-ui/index";
 
   ${
       sortedData.map(item => {

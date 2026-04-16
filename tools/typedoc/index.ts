@@ -86,51 +86,6 @@ export async function runTypeDocForPackage(
   }
 }
 
-export async function genHooksDocForPackage(
-  packageName: string,
-  interfacePath: string,
-): Promise<void> {
-  const hooksPackageFolder = join(rootPath, 'packages/lynx-ui-common')
-  const hookTypesPath = join(
-    hooksPackageFolder,
-    'src/types/interfaces/',
-    interfacePath,
-  )
-
-  const hooksPaths = interfacePath.split('.')
-  const hooksLang = hooksPaths.length > 2 && hooksPaths[1] === 'zh'
-    ? 'zh'
-    : 'en'
-  const tsconfigPath = join(hooksPackageFolder, 'tsconfig.json')
-  const metaJsonPath = join(
-    rootPath,
-    hooksLang === 'en' ? 'tools/typedoc/gen/en/' : 'tools/typedoc/gen/zh/',
-    packageName,
-    'tsconfig.json',
-  )
-  const APITplJsonPath = join(
-    rootPath,
-    hooksLang === 'en' ? 'tools/typedoc/gen/en/' : 'tools/typedoc/gen/zh/',
-    `${packageName}-api-tpl.json`,
-  )
-  const APIMdxPath = join(
-    hooksPackageFolder,
-    'docs',
-    packageName,
-    hooksLang === 'en' ? 'APIReference.mdx' : 'APIReference.zh.mdx',
-  )
-
-  await runTypeDocForPackage(hookTypesPath, tsconfigPath, metaJsonPath)
-  await doGenDocData(
-    metaJsonPath,
-    APITplJsonPath,
-  )
-  await doGenTplWithData(
-    APITplJsonPath,
-    APIMdxPath,
-  )
-}
-
 function getTsConfigPath(
   packageFolder: string,
 ): { path: string, isDocsConfig: boolean } {
@@ -284,12 +239,6 @@ if (args.length > 0) {
 
 // Generate documentation for the selected packages
 await generateDocsForAllPackages(packagesToGenerate)
-
-// Always generate hooks documentation
-// await genHooksDocForPackage('useRefresh', 'RefreshInterface.ts')
-// await genHooksDocForPackage('useRefresh', 'RefreshInterface.zh.ts')
-// await genHooksDocForPackage('useBounce', 'BounceableInterface.ts')
-// await genHooksDocForPackage('useBounce', 'BounceableInterface.zh.ts')
 
 console.log('Documentation generation completed!')
 

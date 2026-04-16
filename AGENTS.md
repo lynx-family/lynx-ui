@@ -76,10 +76,11 @@ Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of 
 ### 4. Build & Verify
 
 Before submitting changes, ensure the project builds and passes checks.
+**CRITICAL**: You MUST run `pnpm turbo build` to perform a full workspace build and ensure no compilation errors are introduced.
 
 ```bash
 # Build all packages
-pnpm build
+pnpm run build
 
 # Verify the aggregate lynx-ui entry re-exports the expected package surface
 pnpm check:exports

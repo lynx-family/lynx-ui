@@ -7,9 +7,7 @@ import type { CSSProperties } from '@lynx-js/types'
 export type * from './BaseScrollEvents'
 export type * from './BaseUIEvents'
 export type * from './BaseUIProps'
-export type * from './BounceableInterface'
 export type * from './LazyInterface'
-export type * from './RefreshInterface'
 
 export interface Point {
   x: number

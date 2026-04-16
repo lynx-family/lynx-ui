@@ -12,15 +12,15 @@ import {
   useState,
 } from '@lynx-js/react'
 
-import { useRefreshAndBounce } from '@lynx-js/lynx-ui-common'
-import type {
-  BounceableBasicProps,
-  RefreshProps,
-  useRefreshAndBounceReturn,
-} from '@lynx-js/lynx-ui-common'
 import { List } from '@lynx-js/lynx-ui-list'
 import type { ListRef } from '@lynx-js/lynx-ui-list'
 
+import { useRefreshAndBounce as useRefreshAndBounceInternal } from './hooks/useRefresh'
+import type {
+  BounceableBasicProps,
+  RefreshProps,
+  useRefreshAndBounceReturn as useRefreshAndBounceReturnInternal,
+} from './hooks/useRefresh'
 import type {
   FeedListProps,
   FeedListRef,
@@ -28,11 +28,11 @@ import type {
 } from './types'
 import './styles.css'
 
+export { useRefreshAndBounce } from './hooks/useRefresh'
+export type { useRefreshAndBounceReturn } from './hooks/useRefresh'
+
 export type { FeedListRef, FeedListProps }
-export type {
-  BounceableBasicProps,
-  RefreshProps,
-} from '@lynx-js/lynx-ui-common'
+export type { BounceableBasicProps, RefreshProps } from './hooks/useRefresh'
 
 const FeedListExcludedJSXProperties: (keyof FeedListProps)[] = [
   'children',
@@ -68,7 +68,6 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     refreshProps = {
       enableRefresh: enableRefresh,
       // todo(fangzhou.fz): refreshOptions should not be a single boolean. It should be an object and set header.
-      // @ts-expect-error error
       headerContent: null,
     }
   } else if (typeof refreshOptions === 'object') {
@@ -91,10 +90,10 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     bounceableProps = { singleSidedBounce: 'both', ...bounceableOptions }
   }
 
-  const useRefreshAndBounceProps: useRefreshAndBounceReturn | null =
+  const useRefreshAndBounceProps: useRefreshAndBounceReturnInternal | null =
     enableBounce || enableRefresh
       // biome-ignore lint/correctness/useHookAtTopLevel: expected
-      ? useRefreshAndBounce({
+      ? useRefreshAndBounceInternal({
         // @ts-expect-error error
         bounceableOptions: bounceableProps,
         // @ts-expect-error error
@@ -112,9 +111,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
         class='vertical-start-wrapper'
         main-thread:bindlayoutchange={(e) => {
           'main thread'
-          // @ts-expect-error error
-
-          useRefreshAndBounceProps.onRefreshHeaderLayoutUpdated(e)
+          useRefreshAndBounceProps?.onRefreshHeaderLayoutUpdated(e)
         }}
       >
         {

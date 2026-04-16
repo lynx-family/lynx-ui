@@ -12,7 +12,6 @@ export {
   useGlobalEventListener,
   useLatest,
   useRegisteredEvents,
-  useRefreshAndBounce,
   useMemoizedFn,
   usePrevious,
   useFirstRender,
@@ -62,13 +61,6 @@ export {
   useReactiveValueChange,
   // react-use re-exported by common
   useMainThreadImperativeHandle,
-} from '@lynx-js/lynx-ui-common'
-export type {
-  // common types
-  useRefreshAndBounceReturn,
-  bounceHandlers,
-  BounceableBasicProps,
-  RefreshProps,
 } from '@lynx-js/lynx-ui-common'
 export type {
   ReactiveValueOptions,
@@ -122,8 +114,13 @@ export type {
 } from '@lynx-js/lynx-ui-draggable'
 
 // feed-list
-export { FeedList } from '@lynx-js/lynx-ui-feed-list'
-export type { FeedListRef, FeedListProps } from '@lynx-js/lynx-ui-feed-list'
+export { FeedList, useRefreshAndBounce } from '@lynx-js/lynx-ui-feed-list'
+export type {
+  FeedListProps,
+  FeedListRef,
+  useRefreshAndBounceReturn,
+  RefreshProps,
+} from '@lynx-js/lynx-ui-feed-list'
 
 // form
 export { FormRoot, FormSubmitButton, FormField } from '@lynx-js/lynx-ui-form'
@@ -201,10 +198,12 @@ export type {
 } from '@lynx-js/lynx-ui-radio-group'
 
 // scroll-view
-export { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
+export { ScrollView, useBounce } from '@lynx-js/lynx-ui-scroll-view'
 export type {
   ScrollViewProps,
   ScrollViewRef,
+  bounceHandlers,
+  BounceableBasicProps,
 } from '@lynx-js/lynx-ui-scroll-view'
 
 // sortable

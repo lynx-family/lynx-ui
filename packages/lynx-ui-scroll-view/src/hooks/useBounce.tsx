@@ -4,10 +4,30 @@
 
 import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
 
+import { selectorMT } from '@lynx-js/lynx-ui-common'
 import type { CommonEvent, MainThread, ScrollEvent } from '@lynx-js/types'
 
-import type { BounceableBasicProps, scrollToBouncesInfo } from '../types'
-import { selectorMT } from '../utils/selector'
+export interface scrollToBouncesInfo {
+  direction: 'upper' | 'lower'
+}
+
+export interface BounceableBasicProps {
+  enableBounces: boolean
+  enableBounceEventInFling?: boolean
+  startBounceTriggerDistance?: number
+  endBounceTriggerDistance?: number
+  // biome-ignore lint/suspicious/noExplicitAny: expected
+  upperBounceItem?: any
+  // biome-ignore lint/suspicious/noExplicitAny: expected
+  lowerBounceItem?: any
+  alwaysBouncing?: boolean
+  singleSidedBounce?: 'upper' | 'lower' | 'both' | 'iOSBounces' | 'none'
+  estimatedHeight?: number
+  estimatedWidth?: number
+  debugLog?: boolean
+  validAnimationVersion?: boolean
+  onScrollToBounces?: (e: scrollToBouncesInfo) => void
+}
 
 export interface useBounceOptions {
   bounceableOptions: BounceableBasicProps

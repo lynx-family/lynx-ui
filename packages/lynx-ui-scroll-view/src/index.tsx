@@ -7,7 +7,7 @@ import type { ForwardedRef, ReactNode } from '@lynx-js/react'
 
 import '@lynx-js/gesture-runtime'
 import type { GestureKind } from '@lynx-js/gesture-runtime'
-import type { BounceableBasicProps, LazyOptions } from '@lynx-js/lynx-ui-common'
+import type { LazyOptions } from '@lynx-js/lynx-ui-common'
 import {
   ExposureEventsMapping,
   LayoutEventsMapping,
@@ -24,12 +24,16 @@ import type {
 import ScrollViewBasic from './ScrollViewBasic'
 import ScrollViewWithBouncesHook from './ScrollViewWithBouncesHook'
 import type {
+  BounceableBasicProps,
   ScrollViewProps,
   ScrollViewRef,
   ScrollView as ScrollViewType,
 } from './types'
 
 export type { ScrollViewProps, ScrollViewRef }
+export { useBounce } from './hooks/useBounce'
+export type { bounceHandlers } from './hooks/useBounce'
+export type { BounceableBasicProps } from './types'
 
 export const ScrollView = memo(forwardRef(ScrollViewImpl)) as ScrollViewType
 
