@@ -1258,6 +1258,15 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  packages/lynx-ui-skills:
+    devDependencies:
+      '@types/node':
+        specifier: ^18.19.130
+        version: 18.19.130
+      vitest:
+        specifier: 2.1.8
+        version: 2.1.8(@types/node@18.19.130)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)
+
   packages/lynx-ui-sortable:
     dependencies:
       '@lynx-js/lynx-ui-common':
@@ -7550,6 +7559,10 @@ snapshots:
     dependencies:
       unrs-resolver: 1.11.1
 
+  '@lynx-js/react-refresh-webpack-plugin@0.3.4(@lynx-js/react-webpack-plugin@0.7.1(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0))':
+    dependencies:
+      '@lynx-js/react-webpack-plugin': 0.7.1(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0)
+
   '@lynx-js/react-refresh-webpack-plugin@0.3.4(@lynx-js/react-webpack-plugin@0.7.1(@lynx-js/react@0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0))':
     dependencies:
       '@lynx-js/react-webpack-plugin': 0.7.1(@lynx-js/react@0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0)
@@ -7558,7 +7571,7 @@ snapshots:
     dependencies:
       '@lynx-js/css-extract-webpack-plugin': 0.6.4(@lynx-js/template-webpack-plugin@0.9.0)(webpack@5.104.1)
       '@lynx-js/react-alias-rsbuild-plugin': 0.11.2
-      '@lynx-js/react-refresh-webpack-plugin': 0.3.4(@lynx-js/react-webpack-plugin@0.7.1(@lynx-js/react@0.114.4(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0))
+      '@lynx-js/react-refresh-webpack-plugin': 0.3.4(@lynx-js/react-webpack-plugin@0.7.1(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0))
       '@lynx-js/react-webpack-plugin': 0.7.1(@lynx-js/react@0.113.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(@lynx-js/template-webpack-plugin@0.9.0)
       '@lynx-js/runtime-wrapper-webpack-plugin': 0.1.3
       '@lynx-js/template-webpack-plugin': 0.9.0

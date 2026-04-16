@@ -18,7 +18,12 @@ const aggregateEntryPath = path.join(
   aggregatePackageName,
   'src/index.tsx',
 )
-const skippedPackages = new Set(['lynx-ui-overlay', 'lynx-ui-presence'])
+const skippedPackages = new Set([
+  'lynx-ui-overlay',
+  'lynx-ui-presence',
+  // Skill payload package; not part of the runtime aggregate entry.
+  'lynx-ui-skills',
+])
 
 function getPackageDirs() {
   return fs.readdirSync(packagesDir)

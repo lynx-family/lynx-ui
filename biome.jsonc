@@ -33,6 +33,10 @@
       "__snapshots__/**",
       "packages/web-platform/web-test/**",
       "website/**",
+      "packages/lynx-ui-skills/examples/**",
+      "packages/lynx-ui-skills/references/**",
+      "packages/lynx-ui-skills/reference.md",
+      "packages/lynx-ui-skills/examples.md",
     ],
     "rules": {
       // We are migrating from ESLint to Biome
@@ -116,6 +120,7 @@
     {
       "include": [
         "apps/**",
+        "packages/lynx-ui-skills/examples/**",
       ],
       "linter": {
         "rules": {
