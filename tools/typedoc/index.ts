@@ -18,17 +18,16 @@ const rootPath = join(__dirname, '../../')
 const excludedPath = [
   'lynx-ui-common',
   'lynx-ui',
-  'lynx-ui-primitives',
   'lynx-ui-live',
   'lynx-ui-radio',
   'lynx-ui-switch',
-  'lynx-ui-primitives-overlay',
-  'lynx-ui-primitives-presence',
+  'lynx-ui-overlay',
+  'lynx-ui-presence',
 ]
 
 const primitivesConfig: Record<string, string[]> = {
   'lynx-ui-button': ['Button'],
-  'lynx-ui-primitives-sheet': [
+  'lynx-ui-sheet': [
     'SheetRoot',
     'SheetBackdrop',
     'SheetView',
@@ -46,18 +45,6 @@ const primitivesConfig: Record<string, string[]> = {
     'PopoverPositioner',
     'PopoverContent',
     'PopoverArrow',
-  ],
-  'lynx-ui-toast': [
-    'ToastRoot',
-    'ToastPositioner',
-    'ToastContent',
-  ],
-  'lynx-ui-primitives-tooltip': [
-    'TooltipRoot',
-    'TooltipTrigger',
-    'TooltipPositioner',
-    'TooltipContent',
-    'TooltipArrow',
   ],
   'lynx-ui-radio-group': [
     'RadioGroupRoot',

@@ -1,0 +1,77 @@
+import { Go, ClassRenderPropTable } from '@lynx-ui/index';
+
+The dialog component. Have a customizable background mask layer.
+
+## Basic Usage
+
+<Go
+  img="https://lf-lynx.tiktok-cdns.com/obj/lynx-artifacts-oss-sg/lynx-website/assets/lynx-ui/lynx-ui-cover-dialog.webm"
+  example="lynx-ui-dialog"
+  defaultEntryName="DialogBasic"
+  entry="Basic"
+  defaultFile="Basic/index.tsx"
+  schema="{{{url}}}?fullscreen=true&bar_color=0d0d0d&bg_color=0d0d0d"
+/>
+
+## Structure
+
+```jsx
+<DialogRoot>
+  <DialogView>
+    <DialogBackdrop />
+    <DialogContent />
+  </DialogView>
+</DialogRoot>
+```
+
+## Styling
+
+This section shows animation-related lifecycle in components. Class names appear when the `transition` prop is true, and render props are always available.
+
+<ClassRenderPropTable
+  source={[
+    {
+      className: 'ui-open',
+      'Render Prop': 'open',
+      item: { type: 'boolean', description: 'The popper is opened.' },
+    },
+    {
+      className: 'ui-closed',
+      'Render Prop': 'closed',
+      item: {
+        type: 'boolean',
+        description:
+          "The popper is closed. If it's force mounted, the initial status will be ui-closed.",
+      },
+    },
+    {
+      className: 'ui-entering',
+      'Render Prop': 'entering',
+      item: {
+        type: 'boolean',
+        description:
+          'The popper is performing the entering animation. Takes effect when transition:true.',
+      },
+    },
+    {
+      className: 'ui-leaving',
+      'Render Prop': 'leaving',
+      item: {
+        type: 'boolean',
+        description:
+          'The popper is doing the leaving animation. Takes effect when transition:true.',
+      },
+    },
+    {
+      className: 'ui-animating',
+      'Render Prop': 'animating',
+      item: {
+        type: 'boolean',
+        description:
+          'The popper is doing the animations. Takes effect when transition:true.',
+      },
+    },
+  ]}
+/>
+
+## API
