@@ -6,7 +6,6 @@
   "author": "The Lynx Authors",
   "type": "module",
   "scripts": {
-    "analyzeDoc": "pnpm tsx tools/typedoc/index.ts",
     "build": "turbo build",
     "changeset": "changeset",
     "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
@@ -24,6 +23,7 @@
     "fix:manypkg": "pnpm dlx @manypkg/cli fix",
     "fix:sherif": "pnpm dlx sherif@latest --fix",
     "format": "dprint fmt",
+    "genDoc": "pnpm tsx tools/typedoc/index.ts",
     "install:all": "pnpm install",
     "knip": "knip",
     "make-new-component": "tsx tools/make-new-component/index.ts",

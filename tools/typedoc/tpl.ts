@@ -118,9 +118,7 @@ const doGenTplWithData = async (
   let content
 
   if (multipleProps) {
-    content = `
-
-import { UIApiTable } from "@lynx/index";
+    content = `import { UIApiTable } from "@lynx/index";
   ${
       sortedData.map(item => {
         if (!titleOrder.includes(item.title.replace(/Props$/, ''))) {
