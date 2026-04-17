@@ -8,14 +8,17 @@ function animateInner(
   duration: number,
   onUpdate: (progress: number) => void,
   onFinished?: () => void,
+  startProgress = 0,
 ) {
   'main thread'
   let startTs = 0
   let rafId = 0
+  const normalizedStartProgress = Math.max(Math.min(startProgress, 100), 0)
+  const startElapsed = (duration * normalizedStartProgress) / 100
 
   function tick(ts: number) {
     const progress = Math.max(
-      Math.min(((ts - startTs) * 100) / duration, 100),
+      Math.min((((ts - startTs) + startElapsed) * 100) / duration, 100),
       0,
     )
 
@@ -31,7 +34,7 @@ function animateInner(
       startTs = Number(ts)
     }
     // make sure progress can reach 100%
-    if (ts - startTs <= duration + 100) {
+    if (ts - startTs + startElapsed <= duration + 100) {
       tick(ts)
       updateRafId(requestAnimationFrame(step))
     } else {
@@ -62,6 +65,7 @@ export function useAnimate() {
     duration: number,
     onUpdate: (progress: number) => void,
     onFinished?: () => void,
+    startProgress = 0,
   ) {
     'main thread'
     cancel()
@@ -69,6 +73,7 @@ export function useAnimate() {
       duration,
       onUpdate,
       onFinished,
+      startProgress,
     )
     lastCancelRef.current = innerCancel
   }

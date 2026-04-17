@@ -11,7 +11,7 @@ import {
 import { useTapLock } from '@lynx-js/react-use'
 import type { MainThread } from '@lynx-js/types'
 
-import { limiter } from '../utils'
+import { easeOut, inferProgressFromEaseOutRate, limiter } from '../utils'
 import { useAnimate } from './useAnimate'
 import { useAutoplay } from './useAutoPlay'
 import { useAxisLock } from './useAxisLock'
@@ -47,7 +47,7 @@ interface UseOffsetOpts extends
   dataCount: number
   size: number
   spaceBetween: number
-  easing: NonNullable<SwiperProps<unknown>['main-thread:easing']>
+  easingConfig?: SwiperProps<unknown>['easingConfig']
   modeConfig: CompoundModeConfig
   enableBounce: boolean
   startBounceItemWidth: NonNullable<BounceConfig['startBounceItemWidth']>
@@ -103,7 +103,7 @@ function useOffset(
     duration,
     size,
     spaceBetween,
-    easing,
+    easingConfig,
     dataCount,
     initialIndex,
     autoPlay,
@@ -124,6 +124,13 @@ function useOffset(
 ) {
   // fullSize contains size and spaceBetween
   const fullSize = size + spaceBetween
+  const easingFn = typeof easingConfig?.['main-thread:easing'] === 'function'
+    ? easingConfig['main-thread:easing']
+    : easeOut
+  const inferProgressFromEasingRatio =
+    easingConfig?.['main-thread:inferProgressFromEasingRatio']
+  const enableInferStartProgress = easingConfig?.enableInferStartProgress ?? false
+
   function getInitialOffset() {
     return limiter(
       -fullSize * initialIndex,
@@ -288,16 +295,71 @@ function useOffset(
     handleTouchEnd: tapLockTouchEnd,
   } = useTapLock()
 
+  function inferStartProgressByBisection(progress: number) {
+    'main thread'
+    const normalizedProgress = Math.max(Math.min(progress, 1), 0)
+    let left = 0
+    let right = 1
+    let middle = normalizedProgress
+    const MAX_ITERATIONS = 20
+    const EPSILON = 0.0001
+
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
+      middle = (left + right) / 2
+      const easedValue = easingFn(middle)
+
+      if (Math.abs(easedValue - normalizedProgress) <= EPSILON) {
+        break
+      }
+
+      if (easedValue < normalizedProgress) {
+        left = middle
+      } else {
+        right = middle
+      }
+    }
+
+    return middle * 100
+  }
+
+  function inferAnimationStartProgress(start: number, end: number) {
+    'main thread'
+    if (!enableInferStartProgress) {
+      return 0
+    }
+
+    const distance = end - start
+    if (distance === 0) {
+      return 100
+    }
+
+    const linearProgress = (Math.abs(start) % fullSize) / Math.abs(fullSize)
+    const normalizedProgress = Math.max(Math.min(linearProgress, 1), 0)
+
+    if (typeof easingConfig?.['main-thread:easing'] !== 'function') {
+      return inferProgressFromEaseOutRate(normalizedProgress)
+    }
+
+    if (typeof inferProgressFromEasingRatio === 'function') {
+      const reversedProgress = inferProgressFromEasingRatio(normalizedProgress)
+      return Math.max(Math.min(reversedProgress, 1), 0) * 100
+    }
+
+    return inferStartProgressByBisection(normalizedProgress)
+  }
+
   function easingTo(start: number, end: number, onFinished?: () => void) {
     'main thread'
+    const startProgress = inferAnimationStartProgress(start, end)
+
     function onProgress(progress: number) {
-      const interpolatedProgress = easing(progress / 100)
+      const interpolatedProgress = easingFn(progress / 100)
       const animeOffset = (end - start) * interpolatedProgress + start
 
       setOffset(animeOffset)
     }
 
-    animate(duration, onProgress, onFinished)
+    animate(duration, onProgress, onFinished, startProgress)
   }
 
   function hasNextMTS() {

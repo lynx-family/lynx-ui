@@ -25,6 +25,7 @@ export function useModeConfig({
   modeConfig = {
     align: 'start',
     spaceBetween: 0,
+    enableFixedSpaceBetween: false,
   },
 }: Pick<SwiperProps<unknown>, 'mode' | 'modeConfig'>) {
   const prevModeConfigRef = useRef<CompoundModeConfig | null>(null)
@@ -50,7 +51,13 @@ export function useModeConfig({
     return newConfig
   }, [mode, modeConfig])
 
-  const spaceBetween = (modeConfig.spaceBetween as number) ?? 0
+  const normalModeConfig = modeConfig as SwiperProps<unknown>['modeConfig'] & {
+    spaceBetween?: number
+    enableFixedSpaceBetween?: boolean
+  }
+  const spaceBetween = normalModeConfig?.spaceBetween ?? 0
+  const enableFixedSpaceBetween =
+    normalModeConfig?.enableFixedSpaceBetween ?? false
 
-  return { modeConfig: normalizedModeConfig, spaceBetween }
+  return { modeConfig: normalizedModeConfig, spaceBetween, enableFixedSpaceBetween }
 }

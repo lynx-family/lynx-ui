@@ -9,6 +9,12 @@ function easeOut(progress: number) {
   return 1 - Math.pow(1 - progress, 3)
 }
 
+function inferProgressFromEaseOutRate(easedProgress: number) {
+  'main thread'
+  const normalizedEasedProgress = Math.max(Math.min(easedProgress, 1), 0)
+  return (1 - Math.pow(1 - normalizedEasedProgress, 1 / 3)) * 100
+}
+
 function limiter(
   offset: number,
   dataCount: number,
@@ -114,4 +120,10 @@ export function eqOrLtMT(a: number, b: number, epsilon = EPSILON) {
   return Math.abs(a - b) < epsilon || a < b
 }
 
-export { easeOut, limiter, limiterMTS, limiterForFirstScreen }
+export {
+  easeOut,
+  inferProgressFromEaseOutRate,
+  limiter,
+  limiterMTS,
+  limiterForFirstScreen,
+}

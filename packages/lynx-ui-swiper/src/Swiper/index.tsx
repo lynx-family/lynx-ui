@@ -61,7 +61,8 @@ const Swiper = forwardRef(
       offsetLimit: _offsetLimit,
       bounceConfig,
       children,
-      'main-thread:easing': easing = easeOut,
+      easingConfig,
+      'main-thread:easing': legacyEasing,
       'main-thread:customAnimation': customAnimation,
       'main-thread:onOffsetChange': onOffsetChange,
       customAnimationFirstScreen,
@@ -89,7 +90,7 @@ const Swiper = forwardRef(
     const childrenMapRef = useMainThreadRef<Record<number, MainThread.Element>>(
       {},
     )
-    const { modeConfig, spaceBetween } = useModeConfig({
+    const { modeConfig, spaceBetween, enableFixedSpaceBetween } = useModeConfig({
       mode,
       modeConfig: _modeConfig,
     })
@@ -128,9 +129,10 @@ const Swiper = forwardRef(
         initialIndex,
         customAnimationFirstScreen,
         spaceBetween,
+        enableFixedSpaceBetween,
         RTL,
       }),
-      [loop, itemWidth, itemHeight, spaceBetween, RTL],
+      [loop, itemWidth, itemHeight, spaceBetween, enableFixedSpaceBetween, RTL],
     )
 
     const { setChangeOffset, setChangeSwipeStartMT, setChangeSwipeStopMT } =
@@ -276,7 +278,10 @@ const Swiper = forwardRef(
         spaceBetween,
         dataCount,
         duration,
-        easing,
+        easingConfig: {
+          ...easingConfig,
+          'main-thread:easing': easingConfig?.['main-thread:easing'] ?? legacyEasing,
+        },
         offsetLimit,
         initialIndex,
         modeConfig,
