@@ -240,23 +240,6 @@ export type {
   SwitchRenderProps,
 } from '@lynx-js/lynx-ui-switch'
 
-// slider
-export {
-  SliderRoot,
-  SliderTrack,
-  SliderRange,
-  SliderThumb,
-} from '@lynx-js/lynx-ui-slider'
-export type {
-  SliderRangeProps,
-  SliderRef,
-  SliderRootProps,
-  SliderThumbProps,
-  SliderTrackProps,
-  SliderUpdateValueOptions,
-  SliderValueChangeSource,
-} from '@lynx-js/lynx-ui-slider'
-
 export {
   SheetRoot,
   SheetContent,

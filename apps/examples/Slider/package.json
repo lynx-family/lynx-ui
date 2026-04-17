@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@lynx-js/luna-styles": "workspace:*",
-    "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/lynx-ui-slider": "workspace:*",
     "@lynx-js/react": "catalog:"
   },
   "devDependencies": {

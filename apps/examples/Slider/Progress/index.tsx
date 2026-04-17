@@ -4,7 +4,7 @@
 
 import { root, useEffect, useRef, useState } from '@lynx-js/react'
 
-import { SliderRange, SliderRoot, SliderTrack } from '@lynx-js/lynx-ui'
+import { SliderRange, SliderRoot, SliderTrack } from '@lynx-js/lynx-ui-slider'
 
 import './index.css'
 
