@@ -47,7 +47,7 @@ export interface CheckboxProps extends ComponentBasicProps {
    */
   onChange?: (checked: boolean) => void
   /**
-   * Radio supports original view props to be directly spread in this prop.
+   * Checkbox supports original view props to be directly spread in this prop.
    * @Android
    * @iOS
    * @zh Checkbox 支持将原始视图属性直接展开到这个属性中。
