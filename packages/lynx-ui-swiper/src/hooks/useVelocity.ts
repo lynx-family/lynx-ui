@@ -19,14 +19,14 @@ export function useVelocity({ RTL }: { RTL: SwiperProps<unknown>['RTL'] }) {
     positionQueueRef.current = []
   }
 
-  const pruneQueue = (ms: number) => {
+  const pruneQueue = (ms: number, minLength = 0) => {
     'main thread'
     const timeQueue = timeQueueRef.current
     const positionQueue = positionQueueRef.current
 
     const nowTs = Date.now()
     // pull old values off of the queue
-    while (timeQueue.length > 0 && timeQueue[0] < nowTs - ms) {
+    while (timeQueue.length > minLength && timeQueue[0] < nowTs - ms) {
       timeQueue.shift()
       positionQueue.shift()
     }
@@ -61,7 +61,9 @@ export function useVelocity({ RTL }: { RTL: SwiperProps<unknown>['RTL'] }) {
 
     positionQueue.push(position)
     timeQueue.push(Date.now())
-    pruneQueue(50)
+    // Keep one older sample around so sparse touchmove delivery can still
+    // produce a release velocity from the latest two points.
+    pruneQueue(50, 2)
   }
 
   function velocityTouchStart() {
