@@ -18,10 +18,6 @@ const rootPath = join(__dirname, '../../')
 const excludedPath = [
   'lynx-ui-common',
   'lynx-ui',
-  'lynx-ui-live',
-  'lynx-ui-radio',
-  'lynx-ui-switch',
-  'lynx-ui-overlay',
   'lynx-ui-presence',
 ]
 
