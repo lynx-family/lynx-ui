@@ -16,7 +16,6 @@ export interface EnableLazyMode {
   /**
    * Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page.
    * @zh 用于标记懒加载的曝光时机。请确保在整个页面中是唯一的。
-   * @defaultValue undefined
    * @Android
    * @iOS
    */

@@ -15,7 +15,6 @@ export interface LazyComponentProps {
   /**
    * Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page.
    * @zh 用于标记懒加载的曝光时机。请确保该标识在整个页面中是唯一的。
-   * @defaultValue undefined
    * @Android
    * @iOS
    */
@@ -23,7 +22,6 @@ export interface LazyComponentProps {
   /**
    * Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page.
    * @zh 用于标记懒加载的曝光时机。请确保该标识在整个页面中是唯一的。
-   * @defaultValue undefined
    * @Android
    * @iOS
    */
@@ -31,7 +29,6 @@ export interface LazyComponentProps {
   /**
    * Estimated height and width need to be set
    * @zh 需要设置预估的高度和宽度
-   * @defaultValue undefined
    * @Android
    * @iOS
    */
@@ -88,7 +85,6 @@ export interface LazyComponentProps {
   /**
    * Children
    * @zh 子节点
-   * @defaultValue undefined
    * @Android
    * @iOS
    */

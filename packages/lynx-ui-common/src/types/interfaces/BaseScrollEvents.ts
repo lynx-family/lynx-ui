@@ -11,7 +11,6 @@ export interface BaseScrollEvents {
   /**
    * Being triggered when scrolling occurs.
    * @zh 滚动时触发。
-   * @defaultValue undefined
    * @eventProperty
    * @Android
    * @iOS
