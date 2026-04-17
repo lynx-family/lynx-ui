@@ -230,6 +230,9 @@ This project uses **Biome** for linting and formatting, and **dprint** for Markd
 ## Contribution Rules
 
 1. **Changesets**: All changes that affect package versions must include a changeset (`pnpm changeset`).
+2. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
+   Do not prepend labels like `[codex]` before the release type, because the semantic PR check parses the type from the beginning of the title.
+   Use one of the repository's allowed types, such as `fix`, `feat`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`, `release`, or `security`.
 
 ## Documentation Maintenance
 
