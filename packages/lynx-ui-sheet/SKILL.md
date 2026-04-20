@@ -18,6 +18,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - Use `direction="bottom"` for bottom sheets. This is the default and preserves existing behavior.
 - Use `direction="left"` or `direction="right"` for drawer-style panels.
+- `snapPoints` defaults to `['fit']`, so omit it when the sheet or drawer should fit its measured content.
 - In `bottom` mode, percentage snap points resolve against viewport height.
 - In `left` and `right` mode, percentage snap points resolve against viewport width.
 - The `'fit'` snap point resolves to measured content height for `bottom`, and measured content width for `left` / `right`.

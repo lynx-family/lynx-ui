@@ -154,6 +154,7 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
 
 - Use `direction="bottom"` for the default bottom-sheet behavior.
 - Use `direction="left"` or `direction="right"` for drawer-like panels.
+- `snapPoints` defaults to `['fit']`; pass explicit snap points only when the sheet needs fixed or multiple stops.
 - For bottom sheets, percentage snap points resolve against screen height and `'fit'` resolves to measured content height.
 - For horizontal drawers, percentage snap points resolve against screen width and `'fit'` resolves to measured content width.
 - For horizontal drawers, put width, height, background, radius, and shadow on `SheetContent`; use `innerClassName` / `innerStyle` only for internal layout and padding.

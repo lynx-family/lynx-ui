@@ -25,6 +25,7 @@ The `lynx-ui-sheet` follows a headless composition pattern. You can control its 
 
 - `direction="bottom"` preserves the default bottom-sheet behavior.
 - `direction="left"` and `direction="right"` provide drawer-like behavior.
+- `snapPoints` defaults to `['fit']`, so the sheet fits measured content when no snap points are provided.
 - Percentage snap points resolve against screen height for `bottom`, and against screen width for `left` / `right`.
 - `'fit'` resolves from measured content height for `bottom`, and measured content width for `left` / `right`.
 

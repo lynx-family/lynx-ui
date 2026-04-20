@@ -150,6 +150,7 @@ export interface SheetRootProps extends ComponentBasicProps {
    *   and relative to screen width for `left` / `right`
    * - 'fit' dynamically resolves to the measured content height for `bottom`,
    *   and the measured content width for `left` / `right`
+   * Defaults to `['fit']`.
    * The index order follows the order of this array.
    * @example snapPoints={['fit', '80%']} // First snap fits content, second is 80% of screen
    * @zh Sheet 的吸附点。可以是像素数值、百分比或 'fit'。
