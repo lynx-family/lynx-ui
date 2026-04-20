@@ -333,7 +333,8 @@ function useOffset(
       return 100
     }
 
-    const linearProgress = (Math.abs(start) % fullSize) / Math.abs(fullSize)
+    const currentProgress = (Math.abs(start) % fullSize) / Math.abs(fullSize)
+    const linearProgress = distance < 0 ? currentProgress : 1 - currentProgress
     const normalizedProgress = Math.max(Math.min(linearProgress, 1), 0)
 
     if (typeof easingConfig?.['main-thread:easing'] !== 'function') {
