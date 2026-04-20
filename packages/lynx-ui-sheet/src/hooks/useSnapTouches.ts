@@ -10,16 +10,19 @@ import type { MainThread } from '@lynx-js/types'
 import {
   clamp,
   findNearestSnap,
+  getDefaultRubberBand,
   getMainAxisTouchCoordinate,
   getNextMainAxisOffset,
+  resolveSheetSide,
   rubberEffect,
 } from '../utils'
 import { useDrag } from './useDrag'
 import type { SnappingOptions } from './useSnap'
-import type { SheetDirection } from '../types'
+import type { SheetSide, SheetTextDirection } from '../types'
 
 export interface SnapTouchOptions {
-  direction?: SheetDirection
+  side?: SheetSide
+  dir?: SheetTextDirection
   dragDisabled?: boolean
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   flingEnabled?: boolean
@@ -49,9 +52,10 @@ export interface SnapTouchOptions {
 }
 
 export function useSnapTouches({
-  direction = 'bottom',
+  side = 'bottom',
+  dir = 'ltr',
   dragDisabled = false,
-  rubberBand = true,
+  rubberBand,
   flingEnabled = true,
   flingDeceleration = 2000,
   flingMinVelocity = 200,
@@ -67,6 +71,8 @@ export function useSnapTouches({
   onDragEndSnapMT,
   onDragEndCloseMT,
 }: SnapTouchOptions) {
+  const resolvedSide = resolveSheetSide(side, dir)
+  const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const startTouchMainAxisRef = useMainThreadRef<number>(0)
   const startOffsetRef = useMainThreadRef<number>(0)
   const isDraggingMTRef = useMainThreadRef<boolean>(false)
@@ -80,7 +86,7 @@ export function useSnapTouches({
     // Only record start position - don't stop animation or change state yet
     // Wait for handleFirstMoveMT to confirm this is a sheet drag
     startTouchMainAxisRef.current = getMainAxisTouchCoordinate(
-      direction,
+      resolvedSide,
       e.detail,
     )
     startOffsetRef.current = yRef.current.get()
@@ -103,9 +109,13 @@ export function useSnapTouches({
     if (dragDisabled) return
     const offsets = getResolvedSnapOffsets()
     if (offsets.length === 0) return
-    const delta = getMainAxisTouchCoordinate(direction, e.detail)
+    const delta = getMainAxisTouchCoordinate(resolvedSide, e.detail)
       - startTouchMainAxisRef.current
-    let next = getNextMainAxisOffset(direction, startOffsetRef.current, delta)
+    let next = getNextMainAxisOffset(
+      resolvedSide,
+      startOffsetRef.current,
+      delta,
+    )
 
     const validOffsets = offsets.filter(o => o !== -1)
     const min = validOffsets.length > 0 ? Math.min(...validOffsets) : 0
@@ -115,16 +125,20 @@ export function useSnapTouches({
 
     // Use max snap offset (not DOM height) for rubber band calculation
     const { enabled, coeff, max: rubberMax } = getRubberBandConfig(
-      rubberBand,
+      effectiveRubberBand,
       viewportSize,
       max,
     )
 
-    if (next > max && enabled) {
-      next = max + rubberEffect(next - max, rubberMax, coeff)
+    if (next > max) {
+      next = enabled
+        ? max + rubberEffect(next - max, rubberMax, coeff)
+        : max
     }
-    if (next < min && enabled && !enableDragToClose) {
-      next = min + rubberEffect(next - min, rubberMax, coeff)
+    if (next < min && !enableDragToClose) {
+      next = enabled
+        ? min + rubberEffect(next - min, rubberMax, coeff)
+        : min
     }
 
     yRef.current.set(next)
@@ -192,7 +206,8 @@ export function useSnapTouches({
     handleTouchMoveMT: handleTouchMoveW,
     handleTouchEndMT: handleTouchEndW,
   } = useDrag({
-    direction,
+    side,
+    dir,
     claimedGestureAngles,
     onStartMT: handleTouchStartMT,
     onFirstMoveMT: handleFirstMoveMT,

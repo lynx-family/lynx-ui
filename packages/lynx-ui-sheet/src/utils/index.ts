@@ -5,13 +5,17 @@ import { PresenceState } from '@lynx-js/lynx-ui-presence'
 
 export {
   getDefaultClaimedGestureAngles,
+  getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
   getMainAxisTouchCoordinate,
   getNextMainAxisOffset,
   getSheetTransform,
+  isHorizontalSide,
+  resolveSheetSide,
   toPxJS,
 } from './direction'
+export type { SheetResolvedSide } from './direction'
 
 export function rubberEffect(
   original: number,

@@ -6,14 +6,27 @@ import { describe, expect, it } from 'vitest'
 
 import {
   getDefaultClaimedGestureAngles,
+  getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
   getNextMainAxisOffset,
   getSheetTransform,
+  resolveSheetSide,
   toPxJS,
 } from './direction'
 
-describe('sheet direction utils', () => {
+describe('sheet side utils', () => {
+  it('resolves logical sides from text direction', () => {
+    expect(resolveSheetSide('start', 'ltr')).toBe('left')
+    expect(resolveSheetSide('end', 'ltr')).toBe('right')
+    expect(resolveSheetSide('start', 'rtl')).toBe('right')
+    expect(resolveSheetSide('end', 'rtl')).toBe('left')
+    expect(resolveSheetSide('top', 'rtl')).toBe('top')
+    expect(resolveSheetSide('bottom', 'rtl')).toBe('bottom')
+    expect(resolveSheetSide('left', 'rtl')).toBe('left')
+    expect(resolveSheetSide('right', 'rtl')).toBe('right')
+  })
+
   it('resolves percent snap points against height for bottom sheets', () => {
     expect(toPxJS('50%', 800)).toBe(400)
   })
@@ -22,7 +35,10 @@ describe('sheet direction utils', () => {
     expect(toPxJS('75%', 360)).toBe(270)
   })
 
-  it('reads the correct viewport basis for each direction', () => {
+  it('reads the correct viewport basis for each resolved side', () => {
+    expect(
+      getMainAxisSize('top', { screenHeight: 800, screenWidth: 360 }),
+    ).toBe(800)
     expect(
       getMainAxisSize('bottom', { screenHeight: 800, screenWidth: 360 }),
     ).toBe(800)
@@ -34,7 +50,12 @@ describe('sheet direction utils', () => {
     ).toBe(360)
   })
 
-  it('reads fit layout from height for bottom sheets', () => {
+  it('reads fit layout from height for vertical sheets', () => {
+    expect(
+      getMainAxisLayoutSize('top', {
+        detail: { height: 420, width: 260 },
+      }),
+    ).toBe(420)
     expect(
       getMainAxisLayoutSize('bottom', {
         detail: { height: 420, width: 260 },
@@ -50,7 +71,11 @@ describe('sheet direction utils', () => {
     ).toBe(260)
   })
 
-  it('uses vertical gesture angles for bottom sheets', () => {
+  it('uses vertical gesture angles for vertical sheets', () => {
+    expect(getDefaultClaimedGestureAngles('top')).toEqual([
+      [-134, -46],
+      [46, 134],
+    ])
     expect(getDefaultClaimedGestureAngles('bottom')).toEqual([
       [-134, -46],
       [46, 134],
@@ -64,13 +89,24 @@ describe('sheet direction utils', () => {
     ])
   })
 
-  it('applies drawer drag deltas with the correct sign', () => {
+  it('enables rubber band by default only for vertical sheets', () => {
+    expect(getDefaultRubberBand('top')).toBe(true)
+    expect(getDefaultRubberBand('bottom')).toBe(true)
+    expect(getDefaultRubberBand('left')).toBe(false)
+    expect(getDefaultRubberBand('right')).toBe(false)
+  })
+
+  it('applies drag deltas with the correct sign', () => {
+    expect(getNextMainAxisOffset('top', 120, 30)).toBe(150)
     expect(getNextMainAxisOffset('left', 120, 30)).toBe(150)
     expect(getNextMainAxisOffset('right', 120, 30)).toBe(90)
     expect(getNextMainAxisOffset('bottom', 120, 30)).toBe(90)
   })
 
-  it('computes the expected transforms for each direction', () => {
+  it('computes the expected transforms for each resolved side', () => {
+    expect(getSheetTransform('top', 120, 360)).toBe(
+      'translate(0px, 120px)',
+    )
     expect(getSheetTransform('bottom', 120, 360)).toBe(
       'translate(0px, -120px)',
     )

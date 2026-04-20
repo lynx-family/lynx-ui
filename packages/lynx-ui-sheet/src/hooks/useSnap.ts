@@ -20,13 +20,16 @@ import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
 import { useSheetController } from './useSheetController'
-import type { SheetDirection, SheetTransition } from '../types'
+import type { SheetSide, SheetTextDirection, SheetTransition } from '../types'
 import {
   clamp,
   findNearestSnap,
+  getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
   getSheetTransform,
+  isHorizontalSide,
+  resolveSheetSide,
   toPxJS,
 } from '../utils'
 
@@ -40,9 +43,11 @@ export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
   snapAnimation?: SheetTransition
-  direction?: SheetDirection
+  side?: SheetSide
+  dir?: SheetTextDirection
   screenHeight?: number
   screenWidth?: number
+  rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
   onDismiss?: () => void
   enterAnimation?: SheetTransition
@@ -59,9 +64,11 @@ export function useSnap({
   snapPoints = [],
   initialSnap = 0,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
-  direction = 'bottom',
+  side = 'bottom',
+  dir = 'ltr',
   screenHeight: userScreenHeight,
   screenWidth: userScreenWidth,
+  rubberBand,
   onSnapChange = noop,
   onDismiss,
   enterAnimation = {
@@ -83,6 +90,9 @@ export function useSnap({
   onResurrected,
   presenceStateMTRef: presenceStateMTRefProp,
 }: SnapOptions) {
+  const resolvedSide = resolveSheetSide(side, dir)
+  const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
+  const allowOverDrag = effectiveRubberBand !== false
   const sheetMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const yRef = useMotionValueRef<number>(0)
   const sheetSizeMTRef = useMainThreadRef<number>(0)
@@ -98,7 +108,7 @@ export function useSnap({
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
-  const viewportSize = getMainAxisSize(direction, {
+  const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
     screenWidth,
   })
@@ -160,11 +170,15 @@ export function useSnap({
       const offsets = getResolvedSnapOffsets()
       const maxSnap = offsets.length > 0 ? Math.max(...offsets) : 0
       const opened = Math.max(sheetSizeMTRef.current, maxSnap)
-      const transformValue = direction === 'bottom'
-        ? v
-        : Math.min(v, opened)
+      const transformValue = isHorizontalSide(resolvedSide) && !allowOverDrag
+        ? Math.min(v, opened)
+        : v
       el.setStyleProperties({
-        transform: getSheetTransform(direction, transformValue, viewportSize),
+        transform: getSheetTransform(
+          resolvedSide,
+          transformValue,
+          viewportSize,
+        ),
         transition: 'none',
       })
       if (sheetProgress?.current) {
@@ -320,7 +334,7 @@ export function useSnap({
   ) {
     'main thread'
 
-    const layoutSize = getMainAxisLayoutSize(direction, e)
+    const layoutSize = getMainAxisLayoutSize(resolvedSide, e)
     sheetSizeMTRef.current = layoutSize
 
     // The rename is required, to prevent from xx.map is not a function
@@ -355,7 +369,8 @@ export function useSnap({
     showMT: controller.showMT,
     // internals for gesture hook
     yRef,
-    direction,
+    side,
+    dir,
     screenHeight,
     screenWidth,
     viewportSize,

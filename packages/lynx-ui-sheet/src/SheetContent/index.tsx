@@ -8,6 +8,7 @@ import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { SheetDragContext, useSheetContext } from '../context'
 import { useSnap, useSnapTouches } from '../hooks'
 import type { SheetContentProps, SheetTransition } from '../types'
+import { getDefaultRubberBand } from '../utils'
 
 const DEFAULT_SNAP_POINTS: Array<number | string> = []
 const DEFAULT_TRANSITION: SheetTransition = {
@@ -34,8 +35,10 @@ export function SheetContent(props: SheetContentProps) {
     registerMethods,
     snapPoints = DEFAULT_SNAP_POINTS,
     initialSnap = 0,
-    direction,
-    rubberBand = true,
+    side,
+    dir,
+    resolvedSide,
+    rubberBand,
     dragDisabled = false,
     dismissThreshold = 0.15,
     handleOnly,
@@ -51,7 +54,9 @@ export function SheetContent(props: SheetContentProps) {
     onClose,
     show: showFromContext,
   } = useSheetContext()
-  const isHorizontal = direction !== 'bottom'
+  const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
+  const isTop = resolvedSide === 'top'
+  const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
 
   // Track if show state changes are internal (from controller) vs external (from prop/context)
   const isInternalChangeRef = useRef(false)
@@ -102,7 +107,8 @@ export function SheetContent(props: SheetContentProps) {
     snapPoints,
     initialSnap,
     snapAnimation,
-    direction,
+    side,
+    dir,
     screenHeight,
     screenWidth,
     onSnapChange,
@@ -111,6 +117,7 @@ export function SheetContent(props: SheetContentProps) {
     onEntered: handleEntered,
     enterAnimation,
     exitAnimation,
+    rubberBand: effectiveRubberBand,
     sheetProgress,
     presenceStateMTRef,
     onUnmount,
@@ -120,9 +127,10 @@ export function SheetContent(props: SheetContentProps) {
   // Touch-based input handling (can be swapped with gesture-handler variant)
   const { handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT } =
     useSnapTouches({
-      direction,
+      side,
+      dir,
       dragDisabled,
-      rubberBand,
+      rubberBand: effectiveRubberBand,
       flingEnabled: true,
       flingDeceleration: 2000,
       flingMinVelocity: 200,
@@ -192,15 +200,13 @@ export function SheetContent(props: SheetContentProps) {
     [handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT],
   )
 
-  const horizontalSurface = (
+  const horizontalContent = (
     <view
-      className={className}
+      {...rest}
+      className={innerClassName}
       style={{
         height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        ...style,
+        ...innerStyle,
       }}
       event-through={false}
       main-thread:bindtouchstart={handleOnly ? undefined : handleTouchStartMT}
@@ -208,43 +214,38 @@ export function SheetContent(props: SheetContentProps) {
       main-thread:bindtouchend={handleOnly ? undefined : handleTouchEndMT}
       main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
     >
-      <view
-        {...rest}
-        className={innerClassName}
-        style={{
-          height: '100%',
-          ...innerStyle,
-        }}
-      >
-        <SheetDragContext.Provider value={contextValue}>
-          {children}
-        </SheetDragContext.Provider>
-      </view>
+      <SheetDragContext.Provider value={contextValue}>
+        {children}
+      </SheetDragContext.Provider>
     </view>
   )
 
   if (isHorizontal) {
     return (
       <view
+        className={className}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100vw',
-          height: '100%',
+          height: '100vh',
           overflow: 'hidden',
-          transform: direction === 'left'
+          transform: resolvedSide === 'left'
             ? `translate(${-viewportSize}px, 0px)`
             : `translate(${viewportSize}px, 0px)`,
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: direction === 'left' ? 'flex-end' : 'flex-start',
+          justifyContent: resolvedSide === 'left'
+            ? 'flex-end'
+            : 'flex-start',
+          ...style,
         }}
         main-thread:ref={setSheetMTRef}
         implicit-animation='false'
         event-through={true}
       >
-        {horizontalSurface}
+        {horizontalContent}
       </view>
     )
   }
@@ -253,7 +254,16 @@ export function SheetContent(props: SheetContentProps) {
     <view
       className={className}
       style={{
-        top: '100%',
+        ...(isTop
+          ? {
+            bottom: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }
+          : {
+            top: '100%',
+          }),
         height: '100vh',
         overflow: 'hidden',
         ...style,

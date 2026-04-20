@@ -148,18 +148,6 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
   />
   ```
 
-### Sheet Drawer Pattern
-
-`lynx-ui-sheet` supports both bottom-sheet and side-drawer behavior through `SheetRoot direction`.
-
-- Use `direction="bottom"` for the default bottom-sheet behavior.
-- Use `direction="left"` or `direction="right"` for drawer-like panels.
-- For bottom sheets, percentage snap points resolve against screen height and `'fit'` resolves to measured content height.
-- For horizontal drawers, percentage snap points resolve against screen width and `'fit'` resolves to measured content width.
-- For horizontal drawers, put width, height, background, radius, and shadow on `SheetContent`; use `innerClassName` / `innerStyle` only for internal layout and padding.
-- Horizontal drawer examples should not use the bottom-sheet pill handle unless the design intentionally calls for a side grip.
-- When reviewing drawer changes, validate left and right open/close, drag-to-close, backdrop click, rapid open/close, and over-drag behavior in addition to bottom-sheet regression coverage.
-
 ### Linting & Formatting
 
 This project uses **Biome** for linting and formatting, and **dprint** for Markdown formatting.
@@ -198,7 +186,10 @@ Documentation should be treated as code. While AI can draft updates, humans must
 2. **Component Skills (`SKILL.md`)**:
    - **Drafting**: Ask AI to summarize the component's usage and pitfalls after implementation.
    - **Refining**: Humans must review the "Prompt Formula" to ensure it aligns with the team's mental model.
-3. **Code Review**:
+3. **Scope of `AGENTS.md`**:
+   - Keep `AGENTS.md` focused on repository workflow, build, verification, and contribution guidance.
+   - Do not add component-specific usage, prop documentation, examples, or design guidance to `AGENTS.md`; put that information in the component README, typedoc comments, examples, or component `SKILL.md`.
+4. **Code Review**:
    - Documentation changes must be included in the same Pull Request as the code changes.
    - Reviewers should verify that `AGENTS.md` and `SKILL.md` accurately reflect the code changes.
 

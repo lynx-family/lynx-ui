@@ -19,6 +19,7 @@ import { useMotionValueRef } from '@lynx-js/motion/mini'
 import { SheetContext } from '../context'
 import type { SheetMethods } from '../context'
 import type { SheetRootProps, SheetRootRef } from '../types'
+import { resolveSheetSide } from '../utils'
 
 export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
   (props, ref) => {
@@ -34,7 +35,8 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       snapPoints,
       initialSnap,
       onSnapChange: onSnapChangeProp,
-      direction = 'bottom',
+      side = 'bottom',
+      dir = 'ltr',
       screenHeight,
       screenWidth,
       // Gesture
@@ -49,6 +51,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
     const presenceStateMTRef = useMainThreadRef<PresenceState>(
       PresenceState.Left,
     )
+    const resolvedSide = resolveSheetSide(side, dir)
 
     const isControlled = show !== undefined
     const [uncontrolledShow, setUncontrolledShow] = useState<boolean>(
@@ -144,7 +147,9 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       snapPoints,
       initialSnap,
       onSnapChange: onSnapChangeProp,
-      direction,
+      side,
+      dir,
+      resolvedSide,
       screenHeight,
       screenWidth,
       // Gesture
@@ -168,7 +173,9 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       snapPoints,
       initialSnap,
       onSnapChangeProp,
-      direction,
+      side,
+      dir,
+      resolvedSide,
       screenHeight,
       screenWidth,
       rubberBand,

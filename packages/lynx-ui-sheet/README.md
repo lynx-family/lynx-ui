@@ -21,12 +21,7 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ## Usage
 
-The `lynx-ui-sheet` follows a headless composition pattern. You can control its visibility via a `ref` and define its behavior using properties like `direction`, `snapPoints`, and `initialSnap`.
-
-- `direction="bottom"` preserves the default bottom-sheet behavior.
-- `direction="left"` and `direction="right"` provide drawer-like behavior.
-- Percentage snap points resolve against screen height for `bottom`, and against screen width for `left` / `right`.
-- `'fit'` resolves from measured content height for `bottom`, and measured content width for `left` / `right`.
+The `lynx-ui-sheet` follows a headless composition pattern. You can control its visibility via a `ref` and define its behavior using properties like `side`, `snapPoints`, and `initialSnap`.
 
 [View Full Examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sheet)
 
@@ -45,7 +40,7 @@ The `Sheet` component is composed of several specialized sub-components to give 
 </SheetRoot>
 ```
 
-- **`SheetRoot`**: The root container that manages the state, direction, snap points, and drag logic.
+- **`SheetRoot`**: The root container that manages the state, side, snap points, and drag logic.
 - **`SheetView`**: The viewport container for the sheet components.
 - **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.

@@ -3,4 +3,4 @@
 '@lynx-js/lynx-ui': minor
 ---
 
-Add directional `Sheet` support with `left` and `right` drawer semantics, width-based horizontal snap points, and directional examples.
+Add `Sheet` side support with `top`, physical `left` / `right`, logical `start` / `end`, width-based drawer snap points, RTL-aware logical sides, and directional examples.

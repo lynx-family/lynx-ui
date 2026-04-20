@@ -3,7 +3,9 @@
 // LICENSE file in the root directory of this source tree.
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetDirection } from '../types'
+import type { SheetSide, SheetTextDirection } from '../types'
+
+export type SheetResolvedSide = 'top' | 'bottom' | 'left' | 'right'
 
 export function toPxJS(value: number | string, viewportSize: number): number {
   if (typeof value === 'number') return value
@@ -35,66 +37,90 @@ const DEFAULT_HORIZONTAL_CLAIMED_GESTURE_ANGLES: [number, number][] = [
 ]
 
 export function getDefaultClaimedGestureAngles(
-  direction: SheetDirection,
+  side: SheetResolvedSide,
 ): [number, number][] {
-  return direction === 'bottom'
+  return side === 'top' || side === 'bottom'
     ? DEFAULT_VERTICAL_CLAIMED_GESTURE_ANGLES
     : DEFAULT_HORIZONTAL_CLAIMED_GESTURE_ANGLES
 }
 
+export function resolveSheetSide(
+  side: SheetSide,
+  dir: SheetTextDirection,
+): SheetResolvedSide {
+  if (side === 'start') {
+    return dir === 'rtl' ? 'right' : 'left'
+  }
+  if (side === 'end') {
+    return dir === 'rtl' ? 'left' : 'right'
+  }
+  return side
+}
+
+export function isHorizontalSide(side: SheetResolvedSide) {
+  'main thread'
+  return side === 'left' || side === 'right'
+}
+
+export function getDefaultRubberBand(side: SheetResolvedSide) {
+  return side !== 'left' && side !== 'right'
+}
+
 export function getMainAxisSize(
-  direction: SheetDirection,
+  side: SheetResolvedSide,
   dimensions: { screenHeight: number, screenWidth: number },
 ) {
-  return direction === 'bottom'
-    ? dimensions.screenHeight
-    : dimensions.screenWidth
+  return side === 'left' || side === 'right'
+    ? dimensions.screenWidth
+    : dimensions.screenHeight
 }
 
 export function getMainAxisLayoutSize(
-  direction: SheetDirection,
+  side: SheetResolvedSide,
   event: {
     detail?: { height?: number, width?: number }
     params?: { height?: number, width?: number }
   },
 ) {
   'main thread'
-  if (direction === 'bottom') {
-    return event.detail?.height ?? event.params?.height ?? 0
-  }
-  return event.detail?.width ?? event.params?.width ?? 0
+  return isHorizontalSide(side)
+    ? event.detail?.width ?? event.params?.width ?? 0
+    : event.detail?.height ?? event.params?.height ?? 0
 }
 
 export function getMainAxisTouchCoordinate(
-  direction: SheetDirection,
+  side: SheetResolvedSide,
   detail: Pick<MainThread.TouchEvent['detail'], 'x' | 'y'>,
 ) {
   'main thread'
-  return direction === 'bottom' ? detail.y : detail.x
+  return isHorizontalSide(side) ? detail.x : detail.y
 }
 
 export function getNextMainAxisOffset(
-  direction: SheetDirection,
+  side: SheetResolvedSide,
   startOffset: number,
   delta: number,
 ) {
   'main thread'
-  if (direction === 'left') {
+  if (side === 'top' || side === 'left') {
     return startOffset + delta
   }
   return startOffset - delta
 }
 
 export function getSheetTransform(
-  direction: SheetDirection,
+  side: SheetResolvedSide,
   value: number,
   viewportSize: number,
 ) {
   'main thread'
-  if (direction === 'bottom') {
+  if (side === 'bottom') {
     return `translate(0px, ${-value}px)`
   }
-  if (direction === 'left') {
+  if (side === 'top') {
+    return `translate(0px, ${value}px)`
+  }
+  if (side === 'left') {
     return `translate(${value - viewportSize}px, 0px)`
   }
   return `translate(${viewportSize - value}px, 0px)`

@@ -8,20 +8,23 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 ## Building Blocks
 
-- **`SheetRoot`**: Owns visibility state, direction, snap points, drag behavior, and imperative methods.
+- **`SheetRoot`**: Owns visibility state, side, snap points, drag behavior, and imperative methods.
 - **`SheetView`**: Renders the sheet subtree in the overlay layer and controls mount/unmount.
 - **`SheetBackdrop`**: Renders the scrim behind the sheet and optionally closes the sheet on tap.
 - **`SheetContent`**: Renders the moving sheet or drawer surface and receives consumer sizing/styling.
 - **`SheetHandle`**: Optional drag handle. Use it for bottom sheets when a visible handle is desired; horizontal drawers usually do not need it.
 
-## Direction Rules
+## Side Rules
 
-- Use `direction="bottom"` for bottom sheets. This is the default and preserves existing behavior.
-- Use `direction="left"` or `direction="right"` for drawer-style panels.
-- In `bottom` mode, percentage snap points resolve against viewport height.
-- In `left` and `right` mode, percentage snap points resolve against viewport width.
-- The `'fit'` snap point resolves to measured content height for `bottom`, and measured content width for `left` / `right`.
-- `screenHeight` can override the height basis for `bottom`; `screenWidth` can override the width basis for `left` / `right`.
+- Use `side="bottom"` for bottom sheets. This is the default and preserves existing behavior.
+- Use `side="top"` for top sheets.
+- Use `side="left"` or `side="right"` for drawer-style panels that should stay on a physical edge.
+- Use `side="start"` or `side="end"` for drawer-style panels that should follow writing direction. These resolve to the physical edge from `dir`.
+- In `top` and `bottom` mode, percentage snap points resolve against viewport height.
+- In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against viewport width.
+- The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
+- `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.
+- Rubber-band over-drag defaults to enabled for `top` / `bottom` and disabled for horizontal modes. Use `rubberBand` to override the default.
 
 ## State Model
 
@@ -34,28 +37,29 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 ## Styling Rules
 
 - Keep `Sheet` headless: do not add default visual classes or styles in the component package.
-- Put visual surface styles such as background, radius, shadow, width, and height on `SheetContent`.
-- For horizontal drawers, size the visible drawer with `className` / `style` on `SheetContent`, not `innerClassName` / `innerStyle`.
-- Use `innerClassName` / `innerStyle` for content layout and padding inside the sheet surface.
+- Put visual surface styles such as background, radius, and shadow on `SheetContent`.
+- Use `innerClassName` / `innerStyle` for content layout, padding, and panel sizing.
+- For horizontal drawers, set the drawer width with `innerClassName` / `innerStyle` so `'fit'` can resolve from the measured drawer width.
 - Horizontal drawers should usually be full height and use inner padding for safe-area or visual breathing room.
 - Do not add a bottom-sheet pill handle to horizontal drawer examples unless the design intentionally calls for a side grip.
 
 ## Verification
 
-- Run `pnpm --filter @lynx-js/lynx-ui-sheet test -- --run` after changing snap, direction, or drag helpers.
+- Run `pnpm --filter @lynx-js/lynx-ui-sheet test -- --run` after changing snap, side, or drag helpers.
 - Run `pnpm --filter @lynx-js/lynx-ui-sheet build` after public API or type changes.
 - Run `pnpm --filter @lynx-example/lynx-ui-sheet build` after example changes.
 - Run `pnpm check:exports` when exported types or aggregate exports change.
-- Manually validate bottom, left, and right directions when changing main-thread transform, gesture, or presence logic.
+- Manually validate bottom, top, left, right, start, and end sides when changing main-thread transform, gesture, or presence logic. Include both LTR and RTL for logical drawer sides.
 
 ## Prompt Formula
 
 Use this formula when asking an agent to build with `Sheet`:
 
-> Direction (`bottom` / `left` / `right`) + State model (`defaultShow`, controlled `show`, or ref methods) + Snap-point behavior (`fit`, pixels, or percentages) + Surface sizing/styling + Close behavior.
+> Side (`bottom` / `top` / `left` / `right` / `start` / `end`) + Text direction (`ltr` / `rtl`, when logical drawers matter) + State model (`defaultShow`, controlled `show`, or ref methods) + Snap-point behavior (`fit`, pixels, or percentages) + Surface sizing/styling + Close behavior.
 
 Examples:
 
-- "Create a left drawer using `SheetRoot direction=\"left\"`, controlled by a ref, with `snapPoints={['72%']}` and backdrop tap to close."
+- "Create a start drawer using `SheetRoot side=\"start\"`, controlled by a ref, with `snapPoints={['72%']}` and backdrop tap to close."
+- "Create a left drawer using `SheetRoot side=\"left\"` when the panel should stay on the physical left edge in both LTR and RTL."
 - "Create a bottom sheet with `snapPoints={['fit', '80%']}`, a handle, and an inner content layout using L.U.N.A tokens."
-- "Convert a bottom sheet to a right drawer; move width and surface styles to `SheetContent` and keep inner padding in `innerClassName`."
+- "Convert a bottom sheet to an end drawer; keep visual surface styles on `SheetContent` and move drawer width plus inner padding to `innerClassName`."

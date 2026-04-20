@@ -7,7 +7,8 @@ import type { ReactNode } from '@lynx-js/react'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
-export type SheetDirection = 'bottom' | 'left' | 'right'
+export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
+export type SheetTextDirection = 'ltr' | 'rtl'
 
 export interface SheetRootRef {
   snapTo: (
@@ -97,9 +98,9 @@ export interface SheetContentProps extends ComponentBasicProps {
   exitAnimation?: SheetTransition
   /**
    * CSS class name for the inner layer.
-   * Use this for layout or sizing styles specific to the inner area.
-   * In horizontal drawer mode, prefer sizing the drawer surface with `className`
-   * / `style` on `SheetContent` itself instead of `innerClassName`.
+   * Use this for content layout and sizing styles. In horizontal drawer mode,
+   * the drawer width should be set here so `'fit'` can resolve from the
+   * measured drawer width.
    * @zh 内层容器的 CSS 类名。用于设置内层区域特定的布局或尺寸样式。
    * @Android
    * @iOS
@@ -108,11 +109,11 @@ export interface SheetContentProps extends ComponentBasicProps {
   innerClassName?: string
   /**
    * Inline styles for the inner layer.
-   * Use this for layout or sizing styles specific to the inner area.
+   * Use this for content layout and sizing styles.
    * Note: Visual styles (background, borderRadius, etc.) should be set via
-   * the main `style` prop which applies to the surface layer.
-   * In horizontal drawer mode, prefer sizing the drawer surface with `style`
-   * on `SheetContent` itself instead of `innerStyle`.
+   * the main `style` prop which applies to the moving surface layer.
+   * In horizontal drawer mode, set drawer width here so `'fit'` can resolve
+   * from the measured drawer width.
    * @zh 内层容器的内联样式。用于设置内层区域特定的布局或尺寸样式。
    * 注意：视觉样式（背景、圆角等）应通过主 `style` 属性设置，它会应用到 surface 层。
    * @Android
@@ -136,26 +137,37 @@ export interface SheetContentProps extends ComponentBasicProps {
  */
 export interface SheetRootProps extends ComponentBasicProps {
   /**
-   * The edge from which the sheet enters.
+   * The side from which the sheet enters.
    * `bottom` preserves the existing bottom-sheet behavior.
-   * `left` and `right` provide drawer-like behavior.
+   * `top` provides top-sheet behavior.
+   * `left` and `right` provide physical drawer behavior.
+   * `start` and `end` provide logical drawer behavior and resolve against `dir`.
    * @defaultValue 'bottom'
-   * @zh Sheet 进入的边缘。`bottom` 保持现有底部弹层行为，`left` 和 `right` 提供抽屉式行为。
+   * @zh Sheet 进入的边。`bottom` 保持现有底部弹层行为，`top` 提供顶部弹层行为，`left` 和 `right` 提供物理抽屉方向，`start` 和 `end` 提供逻辑抽屉方向并根据 `dir` 解析。
    */
-  direction?: SheetDirection
+  side?: SheetSide
+  /**
+   * Text direction used to resolve logical drawer sides.
+   * In `ltr`, `start` means left and `end` means right.
+   * In `rtl`, `start` means right and `end` means left.
+   * Physical `left` and `right` sides are not affected by `dir`.
+   * @defaultValue 'ltr'
+   * @zh 用于解析逻辑抽屉方向的文本方向。在 `ltr` 中 `start` 为左侧、`end` 为右侧；在 `rtl` 中 `start` 为右侧、`end` 为左侧。物理 `left` 和 `right` 不受 `dir` 影响。
+   */
+  dir?: SheetTextDirection
   /**
    * The snap points of the Sheet. Can be pixel numbers, percentages, or 'fit'.
    * - Numbers are treated as pixel values
-   * - Percentages (e.g., '50%') are relative to screen height for `bottom`,
-   *   and relative to screen width for `left` / `right`
-   * - 'fit' dynamically resolves to the measured content height for `bottom`,
-   *   and the measured content width for `left` / `right`
+   * - Percentages (e.g., '50%') are relative to screen height for `top` / `bottom`,
+   *   and relative to screen width for `left` / `right` / `start` / `end`
+   * - 'fit' dynamically resolves to the measured content height for `top` / `bottom`,
+   *   and the measured content width for `left` / `right` / `start` / `end`
    * The index order follows the order of this array.
    * @example snapPoints={['fit', '80%']} // First snap fits content, second is 80% of screen
    * @zh Sheet 的吸附点。可以是像素数值、百分比或 'fit'。
    * - 数字被视为像素值
-   * - 百分比（例如 '50%'）在 `bottom` 模式下相对于屏幕高度，在 `left` / `right` 模式下相对于屏幕宽度
-   * - 'fit' 在 `bottom` 模式下动态解析为测量的内容高度，在 `left` / `right` 模式下动态解析为测量的内容宽度
+   * - 百分比（例如 '50%'）在 `top` / `bottom` 模式下相对于屏幕高度，在 `left` / `right` / `start` / `end` 模式下相对于屏幕宽度
+   * - 'fit' 在 `top` / `bottom` 模式下动态解析为测量的内容高度，在 `left` / `right` / `start` / `end` 模式下动态解析为测量的内容宽度
    * 索引顺序与该数组顺序一致。
    */
   snapPoints?: Array<number | string>
@@ -173,23 +185,29 @@ export interface SheetRootProps extends ComponentBasicProps {
   onSnapChange?: (index: number, value: number) => void
   /**
    * The height of the Sheet container (screen height).
+   * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points
+   * and dismissal calculations.
    * @zh Sheet 容器的高度（屏幕高度）。
    */
   screenHeight?: number
   /**
    * The width of the Sheet container (screen width).
-   * Used in horizontal drawer mode (`left` / `right`) for percentage snap points
+   * Used in horizontal drawer mode (`left` / `right` / `start` / `end`) for percentage snap points
    * and dismissal calculations.
-   * @zh Sheet 容器的宽度（屏幕宽度）。在水平抽屉模式（`left` / `right`）中用于百分比吸附点和关闭计算。
+   * @zh Sheet 容器的宽度（屏幕宽度）。在水平抽屉模式（`left` / `right` / `start` / `end`）中用于百分比吸附点和关闭计算。
    */
   screenWidth?: number
   /**
    * The rubber band effect configuration.
+   * By default, rubber band over-drag is enabled for vertical sheets
+   * (`top` / `bottom`) and disabled for horizontal drawers
+   * (`left` / `right` / `start` / `end`).
    * If true, enables default rubber band effect (coefficient 0.5).
    * If false, disables rubber band effect.
    * If number, enables rubber band effect with the specified coefficient.
    * If object, allows specifying coefficient and max distance.
    * @zh 橡皮筋效果配置。
+   * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋过拖效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
    * 如果为 true，启用默认橡皮筋效果（系数 0.5）。
    * 如果为 false，禁用橡皮筋效果。
    * 如果为数字，启用指定系数的橡皮筋效果。
@@ -213,11 +231,11 @@ export interface SheetRootProps extends ComponentBasicProps {
   handleOnly?: boolean
   /**
    * Whether to enable dragging to close the Sheet.
-   * If true, dragging down from the lowest snap point will move the sheet linearly and allow dismissal.
-   * If false, dragging down will trigger rubber band effect and snap back.
+   * If true, dragging from the lowest snap point toward the closed edge will move the sheet linearly and allow dismissal.
+   * If false, dragging toward the closed edge will trigger rubber band effect and snap back.
    * @zh 是否允许拖拽关闭 Sheet。
-   * 如果为 true，从最低吸附点向下拉动将线性移动并允许关闭。
-   * 如果为 false，向下拉动将触发橡皮筋效果并回弹。
+   * 如果为 true，从最低吸附点向关闭边缘拖动将线性移动并允许关闭。
+   * 如果为 false，向关闭边缘拖动将触发橡皮筋效果并回弹。
    * @default true
    */
   enableDragToClose?: boolean

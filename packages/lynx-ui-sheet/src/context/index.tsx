@@ -10,7 +10,8 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetDirection, SheetTransition } from '../types'
+import type { SheetSide, SheetTextDirection, SheetTransition } from '../types'
+import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
   snapTo: (
@@ -50,7 +51,9 @@ export interface SheetContextValue {
   snapPoints?: Array<number | string>
   initialSnap?: number
   onSnapChange?: (index: number, value: number) => void
-  direction: SheetDirection
+  side: SheetSide
+  dir: SheetTextDirection
+  resolvedSide: SheetResolvedSide
   screenHeight?: number
   screenWidth?: number
   // Gesture
@@ -76,7 +79,9 @@ export const SheetContext = createContext<SheetContextValue>({
   show: false,
   forceMount: false,
   mounted: false,
-  direction: 'bottom',
+  side: 'bottom',
+  dir: 'ltr',
+  resolvedSide: 'bottom',
   onUnmount: noop,
   setUncontrolledShow: noop,
   registerMethods: noop,

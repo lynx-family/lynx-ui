@@ -252,9 +252,10 @@ export {
 export type {
   SheetBackdropProps,
   SheetContentProps,
-  SheetDirection,
   SheetRootProps,
   SheetRootRef,
+  SheetSide,
+  SheetTextDirection,
   SheetViewProps,
   SheetHandleProps,
   SheetTransition,
