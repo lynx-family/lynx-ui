@@ -90,7 +90,7 @@ const Swiper = forwardRef(
     const childrenMapRef = useMainThreadRef<Record<number, MainThread.Element>>(
       {},
     )
-    const { modeConfig, spaceBetween, enableFixedSpaceBetween } = useModeConfig({
+    const { modeConfig, spaceBetween } = useModeConfig({
       mode,
       modeConfig: _modeConfig,
     })
@@ -129,10 +129,9 @@ const Swiper = forwardRef(
         initialIndex,
         customAnimationFirstScreen,
         spaceBetween,
-        enableFixedSpaceBetween,
         RTL,
       }),
-      [loop, itemWidth, itemHeight, spaceBetween, enableFixedSpaceBetween, RTL],
+      [loop, itemWidth, itemHeight, spaceBetween, RTL],
     )
 
     const { setChangeOffset, setChangeSwipeStartMT, setChangeSwipeStopMT } =

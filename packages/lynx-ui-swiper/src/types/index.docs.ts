@@ -355,15 +355,6 @@ export interface SwiperPropsNormal<T> extends SwiperProps<T> {
      * @zh `<SwiperItem>` 之间的间距
      */
     spaceBetween?: number
-    /**
-     * Whether to enable fixed space between SwiperItem
-     * @defaultValue false
-     * @Android
-     * @iOS
-     * @Harmony
-     * @zh 是否启用固定间距
-     */
-    enableFixedSpaceBetween?: boolean
   }
 }
 

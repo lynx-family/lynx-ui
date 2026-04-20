@@ -19,6 +19,5 @@ export const SwiperContext = createContext<SwiperContextProps>({
   initialIndex: 0,
   loop: false,
   spaceBetween: 0,
-  enableFixedSpaceBetween: false,
   RTL: false,
 })

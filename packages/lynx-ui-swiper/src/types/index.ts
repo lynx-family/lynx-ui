@@ -21,7 +21,6 @@ export interface SwiperContextProps extends
 {
   setChildrenRef: (ref: MainThread.Element, index: number) => void
   spaceBetween: number
-  enableFixedSpaceBetween: boolean
   modeConfig: CompoundModeConfig
 }
 

@@ -68,12 +68,9 @@ interface IFirstScreenStyle extends
     | 'initialIndex'
     | 'customAnimationFirstScreen'
     | 'RTL'
-    | 'enableFixedSpaceBetween'
   >
 {
   itemRef: RefObject<MainThread.Element | undefined>
-  itemLeftRef: RefObject<MainThread.Element | undefined>
-  itemRightRef: RefObject<MainThread.Element | undefined>
   spaceBetween: number
   realIndex: number
   modeConfig: CompoundModeConfig
@@ -90,9 +87,6 @@ function useFirstScreenStyle(props: IFirstScreenStyle) {
     modeConfig,
     initialIndex,
     RTL,
-    enableFixedSpaceBetween,
-    itemLeftRef,
-    itemRightRef,
   } = props
 
   const containerStyle = useMemo(() => {
@@ -139,36 +133,13 @@ function useFirstScreenStyle(props: IFirstScreenStyle) {
     itemWidth: number
     itemHeight: SwiperContextProps['itemHeight']
     spaceBetween: number
-    enableFixedSpaceBetween: boolean
   }) {
     'main thread'
-    if (!propsFromJS.enableFixedSpaceBetween) {
-      if (itemRef.current) {
-        itemRef.current.setStyleProperties({
-          width: `${propsFromJS.itemWidth}px`,
-          height: `${propsFromJS.itemHeight}px`,
-          marginInlineEnd: `${propsFromJS.spaceBetween}px`,
-        })
-      }
-      return
-    }
-
     if (itemRef.current) {
       itemRef.current.setStyleProperties({
         width: `${propsFromJS.itemWidth}px`,
         height: `${propsFromJS.itemHeight}px`,
-      })
-    }
-
-    if (itemLeftRef.current) {
-      itemLeftRef.current.setStyleProperties({
-        width: `${propsFromJS.spaceBetween}px`,
-      })
-    }
-
-    if (itemRightRef.current) {
-      itemRightRef.current.setStyleProperties({
-        width: `${propsFromJS.spaceBetween}px`,
+        marginInlineEnd: `${propsFromJS.spaceBetween}px`,
       })
     }
   }
@@ -178,9 +149,8 @@ function useFirstScreenStyle(props: IFirstScreenStyle) {
       itemWidth,
       itemHeight,
       spaceBetween,
-      enableFixedSpaceBetween,
     })
-  }, [itemWidth, itemHeight, spaceBetween, enableFixedSpaceBetween])
+  }, [itemWidth, itemHeight, spaceBetween])
 
   return {
     containerStyle,
@@ -198,21 +168,15 @@ const SwiperItem = (
     customAnimationFirstScreen,
     initialIndex = 0,
     spaceBetween,
-    enableFixedSpaceBetween = false,
     RTL,
   } = useContext(SwiperContext)
   const swiperItemRef = useMainThreadRef<MainThread.Element>()
-  const swiperItemLeftRef = useMainThreadRef<MainThread.Element>()
-  const swiperItemRightRef = useMainThreadRef<MainThread.Element>()
 
   const { containerStyle } = useFirstScreenStyle({
     itemWidth,
     itemHeight,
     spaceBetween,
-    enableFixedSpaceBetween,
     itemRef: swiperItemRef,
-    itemLeftRef: swiperItemLeftRef,
-    itemRightRef: swiperItemRightRef,
     modeConfig,
     realIndex,
     initialIndex,
@@ -226,61 +190,14 @@ const SwiperItem = (
     setChildrenRef(ref, realIndex ?? index)
   }
 
-  function setLeftRef(ref: MainThread.Element) {
-    'main thread'
-    swiperItemLeftRef.current = ref
-  }
-
-  function setRightRef(ref: MainThread.Element) {
-    'main thread'
-    swiperItemRightRef.current = ref
-  }
-
-  const { marginLeft, marginRight, ...restContainerStyle } = containerStyle ?? {}
-
-  if (!enableFixedSpaceBetween) {
-    return (
-      <view
-        class='swiper-item'
-        style={containerStyle}
-        main-thread:ref={setRef}
-        overlap={overlap}
-      >
-        {children}
-      </view>
-    )
-  }
-
   return (
-    <view class='swiper-item-container'>
-      {marginLeft
-        ? (
-          <view
-            class='swiper-item-left'
-            style={{ width: marginLeft }}
-            main-thread:ref={setLeftRef}
-            overlap={overlap}
-          />
-        )
-        : null}
-      <view
-        class='swiper-item'
-        style={restContainerStyle}
-        main-thread:ref={setRef}
-        overlap={overlap}
-      >
-        {children}
-      </view>
-      {marginRight
-        ? (
-          <view
-            class='swiper-item-right'
-            style={{ width: marginRight }}
-            main-thread:ref={setRightRef}
-            overlap={overlap}
-          />
-        )
-        : null}
+    <view
+      class='swiper-item'
+      style={containerStyle}
+      main-thread:ref={setRef}
+      overlap={overlap}
+    >
+      {children}
     </view>
   )
 }
