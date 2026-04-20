@@ -9,7 +9,7 @@ import { SheetDragContext, useSheetContext } from '../context'
 import { useSnap, useSnapTouches } from '../hooks'
 import type { SheetContentProps, SheetTransition } from '../types'
 
-const DEFAULT_SNAP_POINTS: Array<number | string> = []
+const DEFAULT_SNAP_POINTS: Array<number | string> = ['fit']
 const DEFAULT_TRANSITION: SheetTransition = {
   type: 'spring',
   stiffness: 200,
