@@ -148,6 +148,18 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
   />
   ```
 
+### Sheet Drawer Pattern
+
+`lynx-ui-sheet` supports both bottom-sheet and side-drawer behavior through `SheetRoot direction`.
+
+- Use `direction="bottom"` for the default bottom-sheet behavior.
+- Use `direction="left"` or `direction="right"` for drawer-like panels.
+- For bottom sheets, percentage snap points resolve against screen height and `'fit'` resolves to measured content height.
+- For horizontal drawers, percentage snap points resolve against screen width and `'fit'` resolves to measured content width.
+- For horizontal drawers, put width, height, background, radius, and shadow on `SheetContent`; use `innerClassName` / `innerStyle` only for internal layout and padding.
+- Horizontal drawer examples should not use the bottom-sheet pill handle unless the design intentionally calls for a side grip.
+- When reviewing drawer changes, validate left and right open/close, drag-to-close, backdrop click, rapid open/close, and over-drag behavior in addition to bottom-sheet regression coverage.
+
 ### Linting & Formatting
 
 This project uses **Biome** for linting and formatting, and **dprint** for Markdown formatting.
