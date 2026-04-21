@@ -10,7 +10,7 @@ import { useSnap, useSnapTouches } from '../hooks'
 import type { SheetContentProps, SheetTransition } from '../types'
 import { getDefaultRubberBand } from '../utils'
 
-const DEFAULT_SNAP_POINTS: Array<number | string> = []
+const DEFAULT_SNAP_POINTS: Array<number | string> = ['fit']
 const DEFAULT_TRANSITION: SheetTransition = {
   type: 'spring',
   stiffness: 200,

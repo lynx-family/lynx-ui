@@ -248,7 +248,11 @@ Documentation should be treated as code. While AI can draft updates, humans must
 3. **Scope of `AGENTS.md`**:
    - Keep `AGENTS.md` focused on repository workflow, build, verification, and contribution guidance.
    - Do not add component-specific usage, prop documentation, examples, or design guidance to `AGENTS.md`; put that information in the component README, typedoc comments, examples, or component `SKILL.md`.
-4. **Code Review**:
+4. **Package README Scope**:
+   - Keep package `README.md` files high-level. They should describe purpose, installation, component structure, and point readers to examples or API docs.
+   - Do not turn package READMEs into step-by-step usage manuals by appending narrow usage rules or behavioral footnotes for every change.
+   - Put detailed behavior guidance, caveats, and prompt-oriented instructions in typed API docs, examples, component `SKILL.md`, or `AGENTS.md` when that context is the better fit.
+5. **Code Review**:
    - Documentation changes must be included in the same Pull Request as the code changes.
    - Reviewers should verify that `AGENTS.md` and `SKILL.md` accurately reflect the code changes.
 
