@@ -6,7 +6,7 @@ import { forwardRef, memo, root, useState } from '@lynx-js/react'
 import type { ForwardedRef, ReactNode } from '@lynx-js/react'
 
 import {
-  SliderRange,
+  SliderIndicator,
   SliderRoot,
   SliderThumb,
   SliderTrack,
@@ -18,7 +18,7 @@ import './index.css'
 interface SliderProps extends Omit<SliderRootProps, 'children'> {
   thumb?: ReactNode
   trackClassName?: string
-  rangeClassName?: string
+  indicatorClassName?: string
   thumbWrapperClassName?: string
 }
 
@@ -30,19 +30,19 @@ const Slider = memo(
     const {
       thumb,
       trackClassName,
-      rangeClassName,
+      indicatorClassName,
       thumbWrapperClassName,
       ...rootProps
     } = props
 
     return (
       <SliderRoot ref={ref} {...rootProps}>
-        <SliderTrack className={trackClassName} />
-        <SliderRange className={rangeClassName}>
+        <SliderTrack className={trackClassName}>
+          <SliderIndicator className={indicatorClassName} />
           <SliderThumb className={thumbWrapperClassName}>
             {thumb}
           </SliderThumb>
-        </SliderRange>
+        </SliderTrack>
       </SliderRoot>
     )
   }),
@@ -74,7 +74,7 @@ function App() {
               className='slider-root'
               defaultValue={0.4}
               trackClassName='slider-track'
-              rangeClassName='slider-range'
+              indicatorClassName='slider-indicator'
               thumbWrapperClassName='slider-thumb-wrapper'
               thumb={<view className='slider-thumb' />}
               onValueChange={(value: number) => {
@@ -91,7 +91,7 @@ function App() {
               className='slider-root'
               defaultValue={0.72}
               trackClassName='slider-track'
-              rangeClassName='slider-range'
+              indicatorClassName='slider-indicator'
               thumbWrapperClassName='slider-thumb-wrapper'
               thumb={<view className='slider-thumb-pill' />}
               onValueChange={(value: number) => {
@@ -105,9 +105,9 @@ function App() {
             <Slider
               className='slider-root'
               defaultValue={0.45}
-              readonly
+              disabled
               trackClassName='slider-track'
-              rangeClassName='slider-range'
+              indicatorClassName='slider-indicator'
               thumbWrapperClassName='slider-thumb-wrapper'
               thumb={<view className='slider-thumb' />}
             />

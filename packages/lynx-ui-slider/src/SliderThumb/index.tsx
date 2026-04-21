@@ -4,22 +4,28 @@
 
 import { memo } from '@lynx-js/react'
 
+import { useSliderContext } from '../context'
 import type { SliderThumbProps } from '../types'
+import { getVisualRatio } from '../utils'
 
 export const SliderThumb = memo(function SliderThumb(props: SliderThumbProps) {
-  const {
-    children,
-    className,
-    style,
-  } = props
+  const { thumbRef, currentValue, enableRTL } = useSliderContext()
+  const { children, className, style } = props
 
   return (
-    children
-      ? (
-        <view className={className} style={style}>
-          {children}
-        </view>
-      )
-      : null
+    <view
+      ref={thumbRef}
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: `${getVisualRatio(currentValue.current, enableRTL) * 100}%`,
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1,
+      }}
+    >
+      <view className={className} style={style}>
+        {children}
+      </view>
+    </view>
   )
 })

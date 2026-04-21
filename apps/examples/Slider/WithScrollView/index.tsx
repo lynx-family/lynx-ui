@@ -5,7 +5,7 @@
 import { root, useState } from '@lynx-js/react'
 
 import {
-  SliderRange,
+  SliderIndicator,
   SliderRoot,
   SliderThumb,
   SliderTrack,
@@ -33,12 +33,12 @@ function SliderCard({ index }: { index: number }) {
           setValue(v)
         }}
       >
-        <SliderTrack className='slider-track' />
-        <SliderRange className='slider-range'>
+        <SliderTrack className='slider-track'>
+          <SliderIndicator className='slider-indicator' />
           <SliderThumb className='slider-thumb-wrapper'>
             <view className='slider-thumb' />
           </SliderThumb>
-        </SliderRange>
+        </SliderTrack>
       </SliderRoot>
     </view>
   )

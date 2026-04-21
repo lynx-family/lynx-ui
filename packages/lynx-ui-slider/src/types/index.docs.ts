@@ -86,13 +86,9 @@ export interface SliderRootProps extends ComponentBasicProps {
    */
   step?: number
   /**
-   * Make the slider read-only and prevent pointer/touch interaction.
+   * Disable the slider and prevent pointer/touch interaction.
    * @defaultValue false
-   * @zh 将滑块设为只读，阻止指针/触摸交互。
-   */
-  readonly?: boolean
-  /**
-   * @deprecated Please use `readonly` instead.
+   * @zh 禁用滑块，阻止指针/触摸交互。
    */
   disabled?: boolean
   /**
@@ -117,38 +113,48 @@ export interface SliderRootProps extends ComponentBasicProps {
    */
   onValueCommit?: (value: number) => void
   /**
-   * Primitive children composition, usually: SliderTrack` + `SliderRange` + `SliderThumb`.
-   * @zh 子原语组件组合，通常为：`SliderTrack` + `SliderRange` + `SliderThumb`。
+   * Primitive children composition, usually: `SliderTrack` containing `SliderIndicator` and optional `SliderThumb`.
+   * @zh 子原语组件组合，通常为：`SliderTrack` 内包含 `SliderIndicator` 以及可选的 `SliderThumb`。
    */
   children?: ReactNode
 }
 
 /**
  * Track primitive props.
+ *
+ * `SliderTrack` establishes the measurement/layout coordinate space and renders the base rail.
+ *
  * @zh 轨道原语组件属性。
+ *
+ * `SliderTrack` 建立测量与布局坐标空间，并渲染基础轨道。
  */
-export interface SliderTrackProps extends ComponentBasicProps {}
-
-/**
- * Range primitive props.
- *
- * `SliderRange` width and foreground bar are controlled by root value.
- *
- * @zh 范围条原语组件属性。
- *
- * `SliderRange` 的宽度和前景条由根组件的值控制。
- */
-export interface SliderRangeProps extends ComponentBasicProps {
+export interface SliderTrackProps extends ComponentBasicProps {
   /**
-   * Usually includes `SliderThumb` and optional custom range content.
-   * @zh 通常包含 `SliderThumb` 及可选的自定义范围内容。
+   * Usually includes `SliderIndicator` and optional `SliderThumb`.
+   * @zh 通常包含 `SliderIndicator` 以及可选的 `SliderThumb`。
    */
   children?: ReactNode
 }
 
 /**
+ * Indicator primitive props.
+ *
+ * `SliderIndicator` is a pure visual layer whose width is controlled by root value.
+ *
+ * @zh 指示条原语组件属性。
+ *
+ * `SliderIndicator` 是纯视觉层，其宽度由根组件的值控制。
+ */
+export interface SliderIndicatorProps extends ComponentBasicProps {}
+
+/**
  * Thumb primitive props.
+ *
+ * `SliderThumb` is positioned by the current ratio inside `SliderTrack` and does not own interaction logic.
+ *
  * @zh 滑块拇指原语组件属性。
+ *
+ * `SliderThumb` 在 `SliderTrack` 内按照当前比例定位，不负责独立交互逻辑。
  */
 export interface SliderThumbProps extends ComponentBasicProps {
   /**

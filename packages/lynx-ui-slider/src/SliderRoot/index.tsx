@@ -22,7 +22,7 @@ import type {
   SliderUpdateValueOptions,
   SliderValueChangeSource,
 } from '../types'
-import { clamp01, getTouchX, snapToStep } from '../utils'
+import { clamp01, getTouchX, getVisualRatio, snapToStep } from '../utils'
 
 export const SliderRoot = memo(forwardRef(SliderRootImpl))
 
@@ -31,7 +31,6 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
     value: controlledValue,
     defaultValue = 0,
     step,
-    readonly = false,
     disabled = false,
     enableRTL = false,
     className,
@@ -46,12 +45,12 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   const isWebPlatform = useRef<boolean>(SystemInfo.platform === 'web')
 
   const isWebMouseDown = useRef<boolean>(false)
-  const isReadonly = readonly || disabled
 
   const isControlled = controlledValue !== undefined
 
-  const containerRef = useRef<NodesRef>(null)
-  const valueRef = useRef<NodesRef>(null)
+  const trackRef = useRef<NodesRef>(null)
+  const indicatorRef = useRef<NodesRef>(null)
+  const thumbRef = useRef<NodesRef>(null)
 
   const bgWidth = useRef<number>(0)
   const bgLeft = useRef<number>(0)
@@ -64,10 +63,16 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
     snapToStep(clamp01(isControlled ? controlledValue : defaultValue), step),
   )
 
-  const applyNativeWidth = (next: number): void => {
-    valueRef.current
+  const applyNativeValue = (next: number): void => {
+    indicatorRef.current
       ?.setNativeProps?.({
         width: `${next * 100}%`,
+      })
+      ?.exec?.()
+
+    thumbRef.current
+      ?.setNativeProps?.({
+        left: `${getVisualRatio(next, enableRTL) * 100}%`,
       })
       ?.exec?.()
   }
@@ -75,7 +80,7 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   const syncCurrentValue = (next: number): boolean => {
     if (currentValue.current === next) return false
     currentValue.current = next
-    applyNativeWidth(next)
+    applyNativeValue(next)
     return true
   }
 
@@ -141,10 +146,14 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
 
   const measureBounds = (): void => {
     if (isMeasuringBounds.current) return
+
+    const trackNode = trackRef.current
+    if (!trackNode?.invoke) return
+
     isMeasuringBounds.current = true
 
-    containerRef.current
-      ?.invoke?.({
+    trackNode
+      .invoke({
         method: 'boundingClientRect',
         params: { relativeTo: 'screen' },
         success: (res: unknown) => {
@@ -173,7 +182,7 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   }
 
   const handleMoveX = (x: number): void => {
-    if (isReadonly) return
+    if (disabled) return
     if (!Number.isFinite(x)) return
 
     if (!leftMeasured.current || bgWidth.current <= 0) {
@@ -186,7 +195,7 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   }
 
   const handleInteractionStart = (x: number): void => {
-    if (isReadonly) return
+    if (disabled) return
     if (!Number.isFinite(x)) return
 
     pendingMoveX.current = x
@@ -202,7 +211,7 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
     onValueCommit?.(value)
   }
 
-  const onLayoutChange = (event: {
+  const handleTrackLayoutChange = (event: {
     params: { width: number, height: number }
     detail?: { width: number, height: number }
   }): void => {
@@ -274,20 +283,22 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   )
 
   const contextValue = {
-    valueRef,
+    trackRef,
+    indicatorRef,
+    thumbRef,
     currentValue,
     enableRTL,
+    onTrackLayoutChange: handleTrackLayoutChange,
   }
 
   return (
     <SliderContext.Provider value={contextValue}>
       <view
-        ref={containerRef}
         className={className}
         flatten={false}
         style={style}
-        block-native-event={true}
-        native-interaction-enabled={true}
+        // block-native-event={true}
+        // native-interaction-enabled={true}
         consume-slide-event={[[-180, 180]]}
         catchmousemove={(event: unknown) => {
           if (isWebPlatform.current && !isWebMouseDown.current) return
@@ -324,7 +335,6 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
           isWebMouseDown.current = false
           handleEnd()
         }}
-        bindlayoutchange={onLayoutChange}
       >
         {children}
       </view>

@@ -5,7 +5,7 @@
 import { root, useState } from '@lynx-js/react'
 
 import {
-  SliderRange,
+  SliderIndicator,
   SliderRoot,
   SliderThumb,
   SliderTrack,
@@ -41,12 +41,12 @@ function App() {
                 setVariantValue(value)
               }}
             >
-              <SliderTrack className='slider-track' />
-              <SliderRange className='slider-range'>
+              <SliderTrack className='slider-track'>
+                <SliderIndicator className='slider-indicator' />
                 <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb-pill' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
 
@@ -55,14 +55,14 @@ function App() {
             <SliderRoot
               className='slider-root ui-disabled'
               defaultValue={0.45}
-              readonly
+              disabled
             >
-              <SliderTrack className='slider-track' />
-              <SliderRange className='slider-range'>
+              <SliderTrack className='slider-track'>
+                <SliderIndicator className='slider-indicator' />
                 <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
         </view>
@@ -70,8 +70,8 @@ function App() {
         <view className='section'>
           <text className='title'>RTL</text>
           <text className='desc'>
-            A slider with `enableRTL` and CSS `direction: rtl`. The range grows
-            from right to left.
+            A slider with `enableRTL` and CSS `direction: rtl`. The indicator
+            grows from right to left.
           </text>
 
           <view className='row rtl-card'>
@@ -86,12 +86,12 @@ function App() {
                 setRtlValue(value)
               }}
             >
-              <SliderTrack className='slider-track' />
-              <SliderRange className='slider-range'>
-                <SliderThumb className='slider-thumb-wrapper slider-thumb-wrapper-rtl'>
+              <SliderTrack className='slider-track'>
+                <SliderIndicator className='slider-indicator' />
+                <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
         </view>

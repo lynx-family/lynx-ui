@@ -4,10 +4,29 @@
 
 import { memo } from '@lynx-js/react'
 
+import { useSliderContext } from '../context'
 import type { SliderTrackProps } from '../types'
 
 export const SliderTrack = memo(function SliderTrack(props: SliderTrackProps) {
-  const { className, style } = props
+  const { trackRef, onTrackLayoutChange } = useSliderContext()
+  const { children, className, style } = props
 
-  return <view className={className} style={style} />
+  return (
+    <view
+      ref={trackRef}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        overflow: 'visible',
+        zIndex: 0,
+      }}
+      bindlayoutchange={onTrackLayoutChange}
+    >
+      <view className={className} style={style} />
+      {children}
+    </view>
+  )
 })
