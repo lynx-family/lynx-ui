@@ -8,7 +8,6 @@ import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
-export type SheetTextDirection = 'ltr' | 'rtl'
 
 export interface SheetRootRef {
   snapTo: (
@@ -141,20 +140,20 @@ export interface SheetRootProps extends ComponentBasicProps {
    * `bottom` preserves the existing bottom-sheet behavior.
    * `top` provides top-sheet behavior.
    * `left` and `right` provide physical drawer behavior.
-   * `start` and `end` provide logical drawer behavior and resolve against `dir`.
+   * `start` and `end` provide logical drawer behavior and resolve against `enableRTL`.
    * @defaultValue 'bottom'
-   * @zh Sheet 进入的边。`bottom` 保持现有底部弹层行为，`top` 提供顶部弹层行为，`left` 和 `right` 提供物理抽屉方向，`start` 和 `end` 提供逻辑抽屉方向并根据 `dir` 解析。
+   * @zh Sheet 进入的边。`bottom` 保持现有底部弹层行为，`top` 提供顶部弹层行为，`left` 和 `right` 提供物理抽屉方向，`start` 和 `end` 提供逻辑抽屉方向并根据 `enableRTL` 解析。
    */
   side?: SheetSide
   /**
-   * Text direction used to resolve logical drawer sides.
-   * In `ltr`, `start` means left and `end` means right.
-   * In `rtl`, `start` means right and `end` means left.
-   * Physical `left` and `right` sides are not affected by `dir`.
-   * @defaultValue 'ltr'
-   * @zh 用于解析逻辑抽屉方向的文本方向。在 `ltr` 中 `start` 为左侧、`end` 为右侧；在 `rtl` 中 `start` 为右侧、`end` 为左侧。物理 `left` 和 `right` 不受 `dir` 影响。
+   * Whether logical drawer sides should resolve in RTL mode.
+   * When false, `start` means left and `end` means right.
+   * When true, `start` means right and `end` means left.
+   * Physical `left` and `right` sides are not affected by `enableRTL`.
+   * @defaultValue false
+   * @zh 是否以 RTL 模式解析逻辑抽屉方向。为 false 时，`start` 为左侧、`end` 为右侧；为 true 时，`start` 为右侧、`end` 为左侧。物理 `left` 和 `right` 不受 `enableRTL` 影响。
    */
-  dir?: SheetTextDirection
+  enableRTL?: boolean
   /**
    * The snap points of the Sheet. Can be pixel numbers, percentages, or 'fit'.
    * - Numbers are treated as pixel values
@@ -207,7 +206,7 @@ export interface SheetRootProps extends ComponentBasicProps {
    * If number, enables rubber band effect with the specified coefficient.
    * If object, allows specifying coefficient and max distance.
    * @zh 橡皮筋效果配置。
-   * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋过拖效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
+   * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
    * 如果为 true，启用默认橡皮筋效果（系数 0.5）。
    * 如果为 false，禁用橡皮筋效果。
    * 如果为数字，启用指定系数的橡皮筋效果。

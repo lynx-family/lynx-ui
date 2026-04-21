@@ -18,11 +18,11 @@ import {
 } from '../utils'
 import { useDrag } from './useDrag'
 import type { SnappingOptions } from './useSnap'
-import type { SheetSide, SheetTextDirection } from '../types'
+import type { SheetSide } from '../types'
 
 export interface SnapTouchOptions {
   side?: SheetSide
-  dir?: SheetTextDirection
+  enableRTL?: boolean
   dragDisabled?: boolean
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   flingEnabled?: boolean
@@ -53,7 +53,7 @@ export interface SnapTouchOptions {
 
 export function useSnapTouches({
   side = 'bottom',
-  dir = 'ltr',
+  enableRTL = false,
   dragDisabled = false,
   rubberBand,
   flingEnabled = true,
@@ -71,7 +71,7 @@ export function useSnapTouches({
   onDragEndSnapMT,
   onDragEndCloseMT,
 }: SnapTouchOptions) {
-  const resolvedSide = resolveSheetSide(side, dir)
+  const resolvedSide = resolveSheetSide(side, enableRTL)
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const startTouchMainAxisRef = useMainThreadRef<number>(0)
   const startOffsetRef = useMainThreadRef<number>(0)
@@ -207,7 +207,7 @@ export function useSnapTouches({
     handleTouchEndMT: handleTouchEndW,
   } = useDrag({
     side,
-    dir,
+    enableRTL,
     claimedGestureAngles,
     onStartMT: handleTouchStartMT,
     onFirstMoveMT: handleFirstMoveMT,

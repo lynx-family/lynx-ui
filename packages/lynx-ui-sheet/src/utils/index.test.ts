@@ -16,15 +16,15 @@ import {
 } from './direction'
 
 describe('sheet side utils', () => {
-  it('resolves logical sides from text direction', () => {
-    expect(resolveSheetSide('start', 'ltr')).toBe('left')
-    expect(resolveSheetSide('end', 'ltr')).toBe('right')
-    expect(resolveSheetSide('start', 'rtl')).toBe('right')
-    expect(resolveSheetSide('end', 'rtl')).toBe('left')
-    expect(resolveSheetSide('top', 'rtl')).toBe('top')
-    expect(resolveSheetSide('bottom', 'rtl')).toBe('bottom')
-    expect(resolveSheetSide('left', 'rtl')).toBe('left')
-    expect(resolveSheetSide('right', 'rtl')).toBe('right')
+  it('resolves logical sides from enableRTL', () => {
+    expect(resolveSheetSide('start', false)).toBe('left')
+    expect(resolveSheetSide('end', false)).toBe('right')
+    expect(resolveSheetSide('start', true)).toBe('right')
+    expect(resolveSheetSide('end', true)).toBe('left')
+    expect(resolveSheetSide('top', true)).toBe('top')
+    expect(resolveSheetSide('bottom', true)).toBe('bottom')
+    expect(resolveSheetSide('left', true)).toBe('left')
+    expect(resolveSheetSide('right', true)).toBe('right')
   })
 
   it('resolves percent snap points against height for bottom sheets', () => {

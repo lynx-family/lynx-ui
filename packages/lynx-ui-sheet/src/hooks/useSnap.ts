@@ -20,7 +20,7 @@ import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
 import { useSheetController } from './useSheetController'
-import type { SheetSide, SheetTextDirection, SheetTransition } from '../types'
+import type { SheetSide, SheetTransition } from '../types'
 import {
   clamp,
   findNearestSnap,
@@ -44,7 +44,7 @@ export interface SnapOptions {
   initialSnap?: number
   snapAnimation?: SheetTransition
   side?: SheetSide
-  dir?: SheetTextDirection
+  enableRTL?: boolean
   screenHeight?: number
   screenWidth?: number
   rubberBand?: boolean | number | { coeff?: number, max?: number }
@@ -65,7 +65,7 @@ export function useSnap({
   initialSnap = 0,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
-  dir = 'ltr',
+  enableRTL = false,
   screenHeight: userScreenHeight,
   screenWidth: userScreenWidth,
   rubberBand,
@@ -90,7 +90,7 @@ export function useSnap({
   onResurrected,
   presenceStateMTRef: presenceStateMTRefProp,
 }: SnapOptions) {
-  const resolvedSide = resolveSheetSide(side, dir)
+  const resolvedSide = resolveSheetSide(side, enableRTL)
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const allowOverDrag = effectiveRubberBand !== false
   const sheetMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -370,7 +370,7 @@ export function useSnap({
     // internals for gesture hook
     yRef,
     side,
-    dir,
+    enableRTL,
     screenHeight,
     screenWidth,
     viewportSize,

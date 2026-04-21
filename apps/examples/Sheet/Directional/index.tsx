@@ -62,7 +62,8 @@ function App() {
     <view className='demo-container lunaris-dark'>
       <text className='title-text'>Directional Sheet</text>
       <text className='subtitle-text'>
-        Left and right are physical sides. Start and end are logical sides.
+        Left and right are physical sides. Start and end are logical sides that
+        can flip with enableRTL.
       </text>
       <view className='button-group'>
         <TriggerButton
@@ -133,6 +134,7 @@ function App() {
       <SheetRoot
         ref={startDrawerRef}
         side='start'
+        enableRTL={true}
         snapPoints={['fit']}
         initialSnap={0}
       >
@@ -141,9 +143,9 @@ function App() {
           <DrawerSection
             title='Start Drawer'
             description='This drawer uses side="start" with snapPoints=["fit"].'
-            note='In LTR, start resolves to left. In RTL, it resolves to right.'
+            note='This example sets enableRTL, so start resolves to right. Disable it to make start resolve to left.'
             close={() => startDrawerRef.current?.close()}
-            surfaceClassName='drawer-content drawer-content-left'
+            surfaceClassName='drawer-content drawer-content-right'
             innerClassName='drawer-inner-content drawer-inner-content-fit'
           />
         </SheetView>
@@ -160,7 +162,7 @@ function App() {
           <DrawerSection
             title='End Drawer'
             description='This drawer uses side="end" with a percentage snap point.'
-            note='In LTR, end resolves to right. In RTL, it resolves to left.'
+            note='Without enableRTL, end resolves to right. Turn enableRTL on to make end resolve to left.'
             close={() => endDrawerRef.current?.close()}
             surfaceClassName='drawer-content drawer-content-right'
             innerClassName='drawer-inner-content drawer-inner-content-percent'

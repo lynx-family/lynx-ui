@@ -255,7 +255,6 @@ export type {
   SheetRootProps,
   SheetRootRef,
   SheetSide,
-  SheetTextDirection,
   SheetViewProps,
   SheetHandleProps,
   SheetTransition,

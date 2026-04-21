@@ -18,5 +18,4 @@ export type {
   SheetTransition,
   SheetRootRef,
   SheetSide,
-  SheetTextDirection,
 } from './types'

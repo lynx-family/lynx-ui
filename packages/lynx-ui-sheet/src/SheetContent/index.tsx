@@ -36,7 +36,7 @@ export function SheetContent(props: SheetContentProps) {
     snapPoints = DEFAULT_SNAP_POINTS,
     initialSnap = 0,
     side,
-    dir,
+    enableRTL,
     resolvedSide,
     rubberBand,
     dragDisabled = false,
@@ -108,7 +108,7 @@ export function SheetContent(props: SheetContentProps) {
     initialSnap,
     snapAnimation,
     side,
-    dir,
+    enableRTL,
     screenHeight,
     screenWidth,
     onSnapChange,
@@ -128,7 +128,7 @@ export function SheetContent(props: SheetContentProps) {
   const { handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT } =
     useSnapTouches({
       side,
-      dir,
+      enableRTL,
       dragDisabled,
       rubberBand: effectiveRubberBand,
       flingEnabled: true,

@@ -10,7 +10,7 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetSide, SheetTextDirection, SheetTransition } from '../types'
+import type { SheetSide, SheetTransition } from '../types'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
@@ -52,7 +52,7 @@ export interface SheetContextValue {
   initialSnap?: number
   onSnapChange?: (index: number, value: number) => void
   side: SheetSide
-  dir: SheetTextDirection
+  enableRTL: boolean
   resolvedSide: SheetResolvedSide
   screenHeight?: number
   screenWidth?: number
@@ -80,7 +80,7 @@ export const SheetContext = createContext<SheetContextValue>({
   forceMount: false,
   mounted: false,
   side: 'bottom',
-  dir: 'ltr',
+  enableRTL: false,
   resolvedSide: 'bottom',
   onUnmount: noop,
   setUncontrolledShow: noop,

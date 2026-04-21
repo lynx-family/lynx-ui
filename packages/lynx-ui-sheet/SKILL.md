@@ -19,7 +19,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Use `side="bottom"` for bottom sheets. This is the default and preserves existing behavior.
 - Use `side="top"` for top sheets.
 - Use `side="left"` or `side="right"` for drawer-style panels that should stay on a physical edge.
-- Use `side="start"` or `side="end"` for drawer-style panels that should follow writing direction. These resolve to the physical edge from `dir`.
+- Use `side="start"` or `side="end"` for drawer-style panels that should follow writing direction. These resolve to the physical edge from `enableRTL`.
 - In `top` and `bottom` mode, percentage snap points resolve against viewport height.
 - In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against viewport width.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
@@ -49,17 +49,17 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Run `pnpm --filter @lynx-js/lynx-ui-sheet build` after public API or type changes.
 - Run `pnpm --filter @lynx-example/lynx-ui-sheet build` after example changes.
 - Run `pnpm check:exports` when exported types or aggregate exports change.
-- Manually validate bottom, top, left, right, start, and end sides when changing main-thread transform, gesture, or presence logic. Include both LTR and RTL for logical drawer sides.
+- Manually validate bottom, top, left, right, start, and end sides when changing main-thread transform, gesture, or presence logic. Include `enableRTL={false}` and `enableRTL={true}` coverage for logical drawer sides.
 
 ## Prompt Formula
 
 Use this formula when asking an agent to build with `Sheet`:
 
-> Side (`bottom` / `top` / `left` / `right` / `start` / `end`) + Text direction (`ltr` / `rtl`, when logical drawers matter) + State model (`defaultShow`, controlled `show`, or ref methods) + Snap-point behavior (`fit`, pixels, or percentages) + Surface sizing/styling + Close behavior.
+> Side (`bottom` / `top` / `left` / `right` / `start` / `end`) + RTL mode (`enableRTL`, when logical drawers matter) + State model (`defaultShow`, controlled `show`, or ref methods) + Snap-point behavior (`fit`, pixels, or percentages) + Surface sizing/styling + Close behavior.
 
 Examples:
 
-- "Create a start drawer using `SheetRoot side=\"start\"`, controlled by a ref, with `snapPoints={['72%']}` and backdrop tap to close."
-- "Create a left drawer using `SheetRoot side=\"left\"` when the panel should stay on the physical left edge in both LTR and RTL."
+- "Create a start drawer using `SheetRoot side=\"start\" enableRTL`, controlled by a ref, with `snapPoints={['72%']}` and backdrop tap to close."
+- "Create a left drawer using `SheetRoot side=\"left\"` when the panel should stay on the physical left edge regardless of `enableRTL`."
 - "Create a bottom sheet with `snapPoints={['fit', '80%']}`, a handle, and an inner content layout using L.U.N.A tokens."
 - "Convert a bottom sheet to an end drawer; keep visual surface styles on `SheetContent` and move drawer width plus inner padding to `innerClassName`."

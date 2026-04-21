@@ -36,7 +36,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       initialSnap,
       onSnapChange: onSnapChangeProp,
       side = 'bottom',
-      dir = 'ltr',
+      enableRTL = false,
       screenHeight,
       screenWidth,
       // Gesture
@@ -51,7 +51,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
     const presenceStateMTRef = useMainThreadRef<PresenceState>(
       PresenceState.Left,
     )
-    const resolvedSide = resolveSheetSide(side, dir)
+    const resolvedSide = resolveSheetSide(side, enableRTL)
 
     const isControlled = show !== undefined
     const [uncontrolledShow, setUncontrolledShow] = useState<boolean>(
@@ -148,7 +148,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       initialSnap,
       onSnapChange: onSnapChangeProp,
       side,
-      dir,
+      enableRTL,
       resolvedSide,
       screenHeight,
       screenWidth,
@@ -174,7 +174,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       initialSnap,
       onSnapChangeProp,
       side,
-      dir,
+      enableRTL,
       resolvedSide,
       screenHeight,
       screenWidth,

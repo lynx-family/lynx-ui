@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetSide, SheetTextDirection } from '../types'
+import type { SheetSide } from '../types'
 
 export type SheetResolvedSide = 'top' | 'bottom' | 'left' | 'right'
 
@@ -46,13 +46,13 @@ export function getDefaultClaimedGestureAngles(
 
 export function resolveSheetSide(
   side: SheetSide,
-  dir: SheetTextDirection,
+  enableRTL = false,
 ): SheetResolvedSide {
   if (side === 'start') {
-    return dir === 'rtl' ? 'right' : 'left'
+    return enableRTL ? 'right' : 'left'
   }
   if (side === 'end') {
-    return dir === 'rtl' ? 'left' : 'right'
+    return enableRTL ? 'left' : 'right'
   }
   return side
 }
