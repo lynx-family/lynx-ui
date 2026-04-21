@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui-common
 
+## 3.131.0
+
+### Minor Changes
+
+- Migrate bounce and refresh hooks from common to ScrollView and FeedList. ([#119](https://github.com/lynx-family/lynx-ui/pull/119))
+
+  **BREAKING CHANGE**: `useBounce` and `useRefreshAndBounce` hooks are no longer exported from `@lynx-js/lynx-ui-common`.
+
 ## 3.130.0
 
 ### Patch Changes
