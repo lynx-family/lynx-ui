@@ -4,6 +4,8 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
+import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
+
 /**
  * Source of a value change.
  *
@@ -66,7 +68,7 @@ export interface SliderRef {
  *
  * `SliderRoot` 负责交互逻辑（拖拽、值跟踪）并为子原语组件提供上下文。
  */
-export interface SliderRootProps {
+export interface SliderRootProps extends ComponentBasicProps {
   /**
    * Controlled value in range `[0, 1]`. When provided, the slider is in controlled mode. Do not use together with `defaultValue`.
    * @zh 受控模式下的值，范围 `[0, 1]`。传入此属性时滑块为受控模式，请勿与 `defaultValue` 同时使用。
@@ -100,23 +102,13 @@ export interface SliderRootProps {
    */
   enableRTL?: boolean
   /**
-   * Class name for the root container.
-   * @zh 根容器的类名。
-   */
-  className?: string
-  /**
-   * Inline style for the root container.
-   * @zh 根容器的内联样式。
-   */
-  style?: Record<string, unknown>
-  /**
-   * Triggered during dragging with the current progress value.
-   * @zh 拖拽过程中触发，传入当前进度值。
+   * Triggered once when an interaction enters dragging state, with the current progress value.
+   * @zh 交互进入拖拽态时触发一次，传入当前进度值。
    */
   onDragging?: (value: number) => void
   /**
-   * Triggered on every value change.  In controlled mode, the slider does **not** update its internal value automatically; use this callback to update the controlled `value` prop.
-   * @zh 每次值变更时触发。在受控模式下，滑块不会自动更新内部值，需要通过此回调更新外部的 `value` 属性。
+   * Triggered for slider-driven value updates, including dragging and `SliderRef.updateValue`. In controlled mode, the slider does **not** update its internal value automatically; use this callback to update the controlled `value` prop.
+   * @zh 由滑块自身驱动的值更新时触发，包括拖拽和 `SliderRef.updateValue`。在受控模式下，滑块不会自动更新内部值，需要通过此回调更新外部的 `value` 属性。
    */
   onValueChange?: (value: number, source: SliderValueChangeSource) => void
   /**
@@ -135,18 +127,7 @@ export interface SliderRootProps {
  * Track primitive props.
  * @zh 轨道原语组件属性。
  */
-export interface SliderTrackProps {
-  /**
-   * Class name for the background track.
-   * @zh 背景轨道的类名。
-   */
-  className?: string
-  /**
-   * Inline style for background track.
-   * @zh 背景轨道的内联样式。
-   */
-  style?: Record<string, unknown>
-}
+export interface SliderTrackProps extends ComponentBasicProps {}
 
 /**
  * Range primitive props.
@@ -157,17 +138,7 @@ export interface SliderTrackProps {
  *
  * `SliderRange` 的宽度和前景条由根组件的值控制。
  */
-export interface SliderRangeProps {
-  /**
-   * Class name for the foreground range bar.
-   * @zh 前景范围条的类名。
-   */
-  className?: string
-  /**
-   * Inline style for the foreground range bar.
-   * @zh 前景范围条的内联样式。
-   */
-  style?: Record<string, unknown>
+export interface SliderRangeProps extends ComponentBasicProps {
   /**
    * Usually includes `SliderThumb` and optional custom range content.
    * @zh 通常包含 `SliderThumb` 及可选的自定义范围内容。
@@ -179,17 +150,7 @@ export interface SliderRangeProps {
  * Thumb primitive props.
  * @zh 滑块拇指原语组件属性。
  */
-export interface SliderThumbProps {
-  /**
-   * Class name for the thumb wrapper.
-   * @zh 拇指包裹元素的类名。
-   */
-  className?: string
-  /**
-   * Inline style for the thumb wrapper.
-   * @zh 拇指包裹元素的内联样式。
-   */
-  style?: Record<string, unknown>
+export interface SliderThumbProps extends ComponentBasicProps {
   /**
    * Custom thumb content.
    * @zh 自定义拇指内容。

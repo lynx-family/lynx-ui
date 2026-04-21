@@ -5,12 +5,13 @@
 ## 1. Core Capabilities
 
 - **Primitives Composition**: Build slider UI with `SliderRoot` + `SliderTrack` + `SliderRange` + `SliderThumb`.
+- **Shared Base Props**: All primitives inherit `className` and `style` from `ComponentBasicProps`.
 - **Controlled & Uncontrolled Modes**: Use `value` + `onValueChange` for controlled mode, or `defaultValue` for uncontrolled mode.
 - **Imperative API** (uncontrolled only): Access `updateValue` and `getValue` through `SliderRef`. Throws in controlled mode.
 - **RTL Support**: Set `enableRTL` to reverse range direction (right-to-left).
 - **Stepping**: Set `step` to snap values to discrete increments.
 - **Readonly Mode**: Set `readonly` to prevent dragging while still displaying the current value.
-- **Interaction Callbacks**: `onDragging(value)`, `onValueChange(value, source)`, `onValueCommit(value)`.
+- **Interaction Callbacks**: `onDragging(value)` when dragging starts, `onValueChange(value, source)` for slider-driven updates, `onValueCommit(value)` at drag end.
 - **Headless Styling**: Supports styling via `className` and `style` props on every primitive.
 
 ## 2. AI Coding Guide
@@ -99,16 +100,18 @@ function ControlledSlider() {
 
 ### SliderRootProps
 
-| Prop            | Type                              | Default | Description                                                      |
-| --------------- | --------------------------------- | ------- | ---------------------------------------------------------------- |
-| `value`         | `number`                          | —       | Controlled value `[0, 1]`. Do not use with `defaultValue`.       |
-| `defaultValue`  | `number`                          | `0`     | Initial value for uncontrolled mode.                             |
-| `step`          | `number`                          | —       | Snap interval in `[0, 1]`.                                       |
-| `readonly`      | `boolean`                         | `false` | Prevent interaction while keeping the slider value visible.      |
-| `enableRTL`     | `boolean`                         | `false` | Reverse range direction (right-to-left).                         |
-| `onDragging`    | `(value: number) => void`         | —       | Fires during drag with current value.                            |
-| `onValueChange` | `(value: number, source) => void` | —       | Fires on every value change. Source is `'drag'` or `'external'`. |
-| `onValueCommit` | `(value: number) => void`         | —       | Fires at drag end with final value.                              |
+`SliderRootProps`, `SliderTrackProps`, `SliderRangeProps`, and `SliderThumbProps` all inherit `className` and `style` from `ComponentBasicProps`.
+
+| Prop            | Type                              | Default | Description                                                                         |
+| --------------- | --------------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| `value`         | `number`                          | —       | Controlled value `[0, 1]`. Do not use with `defaultValue`.                          |
+| `defaultValue`  | `number`                          | `0`     | Initial value for uncontrolled mode.                                                |
+| `step`          | `number`                          | —       | Snap interval in `[0, 1]`.                                                          |
+| `readonly`      | `boolean`                         | `false` | Prevent interaction while keeping the slider value visible.                         |
+| `enableRTL`     | `boolean`                         | `false` | Reverse range direction (right-to-left).                                            |
+| `onDragging`    | `(value: number) => void`         | —       | Fires once when the interaction enters dragging state.                              |
+| `onValueChange` | `(value: number, source) => void` | —       | Fires for drag updates and `updateValue` calls. Source is `'drag'` or `'external'`. |
+| `onValueCommit` | `(value: number) => void`         | —       | Fires at drag end with final value.                                                 |
 
 ### SliderRef (uncontrolled only)
 
@@ -123,9 +126,9 @@ function ControlledSlider() {
 
 A: Use controlled (`value` + `onValueChange`) when you need to sync slider state with external state. Use uncontrolled (`defaultValue`) for simpler cases where internal state suffices.
 
-**Q: What is the difference between `onValueChange` and `onValueCommit`?**
+**Q: What is the difference between `onDragging`, `onValueChange`, and `onValueCommit`?**
 
-A: `onValueChange` fires on every value change (including during drag). `onValueCommit` fires once at drag end — useful for persisting the final value.
+A: `onDragging` fires once when dragging starts. `onValueChange` fires for slider-driven value updates during drag and imperative `updateValue` calls. `onValueCommit` fires once at drag end — useful for persisting the final value.
 
 **Q: Is `disabled` still supported?**
 

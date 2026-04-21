@@ -4,8 +4,6 @@ A primitives-first slider component package for lynx-ui.
 
 ## Installation
 
-We strongly recommend consuming this through the aggregate package:
-
 ```bash
 # pnpm (recommended)
 pnpm add @lynx-js/lynx-ui
@@ -17,15 +15,11 @@ npm install @lynx-js/lynx-ui
 yarn add @lynx-js/lynx-ui
 ```
 
-If needed, you can install the standalone package directly:
-
-```bash
-pnpm add @lynx-js/lynx-ui-slider
-```
+_(If necessary, you can still install the standalone package via `pnpm add @lynx-js/lynx-ui-slider`)_
 
 ## Usage
 
-### Primitive Composition (Recommended)
+### Primitive Composition
 
 ```tsx
 import {
@@ -38,10 +32,11 @@ import {
 export function SliderPrimitiveDemo() {
   return (
     <SliderRoot
-      defaultProgress={0.35}
-      onSeek={(value) => console.log(value)}
+      defaultValue={0.35}
+      onValueChange={(value, source) => console.log(value, source)}
+      onValueCommit={(value) => console.log('commit', value)}
     >
-      <SliderTrack />
+      <SliderTrack className='slider-track' />
       <SliderRange className='slider-range'>
         <SliderThumb className='slider-thumb-wrapper'>
           <view className='slider-thumb-dot' />
@@ -49,16 +44,6 @@ export function SliderPrimitiveDemo() {
       </SliderRange>
     </SliderRoot>
   )
-}
-```
-
-### Compatibility Facade
-
-```tsx
-import { Slider } from '@lynx-js/lynx-ui'
-
-export function SliderFacadeDemo() {
-  return <Slider defaultProgress={0.5} />
 }
 ```
 
@@ -75,13 +60,12 @@ export function SliderFacadeDemo() {
 </SliderRoot>
 ```
 
-- **`SliderRoot`**: owns interaction logic and imperative methods.
+- **`SliderRoot`**: owns interaction logic and exposes `SliderRef` imperative methods in uncontrolled mode.
 - **`SliderTrack`**: renders background track.
 - **`SliderRange`**: renders the active progress range and owns its width.
 - **`SliderThumb`**: renders thumb content passed through `children`.
-- **`Slider`**: compatibility facade built from primitives.
 
-Styling for track/thumb size and colors is expected to be done through CSS (`className`/`class`) or inline `style`, instead of dedicated style props.
+Styling for track/thumb size and colors is expected to be done through `className` or inline `style`, instead of dedicated style props.
 
 ### About Track/Thumb Centering
 
