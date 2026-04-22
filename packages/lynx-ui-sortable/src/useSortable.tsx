@@ -55,7 +55,6 @@ export function useSortable(
     const item = itemMTSRefMap.current[sortingKey]
 
     item?.MTSSetOtherStyles({
-      'transform': `translateZ(${zIndex}px)`,
       'z-index': `${zIndex}`,
     })
   }, [itemMTSRefMap])
@@ -284,9 +283,10 @@ export function useSortable(
     ) => {
       'main thread'
       switchHandler(delta.y, sortingKey)
+      changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag move]', event)
     },
-    [switchHandler],
+    [switchHandler, changeItemZIndex],
   )
 
   const sortArray = useCallback((sortingKey: string) => {
