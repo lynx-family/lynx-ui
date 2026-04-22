@@ -100,7 +100,9 @@ export interface SheetContentProps extends ComponentBasicProps {
    * Use this for content layout and sizing styles. In horizontal drawer mode,
    * the drawer width should be set here so `'fit'` can resolve from the
    * measured drawer width.
-   * @zh 内层容器的 CSS 类名。用于设置内层区域特定的布局或尺寸样式。
+   * @zh 内层容器的 CSS 类名。
+   * 用于设置内容区域的布局和尺寸样式。
+   * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS
    * @Harmony
@@ -113,8 +115,10 @@ export interface SheetContentProps extends ComponentBasicProps {
    * the main `style` prop which applies to the moving surface layer.
    * In horizontal drawer mode, set drawer width here so `'fit'` can resolve
    * from the measured drawer width.
-   * @zh 内层容器的内联样式。用于设置内层区域特定的布局或尺寸样式。
-   * 注意：视觉样式（背景、圆角等）应通过主 `style` 属性设置，它会应用到 surface 层。
+   * @zh 内层容器的内联样式。
+   * 用于设置内容区域的布局和尺寸样式。
+   * 注意：背景、圆角等视觉样式应通过主 `style` 属性设置，该属性会应用到移动的 surface 层。
+   * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS
    * @Harmony
@@ -180,7 +184,7 @@ export interface SheetRootProps extends ComponentBasicProps {
    * Callback when the snap point changes.
    * `value` is the resolved snap point in pixels.
    * @zh 吸附点变化时的回调。
-   * value 为换算后的像素值。
+   * `value` 表示换算后的像素值。
    */
   onSnapChange?: (index: number, value: number) => void
   /**
@@ -188,6 +192,7 @@ export interface SheetRootProps extends ComponentBasicProps {
    * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points
    * and dismissal calculations.
    * @zh Sheet 容器的高度（屏幕高度）。
+   * 在垂直模式（`top` / `bottom`）下，用于计算百分比吸附点和关闭阈值。
    */
   screenHeight?: number
   /**
@@ -246,7 +251,9 @@ export interface SheetRootProps extends ComponentBasicProps {
    * see https://lynxjs.org/api/elements/built-in/view#consume-slide-event for more
    * @example [[-134, -46],[46, 134]] for claiming vertical gesture
    * @example [[-45, 45],[135, -135]] for claiming horizontal gesture
-   * @zh Sheet 声明处理的手势角度范围（度数）。每个条目为 [最小角度, 最大角度]。在这些角度范围内的手势会触发 Sheet 移动，范围外的手势会传递给子组件。
+   * @zh Sheet 主动接管手势的角度范围（单位：度）。
+   * 每个条目都是 `[最小角度, 最大角度]`。
+   * 落在这些范围内的手势会驱动 Sheet 移动，范围外的手势则继续透传给子组件。
    */
   claimedGestureAngles?: [number, number][]
 
@@ -323,8 +330,10 @@ export interface SheetRootProps extends ComponentBasicProps {
 export interface SheetHandleProps extends ComponentBasicProps {}
 
 /**
- * The view container of Sheet. Can be x-overlay-ng or view. Controls the z-index of the dialog.
- * @zh Sheet 的视图容器。可以是 x-overlay-ng 或 view。控制对话框的 z-index。
+ * The view container of the Sheet. Can be `x-overlay-ng` or `view`.
+ * Controls the Sheet's overlay layer and stacking order.
+ * @zh Sheet 的视图容器，可以是 `x-overlay-ng` 或 `view`。
+ * 用于控制 Sheet 所在的覆盖层及其层级顺序。
  */
 export interface SheetViewProps extends ComponentBasicProps {
   /**
@@ -344,12 +353,20 @@ export interface SheetViewProps extends ComponentBasicProps {
    */
   children: ReactNode
   /**
-   * If you want to use the poppers outside of the LynxView, you need to set this property. The values 'spark', 'bullet', and 'bulletPopup' are the names of native containers. For example, on TikTok it should be 'spark', and on Douyin it should be 'bullet'. If you're using iOS, this prop can be any native view controller on which you want to place the popper. You can use it to handle layers properly.
+   * If you want to render the Sheet outside of the LynxView, set this property.
+   * The values 'spark', 'bullet', and 'bulletPopup' are names of native containers.
+   * For example, on TikTok it should be 'spark', and on Douyin it should be 'bullet'.
+   * On iOS, this prop can also be any native view controller that should host the Sheet.
+   * Use it to place the Sheet in the correct native layer.
    * @Android
    * @iOS
    * @Harmony
    * @docTypeFallback 'spark' | 'bullet' | 'bulletPopup' | (string & {})
-   * @zh 如果你想在 LynxView 外部使用弹出框，则需要设置此属性。值 'spark'、'bullet' 和 'bulletPopup' 是原生容器的名称。例如，在 TikTok 中应该设置为 'spark'，在抖音中应该设置为 'bullet'。如果你使用的是 iOS，此属性可以是任何你想放置弹出框的原生视图控制器。你可以使用它来正确处理层级。
+   * @zh 如果需要将 Sheet 渲染到 LynxView 外部，请设置此属性。
+   * `'spark'`、`'bullet'` 和 `'bulletPopup'` 都是原生容器名称。
+   * 例如在 TikTok 中通常应设置为 `'spark'`，在抖音中通常应设置为 `'bullet'`。
+   * 在 iOS 上，这个属性也可以是任意一个用于承载 Sheet 的原生视图控制器。
+   * 通过它可以将 Sheet 放到正确的原生层级中。
    */
   container?: 'spark' | 'bullet' | 'bulletPopup' | (string & {})
   /**
@@ -357,12 +374,13 @@ export interface SheetViewProps extends ComponentBasicProps {
    * @Android
    * @iOS
    * @Harmony
-   * @zh 仅当 'container' 设置为非空字符串时有效。调整附近元素的显示层级。
+   * @zh 仅当 `container` 为非空字符串时生效。
+   * 用于调整周边元素的显示层级。
    */
   overlayLevel?: 1 | 2 | 3 | 4
   /**
-   * Additional props that will be passthrough to the underlying element
-   * @zh 将被直接传递到底层元素的额外属性
+   * Additional props that will be passed through to the underlying element.
+   * @zh 会透传到底层元素的额外属性。
    * @Android
    * @iOS
    * @Harmony

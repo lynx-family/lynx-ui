@@ -119,23 +119,6 @@ export async function genLynxUIDocForPackage(
   )
   const APIMdxPath = join(subPackageFolder, 'docs', 'APIReference.mdx')
 
-  const entryPointZHPath = join(
-    subPackageFolder,
-    isDocsConfig ? 'src/types/index.docs.ts' : 'types/index.docs.ts',
-  )
-  const metaJsonZHPath = join(
-    rootPath,
-    'tools/typedoc/gen/zh/',
-    packageName,
-    configName,
-  )
-  const APITplJsonZHPath = join(
-    rootPath,
-    'tools/typedoc/gen/zh/',
-    `${packageName}-zh-api-tpl.json`,
-  )
-  const APIMdxZHPath = join(subPackageFolder, 'docs', 'APIReference.zh.mdx')
-
   // generate EN doc
   await runTypeDocForPackage(entryPointPath, tsconfigPath, metaJsonPath)
   await doGenDocData(
@@ -150,21 +133,11 @@ export async function genLynxUIDocForPackage(
     primitivesConfig[packageName],
   )
 
-  // generate ZH doc
-  await runTypeDocForPackage(entryPointZHPath, tsconfigPath, metaJsonZHPath)
-
-  await doGenDocData(
-    metaJsonZHPath,
-    APITplJsonZHPath,
-    hasMultipleProps,
-  )
-
-  await doGenTplWithData(
-    APITplJsonZHPath,
-    APIMdxZHPath,
-    hasMultipleProps,
-    primitivesConfig[packageName],
-  )
+  // OSS only keeps the default APIReference.mdx output.
+  const APIMdxZHPath = join(subPackageFolder, 'docs', 'APIReference.zh.mdx')
+  if (fs.existsSync(APIMdxZHPath)) {
+    fs.unlinkSync(APIMdxZHPath)
+  }
 }
 
 async function generateDocsForAllPackages(packageName: string[]) {

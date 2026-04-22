@@ -10,15 +10,30 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as fs from 'node:fs'
 
+function stringifyCommentContent(
+  content?: { text?: string }[],
+) {
+  return content?.map(item => item.text ?? '').join('') ?? ''
+}
+
+function getCommentText(comment, isZh?: boolean) {
+  if (!comment) return ''
+
+  if (isZh) {
+    const zhTag = comment.blockTags?.find(tag => tag.tag === '@zh')
+
+    if (zhTag) {
+      return stringifyCommentContent(zhTag.content)
+    }
+  }
+
+  return stringifyCommentContent(comment.summary)
+}
+
 function genProps(data, hasMultipleProps?: boolean, isZh?: boolean) {
   const title = data.title
   const children = data.children
-  let comments = ''
-  if (isZh && data.comment?.blockTags) {
-    comments = data.comment?.blockTags[0]?.content[0].text
-  } else {
-    comments = data.comment?.summary[0]?.text
-  }
+  const comments = getCommentText(data.comment, isZh)
 
   let context = ''
 
@@ -78,9 +93,7 @@ const doGenMdx = (data, isZh?: boolean) => {
   return data
     .map(d => {
       if (d.flag && d.title) {
-        const comments = isZh && d.comment?.summary_zh
-          ? d.comment?.summary_zh
-          : d.comment?.summary?.[0]?.text
+        const comments = getCommentText(d.comment, isZh)
         return d.flag === '###'
           ? `
 ${d.flag} ${d.title}
