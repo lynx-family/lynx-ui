@@ -1,8 +1,9 @@
-import { UIApiTable } from "@lynx-ui/index";
-
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   
-## SwitchTrackProps
-    
+### SwitchTrack 
+    The track of the Switch.
+Represents the background area on which the thumb slides.
+Can also be used for pressed overlays or state decorations.
   
 <UIApiTable source={[
   {
@@ -46,7 +47,7 @@ import { UIApiTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   },
   {
@@ -68,15 +69,16 @@ import { UIApiTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   }
 ]}/>
       
 
-### SwitchThumbProps
-
-
+### SwitchThumb 
+    The thumb of the Switch.
+The draggable/clickable handle that toggles the state.
+  
 <UIApiTable source={[
   {
     "name": "children",
@@ -119,7 +121,7 @@ import { UIApiTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   },
   {
@@ -141,90 +143,16 @@ import { UIApiTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   }
 ]}/>
-    
       
 
-### SwitchRenderProps
 
-
-<UIApiTable source={[
-  {
-    "name": "active",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Whether the Switch is active (pressed or being interacted with)."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "是否处于激活状态（按下或交互中）。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "checked",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Whether the Switch is currently checked."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "是否选中。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "disabled",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Whether the Switch is disabled."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "是否禁用。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  }
-]}/>
-    
-      
-
-### SwitchProps
-
-
+### Switch 
+    Props for the Switch component.
+  
 <UIApiTable source={[
   {
     "name": "checked",
@@ -281,36 +209,6 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
-    "name": "children",
-    "type": "ReactNode | [object Object]",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Content displayed inside or next to the Switch."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "Switch 的内容，可以是节点或根据状态动态渲染的函数。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": {
-      "tag": "@docTypeFallback",
-      "content": [
-        {
-          "kind": "text",
-          "text": "ReactNode | ((status: { checked: boolean; active: boolean; disabled: boolean }) => ReactNode)"
-        }
-      ]
-    }
-  },
-  {
     "name": "className",
     "type": "string",
     "summary": [
@@ -329,7 +227,7 @@ import { UIApiTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   },
   {
@@ -441,7 +339,7 @@ import { UIApiTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   },
   {
@@ -467,6 +365,68 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
       
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | [object Object]",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content displayed inside or next to the Switch."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Switch 的内容，可以是节点或根据状态动态渲染的函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "ReactNode | ((status: { checked: boolean; active: boolean; disabled: boolean }) => ReactNode)"
+        }
+      ]
+    }
+  }
+]}/>
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-checked",
+    "Render Prop": "checked",
+    "item": {
+      "type": "boolean",
+      "description": "Whether the Switch is currently checked.\nApplied when `status.checked` is true.",
+      "description_zh": "是否选中。\n当 status.checked 为 true 时生效，可用于 `.ui-checked { ... }`。"
+    }
+  },
+  {
+    "className": "ui-active",
+    "Render Prop": "active",
+    "item": {
+      "type": "boolean",
+      "description": "Whether the Switch is active (pressed or being interacted with).\nApplied when `status.active` is true.",
+      "description_zh": "是否处于激活状态（按下或交互中）。\n当 status.active 为 true 时生效，可用于 `.ui-active { ... }`。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "Render Prop": "disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Whether the Switch is disabled.\nApplied when `status.disabled` is true.",
+      "description_zh": "是否禁用。\n当 status.disabled 为 true 时生效，可用于 `.ui-disabled { ... }`。"
+    }
+  }
+]}/>
+      
+
   

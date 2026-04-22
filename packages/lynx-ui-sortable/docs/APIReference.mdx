@@ -1,4 +1,4 @@
-import { UIApiTable } from "@lynx-ui/index";
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
   
 ## SortableRootProps
@@ -29,7 +29,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "children",
-    "type": "(item: SortableData) => ReactNode",
+    "type": "(item: {dataItem: T, getSortingKey: () => string}) => ReactNode",
     "summary": [
       {
         "kind": "text",

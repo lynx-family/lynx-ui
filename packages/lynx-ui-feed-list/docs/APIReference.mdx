@@ -1,4 +1,4 @@
-import { UIApiTable } from "@lynx-ui/index";
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
   
 ## FeedListProps
@@ -294,7 +294,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "itemSnap",
-    "type": "ListItemSnapAlignment",
+    "type": "{factor: number, offset: number}",
     "summary": [
       {
         "kind": "text",
@@ -1102,7 +1102,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "onLayoutComplete",
-    "type": "(e: LayoutCompleteEvent) => void",
+    "type": "(e: {detail: {diffResult?: {insertions: number[], move_from: number[], move_to: number[], removals: number[], update_from: number[], update_to: number[]}, layout-id: number, visibleCellsAfterLayout?: ListItemInfo[], visibleCellsBeforeLayout?: ListItemInfo[]}}) => void",
     "summary": [
       {
         "kind": "text",
@@ -1159,7 +1159,7 @@ import { UIApiTable } from "@lynx-ui/index";
         "text": "滚动时触发。"
       }
     ],
-    "defaultValue": "undefined",
+    "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
@@ -1557,7 +1557,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "scrollIntoID",
-    "type": "(animated: boolean, alignTo: none | top | bottom | middle, listItemID: string, id: string, index: number, offset: number, success: (res: unknown) => void, fail: (res: unknown) => void) => void",
+    "type": "(animated: boolean, alignTo: top | bottom | middle | none, listItemID: string, id: string, index: number, offset: number, success: (res: unknown) => void, fail: (res: unknown) => void) => void",
     "summary": [
       {
         "kind": "text",
@@ -1595,7 +1595,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "scrollTo",
-    "type": "(animated: boolean, alignTo: none | top | bottom | middle, index: number, offset: number, success: (res: unknown) => void, fail: (res: unknown) => void) => void",
+    "type": "(animated: boolean, alignTo: top | bottom | middle | none, index: number, offset: number, success: (res: unknown) => void, fail: (res: unknown) => void) => void",
     "summary": [
       {
         "kind": "text",
@@ -1661,7 +1661,7 @@ import { UIApiTable } from "@lynx-ui/index";
 <UIApiTable source={[
   {
     "name": "state",
-    "type": "RefreshState",
+    "type": "{DRAGGING: [object Object], IDLE: [object Object], OVER_DRAG_RELEASE: [object Object], REFRESHING: [object Object]}",
     "summary": [
       {
         "kind": "text",

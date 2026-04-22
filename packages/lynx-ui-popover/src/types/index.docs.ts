@@ -169,7 +169,7 @@ export interface PopoverOverlayProps extends ComponentBasicProps {
    * @Android
    * @iOS
    * @Harmony
-   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean)} => ReactNode
+   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean}) => ReactNode
    */
   children?: ReactNode | PresenceChildrenType
   /**
@@ -256,7 +256,7 @@ export interface PopoverPositionerProps extends ComponentBasicProps {
    * @Android
    * @iOS
    * @Harmony
-   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean)} => ReactNode
+   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean}) => ReactNode
    */
   children?: ReactNode | PresenceChildrenType
   /**

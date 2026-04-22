@@ -185,7 +185,6 @@ export interface DialogRootProps {
    * @Android
    * @iOS
    * @Harmony
-   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean)} => ReactNode
    */
   children?: ReactNode | PresenceChildrenType
   /**
@@ -267,7 +266,7 @@ export interface DialogViewProps extends ComponentBasicProps {
    * @iOS
    * @Harmony
    * @zh 子元素
-   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean)} => ReactNode
+   * @docTypeFallback ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean}) => ReactNode
    */
   children:
     | ReactNode

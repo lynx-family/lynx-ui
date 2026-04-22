@@ -1,4 +1,4 @@
-import { UIApiTable } from "@lynx-ui/index";
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
   
 ## SliderTrackProps
@@ -719,7 +719,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "updateValue",
-    "type": "(value: number, options: SliderUpdateValueOptions) => void",
+    "type": "(value: number, options: {force?: boolean, source?: SliderValueChangeSource}) => void",
     "summary": [
       {
         "kind": "text",
