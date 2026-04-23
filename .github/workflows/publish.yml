@@ -55,7 +55,7 @@ jobs:
     if: github.repository == 'lynx-family/lynx-ui'
     concurrency:
       group: ${{ github.workflow }}-publish-${{ github.ref }}
-      cancel-in-progress: false
+      cancel-in-progress: true
     environment: npm
     permissions:
       contents: write
@@ -69,6 +69,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Check release run is current
+        id: current-main
+        shell: bash
+        run: |
+          set -eu
+          read -r latest_main_sha _ < <(git ls-remote --exit-code origin refs/heads/main)
+          echo "sha=${latest_main_sha}" >> "${GITHUB_OUTPUT}"
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: "24"
@@ -96,6 +103,7 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date -u +'%Y-%m-%d %H:%M:%S')"
       - name: publish
+        if: github.sha == steps.current-main.outputs.sha
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
