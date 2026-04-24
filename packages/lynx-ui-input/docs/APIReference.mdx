@@ -1,4 +1,4 @@
-import { UIApiTable } from "@lynx-ui/index";
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
   
 ## TextAreaProps
@@ -702,7 +702,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "bounceableOptions",
-    "type": "boolean | BounceableBasicProps",
+    "type": "boolean | {alwaysBouncing?: boolean, debugLog?: boolean, enableBounceEventInFling?: boolean, enableBounces: boolean, endBounceTriggerDistance?: number, estimatedHeight?: number, estimatedWidth?: number, lowerBounceItem?: any, onScrollToBounces?: (e: {direction: upper | lower}) => void, singleSidedBounce?: upper | lower | both | iOSBounces | none, startBounceTriggerDistance?: number, upperBounceItem?: any, validAnimationVersion?: boolean}",
     "summary": [
       {
         "kind": "text",
@@ -1646,7 +1646,7 @@ import { UIApiTable } from "@lynx-ui/index";
         "text": "滚动时触发。"
       }
     ],
-    "defaultValue": "undefined",
+    "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,

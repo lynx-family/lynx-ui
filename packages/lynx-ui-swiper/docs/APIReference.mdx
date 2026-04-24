@@ -1,4 +1,4 @@
-import { UIApiTable } from "@lynx-ui/index";
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
   
 ## SwiperProps
@@ -95,7 +95,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "children",
-    "type": "(prop: RenderFunctionProps) => ReactElement",
+    "type": "(prop: {index: number, item: T, realIndex: number}) => ReactElement",
     "summary": [
       {
         "kind": "text",
@@ -778,7 +778,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "onEndBounceItemBounce",
-    "type": "(bounceParams: onBounceParams) => void",
+    "type": "(bounceParams: {offset: number, type: start | end}) => void",
     "summary": [
       {
         "kind": "text",
@@ -800,7 +800,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "onStartBounceItemBounce",
-    "type": "(bounceParams: onBounceParams) => void",
+    "type": "(bounceParams: {offset: number, type: start | end}) => void",
     "summary": [
       {
         "kind": "text",
@@ -1002,7 +1002,7 @@ import { UIApiTable } from "@lynx-ui/index";
   },
   {
     "name": "swipeTo",
-    "type": "(index: number, options: SwipeToOptions) => void",
+    "type": "(index: number, options: {animate?: boolean, onFinished?: () => void}) => void",
     "summary": [
       {
         "kind": "text",

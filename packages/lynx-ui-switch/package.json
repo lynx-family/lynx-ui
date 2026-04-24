@@ -29,6 +29,7 @@
     "build:watch": "rslib build --watch"
   },
   "dependencies": {
+    "@lynx-js/lynx-ui-common": "workspace:*",
     "clsx": "catalog:"
   },
   "devDependencies": {

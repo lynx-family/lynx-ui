@@ -1,12 +1,14 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
+// Copyright 2025 The Lynx Authors. All rights reserved.
+// Licensed under the Apache License Version 2.0 that can be found in the
+// LICENSE file in the root directory of this source tree.
 
 /* eslint-disable unicorn/no-negated-condition */
 /* eslint-disable no-extra-boolean-cast */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable regexp/no-useless-lazy */
-/* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-useless-catch */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -16,20 +18,202 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable prefer-const */
 import * as fs from 'node:fs'
+import path from 'node:path'
 
 const doGetTagContent = tagObject => {
   return Array.isArray(tagObject?.content) ? tagObject.content : []
 }
+interface TypeDocJson {
+  children?: any[]
+  symbolIdMap?: Record<string, { packageName?: string, qualifiedName?: string }>
+}
 
-const doFindObjectWithTagValue = (obj, tagName, tagValue) => {
-  function recursiveSearch(currentObj) {
+interface ExternalTypeContext {
+  idMap: Map<number, any>
+  symbolMap: Map<string, number>
+}
+
+const externalTypeContextCache = new Map<string, ExternalTypeContext | null>()
+
+function buildIdMap(root: unknown): Map<number, any> {
+  const map = new Map<number, any>()
+  const visit = (node: any) => {
+    if (!node) return
+    if (Array.isArray(node)) {
+      for (const item of node) visit(item)
+      return
+    }
+    if (typeof node === 'object') {
+      if (typeof node.id === 'number') map.set(node.id, node)
+      for (const value of Object.values(node)) visit(value)
+    }
+  }
+  visit(root)
+  return map
+}
+
+function buildSymbolMap(
+  symbolIdMap:
+    | Record<string, { packageName?: string, qualifiedName?: string }>
+    | undefined,
+): Map<string, number> {
+  const map = new Map<string, number>()
+  if (!symbolIdMap) return map
+  for (const [id, symbol] of Object.entries(symbolIdMap)) {
+    if (!symbol?.packageName || !symbol?.qualifiedName) continue
+    map.set(`${symbol.packageName}::${symbol.qualifiedName}`, Number(id))
+  }
+  return map
+}
+
+function findExternalTypedocJsonPath(
+  packageName: string,
+  isZh: boolean,
+): string | null {
+  const normalized = packageName.replace(/^@[^/]+\//, '')
+  const langDir = isZh ? 'zh' : 'en'
+  const baseDir = path.join(
+    process.cwd(),
+    'tools',
+    'typedoc',
+    'gen',
+    langDir,
+    normalized,
+  )
+  const candidates = ['tsconfig.docs.json', 'tsconfig.json']
+  for (const file of candidates) {
+    const jsonPath = path.join(baseDir, file)
+    if (fs.existsSync(jsonPath)) return jsonPath
+  }
+  return null
+}
+
+function getExternalTypeContext(
+  packageName: string,
+  isZhContext: boolean,
+): ExternalTypeContext | null {
+  const cacheKey = `${packageName}::${isZhContext ? 'zh' : 'en'}`
+  if (externalTypeContextCache.has(cacheKey)) {
+    return externalTypeContextCache.get(cacheKey) ?? null
+  }
+
+  const jsonPath = findExternalTypedocJsonPath(packageName, isZhContext)
+  const normalized = packageName.replace(/^@[^/]+\//, '')
+  if (!jsonPath) {
+    console.warn(
+      `[TypeDoc Warning] Pre-generated TypeDoc JSON for ${normalized} not found. `
+        + `Please ensure you run TypeDoc for ${normalized} before the dependents.`,
+    )
+    externalTypeContextCache.set(cacheKey, null)
+    return null
+  }
+
+  const typedocData = JSON.parse(
+    fs.readFileSync(jsonPath, 'utf8'),
+  ) as TypeDocJson
+  const context = {
+    idMap: buildIdMap(typedocData),
+    symbolMap: buildSymbolMap(typedocData.symbolIdMap),
+  }
+  externalTypeContextCache.set(cacheKey, context)
+  return context
+}
+
+function doCalcObjectLiteralType(
+  children: any[],
+  isZhContext: boolean,
+  currentPkgName?: string,
+): string {
+  const items = children
+    .map((c: any) => {
+      const name = typeof c?.name === 'string' ? c.name : null
+      if (!name) return null
+      const isOptional = Boolean(c?.flags?.isOptional)
+      const t = c?.type
+        ? doTypeCalc(c.type, isZhContext, currentPkgName)
+        : 'unknown'
+      return `${name}${isOptional ? '?: ' : ': '}${t}`
+    })
+    .filter(Boolean)
+  return `{${items.join(', ')}}`
+}
+
+/**
+ * A list of type names that should NOT be recursively inlined.
+ * Inlining these massive or deeply nested base interfaces (like ViewProps)
+ * results in unreadable, infinitely nested JSON structures in the documentation.
+ */
+const EXCLUDED_INLINE_TYPES = [
+  'OverlayViewProps',
+  'ViewProps',
+  'OverlayProps',
+  'BounceConfig',
+]
+
+function tryInlineReferenceType(
+  t: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+): string | null {
+  const target = t?.target
+  const name = typeof t?.name === 'string' ? t.name : ''
+
+  if (EXCLUDED_INLINE_TYPES.includes(name)) {
+    return null
+  }
+
+  // Only attempt to inline cross-package references
+  const targetPackage = target && typeof target === 'object'
+    ? (target as { packageName?: unknown } | null)?.packageName
+    : undefined
+
+  const pkgName = typeof targetPackage === 'string'
+    ? targetPackage
+    : currentPkgName
+
+  const isExternalPackage = typeof pkgName === 'string'
+    && pkgName.startsWith('@lynx-js/lynx-ui-')
+    && pkgName !== '@lynx-js/lynx-ui-common'
+  if (!isExternalPackage) return null
+
+  const ctx = getExternalTypeContext(pkgName, isZhContext)
+  if (!ctx) return null
+
+  let targetId: number | null = null
+  if (typeof target === 'number') {
+    targetId = target
+  } else if (target && typeof target === 'object') {
+    const qualifiedName = (target as { qualifiedName?: unknown } | null)
+      ?.qualifiedName
+    if (typeof qualifiedName === 'string') {
+      targetId = ctx.symbolMap.get(`${pkgName}::${qualifiedName}`) ?? null
+    }
+  }
+
+  if (targetId === null) return null
+  const decl = ctx.idMap.get(targetId)
+  if (!decl) return null
+
+  const declType = decl?.type
+  if (declType?.type === 'reflection' && declType?.declaration?.signatures) {
+    return doTypeCalc(declType, isZhContext, pkgName)
+  }
+  if (Array.isArray(decl?.children) && decl.children.length > 0) {
+    return doCalcObjectLiteralType(decl.children, isZhContext, pkgName)
+  }
+
+  return null
+}
+
+const doFindObjectWithTagValue = (obj: any, tagName: any, tagValue: any) => {
+  function recursiveSearch(currentObj: any): any {
     for (let key in currentObj) {
       if (currentObj.hasOwnProperty(key)) {
         if (key === tagName && currentObj[key] === tagValue) {
           return currentObj
         }
         if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
-          let result = recursiveSearch(currentObj[key])
+          let result: any = recursiveSearch(currentObj[key])
           if (result) {
             return result
           }
@@ -42,15 +226,15 @@ const doFindObjectWithTagValue = (obj, tagName, tagValue) => {
   return recursiveSearch(obj)
 }
 
-const doFindObjectWithTag = (obj, tagName) => {
-  function recursiveSearch(currentObj) {
+const doFindObjectWithTag = (obj: any, tagName: any) => {
+  function recursiveSearch(currentObj: any): any {
     for (let key in currentObj) {
       if (currentObj.hasOwnProperty(key)) {
         if (key === tagName) {
           return currentObj[key]
         }
         if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
-          let result = recursiveSearch(currentObj[key])
+          let result: any = recursiveSearch(currentObj[key])
           if (result) {
             return result
           }
@@ -63,20 +247,26 @@ const doFindObjectWithTag = (obj, tagName) => {
   return recursiveSearch(obj)
 }
 
-const doSingleTypeCalc = t => {
+const doSingleTypeCalc = (
+  t: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+) => {
   try {
     const { type, name } = t
 
     switch (type) {
       case 'intrinsic':
-      case 'reference':
-        return name
+      case 'reference': {
+        const inlined = tryInlineReferenceType(t, isZhContext, currentPkgName)
+        return inlined ?? name
+      }
       case 'array':
         return `${t.elementType.name}[]`
       case 'literal':
         return t.value
       case 'templateLiteral':
-        return t.head + t.tail?.map(ti => ti?.[1]).join(',')
+        return t.head + t.tail?.map((ti: any) => ti?.[1]).join(',')
       default:
         return t
     }
@@ -85,28 +275,51 @@ const doSingleTypeCalc = t => {
   }
 }
 
-const doCalcSingleParam = p => {
-  return `${p.name}: ${doTypeCalc(p.type)}`
+const doCalcSingleParam = (
+  p: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+) => {
+  return `${p.name}: ${doTypeCalc(p.type, isZhContext, currentPkgName)}`
 }
 
-const doCalcParams = params => {
-  return params?.length ? params.map(doCalcSingleParam).join(', ') : ''
+const doCalcParams = (
+  params: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+) => {
+  return params?.length
+    ? params.map((p: any) => doCalcSingleParam(p, isZhContext, currentPkgName))
+      .join(', ')
+    : ''
 }
 
-const doCalcUnionType = types => {
+const doCalcUnionType = (
+  types: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+) => {
   try {
-    return types.map(doSingleTypeCalc).join(' | ')
+    return types.map((t: any) =>
+      doSingleTypeCalc(t, isZhContext, currentPkgName)
+    ).join(' | ')
   } catch (e) {
     throw e
   }
 }
 
-const doCalcReflectionType = declaration => {
+const doCalcReflectionType = (
+  declaration: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+) => {
   try {
     if (declaration.signatures) {
       const { parameters, type } = declaration.signatures?.[0]
 
-      return `(${doCalcParams(parameters)}) => ${doSingleTypeCalc(type)}`
+      return `(${doCalcParams(parameters, isZhContext, currentPkgName)}) => ${
+        doSingleTypeCalc(type, isZhContext, currentPkgName)
+      }`
     }
 
     return 'Record<string, unknown>'
@@ -115,22 +328,24 @@ const doCalcReflectionType = declaration => {
   }
 }
 
-const doTypeCalc = t => {
+const doTypeCalc = (t: any, isZhContext: boolean, currentPkgName?: string) => {
   try {
     const { type, name, types, declaration } = t
 
     switch (type) {
       case 'intrinsic':
-      case 'reference':
-        return name
+      case 'reference': {
+        const inlined = tryInlineReferenceType(t, isZhContext, currentPkgName)
+        return inlined ?? name
+      }
       case 'array':
         return `${t.elementType.name}[]`
       case 'templateLiteral':
-        return t.head + t.tail?.map(ti => ti?.[1]).join(',')
+        return t.head + t.tail?.map((ti: any) => ti?.[1]).join(',')
       case 'union':
-        return doCalcUnionType(types)
+        return doCalcUnionType(types, isZhContext, currentPkgName)
       case 'reflection':
-        return doCalcReflectionType(declaration)
+        return doCalcReflectionType(declaration, isZhContext, currentPkgName)
       default:
         return t
     }
@@ -167,13 +382,13 @@ const doGetDefaultComplexValueString = (singleContent: string) => {
   }
 }
 
-const doDefaultValueCalc = defaultValue => {
+const doDefaultValueCalc = (defaultValue: any) => {
   if (!defaultValue) return ''
 
   const { content } = defaultValue
 
   return content
-    ?.map(c => {
+    ?.map((c: any) => {
       const formatValue = doGetDefaultBaseValueString(c.text)
         || doGetDefaultComplexValueString(c.text)
 
@@ -182,7 +397,7 @@ const doDefaultValueCalc = defaultValue => {
     .join(',')
 }
 
-const doMoreForItem = item => {
+const doMoreForItem = (item: any, currentPkgName?: string) => {
   const { name, type } = item
   // 是否可选
   const isOption = !!doFindObjectWithTagValue(item, 'isOptional', true)
@@ -218,7 +433,7 @@ const doMoreForItem = item => {
 
   return {
     name,
-    type: doTypeCalc(type),
+    type: doTypeCalc(type, false, currentPkgName),
     summary,
     summary_zh,
     defaultValue: doDefaultValueCalc(defaultValue),
@@ -233,24 +448,26 @@ const doMoreForItem = item => {
 const doGetChildren = (
   groupsRoot: { title: string, children: number[] }[],
   childrenRoot: Record<string, unknown>[],
-  flag,
-) => {
-  return groupsRoot?.map(g => {
+  flag: string,
+  currentPkgName?: string,
+): any[] => {
+  return groupsRoot?.map((g: any) => {
     const { title, children } = g
-    const targetChildren = childrenRoot.filter(c =>
-      children.includes((c as { id: number }).id)
+    const targetChildren = childrenRoot.filter((c: any) =>
+      children.includes(c.id)
     )
 
-    const formatChildren = targetChildren.map(f => {
+    const formatChildren = targetChildren.map((f: any) => {
       if (f.groups && f.children) {
         return doGetChildren(
           f.groups as { title: string, children: number[] }[],
           f.children as Record<string, unknown>[],
           flag + '#',
+          currentPkgName,
         )
       }
 
-      return doMoreForItem(f)
+      return doMoreForItem(f, currentPkgName)
     })
 
     return {
@@ -265,28 +482,32 @@ const doGenDocData = async (
   jsonPath: string,
   savePath: string,
   hasMultipleProps?: boolean,
+  currentPkgName?: string,
 ) => {
   if (fs.existsSync(jsonPath)) {
     try {
       const content = fs.readFileSync(jsonPath, 'utf8')
-      const typedocData = JSON.parse(content)
+      const typedocData: any = JSON.parse(content)
       if (hasMultipleProps) {
         const checkIndexTargetGroup = typedocData.groups?.filter(
-          g =>
+          (g: any) =>
             g.title === '接口' || g.title === 'Interfaces'
             || g.title === 'Type Aliases',
         )
 
         const rootTitle = checkIndexTargetGroup?.title ?? ''
-        const checkArray = checkIndexTargetGroup.reduce((acc, item) => {
-          return acc.concat(item.children) as number[]
-        }, [])
+        const checkArray = checkIndexTargetGroup.reduce(
+          (acc: any[], item: any) => {
+            return acc.concat(item.children) as number[]
+          },
+          [],
+        )
 
-        const rootArray = typedocData.children.filter(c =>
+        const rootArray = typedocData.children.filter((c: any) =>
           checkArray?.includes(c.id)
         )
 
-        rootArray.sort((a, b) => {
+        rootArray.sort((a: any, b: any) => {
           if (a.name.endsWith('Props')) {
             return -1
           } else if (b.name.endsWith('Props')) {
@@ -305,7 +526,7 @@ const doGenDocData = async (
         const docData = {
           title: rootTitle,
           flag: rootFlag,
-          children: rootArray?.map(ra => {
+          children: rootArray?.map((ra: any) => {
             return {
               title: ra.name,
               flag: rootFlag + '##',
@@ -318,6 +539,7 @@ const doGenDocData = async (
                 }[],
                 ra.children as Record<string, unknown>[],
                 rootFlag + '##',
+                currentPkgName,
               ),
             }
           }),
@@ -325,17 +547,17 @@ const doGenDocData = async (
         fs.writeFileSync(savePath, JSON.stringify(docData, null, 2))
       } else {
         const checkIndexTargetGroup = typedocData.groups?.filter(
-          g => g.title === '接口' || g.title === 'Interfaces',
+          (g: any) => g.title === '接口' || g.title === 'Interfaces',
         )?.[0]
 
         const rootTitle = checkIndexTargetGroup?.title ?? ''
         const checkArray = checkIndexTargetGroup?.children ?? []
 
-        const rootArray = typedocData.children.filter(c =>
+        const rootArray = typedocData.children.filter((c: any) =>
           checkArray?.includes(c.id)
         )
 
-        rootArray.sort((a, b) => {
+        rootArray.sort((a: any, b: any) => {
           if (a.name.endsWith('Props')) {
             return -1
           } else if (b.name.endsWith('Props')) {
@@ -354,7 +576,7 @@ const doGenDocData = async (
         const docData = {
           title: rootTitle,
           flag: rootFlag,
-          children: rootArray?.map(ra => {
+          children: rootArray?.map((ra: any) => {
             return {
               title: ra.name,
               flag: rootFlag + '#',
@@ -366,6 +588,7 @@ const doGenDocData = async (
                 }[],
                 ra.children as Record<string, unknown>[],
                 rootFlag + '##',
+                currentPkgName,
               ),
             }
           }),
