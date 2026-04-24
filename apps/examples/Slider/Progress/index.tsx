@@ -4,7 +4,11 @@
 
 import { root, useEffect, useRef, useState } from '@lynx-js/react'
 
-import { SliderRange, SliderRoot, SliderTrack } from '@lynx-js/lynx-ui-slider'
+import {
+  SliderIndicator,
+  SliderRoot,
+  SliderTrack,
+} from '@lynx-js/lynx-ui-slider'
 
 import './index.css'
 
@@ -45,8 +49,8 @@ function App() {
         <view className='section'>
           <text className='title'>Progress (No Thumb)</text>
           <text className='desc'>
-            SliderRoot + SliderRange without SliderThumb, used as a read-only
-            progress indicator.
+            SliderRoot + SliderIndicator without SliderThumb, used as a
+            read-only progress indicator.
           </text>
 
           <view className='progress-row'>
@@ -59,10 +63,11 @@ function App() {
             <SliderRoot
               className='progress-root'
               value={downloadProgress}
-              readonly
+              disabled
             >
-              <SliderTrack className='progress-track' />
-              <SliderRange className='progress-range' />
+              <SliderTrack className='progress-track'>
+                <SliderIndicator className='progress-indicator' />
+              </SliderTrack>
             </SliderRoot>
           </view>
 
@@ -76,10 +81,11 @@ function App() {
             <SliderRoot
               className='progress-root'
               value={uploadProgress}
-              readonly
+              disabled
             >
-              <SliderTrack className='progress-track' />
-              <SliderRange className='progress-range progress-range-secondary' />
+              <SliderTrack className='progress-track'>
+                <SliderIndicator className='progress-indicator progress-indicator-secondary' />
+              </SliderTrack>
             </SliderRoot>
           </view>
         </view>
@@ -98,10 +104,11 @@ function App() {
                   <SliderRoot
                     className='progress-root'
                     value={v}
-                    readonly
+                    disabled
                   >
-                    <SliderTrack className='progress-track' />
-                    <SliderRange className='progress-range' />
+                    <SliderTrack className='progress-track'>
+                      <SliderIndicator className='progress-indicator' />
+                    </SliderTrack>
                   </SliderRoot>
                 </view>
               </view>

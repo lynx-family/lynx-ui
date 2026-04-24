@@ -5,7 +5,7 @@
 import { root, useState } from '@lynx-js/react'
 
 import {
-  SliderRange,
+  SliderIndicator,
   SliderRoot,
   SliderThumb,
   SliderTrack,
@@ -45,12 +45,12 @@ function App() {
                 setFullValue(value)
               }}
             >
-              <SliderTrack className='slider-track' />
-              <SliderRange className='slider-range'>
+              <SliderTrack className='slider-track'>
+                <SliderIndicator className='slider-indicator' />
                 <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb-dot' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
 
@@ -65,14 +65,14 @@ function App() {
                 setGradientValue(value)
               }}
             >
-              <SliderTrack className='slider-track slider-track-gradient' />
-              <SliderRange className='slider-range slider-range-gradient'>
+              <SliderTrack className='slider-track slider-track-gradient'>
+                <SliderIndicator className='slider-indicator slider-indicator-gradient' />
                 <SliderThumb className='slider-thumb-wrapper slider-thumb-wrapper-gradient'>
                   <view className='slider-thumb-dot'>
                     <view className='slider-thumb-dot-ring' />
                   </view>
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
 
@@ -87,12 +87,12 @@ function App() {
                 setSecondaryValue(value)
               }}
             >
-              <SliderTrack className='slider-track slider-track-secondary' />
-              <SliderRange className='slider-range slider-range-secondary'>
+              <SliderTrack className='slider-track slider-track-secondary'>
+                <SliderIndicator className='slider-indicator slider-indicator-secondary' />
                 <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb-ring' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
 
@@ -107,14 +107,14 @@ function App() {
                 setInvertedRingValue(value)
               }}
             >
-              <SliderTrack className='slider-track slider-track-inverted' />
-              <SliderRange className='slider-range'>
+              <SliderTrack className='slider-track slider-track-inverted'>
+                <SliderIndicator className='slider-indicator' />
                 <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb-ring-inverted'>
                     <view className='slider-thumb-dot-ring-inverted' />
                   </view>
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
 
@@ -129,12 +129,12 @@ function App() {
                 setPillValue(value)
               }}
             >
-              <SliderTrack className='slider-track-pill' />
-              <SliderRange className='slider-range-pill'>
+              <SliderTrack className='slider-track-pill'>
+                <SliderIndicator className='slider-indicator-pill' />
                 <SliderThumb className='slider-thumb-pill-wrapper'>
                   <view className='slider-thumb-bar' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
           </view>
         </view>

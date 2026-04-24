@@ -6,6 +6,60 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   
 <UIApiTable source={[
   {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Usually includes "
+      },
+      {
+        "kind": "code",
+        "text": "`SliderIndicator`"
+      },
+      {
+        "kind": "text",
+        "text": " and optional "
+      },
+      {
+        "kind": "code",
+        "text": "`SliderThumb`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "通常包含 "
+      },
+      {
+        "kind": "code",
+        "text": "`SliderIndicator`"
+      },
+      {
+        "kind": "text",
+        "text": " 以及可选的 "
+      },
+      {
+        "kind": "code",
+        "text": "`SliderThumb`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "className",
     "type": "string",
     "summary": [
@@ -24,7 +78,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -46,7 +100,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   }
 ]}/>
@@ -97,7 +151,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -119,7 +173,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   }
 ]}/>
@@ -136,50 +190,63 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "summary": [
       {
         "kind": "text",
-        "text": "Primitive children composition, usually: SliderTrack"
+        "text": "Primitive children composition, usually: "
       },
       {
         "kind": "code",
-        "text": "` + `"
+        "text": "`SliderTrack`"
       },
       {
         "kind": "text",
-        "text": "SliderRange"
+        "text": " containing "
       },
       {
         "kind": "code",
-        "text": "` + `"
+        "text": "`SliderIndicator`"
       },
       {
         "kind": "text",
-        "text": "SliderThumb"
+        "text": " and optional "
       },
       {
         "kind": "code",
-        "text": "`.\n@zh 子原语组件组合，通常为：`"
+        "text": "`SliderThumb`"
       },
       {
         "kind": "text",
-        "text": "SliderTrack"
-      },
-      {
-        "kind": "code",
-        "text": "` + `"
-      },
-      {
-        "kind": "text",
-        "text": "SliderRange"
-      },
-      {
-        "kind": "code",
-        "text": "` + `"
-      },
-      {
-        "kind": "text",
-        "text": "SliderThumb`。"
+        "text": "."
       }
     ],
-    "summary_zh": [],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子原语组件组合，通常为："
+      },
+      {
+        "kind": "code",
+        "text": "`SliderTrack`"
+      },
+      {
+        "kind": "text",
+        "text": " 内包含 "
+      },
+      {
+        "kind": "code",
+        "text": "`SliderIndicator`"
+      },
+      {
+        "kind": "text",
+        "text": " 以及可选的 "
+      },
+      {
+        "kind": "code",
+        "text": "`SliderThumb`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -206,7 +273,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -234,9 +301,19 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   {
     "name": "disabled",
     "type": "boolean",
-    "summary": [],
-    "summary_zh": [],
-    "defaultValue": "",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Disable the slider and prevent pointer/touch interaction."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "禁用滑块，阻止指针/触摸交互。"
+      }
+    ],
+    "defaultValue": "false",
     "isOption": true,
     "isSupportIOS": false,
     "isSupportAndroid": false,
@@ -380,28 +457,6 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
-    "name": "readonly",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Make the slider read-only and prevent pointer/touch interaction."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "将滑块设为只读，阻止指针/触摸交互。"
-      }
-    ],
-    "defaultValue": "false",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
     "name": "step",
     "type": "number",
     "summary": [
@@ -474,7 +529,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -535,48 +590,10 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     
       
 
-### SliderRangeProps
+### SliderIndicatorProps
 
 
 <UIApiTable source={[
-  {
-    "name": "children",
-    "type": "ReactNode",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Usually includes "
-      },
-      {
-        "kind": "code",
-        "text": "`SliderThumb`"
-      },
-      {
-        "kind": "text",
-        "text": " and optional custom range content."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "通常包含 "
-      },
-      {
-        "kind": "code",
-        "text": "`SliderThumb`"
-      },
-      {
-        "kind": "text",
-        "text": " 及可选的自定义范围内容。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
   {
     "name": "className",
     "type": "string",
@@ -596,7 +613,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -618,7 +635,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   }
 ]}/>

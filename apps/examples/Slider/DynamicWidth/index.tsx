@@ -5,7 +5,7 @@
 import { root, useState } from '@lynx-js/react'
 
 import {
-  SliderRange,
+  SliderIndicator,
   SliderRoot,
   SliderThumb,
   SliderTrack,
@@ -31,7 +31,7 @@ function App() {
           <text className='title'>Dynamic Width</text>
           <text className='desc'>
             Tap the buttons below to change the slider container width. This
-            tests the `onLayoutChange` handler re-measuring correctly.
+            tests the track layout measurement updating correctly.
           </text>
 
           <view className='row'>
@@ -45,12 +45,12 @@ function App() {
                 setValue(v)
               }}
             >
-              <SliderTrack className='slider-track' />
-              <SliderRange className='slider-range'>
+              <SliderTrack className='slider-track'>
+                <SliderIndicator className='slider-indicator' />
                 <SliderThumb className='slider-thumb-wrapper'>
                   <view className='slider-thumb' />
                 </SliderThumb>
-              </SliderRange>
+              </SliderTrack>
             </SliderRoot>
 
             <view className='width-row'>
