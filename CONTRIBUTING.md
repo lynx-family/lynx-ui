@@ -87,6 +87,25 @@ apps/examples/src/<Component>/package.json
    npx turbo watch dev --filter '@lynx-example/lynx-ui-button'
    ```
 
+#### Publishing Examples to the Website
+
+Each component's example code is maintained in this repository and published as a standalone npm package
+named `@lynx-example/lynx-ui-<component-name>`:
+
+- Example packages are released together with the component, and every release **requires a changeset**.
+- After a release, the corresponding example version in the
+  [lynx-website](https://github.com/lynx-family/lynx-website) repository must be **updated manually**.
+
+The lynx-website site uses the `GO` component to render example code. The associated content lives at:
+
+```
+sharedDocs/introDocs/lynx-ui-<component-name>/Introduction.mdx
+```
+
+> **Note**: Make sure the stable version of `@lynx-example/lynx-ui-<component-name>` has been published
+> **before** updating the example code and related docs in the lynx-website repository, to avoid
+> referencing a version that does not yet exist on the registry.
+
 ## Code Quality
 
 - **Linting & Formatting**
@@ -114,21 +133,61 @@ apps/examples/src/<Component>/package.json
 
 ## Documentation
 
-Component documentation lives in:
+Publishing docs for a newly developed component is part of the component's delivery process.
+
+The lynx-ui website is served at [lynxjs.org/lynx-ui](https://lynxjs.org/lynx-ui/), with its source code
+hosted in the [lynx-website](https://github.com/lynx-family/lynx-website) repository. This repository
+(lynx-ui) only maintains **per-component documentation fragments**; the full website content is
+organized and updated in lynx-website.
+
+### Component README
+
+The top-level component description lives in:
 
 ```
 packages/<component-name>/README.md
 ```
 
-To generate documentation:
+### Generated Docs
 
-```bash
-# Generate all docs
-pnpm genDoc
+In addition to the hand-written `README.md`, each component ships a `docs/` directory that is consumed
+by the website:
 
-# Generate docs for specific components
-pnpm genDoc lynx-ui-dialog lynx-ui-button
 ```
+packages
+└── lynx-ui-<component-name>
+    ├── README.md                 # Component description (hand-written, source of truth)
+    └── docs
+        ├── README.mdx            # English docs
+        ├── README.zh.mdx         # Chinese docs
+        └── APIReference.mdx      # API reference
+```
+
+How each file is maintained:
+
+- **`README.mdx` / `README.zh.mdx`**: English / Chinese component docs. The description sections are
+  generated from `README.md` and `README.zh.md` respectively, so **you should not hand-edit the
+  description paragraphs inside the mdx files**.
+- **`APIReference.mdx`**: API reference generated from `src/types/index.d.ts`. After changing type
+  definitions, regenerate the reference from the repository root:
+
+  ```bash
+  # Generate all docs
+  pnpm genDoc
+
+  # Generate docs for specific components
+  pnpm genDoc lynx-ui-dialog lynx-ui-button
+  ```
+
+### Syncing with lynx-website
+
+The lynx-website build depends on the **latest `main` branch** of this repository, so:
+
+- Documentation updates are automatically synced to lynx-website **after the change is merged into
+  `main`**.
+- Every time lynx-website runs `pnpm install`, it pulls the component docs into its
+  `sharedDocs/packageDocs` directory and extracts component descriptions from `README.md` /
+  `README.zh.md`. **No manual intervention is required.**
 
 ## Pull Request Guidelines
 
