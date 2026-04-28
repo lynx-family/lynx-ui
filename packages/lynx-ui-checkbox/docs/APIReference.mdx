@@ -1,4 +1,14 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+import { useLang } from '@rspress/core/runtime';
+
+export const ClassRenderPropPreamble = () => {
+  const isZh = useLang() === 'zh';
+  if (isZh) {
+    return '基于状态的样式与渲染：该组件将每一项内部状态通过两条等价通道同时对外暴露，下表逐行给出两者的对应关系。一是 CSS className：根节点上会动态加上 ui-<state> 形式的类名，可直接用 .ui-<state> { ... } 选择器定制样式；二是 render-prop 字段：当 children 传入函数时，同一个状态会以 children({ <state>: boolean, ... }) 的形式作为参数传入，便于在运行时做条件渲染。两条通道指向完全相同的条件，你可以任选其一，也可以同时使用。';
+  }
+  return 'State-based styling & rendering: this component exposes each of its internal states through two interchangeable channels, and the table below maps them one-to-one. First, a CSS className like ui-<state> is toggled on the root node, so you can style it with selectors such as .ui-<state> { ... }. Second, a render-prop field: when children is a function, the same state is passed in via children({ <state>: boolean, ... }) for runtime-driven rendering. Both channels reflect the exact same condition, so you can pick either one, or use both together.';
+};
+
   
 
 ### Checkbox 
@@ -215,6 +225,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     }
   }
 ]}/>
+<ClassRenderPropPreamble />
 <ClassRenderPropTable source={[
   {
     "className": "ui-checked",

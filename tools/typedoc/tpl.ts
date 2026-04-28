@@ -462,8 +462,15 @@ ${
         2,
       )
 
+      // Inject a single-tag reference to <ClassRenderPropPreamble />. The actual
+      // component (which picks the current locale via Rspress's `useLang()` hook
+      // and renders the corresponding copy) is defined once at the top of every
+      // generated APIReference.mdx that contains at least one ClassRenderPropTable.
+      const classRenderPropPreamble = `<ClassRenderPropPreamble />`
+
       context += `
 <UIApiTable source={${renderSourceString}}/>
+${classRenderPropPreamble}
 <ClassRenderPropTable source={${mergedTableSource}}/>
       `
     }
@@ -598,51 +605,81 @@ const doGenTplWithData = async (
     fs.mkdirSync(saveDir, { recursive: true })
   }
 
+  // Shared MDX header injected into every generated APIReference.mdx.
+  //
+  // - `import { useLang }` uses Rspress's runtime hook to detect the current
+  //   documentation locale at render time.
+  // - `ClassRenderPropPreamble` is a locale-aware wrapper component that
+  //   appears above every <ClassRenderPropTable/> in the body. It returns the
+  //   copy as a plain string so the output stays free of HTML tags such as
+  //   <h3>, <p>, <ul>, <strong>, <code>, etc.
+  const mdxHeader =
+    `import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+import { useLang } from '@rspress/core/runtime';
+
+export const ClassRenderPropPreamble = () => {
+  const isZh = useLang() === 'zh';
+  if (isZh) {
+    return '基于状态的样式与渲染：该组件将每一项内部状态通过两条等价通道同时对外暴露，下表逐行给出两者的对应关系。一是 CSS className：根节点上会动态加上 ui-<state> 形式的类名，可直接用 .ui-<state> { ... } 选择器定制样式；二是 render-prop 字段：当 children 传入函数时，同一个状态会以 children({ <state>: boolean, ... }) 的形式作为参数传入，便于在运行时做条件渲染。两条通道指向完全相同的条件，你可以任选其一，也可以同时使用。';
+  }
+  return 'State-based styling & rendering: this component exposes each of its internal states through two interchangeable channels, and the table below maps them one-to-one. First, a CSS className like ui-<state> is toggled on the root node, so you can style it with selectors such as .ui-<state> { ... }. Second, a render-prop field: when children is a function, the same state is passed in via children({ <state>: boolean, ... }) for runtime-driven rendering. Both channels reflect the exact same condition, so you can pick either one, or use both together.';
+};
+`
+
   if (multipleProps) {
-    content =
-      `import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+    content = `${mdxHeader}
   ${
-        sortedData.map((item: any) => {
-          if (renderPropsTitlesToSkip.has(item.title)) return ''
-          if (!titleOrder.includes(item.title.replace(/Props$/, ''))) {
-            return
-          }
-          if (item.title.includes('Props')) {
-            return genProps(item, multipleProps, isZh)
-          }
-          if (item.title.includes('Ref')) {
-            return genRef(item)
-          }
+      sortedData.map((item: any) => {
+        if (renderPropsTitlesToSkip.has(item.title)) return ''
+        if (!titleOrder.includes(item.title.replace(/Props$/, ''))) {
           return
-        }).join('\n')
-      }
+        }
+        if (item.title.includes('Props')) {
+          return genProps(item, multipleProps, isZh)
+        }
+        if (item.title.includes('Ref')) {
+          return genRef(item)
+        }
+        return
+      }).join('\n')
+    }
   `
-
-    fs.writeFileSync(savePath, content)
   } else {
-    content =
-      `import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+    content = `${mdxHeader}
 
   ${
-        sortedData.map((item: any) => {
-          if (renderPropsTitlesToSkip.has(item.title)) return ''
-          if (item.title.includes('Props')) {
-            if (!hasProcessedFirstProps) {
-              hasProcessedFirstProps = true
-              return genProps(item, false, isZh)
-            }
-            return doGenMdx([item], isZh)
-          }
-          if (item.title.includes('Ref')) {
-            return genRef(item)
+      sortedData.map((item: any) => {
+        if (renderPropsTitlesToSkip.has(item.title)) return ''
+        if (item.title.includes('Props')) {
+          if (!hasProcessedFirstProps) {
+            hasProcessedFirstProps = true
+            return genProps(item, false, isZh)
           }
           return doGenMdx([item], isZh)
-        }).join('\n')
-      }
+        }
+        if (item.title.includes('Ref')) {
+          return genRef(item)
+        }
+        return doGenMdx([item], isZh)
+      }).join('\n')
+    }
   `
-
-    fs.writeFileSync(savePath, content)
   }
+
+  // Strip the locale-aware preamble scaffolding when the generated body does
+  // not actually contain any <ClassRenderPropTable/>. This keeps the output
+  // minimal for components without render-prop state and avoids shipping
+  // unused `useLang` imports through the docs pipeline.
+  if (!content.includes('<ClassRenderPropPreamble />')) {
+    content = content
+      .replace(/^import \{ useLang \} from '@rspress\/core\/runtime';\n/m, '')
+      .replace(
+        /export const ClassRenderPropPreamble = \(\) => \{[\s\S]*?\n\};\n/,
+        '',
+      )
+  }
+
+  fs.writeFileSync(savePath, content)
 }
 
 export { doGenTplWithData }
