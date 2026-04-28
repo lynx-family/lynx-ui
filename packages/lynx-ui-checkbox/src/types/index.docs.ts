@@ -89,3 +89,64 @@ export interface CheckboxIndicatorProps extends ComponentBasicProps {
    */
   forceMount?: boolean
 }
+
+/**
+ * The interactive status passed to Checkbox's render-prop children.
+ * @zh 传入 Checkbox render-prop children 的交互状态。
+ */
+export interface CheckboxRenderProps {
+  /**
+   * Whether the checkbox is currently checked.
+   * @zh 复选框当前是否处于选中态。
+   */
+  checked?: boolean
+
+  /**
+   * Whether the checkbox is in an indeterminate state.
+   * @zh 复选框是否处于不确定态。
+   */
+  indeterminate?: boolean
+
+  /**
+   * Whether the checkbox is currently being pressed (and not disabled).
+   * @zh 复选框当前是否处于按下态（且未被禁用）。
+   */
+  active?: boolean
+
+  /**
+   * Whether the checkbox is disabled.
+   * @zh 复选框是否处于禁用态。
+   */
+  disabled?: boolean
+}
+
+/**
+ * UI variants applied by Checkbox based on its interactive status.
+ * Use them as CSS selectors to style different states.
+ * @zh Checkbox 根据交互状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ */
+export interface CheckboxUiVariants {
+  /**
+   * Applied when `status.checked` is true.
+   * @zh 当 status.checked 为 true 时生效，可用于 `.ui-checked { ... }`。
+   */
+  'ui-checked'?: boolean
+
+  /**
+   * Applied when `status.indeterminate` is true.
+   * @zh 当 status.indeterminate 为 true 时生效，可用于 `.ui-indeterminate { ... }`。
+   */
+  'ui-indeterminate'?: boolean
+
+  /**
+   * Applied when `status.active` is true.
+   * @zh 当 status.active 为 true 时生效，可用于 `.ui-active { ... }`。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when `status.disabled` is true.
+   * @zh 当 status.disabled 为 true 时生效，可用于 `.ui-disabled { ... }`。
+   */
+  'ui-disabled'?: boolean
+}
