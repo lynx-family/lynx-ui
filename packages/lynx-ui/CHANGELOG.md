@@ -1,5 +1,14 @@
 # @lynx-js/lynx-ui
 
+## 3.131.1
+
+### Patch Changes
+
+- Updated dependencies [[`e6c22ab`](https://github.com/lynx-family/lynx-ui/commit/e6c22abe3aad35738fcc3e2776f5ca79a698fee5), [`5029dc6`](https://github.com/lynx-family/lynx-ui/commit/5029dc66d2506ff9c4a630c0fde013d1345bcf22)]:
+  - @lynx-js/lynx-ui-sortable@3.131.1
+  - @lynx-js/lynx-ui-switch@3.131.1
+  - @lynx-js/lynx-ui-form@3.131.1
+
 ## 3.131.0
 
 ### Minor Changes

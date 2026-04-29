@@ -1,5 +1,14 @@
 # @lynx-example/lynx-ui-swiper
 
+## 0.0.5
+
+### Patch Changes
+
+- Update swiper examples to match luna theme ([#150](https://github.com/lynx-family/lynx-ui/pull/150))
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.131.1
+
 ## 0.0.4
 
 ### Patch Changes

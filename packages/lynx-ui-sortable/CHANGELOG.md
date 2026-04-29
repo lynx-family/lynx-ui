@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-sortable
 
+## 3.131.1
+
+### Patch Changes
+
+- Improve robustness for unstable input data. ([#134](https://github.com/lynx-family/lynx-ui/pull/134))
+
 ## 3.131.0
 
 ### Patch Changes

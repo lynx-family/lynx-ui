@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-swiper",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Example app demonstrating Swiper usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Swiper#readme",
   "repository": {

@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-input
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.131.1
+
 ## 0.0.4
 
 ### Patch Changes

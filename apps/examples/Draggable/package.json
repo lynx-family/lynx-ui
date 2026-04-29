@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-draggable",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Example app demonstrating Draggable usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Draggable#readme",
   "repository": {
