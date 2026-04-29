@@ -1,16 +1,16 @@
 # lynx-ui-slider SKILL
 
-`lynx-ui-slider` is a primitives-first slider package for ReactLynx. It provides composable building blocks (`SliderRoot`, `SliderTrack`, `SliderRange`, `SliderThumb`).
+`lynx-ui-slider` is a primitives-first slider package for ReactLynx. It provides composable building blocks (`SliderRoot`, `SliderTrack`, `SliderIndicator`, `SliderThumb`).
 
 ## 1. Core Capabilities
 
-- **Primitives Composition**: Build slider UI with `SliderRoot` + `SliderTrack` + `SliderRange` + `SliderThumb`.
+- **Primitives Composition**: Build slider UI with `SliderRoot` + `SliderTrack` + `SliderIndicator` + `SliderThumb`.
 - **Shared Base Props**: All primitives inherit `className` and `style` from `ComponentBasicProps`.
 - **Controlled & Uncontrolled Modes**: Use `value` + `onValueChange` for controlled mode, or `defaultValue` for uncontrolled mode.
 - **Imperative API** (uncontrolled only): Access `updateValue` and `getValue` through `SliderRef`. Throws in controlled mode.
-- **RTL Support**: Set `enableRTL` to reverse range direction (right-to-left).
+- **RTL Support**: Set `enableRTL` to make the indicator and thumb resolve right-to-left.
 - **Stepping**: Set `step` to snap values to discrete increments.
-- **Readonly Mode**: Set `readonly` to prevent dragging while still displaying the current value.
+- **Disabled Mode**: Set `disabled` to prevent dragging while still displaying the current value.
 - **Interaction Callbacks**: `onDragging(value)` when dragging starts, `onValueChange(value, source)` for slider-driven updates, `onValueCommit(value)` at drag end.
 - **Headless Styling**: Supports styling via `className` and `style` props on every primitive.
 
@@ -22,9 +22,9 @@
 import {
   SliderRoot,
   SliderTrack,
-  SliderRange,
+  SliderIndicator,
   SliderThumb,
-} from '@lynx-js/lynx-ui'
+} from '@lynx-js/lynx-ui-slider'
 
 function BasicSlider() {
   return (
@@ -32,12 +32,12 @@ function BasicSlider() {
       defaultValue={0.3}
       onValueCommit={(value) => console.log(value)}
     >
-      <SliderTrack className='track' />
-      <SliderRange className='range'>
+      <SliderTrack className='track'>
+        <SliderIndicator className='indicator' />
         <SliderThumb className='thumb'>
           <view />
         </SliderThumb>
-      </SliderRange>
+      </SliderTrack>
     </SliderRoot>
   )
 }
@@ -50,9 +50,9 @@ import { useState } from '@lynx-js/react'
 import {
   SliderRoot,
   SliderTrack,
-  SliderRange,
+  SliderIndicator,
   SliderThumb,
-} from '@lynx-js/lynx-ui'
+} from '@lynx-js/lynx-ui-slider'
 
 function ControlledSlider() {
   const [value, setValue] = useState(0.5)
@@ -62,12 +62,12 @@ function ControlledSlider() {
       value={value}
       onValueChange={(v) => setValue(v)}
     >
-      <SliderTrack className='track' />
-      <SliderRange className='range'>
+      <SliderTrack className='track'>
+        <SliderIndicator className='indicator' />
         <SliderThumb className='thumb'>
           <view />
         </SliderThumb>
-      </SliderRange>
+      </SliderTrack>
     </SliderRoot>
   )
 }
@@ -77,12 +77,12 @@ function ControlledSlider() {
 
 ```tsx
 <SliderRoot enableRTL defaultValue={0.4}>
-  <SliderTrack className='track' />
-  <SliderRange className='range'>
+  <SliderTrack className='track'>
+    <SliderIndicator className='indicator' />
     <SliderThumb className='thumb'>
       <view />
     </SliderThumb>
-  </SliderRange>
+  </SliderTrack>
 </SliderRoot>
 ```
 
@@ -94,20 +94,20 @@ function ControlledSlider() {
 
 - "Create a controlled slider with custom thumb UI and `onValueCommit` callback."
 - "Build a headless slider with `step={0.1}` and custom class names for each primitive."
-- "Add an RTL slider with `enableRTL` and `direction: rtl` CSS."
+- "Add an RTL slider with `enableRTL` and optional RTL container styling."
 
 ## 3. Props Reference
 
 ### SliderRootProps
 
-`SliderRootProps`, `SliderTrackProps`, `SliderRangeProps`, and `SliderThumbProps` all inherit `className` and `style` from `ComponentBasicProps`.
+`SliderRootProps`, `SliderTrackProps`, `SliderIndicatorProps`, and `SliderThumbProps` all inherit `className` and `style` from `ComponentBasicProps`.
 
 | Prop            | Type                              | Default | Description                                                                         |
 | --------------- | --------------------------------- | ------- | ----------------------------------------------------------------------------------- |
 | `value`         | `number`                          | —       | Controlled value `[0, 1]`. Do not use with `defaultValue`.                          |
 | `defaultValue`  | `number`                          | `0`     | Initial value for uncontrolled mode.                                                |
 | `step`          | `number`                          | —       | Snap interval in `[0, 1]`.                                                          |
-| `readonly`      | `boolean`                         | `false` | Prevent interaction while keeping the slider value visible.                         |
+| `disabled`      | `boolean`                         | `false` | Prevent interaction while keeping the slider value visible.                         |
 | `enableRTL`     | `boolean`                         | `false` | Reverse range direction (right-to-left).                                            |
 | `onDragging`    | `(value: number) => void`         | —       | Fires once when the interaction enters dragging state.                              |
 | `onValueChange` | `(value: number, source) => void` | —       | Fires for drag updates and `updateValue` calls. Source is `'drag'` or `'external'`. |
@@ -130,9 +130,9 @@ A: Use controlled (`value` + `onValueChange`) when you need to sync slider state
 
 A: `onDragging` fires once when dragging starts. `onValueChange` fires for slider-driven value updates during drag and imperative `updateValue` calls. `onValueCommit` fires once at drag end — useful for persisting the final value.
 
-**Q: Is `disabled` still supported?**
+**Q: How do I prevent user interaction while still showing the value?**
 
-A: Use `readonly` going forward. `disabled` is kept only as a deprecated compatibility alias.
+A: Set `disabled` on `SliderRoot`. The slider will display the current value but will not respond to touch or pointer events.
 
 **Q: What happens if I call `updateValue` / `getValue` in controlled mode?**
 
@@ -144,18 +144,15 @@ A: Input values are clamped to `[0, 1]` internally.
 
 **Q: How do I enable RTL?**
 
-A: Pass `enableRTL` to `SliderRoot` and add `direction: rtl` to the container CSS.
+A: Pass `enableRTL` to `SliderRoot`. Add `direction: rtl` only if you also want the surrounding container layout or text flow to follow RTL.
 
-**Q: I changed thumb/track size in CSS and now thumb is not centered. Why?**
+**Q: Which primitive should own the fill styling?**
 
-A: Thumb and track have an implicit centering relationship. If you change one size, also update the matching offsets in CSS:
-
-- vertical alignment offset: `(thumbHeight - trackHeight) / 2`
-- horizontal anchor offset: `-thumbWidth / 2`
+A: `SliderIndicator` is the pure visual fill layer. Keep `SliderThumb` as a sibling inside `SliderTrack`, and style the thumb content independently from the filled portion.
 
 ## 5. Sub Components
 
 - **`SliderRoot`**: Owns measurement, drag behavior, value management, and context provider.
-- **`SliderTrack`**: Background track bar.
-- **`SliderRange`**: Foreground range container with width bound to value. Supports RTL via `right: 0` positioning.
-- **`SliderThumb`**: Draggable thumb visual node, positioned at the end of the range.
+- **`SliderTrack`**: Base rail plus the measurement/layout coordinate space for its children.
+- **`SliderIndicator`**: Foreground visual indicator with width bound to value. Supports RTL via `right: 0` positioning.
+- **`SliderThumb`**: Visual thumb node positioned inside `SliderTrack` by the current ratio.

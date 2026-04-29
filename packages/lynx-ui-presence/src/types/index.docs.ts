@@ -13,12 +13,73 @@ import type {
 import type { PresenceState } from '../utils'
 
 export interface PresenceAnimationStatus {
+  /**
+   * The popper is opened.
+   * @zh 弹层处于打开状态。
+   */
   open?: boolean
+
+  /**
+   * The popper is closed.
+   * If it's force mounted, the initial status will be closed.
+   * @zh 弹层处于关闭状态。如果开启了 forceMount，初始状态会是 ui-closed。
+   */
   closed?: boolean
 
+  /**
+   * The popper is performing the leaving animation. Takes effect when transition:true.
+   * @zh 弹层正在执行离开动画。仅在 transition:true 时生效。
+   */
   leaving?: boolean
+
+  /**
+   * The popper is performing the entering animation. Takes effect when transition:true.
+   * @zh 弹层正在执行进入动画。仅在 transition:true 时生效。
+   */
   entering?: boolean
+
+  /**
+   * The popper is doing the animations. Takes effect when transition:true.
+   * @zh 弹层正在执行动画。仅在 transition:true 时生效。
+   */
   animating?: boolean
+}
+
+/**
+ * UI variants applied by Presence based on animation status.
+ * Use them as CSS selectors to style different states.
+ * @zh Presence 根据状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ */
+export interface PresenceUiVariants {
+  /**
+   * Applied when `status.open` is true.
+   * @zh 当 status.open 为 true 时生效，可用于 `.ui-open { ... }`。
+   */
+  'ui-open'?: boolean
+
+  /**
+   * Applied when `status.closed` is true.
+   * @zh 当 status.closed 为 true 时生效，可用于 `.ui-closed { ... }`。
+   */
+  'ui-closed'?: boolean
+
+  /**
+   * Applied when `status.entering` is true.
+   * @zh 当 status.entering 为 true 时生效，可用于 `.ui-entering { ... }`。
+   */
+  'ui-entering'?: boolean
+
+  /**
+   * Applied when `status.leaving` is true.
+   * @zh 当 status.leaving 为 true 时生效，可用于 `.ui-leaving { ... }`。
+   */
+  'ui-leaving'?: boolean
+
+  /**
+   * Applied when `status.animating` is true.
+   * @zh 当 status.animating 为 true 时生效，可用于 `.ui-animating { ... }`。
+   */
+  'ui-animating'?: boolean
 }
 
 export type PresenceChildrenType = (

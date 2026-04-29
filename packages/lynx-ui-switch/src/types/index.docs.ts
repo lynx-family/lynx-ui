@@ -4,24 +4,8 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import type { CSSProperties, ViewProps } from '@lynx-js/types'
-
-interface ComponentBasicProps {
-  /**
-   * className
-   * @zh 类名
-   * @Android
-   * @iOS
-   */
-  className?: string
-  /**
-   * style
-   * @zh 样式
-   * @Android
-   * @iOS
-   */
-  style?: CSSProperties
-}
+import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
+import type { ViewProps } from '@lynx-js/types'
 
 /** Props for the Switch component.
  * @zh Switch 组件的属性
@@ -112,6 +96,31 @@ export interface SwitchRenderProps {
    * @Android
    */
   disabled: boolean
+}
+
+/**
+ * UI variants applied by Switch based on render state.
+ * Use them as CSS selectors to style different states.
+ * @zh Switch 根据状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ */
+export interface SwitchUiVariants {
+  /**
+   * Applied when `status.active` is true.
+   * @zh 当 status.active 为 true 时生效，可用于 `.ui-active { ... }`。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when `status.checked` is true.
+   * @zh 当 status.checked 为 true 时生效，可用于 `.ui-checked { ... }`。
+   */
+  'ui-checked'?: boolean
+
+  /**
+   * Applied when `status.disabled` is true.
+   * @zh 当 status.disabled 为 true 时生效，可用于 `.ui-disabled { ... }`。
+   */
+  'ui-disabled'?: boolean
 }
 
 /**

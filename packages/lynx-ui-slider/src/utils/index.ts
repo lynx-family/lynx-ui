@@ -7,6 +7,10 @@ export const clamp01 = (value: number): number => {
   return Math.min(Math.max(value, 0), 1)
 }
 
+export const getVisualRatio = (value: number, enableRTL: boolean): number => {
+  return enableRTL ? 1 - value : value
+}
+
 export const snapToStep = (value: number, step: number | undefined): number => {
   if (step === undefined || step <= 0) return value
   const snapped = Math.round(value / step) * step

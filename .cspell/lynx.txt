@@ -57,6 +57,7 @@ infcplibrary
 jsbi
 linkbar
 longpress
+lynxjs
 napi
 objectfit
 quickjs

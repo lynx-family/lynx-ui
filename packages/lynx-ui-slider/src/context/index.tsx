@@ -7,9 +7,15 @@ import { createContext, useContext } from '@lynx-js/react'
 import type { NodesRef } from '@lynx-js/types'
 
 export interface SliderContextValue {
-  valueRef: { current: NodesRef | null }
+  trackRef: { current: NodesRef | null }
+  indicatorRef: { current: NodesRef | null }
+  thumbRef: { current: NodesRef | null }
   currentValue: { current: number }
   enableRTL: boolean
+  onTrackLayoutChange: (event: {
+    params: { width: number, height: number }
+    detail?: { width: number, height: number }
+  }) => void
 }
 
 export const SliderContext = createContext<SliderContextValue | null>(null)

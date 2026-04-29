@@ -84,7 +84,7 @@
   background-color: var(--neutral-faint);
 }
 
-.slider-range {
+.slider-indicator {
   width: 100%;
   height: 4px;
   border-radius: 9999px;
@@ -93,9 +93,6 @@
 }
 
 .slider-thumb-wrapper {
-  position: absolute;
-  top: 0;
-  right: -18px;
   width: 36px;
   height: 36px;
   display: flex;
@@ -122,16 +119,4 @@
 
 .rtl-card {
   direction: rtl;
-}
-
-.slider-thumb-wrapper-rtl {
-  position: absolute;
-  top: 0;
-  left: -18px;
-  right: auto;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

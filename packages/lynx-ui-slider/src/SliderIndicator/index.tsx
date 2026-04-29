@@ -5,26 +5,27 @@
 import { memo } from '@lynx-js/react'
 
 import { useSliderContext } from '../context'
-import type { SliderRangeProps } from '../types'
+import type { SliderIndicatorProps } from '../types'
 
-export const SliderRange = memo(function SliderRange(props: SliderRangeProps) {
-  const { valueRef, currentValue, enableRTL } = useSliderContext()
-  const { children, className, style } = props
+export const SliderIndicator = memo(function SliderIndicator(
+  props: SliderIndicatorProps,
+) {
+  const { indicatorRef, currentValue, enableRTL } = useSliderContext()
+  const { className, style } = props
 
   return (
     <view
-      ref={valueRef}
+      ref={indicatorRef}
       style={{
         position: 'absolute',
         top: '0px',
-        ...(enableRTL ? { right: '0px' } : { left: '0px' }),
-        height: '100%',
+        bottom: '0px',
         overflow: 'visible',
+        ...(enableRTL ? { right: '0px' } : { left: '0px' }),
         width: `${currentValue.current * 100}%`,
       }}
     >
       <view className={className} style={style} />
-      {children}
     </view>
   )
 })

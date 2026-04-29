@@ -4,11 +4,11 @@
 
 export { SliderRoot } from './SliderRoot'
 export { SliderTrack } from './SliderTrack'
-export { SliderRange } from './SliderRange'
+export { SliderIndicator } from './SliderIndicator'
 export { SliderThumb } from './SliderThumb'
 
 export type {
-  SliderRangeProps,
+  SliderIndicatorProps,
   SliderRef,
   SliderRootProps,
   SliderThumbProps,
