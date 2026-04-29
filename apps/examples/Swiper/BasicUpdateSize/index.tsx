@@ -7,120 +7,110 @@ import { root, useEffect, useRef, useState } from '@lynx-js/react'
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 import type { SwiperRef } from '@lynx-js/lynx-ui'
 
-import './styles.css'
-
 import { Button } from '../Common/Button'
+import { Card } from '../Common/Card'
+import { Indicator } from '../Common/Indicator'
 
-const DEFAULT_COLORS_ARR: string[] = [
-  'red',
-  'green',
-  'yellow',
-  'purple',
-  'lightgreen',
-  'lightyellow',
-  'lightblue',
-  'gray',
-]
+import '../Common/Demo/styles.css'
+
+const DEFAULT_ITEM_ARR: number[] = [1, 2, 3, 4, 5, 6, 7, 8]
 
 const itemWidths = [250, 350, 400]
 const alignArr: ['start', 'center', 'end'] = ['start', 'center', 'end']
+const INITIAL_INDEX = 0
 
 function SwiperEntry(): JSX.Element {
   const [itemWidthsIndex, setItemWidthsIndex] = useState<number>(0)
-  const [alignIndex, setAlignIndex] = useState<number>(0)
-  const [currentIndex, setCurrentIndex] = useState<number>(0)
+  const [alignIndex, setAlignIndex] = useState<number>(1)
+  const [currentIndex, setCurrentIndex] = useState<number>(INITIAL_INDEX)
   const swiperRef = useRef<SwiperRef>(null)
-  const [colorsArr, setColorsArr] = useState<string[]>([])
+  const [itemArr, setItemArr] = useState<number[]>([])
 
   useEffect(() => {
     setTimeout(() => {
-      setColorsArr(DEFAULT_COLORS_ARR.slice(0, 4))
+      setItemArr(DEFAULT_ITEM_ARR.slice(0, 4))
     }, 1000)
   }, [])
 
   return (
-    <view id='container'>
-      <Swiper
-        ref={swiperRef}
-        data={colorsArr}
-        itemWidth={itemWidths[itemWidthsIndex] ?? 0}
-        containerWidth={itemWidths[itemWidthsIndex] ?? 0}
-        itemHeight={200}
-        duration={500}
-        initialIndex={0}
-        onChange={setCurrentIndex}
-        mode='normal'
-        loop={true}
-        autoPlay={false}
-        modeConfig={{
-          align: alignArr[alignIndex] ?? 'start',
-        }}
-      >
-        {({ item, index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <view
-              class='block-view'
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: item,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <view
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area'>
+        <Swiper
+          ref={swiperRef}
+          data={itemArr}
+          itemWidth={itemWidths[itemWidthsIndex] ?? 0}
+          containerWidth={itemWidths[itemWidthsIndex] ?? 0}
+          itemHeight={250}
+          duration={500}
+          initialIndex={INITIAL_INDEX}
+          onChange={setCurrentIndex}
+          mode='normal'
+          loop={true}
+          autoPlay={false}
+          modeConfig={{
+            align: alignArr[alignIndex] ?? 'center',
+            spaceBetween: 16,
+          }}
+          style={{
+            overflow: 'visible',
+          }}
+        >
+          {({ index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+              <Card
+                index={realIndex}
                 style={{
-                  backgroundColor: 'white',
-                  width: '4px',
-                  height: '4px',
+                  height: '250px',
                 }}
-              >
-              </view>
-            </view>
-            <text class='image-text'>Number.{index}</text>
-          </SwiperItem>
-        )}
-      </Swiper>
-      <view class='operation'>
-        <view class='block'>
-          <text>Current Index: {currentIndex}</text>
-        </view>
+              />
+            </SwiperItem>
+          )}
+        </Swiper>
+        <Indicator
+          current={currentIndex}
+          count={itemArr.length}
+        />
+      </view>
+      <view className='operation'>
         <Button
           onClick={() => {
             swiperRef.current?.swipePrev()
           }}
+          className='expand'
           text='SwipePrev'
-        >
-        </Button>
+        />
         <Button
           onClick={() => {
             swiperRef.current?.swipeNext()
           }}
+          className='expand'
+          type='primary'
           text='SwipeNext'
-        >
-        </Button>
+        />
+      </view>
+      <view className='sub-operation'>
         <Button
           onClick={() => {
             setItemWidthsIndex(prev => (prev + 1) % itemWidths.length)
           }}
-          text={`itemWidth: ${itemWidths[itemWidthsIndex]}`}
-        >
-        </Button>
+          text='Update Container Width'
+          subText={`Width: ${itemWidths[itemWidthsIndex]}`}
+        />
         <Button
           onClick={() => {
             setAlignIndex(prev => (prev + 1) % itemWidths.length)
           }}
-          text={`alignType: ${alignArr[alignIndex]}`}
-        >
-        </Button>
+          text='Change Align Type'
+          subText={`AlignType: ${alignArr[alignIndex]}`}
+        />
         <Button
           onClick={() => {
-            setColorsArr(prev => DEFAULT_COLORS_ARR.slice(0, prev.length + 1))
+            setItemArr(prev => DEFAULT_ITEM_ARR.slice(0, prev.length + 1))
           }}
-          text={`Add List Length, current: ${colorsArr.length}`}
-        >
-        </Button>
+          text='Add List Item'
+          subText={`Current Length: ${itemArr.length}`}
+        />
       </view>
     </view>
   )

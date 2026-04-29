@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useRef } from '@lynx-js/react'
+import { root, useRef, useState } from '@lynx-js/react'
 
 import {
   Swiper,
@@ -12,17 +12,18 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SwiperRef } from '@lynx-js/lynx-ui'
 
-import './styles.css'
+import { Card } from '../Common/Card'
+import { Indicator } from '../Common/Indicator'
 
-const colorsArr: string[] = ['red', 'green', 'yellow', 'purple']
+import '../Common/Demo/styles.css'
+
+const itemArr: number[] = [1, 2, 3, 4, 5]
 
 const ITEM_WIDTH = 250
+const ITEM_HEIGHT = 250
 
 function customAnimation(value: number, _index: number) {
   'main thread'
-
-  const scale = interpolate(value, [-1, 0, 1], [0.8, 1, 0.8])
-  // const scale = 1
 
   const centerOffset = ((lynx.__globalProps.screenWidth
     ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio) - ITEM_WIDTH) / 2
@@ -31,16 +32,17 @@ function customAnimation(value: number, _index: number) {
     centerOffset,
     ITEM_WIDTH + centerOffset,
   ], 'extend')
+  const scale = interpolate(value, [-1, 0, 1], [0.84, 1, 0.84])
+  const opacity = interpolate(value, [-1, 0, 1], [0.72, 1, 0.72])
 
   return {
     transform: `translateX(${translateX}px) scale(${scale})`,
     'transform-origin': 'center',
+    opacity,
   }
 }
 
 function customAnimationFirstScreen(value: number, _index: number) {
-  const scale = interpolateJS(value, [-1, 0, 1], [0.8, 1, 0.8])
-  // const scale = 1
   const centerOffset = ((lynx.__globalProps.screenWidth
     ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio) - ITEM_WIDTH) / 2
   const translateX = interpolateJS(value, [-1, 0, 1], [
@@ -48,65 +50,57 @@ function customAnimationFirstScreen(value: number, _index: number) {
     centerOffset,
     ITEM_WIDTH + centerOffset,
   ], 'extend')
+  const scale = interpolateJS(value, [-1, 0, 1], [0.84, 1, 0.84])
+  const opacity = interpolateJS(value, [-1, 0, 1], [0.72, 1, 0.72])
 
-  console.log(
-    'customAnimationFirstScreen',
-    value,
-    scale,
-    translateX,
-    centerOffset,
-  )
   return {
     transform: `translateX(${translateX}px) scale(${scale})`,
     'transform-origin': 'center',
+    opacity,
   }
 }
 
 function SwiperEntry(): JSX.Element {
   const swiperRef = useRef<SwiperRef>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   return (
-    <view id='container'>
-      <Swiper
-        ref={swiperRef}
-        data={colorsArr}
-        itemWidth={ITEM_WIDTH}
-        itemHeight={200}
-        duration={500}
-        initialIndex={0}
-        mode='custom'
-        modeConfig={{
-          align: 'center',
-        }}
-        main-thread:customAnimation={customAnimation}
-        customAnimationFirstScreen={customAnimationFirstScreen}
-      >
-        {({ item, index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <view
-              class='block-view'
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: item,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <view
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area'>
+        <Swiper
+          ref={swiperRef}
+          data={itemArr}
+          itemWidth={ITEM_WIDTH}
+          itemHeight={ITEM_HEIGHT}
+          duration={500}
+          initialIndex={0}
+          mode='custom'
+          onChange={setCurrentIndex}
+          main-thread:customAnimation={customAnimation}
+          customAnimationFirstScreen={customAnimationFirstScreen}
+          style={{
+            overflow: 'visible',
+          }}
+        >
+          {({ index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+              <Card
+                index={realIndex}
                 style={{
-                  backgroundColor: 'white',
-                  width: '4px',
-                  height: '4px',
+                  height: '250px',
                 }}
-              >
-              </view>
-            </view>
-            <text class='image-text'>Number.{index}</text>
-          </SwiperItem>
-        )}
-      </Swiper>
+              />
+            </SwiperItem>
+          )}
+        </Swiper>
+        <Indicator current={currentIndex} count={itemArr.length} />
+      </view>
+      <view className='demo-status'>
+        <text className='demo-status-text'>
+          Custom mode keeps the active slide centered while scaling neighbors.
+        </text>
+      </view>
     </view>
   )
 }

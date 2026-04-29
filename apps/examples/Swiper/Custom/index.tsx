@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useRef } from '@lynx-js/react'
+import { root, useRef, useState } from '@lynx-js/react'
 
 import {
   Swiper,
@@ -12,72 +12,84 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SwiperRef } from '@lynx-js/lynx-ui'
 
-import './styles.css'
+import { Card } from '../Common/Card'
+import { Indicator } from '../Common/Indicator'
 
-const colorsArr: string[] = ['red', 'green', 'yellow', 'purple']
+import '../Common/Demo/styles.css'
+
+const itemArr: number[] = [1, 2, 3, 4, 5]
 
 function customAnimation(value: number, _index: number) {
   'main thread'
 
-  const scale = interpolate(value, [-1, 0, 1], [0.5, 1, 0.5])
+  const scale = interpolate(value, [-1, 0, 1], [0.86, 1, 0.86])
+  const translateY = interpolate(value, [-1, 0, 1], [12, 0, 12])
+  const opacity = interpolate(value, [-1, 0, 1], [0.64, 1, 0.64])
 
   return {
-    transform: `scale(${scale})`,
+    transform: `translateY(${translateY}px) scale(${scale})`,
+    opacity,
   }
 }
 
 function customAnimationFirstScreen(value: number, _index: number) {
-  const scale = interpolateJS(value, [-1, 0, 1], [0.5, 1, 0.5])
+  const scale = interpolateJS(value, [-1, 0, 1], [0.86, 1, 0.86])
+  const translateY = interpolateJS(value, [-1, 0, 1], [12, 0, 12])
+  const opacity = interpolateJS(value, [-1, 0, 1], [0.64, 1, 0.64])
 
   return {
-    transform: `scale(${scale})`,
+    transform: `translateY(${translateY}px) scale(${scale})`,
+    opacity,
   }
 }
 
 function SwiperEntry(): JSX.Element {
   const swiperRef = useRef<SwiperRef>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   return (
-    <view id='container'>
-      <Swiper
-        ref={swiperRef}
-        data={colorsArr}
-        itemWidth={250}
-        duration={500}
-        initialIndex={0}
-        mode='normal'
-        modeConfig={{
-          align: 'center',
-        }}
-        main-thread:customAnimation={customAnimation}
-        customAnimationFirstScreen={customAnimationFirstScreen}
-      >
-        {({ item, index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <view
-              class='block-view'
-              style={{
-                width: '100%',
-                height: '250px',
-                backgroundColor: item,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <view
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area'>
+        <Swiper
+          ref={swiperRef}
+          data={itemArr}
+          itemWidth={250}
+          itemHeight={250}
+          containerWidth={lynx.__globalProps.screenWidth - 32
+            || SystemInfo.pixelWidth / SystemInfo.pixelRatio - 32}
+          duration={500}
+          initialIndex={0}
+          mode='normal'
+          modeConfig={{
+            align: 'center',
+            spaceBetween: 16,
+          }}
+          onChange={setCurrentIndex}
+          main-thread:customAnimation={customAnimation}
+          customAnimationFirstScreen={customAnimationFirstScreen}
+          style={{
+            overflow: 'visible',
+          }}
+        >
+          {({ index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+              <Card
+                index={realIndex}
                 style={{
-                  backgroundColor: 'white',
-                  width: '4px',
-                  height: '4px',
+                  height: '250px',
                 }}
-              >
-              </view>
-            </view>
-            <text class='image-text'>Number.{index}</text>
-          </SwiperItem>
-        )}
-      </Swiper>
+              />
+            </SwiperItem>
+          )}
+        </Swiper>
+        <Indicator current={currentIndex} count={itemArr.length} />
+      </view>
+      <view className='demo-status'>
+        <text className='demo-status-text'>
+          Custom animation scales each slide around the active item.
+        </text>
+      </view>
     </view>
   )
 }
