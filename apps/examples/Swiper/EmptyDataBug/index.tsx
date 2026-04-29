@@ -22,6 +22,7 @@ import type { SwiperRef } from '@lynx-js/lynx-ui'
 import { Button } from '../Common/Button'
 import { Card } from '../Common/Card'
 
+import '../Common/Demo/styles.css'
 import './styles.css'
 
 const DEFAULT_DATA: number[] = [1, 2, 3, 4, 5]
@@ -352,7 +353,7 @@ function ResetWithCorruptedIndex(): JSX.Element {
 
 function EmptyDataBugExample(): JSX.Element {
   return (
-    <scroll-view class='container' scroll-orientation='vertical'>
+    <scroll-view class='container lunaris-dark' scroll-orientation='vertical'>
       <text class='main-title'>Empty Data Bug Reproduction</text>
       <text class='main-description'>
         These examples demonstrate the "calcBounceOffset: invalid offset" error

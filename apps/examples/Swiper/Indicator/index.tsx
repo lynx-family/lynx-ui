@@ -2,63 +2,69 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root } from '@lynx-js/react'
+import { root, useState } from '@lynx-js/react'
 
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
-import './styles.css'
+import { Card } from '../Common/Card'
+import { Indicator } from '../Common/Indicator'
 
-const colorsArr: string[] = ['red', 'green', 'yellow', 'purple']
+import '../Common/Demo/styles.css'
+
+const itemArr: number[] = [1, 2, 3, 4]
 
 function SwiperEntry() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
   return (
-    <Swiper
-      data={colorsArr}
-      itemWidth={375}
-      itemHeight={200}
-      loop={false}
-      duration={500}
-      initialIndex={0}
-      mode='normal'
-      bounceConfig={{
-        enable: true,
-        startBounceItemWidth: 100,
-        startBounceItem: (
-          <view>
-            <text>123</text>
-          </view>
-        ),
-      }}
-      onChange={i => {
-        console.log('change', i)
-      }}
-    >
-      {({ item, index, realIndex }) => (
-        <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-          <view
-            class='block-view'
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: item,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <view
-              style={{
-                backgroundColor: 'white',
-                width: '4px',
-                height: '4px',
-              }}
-            >
-            </view>
-          </view>
-          <text class='image-text'>Number.{index}</text>
-        </SwiperItem>
-      )}
-    </Swiper>
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area'>
+        <Swiper
+          data={itemArr}
+          itemWidth={300}
+          itemHeight={250}
+          containerWidth={lynx.__globalProps.screenWidth - 32
+            || SystemInfo.pixelWidth / SystemInfo.pixelRatio - 32}
+          loop={false}
+          duration={500}
+          initialIndex={0}
+          mode='normal'
+          modeConfig={{
+            align: 'center',
+            spaceBetween: 16,
+          }}
+          bounceConfig={{
+            enable: true,
+            startBounceItemWidth: 100,
+            startBounceItem: (
+              <view className='bounce-item'>
+                <text className='bounce-item-text'>Start</text>
+              </view>
+            ),
+          }}
+          onChange={setCurrentIndex}
+          style={{
+            overflow: 'visible',
+          }}
+        >
+          {({ index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+              <Card
+                index={realIndex}
+                style={{
+                  height: '250px',
+                }}
+              />
+            </SwiperItem>
+          )}
+        </Swiper>
+        <Indicator
+          current={currentIndex}
+          count={itemArr.length}
+        />
+      </view>
+    </view>
   )
 }
 

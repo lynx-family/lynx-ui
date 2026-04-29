@@ -6,9 +6,12 @@ import { root, useState } from '@lynx-js/react'
 
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
-import './styles.css'
+import { Card } from '../Common/Card'
+import { Indicator } from '../Common/Indicator'
 
-const colorsArr: string[] = ['red', 'green', 'yellow', 'purple']
+import '../Common/Demo/styles.css'
+
+const itemArr: number[] = [1, 2, 3, 4]
 
 function SwiperEntry() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -25,48 +28,48 @@ function SwiperEntry() {
     containWidth,
   )
   return (
-    <view>
-      <Swiper
-        data={colorsArr}
-        itemWidth={itemWidth + SwiperItemGap}
-        itemHeight={219.92727272727276}
-        containerWidth={containWidth}
-        loop={true}
-        duration={500}
-        initialIndex={0}
-        mode='normal'
-        autoPlay={true}
-        onChange={setCurrentIndex}
-        experimentalHorizontalSwipeOnly={true}
-      >
-        {({ item, index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <view
-              class='block-view'
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: item,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <view
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area'>
+        <Swiper
+          data={itemArr}
+          itemWidth={itemWidth + SwiperItemGap}
+          itemHeight={250}
+          containerWidth={containWidth}
+          loop={true}
+          duration={500}
+          initialIndex={0}
+          mode='normal'
+          modeConfig={{
+            spaceBetween: SwiperItemGap,
+          }}
+          autoPlay={true}
+          onChange={setCurrentIndex}
+          experimentalHorizontalSwipeOnly={true}
+          style={{
+            overflow: 'visible',
+          }}
+        >
+          {({ index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+              <Card
+                index={realIndex}
                 style={{
-                  backgroundColor: 'white',
-                  width: '4px',
-                  height: '4px',
+                  height: '250px',
                 }}
-              >
-              </view>
-            </view>
-            <text class='image-text'>Number.{index}</text>
-          </SwiperItem>
-        )}
-      </Swiper>
-      <view>
-        <text>currentIndex: {currentIndex}</text>
+              />
+            </SwiperItem>
+          )}
+        </Swiper>
+        <Indicator
+          current={currentIndex}
+          count={itemArr.length}
+        />
+      </view>
+      <view className='demo-status'>
+        <text className='demo-status-text'>
+          Loop mode keeps autoplay continuous across the boundary.
+        </text>
       </view>
     </view>
   )

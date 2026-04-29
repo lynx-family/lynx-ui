@@ -2,69 +2,85 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root } from '@lynx-js/react'
+import { root, useState } from '@lynx-js/react'
 
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
+import { Card } from '../Common/Card'
+import { Indicator } from '../Common/Indicator'
+
+import '../Common/Demo/styles.css'
 import './styles.css'
 
-const colorsArr: string[] = ['red', 'green', 'yellow', 'purple']
+const itemArr: number[] = [1, 2, 3, 4]
+const CONTAINER_PADDING = 32
+const BOUNCE_WIDTH = 96
+const ITEM_GAP = 16
+const ITEM_HEIGHT = 220
+
+const getScreenWidth = () =>
+  lynx.__globalProps.screenWidth
+  || SystemInfo.pixelWidth / SystemInfo.pixelRatio
 
 function SwiperEntry() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const containerWidth = getScreenWidth() - CONTAINER_PADDING
+  const itemWidth = Math.min(300, containerWidth - 48)
+
   return (
-    <Swiper
-      data={colorsArr}
-      itemWidth={250}
-      loop={false}
-      duration={500}
-      initialIndex={0}
-      mode='normal'
-      modeConfig={{
-        align: 'start',
-      }}
-      bounceConfig={{
-        enable: true,
-        startBounceItemWidth: 0,
-        endBounceItemWidth: 100,
-        endBounceItem: (
-          <view style='display: linear; linear-orientation: vertical; height: 100%; width: 30px; border: 1px solid #000;'>
-            <text style='color: #000'>Show More</text>
-          </view>
-        ),
-        onEndBounceItemBounce: ({ type }) => {
-          console.log('onBounce result', type)
-        },
-      }}
-      onChange={(index) => {
-        console.log('onChange', index)
-      }}
-    >
-      {({ item, index, realIndex }) => (
-        <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-          <view
-            class='block-view'
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: item,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <view
-              style={{
-                backgroundColor: 'white',
-                width: '4px',
-                height: '4px',
-              }}
-            >
-            </view>
-          </view>
-          <text class='image-text'>Number.{index}</text>
-        </SwiperItem>
-      )}
-    </Swiper>
+    <view className='demo-container lunaris-dark'>
+      <view className='top-area' />
+      <view className='content-area bounces-content-area'>
+        <Swiper
+          data={itemArr}
+          itemWidth={itemWidth}
+          itemHeight={ITEM_HEIGHT}
+          containerWidth={containerWidth}
+          loop={false}
+          duration={500}
+          initialIndex={2}
+          mode='normal'
+          modeConfig={{
+            align: 'start',
+            spaceBetween: ITEM_GAP,
+          }}
+          style={{
+            overflow: 'hidden',
+          }}
+          bounceConfig={{
+            enable: true,
+            startBounceItemWidth: 0,
+            endBounceItemWidth: BOUNCE_WIDTH,
+            endBounceItem: (
+              <view className='bounce-loading'>
+                <view className='bounce-loading-dot bounce-loading-dot--first' />
+                <view className='bounce-loading-dot bounce-loading-dot--second' />
+                <view className='bounce-loading-dot bounce-loading-dot--third' />
+              </view>
+            ),
+            onEndBounceItemBounce: ({ type }) => {
+              console.log('onBounce result', type)
+            },
+          }}
+          onChange={setCurrentIndex}
+        >
+          {({ index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+              <Card
+                index={realIndex}
+                style={{
+                  height: `${ITEM_HEIGHT}px`,
+                }}
+              />
+            </SwiperItem>
+          )}
+        </Swiper>
+        <Indicator
+          current={currentIndex}
+          count={itemArr.length}
+        />
+      </view>
+    </view>
   )
 }
 
