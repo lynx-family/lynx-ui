@@ -4,10 +4,10 @@ Thank you for your interest in contributing to lynx-ui!
 
 ## Prerequisites
 
-- **Node.js**: >= 18
-- **pnpm**: >= 9
+- **Node.js**: >= 24.0.0
+- **pnpm**: 10.33.2
 
-  > You can enable pnpm using corepack: `corepack enable`
+  > Use Corepack so the pinned pnpm version from `package.json` is used: `corepack enable`
 
 ## Repository Structure
 
@@ -28,6 +28,7 @@ This repository includes the shared theming foundation in-repo.
 2. **Install dependencies:**
 
    ```bash
+   corepack enable
    pnpm install
    ```
 

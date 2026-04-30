@@ -10,7 +10,8 @@ This document provides context, conventions, and guidelines for AI agents workin
 
 - **Framework**: React (Lynx bindings)
 - **Language**: TypeScript
-- **Package Manager**: pnpm
+- **Runtime**: Node.js 24
+- **Package Manager**: pnpm 10.33.2
 - **Build System**: TurboRepo, Rslib
 
 ## Directory Structure
@@ -39,8 +40,12 @@ This repository follows a standard Monorepo structure. Understanding this is cru
 ### 1. Initial Setup
 
 **ALWAYS** ensure dependencies are up to date.
+Use Node.js 24 and pnpm 10.33.2, matching `.nvmrc`, `package.json`, and CI. Prefer Corepack so the pinned pnpm version from `packageManager` is used.
 
 ```bash
+# Enable the package manager pinned by package.json
+corepack enable
+
 # Install dependencies
 pnpm install
 ```
@@ -230,7 +235,8 @@ This project uses **Biome** for linting and formatting, and **dprint** for Markd
 ## Contribution Rules
 
 1. **Changesets**: All changes that affect package versions must include a changeset (`pnpm changeset`).
-2. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
+2. **Toolchain Updates**: Keep `.nvmrc`, `package.json` `engines`/`packageManager`, `pnpm-lock.yaml`, and GitHub Actions `actions/setup-node` versions aligned when changing Node.js or pnpm.
+3. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
    Do not prepend labels like `[codex]` before the release type, because the semantic PR check parses the type from the beginning of the title.
    Use one of the repository's allowed types, such as `fix`, `feat`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`, `release`, or `security`.
 
