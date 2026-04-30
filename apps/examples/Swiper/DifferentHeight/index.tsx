@@ -53,12 +53,12 @@ function SwiperEntry(): JSX.Element {
             alignItems: 'end',
           }}
         >
-          {({ index, realIndex }) => (
-            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+          {({ index }) => (
+            <SwiperItem>
               <Card
-                index={realIndex}
+                index={index}
                 style={{
-                  height: `${itemHeights[realIndex % itemHeights.length]}px`,
+                  height: `${itemHeights[index % itemHeights.length]}px`,
                 }}
               />
             </SwiperItem>

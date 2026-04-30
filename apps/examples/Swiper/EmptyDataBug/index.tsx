@@ -102,9 +102,9 @@ function EmptyDataWithAutoPlay(): JSX.Element {
         autoPlayInterval={2000}
         modeConfig={{ align: 'center' }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -187,9 +187,9 @@ function EmptyDataWithManualSwipe(): JSX.Element {
         onSwipeStart={handleSwipeStart}
         onSwipeStop={handleSwipeStop}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -264,9 +264,9 @@ function DataBecomesEmpty(): JSX.Element {
         autoPlayInterval={3000}
         modeConfig={{ align: 'center' }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -330,9 +330,9 @@ function ResetWithCorruptedIndex(): JSX.Element {
         autoPlay={false}
         modeConfig={{ align: 'center' }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>

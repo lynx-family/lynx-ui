@@ -14,15 +14,13 @@ const itemArr: number[] = [1, 2, 3, 4]
 
 function renderCard({
   index,
-  realIndex,
 }: {
   index: number
-  realIndex: number
 }) {
   return (
-    <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+    <SwiperItem>
       <Card
-        index={realIndex}
+        index={index}
         style={{
           height: '200px',
         }}

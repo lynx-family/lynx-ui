@@ -31,8 +31,8 @@ The `Swiper` component is composed of the following sub-components:
 
 ```tsx
 <Swiper>
-  {({ index, realIndex }) => (
-    <SwiperItem index={index} realIndex={realIndex} key={realIndex}>
+  {({ index }) => (
+    <SwiperItem>
       {/* Your item content */}
     </SwiperItem>
   )}

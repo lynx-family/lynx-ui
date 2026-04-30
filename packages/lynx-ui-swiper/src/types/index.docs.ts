@@ -44,7 +44,7 @@ export interface SwiperProps<T> {
    *   itemWidth={350}
    *  >
    *    {({ index, item }) => (
-   *      <SwiperItem index={index} key={index}>
+   *      <SwiperItem>
    *        <image class="image" src={`${item}`}></image>
    *        <text class="image-text">Number.{index}</text>
    *      </SwiperItem>
@@ -459,7 +459,22 @@ export interface onBounceParams {
 }
 
 export interface RenderFunctionProps<T> {
+  /**
+   * Data item of current SwiperItem.
+   * @zh 当前 SwiperItem 对应的数据项。
+   */
   item: T
+  /**
+   * Logical index of current SwiperItem in Swiper's data.
+   * @zh 当前 SwiperItem 在 Swiper 数据中的逻辑索引。
+   */
   index: number
+  /**
+   * Physical index of current SwiperItem.
+   * Kept for compatibility with existing manual SwiperItem wiring.
+   * SwiperItem receives this automatically when rendered inside Swiper's
+   * children function.
+   * @zh 当前 SwiperItem 的物理索引，为兼容已有手动传参用法保留。SwiperItem 在 Swiper 的 children 函数内渲染时会自动获取该值。
+   */
   realIndex: number
 }

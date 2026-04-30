@@ -85,8 +85,8 @@ function SwiperEntry() {
           overflow: 'visible',
         }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+        {({ index }) => (
+          <SwiperItem>
             <view
               class='block-view'
               style={{

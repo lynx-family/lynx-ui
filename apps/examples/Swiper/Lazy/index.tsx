@@ -51,15 +51,15 @@ function SwiperEntry() {
             overflow: 'visible',
           }}
         >
-          {({ index, realIndex }) => (
-            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+          {({ index }) => (
+            <SwiperItem>
               <LazyComponent
                 scene='scene'
-                pid={`pid_${realIndex}`}
+                pid={`pid_${index}`}
                 estimatedStyle={{ width: '100%', height: '100%' }}
               >
                 <Card
-                  index={realIndex}
+                  index={index}
                   style={{
                     height: '250px',
                   }}

@@ -48,10 +48,10 @@ function SwiperEntry() {
             overflow: 'visible',
           }}
         >
-          {({ index, realIndex }) => (
-            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+          {({ index }) => (
+            <SwiperItem>
               <Card
-                index={realIndex}
+                index={index}
                 style={{
                   height: '250px',
                 }}

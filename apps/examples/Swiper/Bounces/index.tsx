@@ -64,10 +64,10 @@ function SwiperEntry() {
           }}
           onChange={setCurrentIndex}
         >
-          {({ index, realIndex }) => (
-            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+          {({ index }) => (
+            <SwiperItem>
               <Card
-                index={realIndex}
+                index={index}
                 style={{
                   height: `${ITEM_HEIGHT}px`,
                 }}
