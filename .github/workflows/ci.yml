@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - "**/*.{md,mdx}"
+      - "**/*.md"
   merge_group:
     types: [checks_requested]
 permissions:
@@ -41,6 +41,7 @@ jobs:
           pnpm install --frozen-lockfile
       - name: Code Style Check
         run: |
+          pnpm check:mdx
           pnpm dprint check
           pnpm biome check
           pnpm dlx sherif@latest

@@ -9,10 +9,11 @@
     "build": "turbo build",
     "changeset": "changeset",
     "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
-    "check:all": "pnpm run check && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
+    "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
     "coverage": "vitest --coverage",
     "examples:build": "turbo build --filter='./apps/examples/*'",
@@ -36,6 +37,9 @@
       "eslint --cache --fix --no-warn-ignored",
       "biome lint --write --no-errors-on-unmatched --files-ignore-unknown=true",
       "dprint fmt --allow-no-files --"
+    ],
+    "packages/lynx-ui-*/docs/**/*.mdx": [
+      "node tools/scripts/check-mdx-top-level-esm.mjs"
     ],
     "*.{toml,css,sass,scss,less,html,yml,yaml}": [
       "dprint fmt --allow-no-files --"
