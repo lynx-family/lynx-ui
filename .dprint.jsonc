@@ -24,7 +24,9 @@
       "tsconfig.eslint.json"
     ]
   },
-  "markdown": {},
+  "markdown": {
+    "associations": ["**/*.mdx"]
+  },
   "toml": {},
   "excludes": [
     // dependencies
@@ -34,37 +36,21 @@
     ".vscode/**",
 
     // Outputs
-    ".nx",
     "coverage",
     "**/dist",
     "**/lib",
-    "website/reviews/**",
-    "website/doc_build/**",
-    "website/docs/api",
-    "website/docs/config",
-    "website/docs/plugins",
-    "website/temp/**",
-
-    // Hot Cases
-    "packages/webpack/*/test/**/hotCases/**",
 
     // Test snapshots
     "**/expected/**",
     "**/rspack-expected/**",
-    "packages/rspeedy/core/test/config/fixtures/error/**",
-    "packages/webpack/css-extract-webpack-plugin/test/js/**",
-    "packages/webpack/css-extract-webpack-plugin/test/rspack-js/**",
-    "packages/webpack/*/test/**/diagnostic/**",
     "**/*.spec.ts",
     "**/__test__/**",
 
     // Ignored files
     "**/*-lock.json",
+    "**/APIReference.mdx",
     // The tsconfig.json contains comments that align with indents.
     "/tsconfig.json",
-
-    // Pipeline
-    ".codebase/pipelines/**",
 
     // self
     ".dprint.jsonc"
