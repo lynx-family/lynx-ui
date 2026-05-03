@@ -2,9 +2,9 @@
 
 The `useRefresh` hook extends the `useBounces hook`, leveraging its core functionality while adding several key capabilities:
 
- - Supports a dedicated refreshHeader node (counterpart to `upperBounceItem`)
+- Supports a dedicated refreshHeader node (counterpart to `upperBounceItem`)
 
- - Enables pause behavior at the `refreshHeader` position to simulate pull-to-refresh effects
+- Enables pause behavior at the `refreshHeader` position to simulate pull-to-refresh effects
 
 We modified rebound curve to pause at the `refreshHeader` boundary (refresh zone edge), remaining there until manually released via `finishRefresh` after data loading completes.
 
@@ -16,18 +16,18 @@ A complete refresh consists of four distinct phases:
 
 Each phase triggers specific events:
 
- - `onStartRefresh`: The key event in phase 3 for initiating data updates.
+- `onStartRefresh`: The key event in phase 3 for initiating data updates.
 
- - `onRefreshOffsetChange`: Continuously fires while `refreshHeader` is visible, reporting its exposure percentage
+- `onRefreshOffsetChange`: Continuously fires while `refreshHeader` is visible, reporting its exposure percentage
 
- - `onHeaderReleased`: Triggers when releasing drag after phase 2 (beginning rebound to `refreshHeader`)
+- `onHeaderReleased`: Triggers when releasing drag after phase 2 (beginning rebound to `refreshHeader`)
 
- - `onRefreshStateChange`: Fires during phase transitions, providing full state tracking:
+- `onRefreshStateChange`: Fires during phase transitions, providing full state tracking:
 
-   - `IDLE`: Default state (`refreshHeader` hidden)
+  - `IDLE`: Default state (`refreshHeader` hidden)
 
-   - `OVER_DRAG_RELEASE`: Matches `onHeaderReleased` timing (post-drag release)
+  - `OVER_DRAG_RELEASE`: Matches `onHeaderReleased` timing (post-drag release)
 
-   - `REFRESHING`: Matches `onStartRefresh` timing
+  - `REFRESHING`: Matches `onStartRefresh` timing
 
-   - `DRAGGING`: Continuous state while dragging with `refreshHeader` exposed
+  - `DRAGGING`: Continuous state while dragging with `refreshHeader` exposed

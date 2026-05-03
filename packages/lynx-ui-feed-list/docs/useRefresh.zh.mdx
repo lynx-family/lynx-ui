@@ -14,11 +14,12 @@ useRefresh hook 是 `useBounces` hook 的扩展，它使用了 `useBounces` 的�
 ### 事件
 
 上图所示的四个阶段有各自的事件触发时机：
- - `onStartRefresh`：最重要的事件，在阶段三的状态触发，此事件中可以进行数据的更新；
- - `onRefreshOffsetChange`：`RefreshHeader` 露出、处于刷新区域的时候会连续触发，发送当前的 `refreshHeader` 露出位置；
- - `onHeaderReleased`：从阶段二结束拖拽时触发，开始回弹至 `refreshHeader`；
- - `onRefreshStateChange`：不同阶段转移时触发，提供在一个单一事件中掌握所有状态的能力：
-   - `IDLE`：`refreshHeader` 未露出，处于正常滚动区域的状态；
-   - `OVER_DRAG_RELEASE`：与 `onHeaderReleased` 时机相同，阶段二结束拖拽时的状态；
-   - `REFRESHING`：与 `onStartRefresh` 时机相同；
-   - `DRAGGING`：拖拽并露出 `refreshHeader` 的状态下持续触发；
+
+- `onStartRefresh`：最重要的事件，在阶段三的状态触发，此事件中可以进行数据的更新；
+- `onRefreshOffsetChange`：`RefreshHeader` 露出、处于刷新区域的时候会连续触发，发送当前的 `refreshHeader` 露出位置；
+- `onHeaderReleased`：从阶段二结束拖拽时触发，开始回弹至 `refreshHeader`；
+- `onRefreshStateChange`：不同阶段转移时触发，提供在一个单一事件中掌握所有状态的能力：
+  - `IDLE`：`refreshHeader` 未露出，处于正常滚动区域的状态；
+  - `OVER_DRAG_RELEASE`：与 `onHeaderReleased` 时机相同，阶段二结束拖拽时的状态；
+  - `REFRESHING`：与 `onStartRefresh` 时机相同；
+  - `DRAGGING`：拖拽并露出 `refreshHeader` 的状态下持续触发；
