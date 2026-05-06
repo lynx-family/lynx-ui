@@ -78,6 +78,20 @@ To test changes, run the specific example for the component.
 
 Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of `@lynx-js/lynx-ui-<component>` or `@lynx-js/lynx-ui-common`, unless a symbol is intentionally excluded from the aggregate entry.
 
+When adding a new example under `apps/examples/<Component>/<UseCase>/`, ALWAYS register it in that component's sibling `lynx.config.mjs`. If the entry is missing, the example will not appear in the example app.
+
+### 3.1 Example Theming With LUNA
+
+Examples should use the in-repo LUNA theme foundation by default instead of ad-hoc hard-coded colors.
+
+- Import `@lynx-js/luna-styles/index.css` in example styles so CSS variables are available.
+- Apply a theme class at the example root. Available themes are `lunaris-dark`, `lunaris-light`, `luna-dark`, and `luna-light`.
+- Prefer `lunaris-dark` as the default demo theme unless the example is specifically trying to show a neutral product-style surface, in which case `luna-dark` or `luna-light` is a better fit.
+- Prefer semantic LUNA tokens over literal color values.
+- When you need the exact token names or meanings, look them up in the in-repo `luna/` workspace and the imported LUNA styles source used by the example.
+- Use token semantics rather than visual guesses. Choose surface, content, accent, backdrop, divider, or gradient roles based on purpose, then resolve the exact token from the source of truth in `luna/`.
+- When an example needs RTL support, set `direction: rtl` on the outer container and let descendants inherit it through CSS instead of duplicating directional styles on every node.
+
 ### 4. Build & Verify
 
 Before submitting changes, ensure the project builds and passes checks.

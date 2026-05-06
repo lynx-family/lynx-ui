@@ -74,6 +74,8 @@ function ScrollViewImpl(
     scrollOrientation,
     lazyOptions,
     className = '',
+    debugLog = false,
+    enableRTL = false,
     bounceableOptions = {
       enableBounces: true,
       singleSidedBounce: 'iOSBounces',
@@ -225,6 +227,8 @@ function ScrollViewImpl(
       <ScrollViewWithBouncesHook
         elementProps={elementProps}
         bounceableOptions={bounceableProps}
+        debugLog={debugLog}
+        enableRTL={enableRTL}
         sticky={sticky}
       >
         {renderChildren(children, normalizedLazyOptions)}

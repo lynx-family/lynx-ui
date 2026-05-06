@@ -38,6 +38,7 @@ const FeedListExcludedJSXProperties: (keyof FeedListProps)[] = [
   'children',
   'refreshOptions',
   'bounceableOptions',
+  'debugLog',
   'loadMoreFooter',
   'noMoreDataFooter',
 ]
@@ -54,13 +55,21 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     'main-thread:gesture': gesture,
     iosEnableSimultaneousTouch = true,
     scrollOrientation,
+    enableRTL = false,
+    debugLog = false,
     children = null,
     style,
     bounces,
   } = props
   const [hasMoreData, setHasMoreData] = useState(true)
   const baseListRef = useRef<ListRef>(null)
-  let refreshProps: RefreshProps, bounceableProps: BounceableBasicProps
+  let refreshProps: RefreshProps = {
+    enableRefresh: false,
+    headerContent: null,
+  }
+  let bounceableProps: BounceableBasicProps = {
+    enableBounces: false,
+  }
   // Initialize refreshProps
   let enableRefresh = false
   if (typeof refreshOptions === 'boolean') {
@@ -94,9 +103,9 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     enableBounce || enableRefresh
       // biome-ignore lint/correctness/useHookAtTopLevel: expected
       ? useRefreshAndBounceInternal({
-        // @ts-expect-error error
         bounceableOptions: bounceableProps,
-        // @ts-expect-error error
+        debugLog,
+        enableRTL,
         refreshOptions: refreshProps,
         id: listId,
         scrollOrientation: scrollOrientation,
@@ -114,10 +123,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
           useRefreshAndBounceProps?.onRefreshHeaderLayoutUpdated(e)
         }}
       >
-        {
-          // @ts-expect-error error
-          refreshProps.headerContent
-        }
+        {refreshProps.headerContent}
       </view>
     )
   }
@@ -132,44 +138,38 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
   const horizontal = scrollOrientation === 'horizontal'
   if (enableBounce) {
     // Refresh has higher priority than normal bounce-view
-    // @ts-expect-error error
     if (!enableRefresh && bounceableProps.upperBounceItem) {
       startBounceView = (
         <view
           id={`${listId}-upperBounceWrapper`}
           class={horizontal
-            ? 'horizontal-start-wrapper'
+            ? (enableRTL
+              ? 'horizontal-start-wrapper-rtl'
+              : 'horizontal-start-wrapper')
             : 'vertical-start-wrapper'}
         >
-          {
-            // @ts-expect-error error
-            bounceableProps.upperBounceItem
-          }
+          {bounceableProps.upperBounceItem}
         </view>
       )
     }
-    // @ts-expect-error error
     if (bounceableProps.lowerBounceItem) {
       endBounceView = (
         <view
           id={`${listId}-lowerBounceWrapper`}
           class={horizontal
-            ? 'horizontal-end-wrapper'
+            ? (enableRTL
+              ? 'horizontal-end-wrapper-rtl'
+              : 'horizontal-end-wrapper')
             : 'vertical-end-wrapper'}
         >
-          {
-            // @ts-expect-error error
-            bounceableProps.lowerBounceItem
-          }
+          {bounceableProps.lowerBounceItem}
         </view>
       )
     }
   }
   if (
     (enableBounce
-      // @ts-expect-error error
       && (bounceableProps.singleSidedBounce === 'upper'
-        // @ts-expect-error error
         || bounceableProps.singleSidedBounce === 'both'))
     || enableRefresh
   ) {
@@ -181,21 +181,16 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
           }; width: ${horizontal ? '1ppx' : '100%'};`}
           exposure-scene={listId}
           exposure-id='upperExposureView'
-          main-thread:binduidisappear={
-            // @ts-expect-error error
-            useRefreshAndBounceProps.onUpperDisexposure
-          }
-          // @ts-expect-error error
-          main-thread:binduiappear={useRefreshAndBounceProps.onUpperExposure}
+          main-thread:binduidisappear={useRefreshAndBounceProps
+            ?.onUpperDisexposure}
+          main-thread:binduiappear={useRefreshAndBounceProps?.onUpperExposure}
         />
       </list-item>
     )
   }
   if (
     enableBounce
-    // @ts-expect-error error
     && (bounceableProps.singleSidedBounce === 'lower'
-      // @ts-expect-error error
       || bounceableProps.singleSidedBounce === 'both')
   ) {
     lowerExposureView = (
@@ -206,12 +201,9 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
           }; width: ${horizontal ? '1ppx' : '100%'};`}
           exposure-scene={listId}
           exposure-id='lowerExposureView'
-          main-thread:binduidisappear={
-            // @ts-expect-error error
-            useRefreshAndBounceProps.onLowerDisexposure
-          }
-          // @ts-expect-error error
-          main-thread:binduiappear={useRefreshAndBounceProps.onLowerExposure}
+          main-thread:binduidisappear={useRefreshAndBounceProps
+            ?.onLowerDisexposure}
+          main-thread:binduiappear={useRefreshAndBounceProps?.onLowerExposure}
         />
       </list-item>
     )

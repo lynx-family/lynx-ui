@@ -24,11 +24,20 @@ function ScrollViewWithBouncesHook(
     elementProps: ScrollViewElementProps
     children?: ReactNode
     bounceableOptions?: BounceableBasicProps
+    debugLog?: boolean
+    enableRTL?: boolean
     sticky?: ReactElement
   },
   _ref: ForwardedRef<ScrollViewRef>,
 ) {
-  const { children, bounceableOptions, sticky, elementProps } = props
+  const {
+    children,
+    bounceableOptions,
+    sticky,
+    elementProps,
+    debugLog = false,
+    enableRTL = false,
+  } = props
   // @ts-expect-error Compatible with older versions
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const horizontal = elementProps['scroll-x']
@@ -59,6 +68,8 @@ function ScrollViewWithBouncesHook(
   }
   const bounceMTSProps = useBounce({
     bounceableOptions: bounceableProps,
+    debugLog,
+    enableRTL,
     id: scrollViewId,
     scrollOrientation: horizontal ? 'horizontal' : 'vertical',
   })
@@ -68,7 +79,9 @@ function ScrollViewWithBouncesHook(
         <view
           id={`${scrollViewId}-upperBounceWrapper`}
           style={`position:absolute;${
-            horizontal ? 'right:100%' : 'bottom:100%'
+            horizontal
+              ? (enableRTL ? 'left:100%' : 'right:100%')
+              : 'bottom:100%'
           }; ${horizontal ? 'height:100%;' : 'width:100%;'};${
             horizontal ? 'width:max-content' : 'height:max-content'
           };`}
@@ -82,9 +95,13 @@ function ScrollViewWithBouncesHook(
       endBounceView = (
         <view
           id={`${scrollViewId}-lowerBounceWrapper`}
-          style={`position:absolute;${horizontal ? 'left:100%' : 'top:100%'}; ${
-            horizontal ? 'height:100%;' : 'width:100%;'
-          };${horizontal ? 'width:max-content' : 'height:max-content'};`}
+          style={`position:absolute;${
+            horizontal
+              ? (enableRTL ? 'right:100%' : 'left:100%')
+              : 'top:100%'
+          }; ${horizontal ? 'height:100%;' : 'width:100%;'};${
+            horizontal ? 'width:max-content' : 'height:max-content'
+          };`}
           main-thread:gesture={elementProps['main-thread:gesture']}
         >
           {bounceableProps.lowerBounceItem}

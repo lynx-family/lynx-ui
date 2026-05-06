@@ -44,7 +44,7 @@ function App() {
 
   return (
     <view className='demo-container lunaris-dark'>
-      <PopoverRoot show={show} onVisibleChange={setShow} debugLog={true}>
+      <PopoverRoot show={show} onVisibleChange={setShow}>
         <view className='info-panel'>
           <text className='info-panel-text'>
             Status: {show ? 'Visible' : 'Hidden'}

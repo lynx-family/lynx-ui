@@ -8,6 +8,8 @@ import type { ReactElement } from '@lynx-js/react'
 import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
 import type { GestureChangeEvent, StateManager } from '@lynx-js/gesture-runtime'
 import {
+  log,
+  mtsLog,
   mtsNativeLynxSDKVersionLessThan,
   selectorMT,
 } from '@lynx-js/lynx-ui-common'
@@ -43,7 +45,6 @@ export interface BounceableBasicProps {
   singleSidedBounce?: 'upper' | 'lower' | 'both' | 'iOSBounces' | 'none'
   estimatedHeight?: number
   estimatedWidth?: number
-  debugLog?: boolean
   validAnimationVersion?: boolean
   onScrollToBounces?: (e: { direction: 'upper' | 'lower' }) => void
 }
@@ -52,7 +53,6 @@ export interface RefreshProps {
   enableRefresh: boolean
   // biome-ignore lint/suspicious/noExplicitAny: expected
   headerContent: any
-  debugLog?: boolean
   validAnimationVersion?: boolean
   onStartRefresh?: (e: { triggeredBy: 'startRefresh' | 'drag' }) => void
   onRefreshOffsetChange?: (
@@ -72,6 +72,8 @@ export enum RefreshState {
 export interface useRefreshAndBounceOptions {
   refreshOptions: RefreshProps
   bounceableOptions: BounceableBasicProps
+  debugLog?: boolean
+  enableRTL?: boolean
   id: string
   scrollOrientation: 'vertical' | 'horizontal'
 }
@@ -88,6 +90,13 @@ export interface useRefreshAndBounceReturn {
   onRefreshHeaderLayoutUpdated: (e: MainThread.LayoutChangeEvent) => void
   finishRefresh: () => void
   startRefreshMethod: () => void
+}
+
+interface BouncingPositionInfo {
+  [key: string]: unknown
+  bouncingOffset?: number
+  velocity?: number
+  timeStamp?: number
 }
 
 export function useRefreshAndBounce(
@@ -108,7 +117,7 @@ export function useRefreshAndBounce(
   // Read from options
   const containerID = options.id ?? 'bounceableContainer'
   // Current bouncing position.
-  const bouncingPositionInfo = useMainThreadRef({ currentID: containerID })
+  const bouncingPositionInfo = useMainThreadRef<BouncingPositionInfo>({})
   // If reaches edge and bouncing starts during dragging, save the touch point and calculate later touch delta for rubberEffect.
   const startBouncingTouchEvent = useMainThreadRef<GestureChangeEvent | null>(
     null,
@@ -133,13 +142,12 @@ export function useRefreshAndBounce(
   const toUpper = useMainThreadRef(false)
   const toLower = useMainThreadRef(false)
   const { enableBounces, onScrollToBounces } = options.bounceableOptions
-  const bounceableDebugLog = useMainThreadRef(
-    (enableBounces && options.bounceableOptions.debugLog) ?? false,
-  )
+  const debugLogEnabled = Boolean(options.debugLog)
   const alwaysBouncing = options.bounceableOptions.alwaysBouncing
     ?? options.refreshOptions.enableRefresh
     ?? false
   const scrollOrientation = options.scrollOrientation ?? 'vertical'
+  const enableRTL = useMainThreadRef(options.enableRTL ?? false)
   const enableBounceEventInFling =
     options.bounceableOptions.enableBounceEventInFling
       ?? options.bounceableOptions.enableBounceEventInFling
@@ -162,8 +170,11 @@ export function useRefreshAndBounce(
     onHeaderReleased,
   } = options.refreshOptions
   const refreshHeaderSize = useMainThreadRef<number>(0)
-  const refreshDebugLog = useMainThreadRef(
-    options.refreshOptions.debugLog ?? false,
+  log(
+    debugLogEnabled,
+    `[lynx-ui-feed-list][useRefresh] init, enableRefresh: ${enableRefresh}, enableBounces: ${enableBounces}, orientation: ${scrollOrientation}, enableRTL: ${
+      options.enableRTL ?? false
+    }`,
   )
   // While refresh released and finishRefresh not called, the bouncingBack should not be triggered.
   const isDuringRefresh = useMainThreadRef(false)
@@ -186,6 +197,10 @@ export function useRefreshAndBounce(
   function threshold() {
     'main thread'
     return 1.0 / Number(SystemInfo.pixelRatio)
+  }
+  function normalizedHorizontalValue(value: number) {
+    'main thread'
+    return enableRTL.current ? -value : value
   }
   function bouncingBackThreshold(mode: number) {
     'main thread'
@@ -232,6 +247,10 @@ export function useRefreshAndBounce(
   // Clear all temps when a touch procedure ends.
   function clearTouchInfo() {
     'main thread'
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] clear touch info',
+    )
     startTouchEvent.current = null
     bouncingTouchStartPosition.current = 0
     prevTouchEvent.current = null
@@ -257,11 +276,15 @@ export function useRefreshAndBounce(
     if (startBouncingTouchEvent.current === null) {
       return scrollOrientation === 'vertical'
         ? event.params.pageY - startTouchEvent.current.params.pageY
-        : event.params.pageX - startTouchEvent.current.params.pageX
+        : normalizedHorizontalValue(
+          event.params.pageX - startTouchEvent.current.params.pageX,
+        )
     } else {
       return scrollOrientation === 'vertical'
         ? event.params.pageY - startBouncingTouchEvent.current.params.pageY
-        : event.params.pageX - startBouncingTouchEvent.current.params.pageX
+        : normalizedHorizontalValue(
+          event.params.pageX - startBouncingTouchEvent.current.params.pageX,
+        )
     }
   }
 
@@ -273,6 +296,10 @@ export function useRefreshAndBounce(
 
   function sendRefreshStateChangeEvent(state: number) {
     'main thread'
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] refresh state change, state: ${state}`,
+    )
     const refreshStateChangeInfo: RefreshStateChange = {
       state,
     }
@@ -284,6 +311,10 @@ export function useRefreshAndBounce(
     if (currentRefreshState.current === state) {
       return
     }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] set refresh state, from: ${currentRefreshState.current}, to: ${state}`,
+    )
     currentRefreshState.current = state
     sendRefreshStateChangeEvent(state)
   }
@@ -296,6 +327,12 @@ export function useRefreshAndBounce(
 
   function sendStartRefreshEvent(fromStartRefreshMethod: boolean) {
     'main thread'
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] startRefresh event, triggeredBy: ${
+        fromStartRefreshMethod ? 'startRefresh' : 'drag'
+      }`,
+    )
     const refreshInfo: RefreshEvent = {
       triggeredBy: fromStartRefreshMethod ? 'startRefresh' : 'drag',
     }
@@ -309,6 +346,9 @@ export function useRefreshAndBounce(
   }
   function sendHeaderReleasedEvent() {
     'main thread'
+    const currentBounceOffset = Number(
+      bouncingPositionInfo.current?.bouncingOffset ?? 0,
+    )
     if (
       // @ts-expect-error expected
       bouncingPositionInfo.current.bouncingOffset > 0
@@ -319,10 +359,12 @@ export function useRefreshAndBounce(
       ) {
         setRefreshState(RefreshState.OVER_DRAG_RELEASE)
       }
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] header released, offset: ${currentBounceOffset}, headerSize: ${refreshHeaderSize.current}`,
+      )
       const refreshReleaseInfo: headerReleased = {
-        // @ts-expect-error expected
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        offset: bouncingPositionInfo.current.bouncingOffset ?? 0,
+        offset: currentBounceOffset,
         headerSize: refreshHeaderSize.current,
       }
       runOnBackground(onHeaderReleasedJS)(refreshReleaseInfo)
@@ -337,14 +379,10 @@ export function useRefreshAndBounce(
 
   function sendHeaderOffsetChangeEvent() {
     'main thread'
-    if (
-      // @ts-expect-error expected
-      bouncingPositionInfo.current.bouncingOffset > 0
-    ) {
+    const currentBounceOffset = bouncingPositionInfo.current.bouncingOffset ?? 0
+    if (currentBounceOffset > 0) {
       const refreshOffsetChangeInfo: refreshOffsetEvent = {
-        // @ts-expect-error expected
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        offset: bouncingPositionInfo.current.bouncingOffset ?? 0,
+        offset: currentBounceOffset,
         headerSize: refreshHeaderSize.current,
         isDragging: startTouchEvent.current !== null,
       }
@@ -355,8 +393,6 @@ export function useRefreshAndBounce(
   // Key bouncing status judgement.
   function getBouncingStatus() {
     'main thread'
-    // @ts-expect-error expected
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const currentPosition = bouncingPositionInfo.current?.bouncingOffset ?? 0
     if (Boolean(toUpper.current) && Boolean(toLower.current)) {
       return alwaysBouncing
@@ -365,14 +401,6 @@ export function useRefreshAndBounce(
     }
     // upper bouncing
     const initialLayoutPosition = 0
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info(
-        'getBouncingStatus',
-        initialLayoutPosition,
-        'currentPosition',
-        currentPosition,
-      )
-    }
     if (currentPosition > initialLayoutPosition) {
       return bouncingStatus.upperBouncing
     }
@@ -386,9 +414,10 @@ export function useRefreshAndBounce(
   // Whether fling and bouncing back step should be triggered.
   function shouldBounceWhenTouchEnd(status: number) {
     'main thread'
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('shouldBounceWhenTouchEnd', status)
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] shouldBounceWhenTouchEnd, status: ${status}`,
+    )
     if (
       status === bouncingStatus.inScrollingRange
       || status === bouncingStatus.noBouncing
@@ -408,10 +437,8 @@ export function useRefreshAndBounce(
   }
   function releasedOverHeader() {
     'main thread'
-    if (
-      // @ts-expect-error expected
-      bouncingPositionInfo.current.bouncingOffset > refreshHeaderSize.current
-    ) {
+    const currentBounceOffset = bouncingPositionInfo.current.bouncingOffset ?? 0
+    if (currentBounceOffset > refreshHeaderSize.current) {
       return true
     }
   }
@@ -419,12 +446,27 @@ export function useRefreshAndBounce(
     'main thread'
     // If not enableRefresh, follow bounceable logic.
     if (!enableRefresh) {
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-feed-list][useRefresh] shouldBounceBackWhenRefresh skipped, enableRefresh=false',
+      )
       return false
     }
+    const overHeader = releasedOverHeader()
+    const shouldBounceBack = (
+      status === bouncingStatus.upperBouncing
+      || status === bouncingStatus.alwaysBouncing
+    ) && Boolean(overHeader)
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] shouldBounceBackWhenRefresh, status: ${status}, releasedOverHeader: ${
+        String(overHeader)
+      }, result: ${String(shouldBounceBack)}`,
+    )
     if (
       (status === bouncingStatus.upperBouncing
         || status === bouncingStatus.alwaysBouncing)
-      && releasedOverHeader()
+      && overHeader
     ) {
       return true
     }
@@ -434,27 +476,24 @@ export function useRefreshAndBounce(
   function bouncingSetStyle(offset: number) {
     'main thread'
     if (isNaN(Number(offset))) {
-      console.error('ERROR! bouncingOffset is NaN')
+      console.error(
+        '[lynx-ui-feed-list][useRefresh] ERROR! bouncingOffset is NaN',
+      )
       return
     }
     // update bouncingPositionInfo first
     if (isEmpty(bouncingPositionInfo.current)) {
-      // @ts-expect-error expected
       bouncingPositionInfo.current.velocity = 0
     } else {
-      // @ts-expect-error expected
-      const timeDuration = Date.now() - bouncingPositionInfo.current.timeStamp
+      const timeDuration = Date.now()
+        - Number(bouncingPositionInfo.current.timeStamp ?? 0)
       const offsetDiff = offset
-        // @ts-expect-error expected
         - Number(bouncingPositionInfo.current?.bouncingOffset ?? 0)
       if (timeDuration > 0) {
-        // @ts-expect-error expected
         bouncingPositionInfo.current.velocity = offsetDiff / timeDuration
       }
     }
-    // @ts-expect-error expected
     bouncingPositionInfo.current.bouncingOffset = offset
-    // @ts-expect-error expected
     bouncingPositionInfo.current.timeStamp = Date.now()
     // When bouncing effect ends, clear startTouchEvent and bouncingTouchStartPosition
     if (offset === 0 && prevTouchEvent.current !== null) {
@@ -463,39 +502,69 @@ export function useRefreshAndBounce(
     }
     // trigger translate
     if (isVertical()) {
+      const containerTransform = `translateY(${offset}px)`
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] apply transform, orientation: vertical, rawOffset: ${offset}, containerTransform: ${containerTransform}`,
+      )
       selectorMT(containerID)?.setStyleProperty(
         'transform',
-        `translateY(${offset}px)`,
+        containerTransform,
       )
-      if (refreshDebugLog.current) {
-        console.info('bouncingSetStyle', `translateY(${offset}px)`)
-      }
       if (enableRefresh) {
+        mtsLog(
+          debugLogEnabled,
+          `[lynx-ui-feed-list][useRefresh] apply transform, target: refreshHeaderWrapper, transform: ${containerTransform}`,
+        )
         selectorMT(`${containerID}-refreshHeaderWrapper`)?.setStyleProperty(
           'transform',
-          `translateY(${offset}px)`,
+          containerTransform,
         )
       }
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] apply transform, target: refreshFooterWrapper, transform: ${containerTransform}`,
+      )
       selectorMT(`${containerID}-refreshFooterWrapper`)?.setStyleProperty(
         'transform',
-        `translateY(${offset}px)`,
+        containerTransform,
+      )
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] apply transform, target: lowerBounceWrapper, transform: ${containerTransform}`,
       )
       selectorMT(`${containerID}-lowerBounceWrapper`)?.setStyleProperty(
         'transform',
-        `translateY(${offset}px)`,
+        containerTransform,
       )
     } else {
+      const visualOffset = normalizedHorizontalValue(offset)
+      const containerTransform = `translateX(${visualOffset}px)`
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] apply transform, orientation: horizontal, rawOffset: ${offset}, enableRTL: ${
+          String(enableRTL.current)
+        }, visualOffset: ${visualOffset}, containerTransform: ${containerTransform}`,
+      )
       selectorMT(containerID)?.setStyleProperty(
         'transform',
-        `translateX(${offset}px)`,
+        containerTransform,
+      )
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] apply transform, target: upperBounceWrapper, transform: ${containerTransform}`,
       )
       selectorMT(`${containerID}-upperBounceWrapper`)?.setStyleProperty(
         'transform',
-        `translateX(${offset}px)`,
+        containerTransform,
+      )
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] apply transform, target: lowerBounceWrapper, transform: ${containerTransform}`,
       )
       selectorMT(`${containerID}-lowerBounceWrapper`)?.setStyleProperty(
         'transform',
-        `translateX(${offset}px)`,
+        containerTransform,
       )
     }
     // Send refreshOffsetChange event
@@ -513,9 +582,12 @@ export function useRefreshAndBounce(
   // send the scrollToBounces event
   function triggerScrollToBouncesEvent(isUpper: boolean) {
     'main thread'
-    if (bounceableDebugLog.current) {
-      console.info('triggerScrollToBouncesEvent', isUpper ? 'upper' : 'lower')
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] triggerScrollToBouncesEvent, direction: ${
+        isUpper ? 'upper' : 'lower'
+      }`,
+    )
 
     const info: scrollToBouncesInfo = {
       direction: isUpper ? 'upper' : 'lower',
@@ -552,56 +624,40 @@ export function useRefreshAndBounce(
             + 1.0))
         * scrollViewFrameSize,
     )
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info(
-        'rubberEffect',
-        'scrollContainerFrameSize',
-        scrollViewFrameSize,
-        'touchStartPosition',
-        touchStartPosition,
-        'deltaYForTouchStartPosition',
-        deltaYForTouchStartPosition,
-        'deltaYForNextPosition',
-        deltaYForNextPosition,
-        'rubberBandingDistance',
-        rubberBandingDistance,
-      )
-    }
     setRefreshState(RefreshState.DRAGGING)
     bouncingSetStyle(isNegative * rubberBandingDistance)
   }
 
   function onRefreshHeaderLayoutUpdated(event: MainThread.LayoutChangeEvent) {
     'main thread'
-    if (refreshDebugLog.current) {
-      console.info('onRefreshHeaderLayoutUpdated', event.detail)
-    }
     refreshHeaderSize.current = isAndroid()
       ? event.params?.height
       : event.detail?.height
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] refreshHeader layout updated, headerSize: ${refreshHeaderSize.current}`,
+      event.detail,
+    )
   }
 
   function triggerRubberEffectIfCrossingEdge(event: GestureChangeEvent) {
     'main thread'
     const delta = getCurrentDelta(event) || 0
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info(
-        'isCrossingEdge',
-        'delta',
-        delta,
-        'toUpper',
-        toUpper.current,
-        'toLower',
-        toLower.current,
-      )
-    }
     // Crossing top range
     if (toUpper.current === true && delta > 0) {
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] cross upper edge, delta: ${delta}`,
+      )
       enableScroll(false)
       rubberEffect(1, delta)
     }
     // Crossing bottom range
     if (toLower.current === true && delta < 0) {
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] cross lower edge, delta: ${delta}`,
+      )
       enableScroll(false)
       rubberEffect(-1, delta)
     }
@@ -610,26 +666,27 @@ export function useRefreshAndBounce(
   // return true if scrollToBounces should be sent
   function isOverTriggerDistance() {
     'main thread'
-    // @ts-expect-error expected
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const bouncingTop: number = bouncingPositionInfo.current.bouncingOffset ?? 0
-    const triggerDistance =
-      // @ts-expect-error expected
-      bouncingPositionInfo.current?.bouncingOffset > 0
-        ? startBounceTriggerDistance
-        : endBounceTriggerDistance
+    const triggerDistance = bouncingTop > 0
+      ? startBounceTriggerDistance
+      : endBounceTriggerDistance
     const delta = Math.abs(bouncingTop) - Math.abs(triggerDistance)
-    return delta > threshold()
+    const result = delta > threshold()
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] isOverTriggerDistance, offset: ${bouncingTop}, triggerDistance: ${triggerDistance}, result: ${
+        String(result)
+      }`,
+    )
+    return result
   }
   function bouncingBack(mode: number) {
     'main thread'
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('fling forward end')
-      console.info('bounce back starts')
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] bounce back start, mode: ${mode}`,
+    )
     // step3: bounce back
-    // @ts-expect-error expected
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const C1 = bouncingPositionInfo.current.bouncingOffset ?? 0
     const startTime = Date.now()
     const touchingEndBouncingBackFrame = () => {
@@ -637,9 +694,6 @@ export function useRefreshAndBounce(
         return
       }
       const currentTime = Date.now() - startTime
-      if (bounceableDebugLog.current || refreshDebugLog.current) {
-        console.info('touchingEndBouncingBackFrame')
-      }
       // critical damping
       const C2 = beta.current * C1
       const easedDistance = (C1 + C2 * (currentTime / 1000))
@@ -656,9 +710,10 @@ export function useRefreshAndBounce(
         if (mode === bouncingBackMode.resetToBoundary) {
           enableScroll(true)
         }
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('bounce back ends')
-        }
+        mtsLog(
+          debugLogEnabled,
+          `[lynx-ui-feed-list][useRefresh] bounce back end, mode: ${mode}`,
+        )
       } else {
         customRequestAnimationFrame(touchingEndBouncingBackFrame)
       }
@@ -671,12 +726,9 @@ export function useRefreshAndBounce(
     'main thread'
     startTouchEvent.current = event
     prevTouchEvent.current = event
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('bounceableTouchStart')
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    mtsLog(debugLogEnabled, '[lynx-ui-feed-list][useRefresh] touch start')
+
     bouncingTouchStartPosition.current =
-      // @ts-expect-error expected
       bouncingPositionInfo.current?.bouncingOffset ?? 0
     // reset all animation flags. No animation should play during a touch.
     touchEndFrameEnableFlag.current = false
@@ -688,7 +740,7 @@ export function useRefreshAndBounce(
     'main thread'
     if (startTouchEvent.current === null) {
       // It means current situation is illegal. A touchMove event happens without a touchStart event beforehand. Or a touchMove event happens after a touchEnd event.
-      console.error('ERROR! touch not started')
+      console.error('[lynx-ui-feed-list][useRefresh] ERROR! touch not started')
       return
     }
     prevTouchEvent.current = event
@@ -699,32 +751,20 @@ export function useRefreshAndBounce(
       case bouncingStatus.upperBouncing: {
         enableScroll(false)
         rubberEffect(1, delta)
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('bounceableTouchMove upperBouncing')
-        }
         break
       }
       case bouncingStatus.lowerBouncing: {
         enableScroll(false)
         rubberEffect(-1, delta)
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('bounceableTouchMove lowerBouncing')
-        }
         break
       }
       case bouncingStatus.alwaysBouncing: {
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('bounceableTouchMove alwaysBouncing')
-        }
         if (alwaysBouncing) {
           triggerRubberEffectIfCrossingEdge(event)
         }
         break
       }
       case bouncingStatus.inScrollingRange: {
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('bounceableTouchMove inScrollingRange')
-        }
         triggerRubberEffectIfCrossingEdge(event)
         break
       }
@@ -735,27 +775,28 @@ export function useRefreshAndBounce(
   function bouncingBackEntrance(mode: number) {
     'main thread'
     const startTime = Date.now()
-    // @ts-expect-error expected
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const dragEndVelocity = bouncingPositionInfo.current?.velocity ?? 0
-    // @ts-expect-error expected
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const dragEndPosition = bouncingPositionInfo.current?.bouncingOffset ?? 0
     // Send scrolltobounces event.
-    if (isOverTriggerDistance()) {
+    const overTriggerDistance = isOverTriggerDistance()
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] bouncingBackEntrance, mode: ${mode}, dragEndVelocity: ${dragEndVelocity}, dragEndPosition: ${dragEndPosition}, overTriggerDistance: ${
+        String(overTriggerDistance)
+      }`,
+    )
+    if (overTriggerDistance) {
+      const currentBounceOffset = bouncingPositionInfo.current?.bouncingOffset
+        ?? 0
       triggerScrollToBouncesEvent(
-        // @ts-expect-error expected
-        bouncingPositionInfo.current?.bouncingOffset > 0,
+        currentBounceOffset > 0,
       )
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     let currentVelocity: number = dragEndVelocity
     const touchEndProcessFrame = () => {
       if (Boolean(touchEndFrameEnableFlag.current) === false) {
         return
-      }
-      if (bounceableDebugLog.current || refreshDebugLog.current) {
-        console.info('touchEndProcessFrame')
       }
       if (Math.abs(currentVelocity) <= threshold()) {
         // If the velocity is already under threshold, skip fling and start step3: bounce back.
@@ -763,11 +804,12 @@ export function useRefreshAndBounce(
       } else {
         // If the drag end with a velocity, start fling to consume it.
         // step 2: fling down
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('fling down start')
-        }
+        mtsLog(
+          debugLogEnabled,
+          `[lynx-ui-feed-list][useRefresh] fling down start, mode: ${mode}, velocity: ${currentVelocity}`,
+        )
         // This function is obtained by integrating the velocity function with a deceleration rate of flingDeceleratingRate.
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
         const distance: number = dragEndPosition
           + (dragEndVelocity
               * (Math.pow(flingDeceleratingRate.current, Date.now() - startTime)
@@ -793,14 +835,22 @@ export function useRefreshAndBounce(
     // Reset the state. The touch information should be reset, and we should no longer ban the enable-scroll.
     clearTouchInfo()
     enableScroll(true)
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('bounceableTouchEnd')
-    }
-    if (shouldBounceBackWhenRefresh(getBouncingStatus())) {
+    const currentStatus = getBouncingStatus()
+    const shouldBounceBackForRefresh = shouldBounceBackWhenRefresh(
+      currentStatus,
+    )
+    const shouldBounce = shouldBounceWhenTouchEnd(currentStatus)
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] touch end, status: ${currentStatus}, shouldBounceBackForRefresh: ${
+        String(shouldBounceBackForRefresh)
+      }, shouldBounce: ${String(shouldBounce)}`,
+    )
+    if (shouldBounceBackForRefresh) {
       bouncingBackEntrance(bouncingBackMode.clampToHeader)
     } else if (
-      shouldBounceWhenTouchEnd(getBouncingStatus())
-      && !shouldBounceBackWhenRefresh(getBouncingStatus())
+      shouldBounce
+      && !shouldBounceBackForRefresh
     ) {
       bouncingBackEntrance(bouncingBackMode.resetToBoundary)
     }
@@ -811,26 +861,43 @@ export function useRefreshAndBounce(
     scrollX.current = event.detail.scrollLeft
     scrollY.current = event.detail.scrollTop
     if (!isEmpty(prevScroll.current)) {
-      // @ts-expect-error expected
-      const timeDuration = Date.now() - prevScroll.current.timestamp
+      const prev = prevScroll.current as {
+        timestamp: number
+        detail: { scrollTop: number, scrollLeft: number }
+      }
+      const timeDuration = Date.now() - prev.timestamp
       if (timeDuration > 0) {
-        const deltaY = isVertical() // @ts-expect-error expected
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          ? event.detail.scrollTop - prevScroll.current.detail.scrollTop // @ts-expect-error expected
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          : event.detail.scrollLeft - prevScroll.current.detail.scrollLeft
-        const velocity = deltaY / timeDuration
+        const delta = isVertical()
+          ? event.detail.scrollTop - prev.detail.scrollTop
+          : event.detail.scrollLeft - prev.detail.scrollLeft
+        const velocity = delta / timeDuration
         if (Number.isFinite(velocity)) {
           scrollVelocity.current = velocity
         }
       }
     }
+    const prev = prevScroll.current as {
+      timestamp?: number
+      detail?: { scrollTop?: number, scrollLeft?: number }
+    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] handle scroll near edge, scrollLeft: ${event.detail.scrollLeft}, scrollTop: ${event.detail.scrollTop}, velocity: ${scrollVelocity.current}, prevTimestamp: ${
+        String(prev?.timestamp)
+      }, prevScrollLeft: ${String(prev?.detail?.scrollLeft)}, prevScrollTop: ${
+        String(prev?.detail?.scrollTop)
+      }`,
+    )
     prevScroll.current = event
   }
 
   function finishRefresh() {
     'main thread'
     if (enableRefresh) {
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-feed-list][useRefresh] finishRefresh called',
+      )
       isDuringRefresh.current = false
       bouncingBack(bouncingBackMode.resetToBoundary)
       setRefreshState(RefreshState.IDLE)
@@ -840,6 +907,10 @@ export function useRefreshAndBounce(
   function startRefreshMethod() {
     'main thread'
     if (enableRefresh) {
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-feed-list][useRefresh] startRefreshMethod called',
+      )
       isDuringRefresh.current = true
       const scrollToZero = selectorMT(containerID)
         ?.invoke('scrollToPosition', {
@@ -850,6 +921,10 @@ export function useRefreshAndBounce(
         })
       // Before startRefresh method, force the List to scroll to top.
       void scrollToZero?.then(() => {
+        mtsLog(
+          debugLogEnabled,
+          '[lynx-ui-feed-list][useRefresh] startRefreshMethod scrollToPosition resolved',
+        )
         bouncingSetStyle(refreshHeaderSize.current)
         setRefreshState(RefreshState.OVER_DRAG_RELEASE)
         sendStartRefreshEvent(true)
@@ -857,29 +932,31 @@ export function useRefreshAndBounce(
     }
   }
 
-  function handleBounceEventInFling() {
+  function handleBounceEventInFling(edge: 'upper' | 'lower') {
     'main thread'
     // reaches edge during fling
     const startVelocity = scrollVelocity.current
     let currentVelocity = startVelocity
     const startTime = Date.now()
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('fling to edge event start with velocity', startVelocity)
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] fling to edge start, edge: ${edge}, velocity: ${startVelocity}`,
+    )
     let sentScrollToBouncesEvent = false // only sent scrollToBounces once
     const flingEndWithBouncingFrame = () => {
       if (Boolean(flingEndWithBouncingEnableFlag.current) === false) {
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('flingEndWithBouncingEnableFlag early return')
-        }
+        mtsLog(
+          debugLogEnabled,
+          '[lynx-ui-feed-list][useRefresh] fling to edge cancelled before completion',
+        )
         return
       }
       if (Math.abs(currentVelocity) <= threshold()) {
         flingEndWithBouncingEnableFlag.current = false
-        if (bounceableDebugLog.current || refreshDebugLog.current) {
-          console.info('fling event end')
-          console.info('bouncing event start')
-        }
+        mtsLog(
+          debugLogEnabled,
+          '[lynx-ui-feed-list][useRefresh] fling to edge end, bouncing back starts',
+        )
         bouncingBack(bouncingBackMode.resetToBoundary)
       } else {
         // step 1: fling
@@ -887,12 +964,22 @@ export function useRefreshAndBounce(
           * (Math.pow(flingDeceleratingRate.current, Date.now() - startTime)
             - 1))
           / Math.log(flingDeceleratingRate.current)
+        const flingOffset = !isVertical() && enableRTL.current
+          ? -distance
+          : distance
+        mtsLog(
+          debugLogEnabled,
+          `[lynx-ui-feed-list][useRefresh] fling frame, edge: ${edge}, currentVelocity: ${currentVelocity}, distance: ${distance}, enableRTL: ${
+            String(enableRTL.current)
+          }, appliedOffset: ${flingOffset}`,
+        )
         bouncingSetStyle(-distance)
         if (!sentScrollToBouncesEvent && isOverTriggerDistance()) {
-          triggerScrollToBouncesEvent(
-            // @ts-expect-error TODO: fix this
-            bouncingPositionInfo.current?.bouncingOffset > 0,
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-feed-list][useRefresh] fling to edge reached trigger distance, emitting scrollToBounces',
           )
+          triggerScrollToBouncesEvent(edge === 'upper')
           sentScrollToBouncesEvent = true
         }
         currentVelocity = startVelocity
@@ -908,30 +995,39 @@ export function useRefreshAndBounce(
 
   function onUpperDisexposure() {
     'main thread'
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('upper disexposure')
-    }
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] upper disexposure',
+    )
     toUpper.current = false
   }
   // Handle scrolltoupper event.
   function onUpperExposure() {
     'main thread'
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('upper exposure')
-    }
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] upper exposure',
+    )
     toUpper.current = true
     if (prevTouchEvent.current) {
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-feed-list][useRefresh] upper exposure during dragging',
+      )
       // reaches edge during dragging
       startBouncingTouchEvent.current = prevTouchEvent.current
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       startTouchBouncingDelta.current =
-        // @ts-expect-error expected
         bouncingPositionInfo.current?.bouncingOffset ?? 0
     } else if (
       enableBounceEventInFling
       && Math.abs(scrollVelocity.current) > threshold()
     ) {
-      handleBounceEventInFling()
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] upper exposure during fling, velocity: ${scrollVelocity.current}`,
+      )
+      handleBounceEventInFling('upper')
     }
     // clear scrollVelocity once it is consumed when scroll container reaches the edge.
     scrollVelocity.current = 0
@@ -939,30 +1035,39 @@ export function useRefreshAndBounce(
 
   function onLowerDisexposure() {
     'main thread'
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('lower disexposure', scrollVelocity.current)
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] lower disexposure, velocity: ${scrollVelocity.current}`,
+    )
     toLower.current = false
   }
   function onLowerExposure() {
     'main thread'
-    if (bounceableDebugLog.current || refreshDebugLog.current) {
-      console.info('lower exposure')
-    }
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] lower exposure',
+    )
     toLower.current = true
     // reaches lower during dragging
     if (prevTouchEvent.current) {
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-feed-list][useRefresh] lower exposure during dragging',
+      )
       // reaches lower during dragging
       startBouncingTouchEvent.current = prevTouchEvent.current
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       startTouchBouncingDelta.current =
-        // @ts-expect-error expected
         bouncingPositionInfo.current?.bouncingOffset ?? 0
     } else if (
       enableBounceEventInFling
-      && Math.abs(scrollVelocity.current) > threshold()
+      && scrollVelocity.current > threshold()
     ) {
-      handleBounceEventInFling()
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-feed-list][useRefresh] lower exposure during fling, velocity: ${scrollVelocity.current}`,
+      )
+      handleBounceEventInFling('lower')
     }
     // clear scrollVelocity once it is consumed when scroll container reaches the edge.
     scrollVelocity.current = 0
@@ -970,6 +1075,10 @@ export function useRefreshAndBounce(
 
   function bounceableLayoutComplete() {
     'main thread'
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] layout complete',
+    )
     clearTouchInfo()
   }
 
@@ -980,6 +1089,10 @@ export function useRefreshAndBounce(
       ?? 0
     width.current = (isAndroid() ? event.params?.width : event.detail?.width)
       ?? 0
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-feed-list][useRefresh] layout change, width: ${width.current}, height: ${height.current}`,
+    )
   }
 
   const isHorizontalTouchMove = (event: GestureChangeEvent) => {
@@ -1005,8 +1118,16 @@ export function useRefreshAndBounce(
     (event: GestureChangeEvent, gestureManager: StateManager) => {
       'main thread'
       isFirstJudge.current = true
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-feed-list][useRefresh] gesture begin',
+      )
       bounceableTouchStart(event)
       if (mtsNativeLynxSDKVersionLessThan('3.3')) {
+        mtsLog(
+          debugLogEnabled,
+          '[lynx-ui-feed-list][useRefresh] gesture begin consumeGesture(true) for sdk < 3.3',
+        )
         gestureManager.consumeGesture(true)
       }
     },
@@ -1015,6 +1136,10 @@ export function useRefreshAndBounce(
   refreshAndBounceGesture.onEnd(() => {
     'main thread'
     isFirstJudge.current = true
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] gesture end',
+    )
     bounceableTouchEnd()
   })
 
@@ -1022,6 +1147,10 @@ export function useRefreshAndBounce(
   refreshAndBounceGesture.onTouchesCancel(() => {
     'main thread'
     isFirstJudge.current = true
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-feed-list][useRefresh] gesture cancel',
+    )
     bounceableTouchEnd()
   })
 
@@ -1038,9 +1167,17 @@ export function useRefreshAndBounce(
         if (isFirstJudge.current) {
           if (mtsNativeLynxSDKVersionLessThan('3.3')) {
             if (isHorizontalTouchMove(event)) {
+              mtsLog(
+                debugLogEnabled,
+                '[lynx-ui-feed-list][useRefresh] gesture first judge, vertical mode, horizontal move detected, end gesture',
+              )
               gestureManager.consumeGesture(false)
               gestureManager.end()
             } else {
+              mtsLog(
+                debugLogEnabled,
+                '[lynx-ui-feed-list][useRefresh] gesture first judge, vertical mode, consume gesture',
+              )
               gestureManager.consumeGesture(true)
             }
           } else {
@@ -1050,8 +1187,16 @@ export function useRefreshAndBounce(
             if (
               !isHorizontalTouchMove(event) && toUpper.current && deltaY > 0
             ) {
+              mtsLog(
+                debugLogEnabled,
+                '[lynx-ui-feed-list][useRefresh] gesture first judge, vertical mode, intercept gesture',
+              )
               gestureManager.interceptGesture(true)
             } else {
+              mtsLog(
+                debugLogEnabled,
+                '[lynx-ui-feed-list][useRefresh] gesture first judge, vertical mode, do not intercept gesture',
+              )
               gestureManager.interceptGesture(false)
             }
           }
@@ -1064,8 +1209,16 @@ export function useRefreshAndBounce(
         if (mtsNativeLynxSDKVersionLessThan('3.3')) {
           if (isFirstJudge.current) {
             if (isHorizontalTouchMove(event)) {
+              mtsLog(
+                debugLogEnabled,
+                '[lynx-ui-feed-list][useRefresh] gesture first judge, horizontal mode, consume gesture',
+              )
               gestureManager.consumeGesture(true)
             } else {
+              mtsLog(
+                debugLogEnabled,
+                '[lynx-ui-feed-list][useRefresh] gesture first judge, horizontal mode, vertical move detected, end gesture',
+              )
               gestureManager.consumeGesture(false)
               gestureManager.end()
             }
@@ -1076,6 +1229,10 @@ export function useRefreshAndBounce(
           }
         } else {
           if (isHorizontalTouchMove(event)) {
+            mtsLog(
+              debugLogEnabled,
+              '[lynx-ui-feed-list][useRefresh] gesture horizontal mode, interceptGesture(false) and handle touch move',
+            )
             gestureManager.interceptGesture(false)
             bounceableTouchMove(event)
           }

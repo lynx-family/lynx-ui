@@ -6,6 +6,8 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
 const defaultConfig = exampleConfig({
   FeedListBasic: './Basic/index.tsx',
+  FeedListHorizontal: './Horizontal/index.tsx',
+  FeedListHorizontalRTL: './HorizontalRTL/index.tsx',
 }, { needWeb: false })
 
 export default defaultConfig

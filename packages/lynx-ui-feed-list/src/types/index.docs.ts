@@ -54,6 +54,24 @@ export interface FeedListProps extends Omit<ListProps, 'ref'> {
    */
   bounceableOptions?: boolean | BounceableBasicProps
   /**
+   * Enable debug logs for refresh and bounce lifecycle.
+   * @zh 是否开启 refresh / bounce 生命周期关键日志。
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  debugLog?: boolean
+  /**
+   * Whether horizontal bounce direction should be mirrored in RTL mode.
+   * @zh 是否在 RTL 模式下镜像水平回弹方向。
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  enableRTL?: boolean
+  /**
    * The loadmore area of the list.
    * @defaultValue false
    * @Android

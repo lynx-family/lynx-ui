@@ -4,7 +4,7 @@
 
 import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
 
-import { selectorMT } from '@lynx-js/lynx-ui-common'
+import { log, mtsLog, selectorMT } from '@lynx-js/lynx-ui-common'
 import type { CommonEvent, MainThread, ScrollEvent } from '@lynx-js/types'
 
 export interface scrollToBouncesInfo {
@@ -24,13 +24,14 @@ export interface BounceableBasicProps {
   singleSidedBounce?: 'upper' | 'lower' | 'both' | 'iOSBounces' | 'none'
   estimatedHeight?: number
   estimatedWidth?: number
-  debugLog?: boolean
   validAnimationVersion?: boolean
   onScrollToBounces?: (e: scrollToBouncesInfo) => void
 }
 
 export interface useBounceOptions {
   bounceableOptions: BounceableBasicProps
+  debugLog?: boolean
+  enableRTL?: boolean
   /**
    * idSelector of scroll container
    */
@@ -61,9 +62,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   // The rebound coefficient during bounce back, the larger it is, the faster the rebound speed.
   const beta = useMainThreadRef(15)
 
-  const debugLog = useMainThreadRef(
-    options.bounceableOptions.debugLog ?? false,
-  )
+  const debugLogEnabled = Boolean(options.debugLog)
 
   const singleSidedBounce = useMainThreadRef(
     options.bounceableOptions.singleSidedBounce ?? 'both',
@@ -122,6 +121,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   const { enableBounces, onScrollToBounces } = options.bounceableOptions
   const alwaysBouncing = options.bounceableOptions.alwaysBouncing ?? false
   const scrollOrientation = options.scrollOrientation ?? 'vertical'
+  const enableRTL = useMainThreadRef(options.enableRTL ?? false)
   const enableBounceEventInFling =
     options.bounceableOptions.enableBounceEventInFling ?? true
   const startBounceTriggerDistance =
@@ -131,6 +131,12 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   // Temporary workaround as requestAnimationFrame will crash below Lynx 2.15.2.
   const temporaryValidVersionCheckForRAF = useMainThreadRef(
     options.bounceableOptions.validAnimationVersion ?? false,
+  )
+  log(
+    debugLogEnabled,
+    `[lynx-ui-scroll-view][useBounce] init, enableBounces: ${enableBounces}, orientation: ${scrollOrientation}, enableRTL: ${
+      options.enableRTL ?? false
+    }`,
   )
 
   const bouncingStatus = {
@@ -149,6 +155,11 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   function threshold() {
     'main thread'
     return 1.0 / Number(SystemInfo.pixelRatio)
+  }
+
+  function normalizedHorizontalValue(value: number) {
+    'main thread'
+    return enableRTL.current ? -value : value
   }
 
   function isAndroid() {
@@ -172,9 +183,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   // Clear all temps when a touch procedure ends.
   function clearTouchInfo() {
     'main thread'
-    if (debugLog.current) {
-      console.info('clearTouchInfo')
-    }
+    mtsLog(debugLogEnabled, '[lynx-ui-scroll-view][useBounce] clear touch info')
     startTouch.current = null
     bouncingTouchStartPosition.current = 0
     prevTouch.current = null
@@ -199,11 +208,15 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
       if (startBouncingTouch.current === null) {
         return scrollOrientation === 'vertical'
           ? event.touches[0].pageY - startTouch.current[0].pageY
-          : event.touches[0].pageX - startTouch.current[0].pageX
+          : normalizedHorizontalValue(
+            event.touches[0].pageX - startTouch.current[0].pageX,
+          )
       } else {
         return scrollOrientation === 'vertical'
           ? event.touches[0].pageY - startBouncingTouch.current[0].pageY
-          : event.touches[0].pageX - startBouncingTouch.current[0].pageX
+          : normalizedHorizontalValue(
+            event.touches[0].pageX - startBouncingTouch.current[0].pageX,
+          )
       }
     }
     return 0
@@ -223,14 +236,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
 
     // upper bouncing
     const initialLayoutPosition = 0
-    if (debugLog.current) {
-      console.info(
-        'getBouncingStatus',
-        initialLayoutPosition,
-        'currentPosition',
-        currentPosition,
-      )
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-scroll-view][useBounce] get bouncing status, initialLayoutPosition: ${initialLayoutPosition}, currentPosition: ${currentPosition}`,
+    )
 
     if (currentPosition > initialLayoutPosition) {
       return bouncingStatus.upperBouncing
@@ -270,7 +279,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   function bouncingSetStyle(offset: number) {
     'main thread'
     if (isNaN(Number(offset))) {
-      console.info('ERROR! bouncingOffset is NaN')
+      mtsLog(
+        true,
+        '[lynx-ui-scroll-view][useBounce] ERROR! bouncingOffset is NaN',
+      )
       return
     }
     // update bouncingPositionInfo first
@@ -300,6 +312,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     }
     // trigger translate
     if (isVertical()) {
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-scroll-view][useBounce] apply transform, orientation: vertical, rawOffset: ${offset}, containerTransform: translateY(${offset}px)`,
+      )
       selectorMT(containerID)?.setStyleProperty(
         'transform',
         `translateY(${offset}px)`,
@@ -313,17 +329,24 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
         `translateY(${offset}px)`,
       )
     } else {
+      const visualOffset = enableRTL.current ? -offset : offset
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-scroll-view][useBounce] apply transform, orientation: horizontal, rawOffset: ${offset}, enableRTL: ${
+          String(enableRTL.current)
+        }, visualOffset: ${visualOffset}, containerTransform: translateX(${visualOffset}px)`,
+      )
       selectorMT(containerID)?.setStyleProperty(
         'transform',
-        `translateX(${offset}px)`,
+        `translateX(${visualOffset}px)`,
       )
       selectorMT(`${containerID}-upperBounceWrapper`)?.setStyleProperty(
         'transform',
-        `translateX(${offset}px)`,
+        `translateX(${visualOffset}px)`,
       )
       selectorMT(`${containerID}-lowerBounceWrapper`)?.setStyleProperty(
         'transform',
-        `translateX(${offset}px)`,
+        `translateX(${visualOffset}px)`,
       )
     }
   }
@@ -337,9 +360,12 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   // send the scrollToBounces event
   function triggerScrollToBouncesEvent(isUpper: boolean) {
     'main thread'
-    if (debugLog.current) {
-      console.info('triggerScrollToBouncesEvent', isUpper ? 'upper' : 'lower')
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-scroll-view][useBounce] trigger scrollToBounces, direction: ${
+        isUpper ? 'upper' : 'lower'
+      }`,
+    )
 
     const info: scrollToBouncesInfo = {
       direction: isUpper ? 'upper' : 'lower',
@@ -376,21 +402,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
             + 1.0))
         * scrollViewFrameSize,
     )
-    if (debugLog.current) {
-      console.info(
-        'rubberEffect',
-        'scrollViewFrameSize',
-        scrollViewFrameSize,
-        'touchStartPosition',
-        touchStartPosition,
-        'deltaYForTouchStartPosition',
-        deltaYForTouchStartPosition,
-        'deltaYForNextPosition',
-        deltaYForNextPosition,
-        'rubberBandingDistance',
-        rubberBandingDistance,
-      )
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-scroll-view][useBounce] rubber effect, scrollViewFrameSize: ${scrollViewFrameSize}, touchStartPosition: ${touchStartPosition}, deltaYForTouchStartPosition: ${deltaYForTouchStartPosition}, deltaYForNextPosition: ${deltaYForNextPosition}, rubberBandingDistance: ${rubberBandingDistance}`,
+    )
 
     bouncingSetStyle(isNegative * rubberBandingDistance)
   }
@@ -398,17 +413,12 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   function triggerRubberEffectIfCrossingEdge(event: MainThread.TouchEvent) {
     'main thread'
     const delta = getCurrentDelta(event)
-    if (debugLog.current) {
-      console.info(
-        'isCrossingEdge',
-        'delta',
-        delta,
-        'toUpper',
-        toUpper.current,
-        'toLower',
-        toLower.current,
-      )
-    }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-scroll-view][useBounce] check crossing edge, delta: ${delta}, toUpper: ${
+        String(toUpper.current)
+      }, toLower: ${String(toLower.current)}`,
+    )
 
     // Crossing top range
     if (
@@ -449,11 +459,14 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
 
   function bouncingBack() {
     'main thread'
-    if (debugLog.current) {
-      console.info('fling forward end')
-
-      console.info('bounce back starts')
-    }
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-scroll-view][useBounce] fling forward end',
+    )
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-scroll-view][useBounce] bounce back starts',
+    )
 
     // step3: bounce back
     // @ts-expect-error expected
@@ -465,9 +478,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
         return
       }
       const currentTime = Date.now() - startTime
-      if (debugLog.current) {
-        console.info('touchingEndBouncingBackFrame')
-      }
+      mtsLog(
+        debugLogEnabled,
+        '[lynx-ui-scroll-view][useBounce] touching end bouncing back frame',
+      )
 
       // critical damping
       const C2 = beta.current * C1
@@ -477,9 +491,10 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
       if (Math.abs(easedDistance) < threshold()) {
         // Make sure it backs to 0
         bouncingSetStyle(0)
-        if (debugLog.current) {
-          console.info('bounce back ends')
-        }
+        mtsLog(
+          debugLogEnabled,
+          '[lynx-ui-scroll-view][useBounce] bounce back ends',
+        )
       } else {
         customRequestAnimationFrame(touchingEndBouncingBackFrame)
       }
@@ -493,9 +508,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   function bounceableTouchStart(event: MainThread.TouchEvent) {
     'main thread'
     startTouch.current = event.touches
-    if (debugLog.current) {
-      console.info('bounceableTouchStart')
-    }
+    mtsLog(debugLogEnabled, '[lynx-ui-scroll-view][useBounce] touch start')
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     bouncingTouchStartPosition.current =
       // @ts-expect-error expected
@@ -511,7 +524,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     prevTouch.current = event.touches
     if (startTouch.current === null) {
       // It means current situation is illegal. A touchMove event happens without a touchStart event beforehand. Or a touchMove event happens after a touchEnd event.
-      console.info('ERROR! touch not started')
+      mtsLog(true, '[lynx-ui-scroll-view][useBounce] ERROR! touch not started')
     } else {
       const delta = getCurrentDelta(event)
       const currentBouncingStatus = getBouncingStatus()
@@ -520,32 +533,36 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
         case bouncingStatus.upperBouncing: {
           enableScroll(false)
           rubberEffect(1, delta)
-          if (debugLog.current) {
-            console.info('bounceableTouchMove upperBouncing')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] touch move upper bouncing',
+          )
           break
         }
         case bouncingStatus.lowerBouncing: {
           enableScroll(false)
           rubberEffect(-1, delta)
-          if (debugLog.current) {
-            console.info('bounceableTouchMove lowerBouncing')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] touch move lower bouncing',
+          )
           break
         }
         case bouncingStatus.alwaysBouncing: {
-          if (debugLog.current) {
-            console.info('bounceableTouchMove alwaysBouncing')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] touch move always bouncing',
+          )
           if (alwaysBouncing) {
             triggerRubberEffectIfCrossingEdge(event)
           }
           break
         }
         case bouncingStatus.inScrollingRange: {
-          if (debugLog.current) {
-            console.info('bounceableTouchMove inScrollingRange')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] touch move in scrolling range',
+          )
           triggerRubberEffectIfCrossingEdge(event)
           break
         }
@@ -561,9 +578,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     // Reset the state. The touch information should be reset, and we should no longer ban the enable-scroll.
     clearTouchInfo()
     enableScroll(true)
-    if (debugLog.current) {
-      console.info('bounceableTouchEnd')
-    }
+    mtsLog(debugLogEnabled, '[lynx-ui-scroll-view][useBounce] touch end')
     if (shouldBounceWhenTouchEnd(getBouncingStatus())) {
       const startTime = Date.now()
       // @ts-expect-error expected
@@ -585,18 +600,20 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
         if (Boolean(touchEndFrameEnableFlag.current) === false) {
           return
         }
-        if (debugLog.current) {
-          console.info('touchEndProcessFrame')
-        }
+        mtsLog(
+          debugLogEnabled,
+          '[lynx-ui-scroll-view][useBounce] touch end process frame',
+        )
         if (Math.abs(currentVelocity) <= threshold()) {
           // If the velocity is already under threshold, skip fling and start step3: bounce back.
           bouncingBack()
         } else {
           // If the drag end with a velocity, start fling to consume it.
           // step 2: fling down
-          if (debugLog.current) {
-            console.info('fling down start')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] fling down start',
+          )
           // This function is obtained by integrating the velocity function with a deceleration rate of flingDeceleratingRate.
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const distance: number = dragEndPosition
@@ -626,37 +643,43 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     scrollX.current = event.detail.scrollLeft
     scrollY.current = event.detail.scrollTop
     if (!isEmpty(prevScroll.current)) {
-      // @ts-expect-error expected
-      const timeDuration = Date.now() - prevScroll.current.timestamp
+      const prev = prevScroll.current as {
+        timestamp: number
+        detail: { scrollTop: number, scrollLeft: number }
+      }
+      const timeDuration = Date.now() - prev.timestamp
       if (timeDuration > 0) {
-        const deltaY = isVertical() // @ts-expect-error expected
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          ? event.detail.scrollTop - prevScroll.current.detail.scrollTop // @ts-expect-error expected
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          : event.detail.scrollLeft - prevScroll.current.detail.scrollLeft
+        const deltaY = isVertical()
+          ? event.detail.scrollTop - prev.detail.scrollTop
+          : normalizedHorizontalValue(
+            event.detail.scrollLeft - prev.detail.scrollLeft,
+          )
         const velocity = deltaY / timeDuration
         if (Number.isFinite(velocity)) {
           scrollVelocity.current = velocity
         }
       }
     }
+    mtsLog(
+      debugLogEnabled,
+      `[lynx-ui-scroll-view][useBounce] handle scroll near edge, scrollLeft: ${event.detail.scrollLeft}, scrollTop: ${event.detail.scrollTop}, velocity: ${scrollVelocity.current}`,
+    )
     prevScroll.current = event
   }
 
   function onUpperDisexposure(_event: CommonEvent) {
     'main thread'
-    if (debugLog.current) {
-      console.info('upper disexposure')
-    }
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-scroll-view][useBounce] upper disexposure',
+    )
     toUpper.current = false
   }
 
   // Handle scrolltoupper event.
   function onUpperExposure(_event: CommonEvent) {
     'main thread'
-    if (debugLog.current) {
-      console.info('upper exposure')
-    }
+    mtsLog(debugLogEnabled, '[lynx-ui-scroll-view][useBounce] upper exposure')
     toUpper.current = true
     if (
       singleSidedBounce.current !== 'upper'
@@ -676,24 +699,29 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
       const velocity = scrollVelocity.current
       let currentVelocity = velocity
       const startTime = Date.now()
-      if (debugLog.current) {
-        console.info('fling to upper event start with velocity', velocity)
-      }
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-scroll-view][useBounce] fling to upper event start, velocity: ${velocity}`,
+      )
       let sentScrollToBouncesEvent = false // only sent scrollToBounces once
       const flingEndWithBouncingFrame = () => {
         if (Boolean(flingEndWithBouncingEnableFlag.current) === false) {
-          if (debugLog.current) {
-            console.info('flingEndWithBouncingEnableFlag early return')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] flingEndWithBouncingEnableFlag early return',
+          )
           return
         }
         if (Math.abs(currentVelocity) <= threshold()) {
           flingEndWithBouncingEnableFlag.current = false
-          if (debugLog.current) {
-            console.info('fling to upper event end')
-
-            console.info('bouncing to upper event start')
-          }
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] fling to upper event end',
+          )
+          mtsLog(
+            debugLogEnabled,
+            '[lynx-ui-scroll-view][useBounce] bouncing to upper event start',
+          )
           bouncingBack()
         } else {
           // step 1: fling
@@ -723,17 +751,16 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
 
   function onLowerDisexposure(_event: CommonEvent) {
     'main thread'
-    if (debugLog.current) {
-      console.info('lower disexposure')
-    }
+    mtsLog(
+      debugLogEnabled,
+      '[lynx-ui-scroll-view][useBounce] lower disexposure',
+    )
     toLower.current = false
   }
 
   function onLowerExposure(_event: CommonEvent) {
     'main thread'
-    if (debugLog.current) {
-      console.info('lower exposure')
-    }
+    mtsLog(debugLogEnabled, '[lynx-ui-scroll-view][useBounce] lower exposure')
     toLower.current = true
     if (
       singleSidedBounce.current !== 'lower'
@@ -750,32 +777,38 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
         bouncingPositionInfo.current?.bouncingOffset ?? 0
     } else if (enableBounceEventInFling && scrollVelocity.current > 0) {
       const velocity = scrollVelocity.current
-      if (debugLog.current) {
-        console.info('lower velocity', velocity)
-      }
+      mtsLog(
+        debugLogEnabled,
+        `[lynx-ui-scroll-view][useBounce] lower velocity: ${velocity}`,
+      )
 
       // scroll to end with velocity, start bouncing effect
       if (Math.abs(velocity) > threshold()) {
         let currentVelocity = velocity
         const startTime = Date.now()
-        if (debugLog.current) {
-          console.info('fling to lower event start with velocity', velocity)
-        }
+        mtsLog(
+          debugLogEnabled,
+          `[lynx-ui-scroll-view][useBounce] fling to lower event start, velocity: ${velocity}`,
+        )
         let sentScrollToBouncesEvent = false // only sent scrollToBounces once
         const flingEndWithBouncingFrame = () => {
           if (Boolean(flingEndWithBouncingEnableFlag.current) === false) {
-            if (debugLog.current) {
-              console.info('flingEndWithBouncingEnableFlag early return')
-            }
+            mtsLog(
+              debugLogEnabled,
+              '[lynx-ui-scroll-view][useBounce] flingEndWithBouncingEnableFlag early return',
+            )
             return
           }
           if (Math.abs(currentVelocity) <= threshold()) {
             flingEndWithBouncingEnableFlag.current = false
-            if (debugLog.current) {
-              console.info('fling to lower event end')
-
-              console.info('bouncing to lower event start')
-            }
+            mtsLog(
+              debugLogEnabled,
+              '[lynx-ui-scroll-view][useBounce] fling to lower event end',
+            )
+            mtsLog(
+              debugLogEnabled,
+              '[lynx-ui-scroll-view][useBounce] bouncing to lower event start',
+            )
             bouncingBack()
           } else {
             // step 1: fling

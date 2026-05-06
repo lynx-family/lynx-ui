@@ -213,6 +213,24 @@ export interface ScrollViewProps
    */
   bounceableOptions?: boolean | BounceableBasicProps
   /**
+   * Whether horizontal bounce direction should be mirrored in RTL mode.
+   * @zh 是否在 RTL 模式下镜像水平回弹方向。
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  enableRTL?: boolean
+  /**
+   * Display debug logs for bounce interactions.
+   * @zh 显示回弹交互的调试日志。
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  debugLog?: boolean
+  /**
    * Controls whether scroll events propagate to parent containers. For now, 'preventPropagate' needs to be used together with temporaryBlockScrollClass and temporaryBlockScrollTag on iOS.
    * @zh 控制滚动事件是否向父级容器传递。'preventPropagate' 在 iOS 上暂时需与 temporaryBlockScrollClass 和 temporaryBlockScrollTag 配合使用。
    * @experimental Currently, this property has limitations because its full functionality depends on a higher native SDK version: on iOS, `propagate` only works if both the parent and this component are set to` propagate` and `useRefactorList={true}` does not support 'propagate'. On Android, `preventPropagate` only functions when the parent is `x-swiper` or `x-viewpager-ng`.
@@ -362,15 +380,6 @@ export interface BounceableBasicProps {
    * @Harmony
    */
   estimatedWidth?: number
-  /**
-   * Display debug logs. Open it when you find a bug.
-   * @zh 显示调试日志。当您发现错误时，请打开此选项。
-   * @defaultValue false
-   * @iOS
-   * @Android
-   * @Harmony
-   */
-  debugLog?: boolean
   /**
    * requestAnimationFrame don't work under lynx version 2.15.2. This switch should be opened when the version is higher than 2.15.2.
    * @zh `requestAnimationFrame` 在 lynx 2.15.2 以下版本中不起作用。当版本高于 2.15.2 时，应打开此开关。
