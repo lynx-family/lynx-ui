@@ -26,6 +26,12 @@ function getPackageDirs() {
       name.startsWith('lynx-ui-') && name !== aggregatePackageName
     )
     .filter(name => fs.statSync(path.join(packagesDir, name)).isDirectory())
+    .filter(name => {
+      const pkgPath = path.join(packagesDir, name, 'package.json')
+      if (!fs.existsSync(pkgPath)) return true
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+      return pkg.private !== true
+    })
     .sort()
 }
 

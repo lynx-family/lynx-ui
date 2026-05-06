@@ -22,6 +22,7 @@ import type { SwiperRef } from '@lynx-js/lynx-ui'
 import { Button } from '../Common/Button'
 import { Card } from '../Common/Card'
 
+import '../Common/Demo/styles.css'
 import './styles.css'
 
 const DEFAULT_DATA: number[] = [1, 2, 3, 4, 5]
@@ -101,9 +102,9 @@ function EmptyDataWithAutoPlay(): JSX.Element {
         autoPlayInterval={2000}
         modeConfig={{ align: 'center' }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -186,9 +187,9 @@ function EmptyDataWithManualSwipe(): JSX.Element {
         onSwipeStart={handleSwipeStart}
         onSwipeStop={handleSwipeStop}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -263,9 +264,9 @@ function DataBecomesEmpty(): JSX.Element {
         autoPlayInterval={3000}
         modeConfig={{ align: 'center' }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -329,9 +330,9 @@ function ResetWithCorruptedIndex(): JSX.Element {
         autoPlay={false}
         modeConfig={{ align: 'center' }}
       >
-        {({ index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <Card index={realIndex} style={{ height: '200px' }} />
+        {({ index }) => (
+          <SwiperItem>
+            <Card index={index} style={{ height: '200px' }} />
           </SwiperItem>
         )}
       </Swiper>
@@ -352,7 +353,7 @@ function ResetWithCorruptedIndex(): JSX.Element {
 
 function EmptyDataBugExample(): JSX.Element {
   return (
-    <scroll-view class='container' scroll-orientation='vertical'>
+    <scroll-view class='container lunaris-dark' scroll-orientation='vertical'>
       <text class='main-title'>Empty Data Bug Reproduction</text>
       <text class='main-description'>
         These examples demonstrate the "calcBounceOffset: invalid offset" error

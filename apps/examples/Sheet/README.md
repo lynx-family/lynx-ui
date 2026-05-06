@@ -6,6 +6,7 @@ This directory contains examples for the Sheet component.
 
 - **Basic**: Basic usage of Sheet.
 - **Controlled**: Controlled usage of Sheet.
+- **Directional**: Top, bottom, physical sides, and logical sides with `enableRTL`.
 - **ControlledOpen**: Controlled usage of Sheet with initial open state.
 - **DefaultOpen**: Uncontrolled Sheet with `defaultShow` enabled.
 - **Imperative**: Imperative usage of Sheet.

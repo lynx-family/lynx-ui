@@ -14,7 +14,7 @@ import type { ReactElement, RefObject } from '@lynx-js/react'
 
 import type { CSSProperties, MainThread } from '@lynx-js/types'
 
-import { SwiperContext } from '../store'
+import { SwiperContext, SwiperItemContext } from '../store'
 import type { CompoundModeConfig, SwiperContextProps } from '../types'
 
 export interface SwiperItemProps {
@@ -24,7 +24,7 @@ export interface SwiperItemProps {
    * @iOS
    * @Harmony
    */
-  index: number
+  index?: number
   /**
    * Children of SwiperItem
    * @Android
@@ -40,8 +40,9 @@ export interface SwiperItemProps {
    */
   style?: CSSProperties
   /**
-   * Real index of current SwiperItem, out of Swiper's data.
-   * Same with `index`, but will be different from `index` when in loop mode.
+   * Physical index of current SwiperItem.
+   * Kept for compatibility with existing manual usage. This is resolved
+   * automatically when SwiperItem is rendered inside Swiper's children function.
    * @Android
    * @iOS
    * @Harmony
@@ -156,7 +157,7 @@ function useFirstScreenStyle(props: IFirstScreenStyle) {
 }
 
 const SwiperItem = (
-  { index, realIndex = index, children, overlap }: SwiperItemProps,
+  { index, realIndex, children, overlap }: SwiperItemProps,
 ) => {
   const {
     itemWidth,
@@ -168,6 +169,11 @@ const SwiperItem = (
     spaceBetween,
     RTL,
   } = useContext(SwiperContext)
+  const itemContext = useContext(SwiperItemContext)
+  const resolvedIndex = index ?? itemContext?.index
+  const resolvedRealIndex = realIndex ?? itemContext?.realIndex ?? resolvedIndex
+  const hasResolvedIndex = resolvedIndex !== undefined
+  const effectiveRealIndex = resolvedRealIndex ?? 0
   const swiperItemRef = useMainThreadRef<MainThread.Element>()
 
   const { containerStyle } = useFirstScreenStyle({
@@ -176,16 +182,22 @@ const SwiperItem = (
     spaceBetween,
     itemRef: swiperItemRef,
     modeConfig,
-    realIndex,
+    realIndex: effectiveRealIndex,
     initialIndex,
     customAnimationFirstScreen,
     RTL,
   })
 
+  if (!hasResolvedIndex) {
+    throw new Error(
+      'SwiperItem must be rendered inside Swiper children or receive an index prop.',
+    )
+  }
+
   function setRef(ref: MainThread.Element) {
     'main thread'
     swiperItemRef.current = ref
-    setChildrenRef(ref, realIndex ?? index)
+    setChildrenRef(ref, effectiveRealIndex)
   }
 
   return (

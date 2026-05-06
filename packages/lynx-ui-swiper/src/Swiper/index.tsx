@@ -25,7 +25,7 @@ import { useModeConfig } from '../hooks/useModeConfig'
 import { useOffset } from '../hooks/useOffset'
 import { useOffsetLimit } from '../hooks/useOffsetLimit'
 import { useReset } from '../hooks/useReset'
-import { SwiperContext } from '../store'
+import { SwiperContext, SwiperItemContext } from '../store'
 import type {
   SwipeDirection,
   SwiperProps,
@@ -326,6 +326,24 @@ const Swiper = forwardRef(
       cancelAnimation: cancelAnimationJS,
     }))
 
+    function renderSwiperItem(props: {
+      item: T
+      index: number
+      realIndex: number
+    }) {
+      return (
+        <SwiperItemContext.Provider
+          key={props.realIndex}
+          value={{
+            index: props.index,
+            realIndex: props.realIndex,
+          }}
+        >
+          {children(props)}
+        </SwiperItemContext.Provider>
+      )
+    }
+
     const { bounceStartView, bounceEndView } = useBounceView({
       startBounceItem,
       endBounceItem,
@@ -366,7 +384,7 @@ const Swiper = forwardRef(
                     { length: loopDuplicateCount },
                     (_, i) => loopDuplicateCount - i - 1,
                   ).map((i) =>
-                    children({
+                    renderSwiperItem({
                       index: data.length - i - 1,
                       item: data[data.length - i - 1],
                       realIndex: -i - 1,
@@ -376,7 +394,7 @@ const Swiper = forwardRef(
               )
               : null}
             {data.map((item: T, index: number) =>
-              children({
+              renderSwiperItem({
                 index,
                 item,
                 realIndex: index,
@@ -388,7 +406,7 @@ const Swiper = forwardRef(
                   {Array.from({ length: loopDuplicateCount }, (_, i) => i).map((
                     i,
                   ) =>
-                    children({
+                    renderSwiperItem({
                       index: i,
                       item: data[i],
                       realIndex: data.length + i,

@@ -175,7 +175,6 @@ export interface InputProps extends ComponentBasicProps {
   /**
    * Filter the input content and process it in the form of regular expressions
    * @zh 输入框内容过滤正则表达式
-   * @defaultValue undefined
    * @Android
    * @iOS
    * @Harmony

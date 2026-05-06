@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-sheet
 
-A Bottom Sheet component for ReactLynx. It provides drag interactions and snap point primitives.
+A directional Sheet component for ReactLynx. It supports bottom-sheet and side-drawer semantics with drag interactions and snap point primitives.
 
 ## Installation
 
@@ -21,7 +21,7 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ## Usage
 
-The `lynx-ui-sheet` follows a headless composition pattern. You can control its visibility via a `ref` and define its behavior using properties like `snapPoints` and `initialSnap`.
+The `lynx-ui-sheet` follows a headless composition pattern. You can control its visibility via a `ref` and define its behavior using properties like `side`, `enableRTL`, `snapPoints`, and `initialSnap`.
 
 [View Full Examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sheet)
 
@@ -40,7 +40,7 @@ The `Sheet` component is composed of several specialized sub-components to give 
 </SheetRoot>
 ```
 
-- **`SheetRoot`**: The root container that manages the state, snap points, and drag logic.
+- **`SheetRoot`**: The root container that manages the state, side, logical RTL resolution, snap points, and drag logic.
 - **`SheetView`**: The viewport container for the sheet components.
 - **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.

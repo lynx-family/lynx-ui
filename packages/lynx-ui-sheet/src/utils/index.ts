@@ -3,25 +3,19 @@
 // LICENSE file in the root directory of this source tree.
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
 
-export function toPxJS(value: number | string, screenHeight: number): number {
-  if (typeof value === 'number') return value
-  const s = String(value).trim()
-  // Handle 'fit' - return -1 as sentinel to be resolved after measurement
-  if (s === 'fit') return -1
-  const m = /^\d+(?:\.\d+)?%$/.exec(s)
-  if (m) {
-    return (Number.parseFloat(m[0]) / 100) * screenHeight
-  }
-  const px = /^\d+(?:\.\d+)?px$/.exec(s)
-  if (px) {
-    return Number.parseFloat(px[0])
-  }
-  const num = /^\d+(?:\.\d+)?$/.exec(s)
-  if (num) {
-    return Number.parseFloat(num[0])
-  }
-  throw new Error(`[Sheet] Invalid snap point: ${value}`)
-}
+export {
+  getDefaultClaimedGestureAngles,
+  getDefaultRubberBand,
+  getMainAxisLayoutSize,
+  getMainAxisSize,
+  getMainAxisTouchCoordinate,
+  getNextMainAxisOffset,
+  getSheetTransform,
+  isHorizontalSide,
+  resolveSheetSide,
+  toPxJS,
+} from './direction'
+export type { SheetResolvedSide } from './direction'
 
 export function rubberEffect(
   original: number,

@@ -7,6 +7,8 @@ import type { ReactNode } from '@lynx-js/react'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
+export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
+
 export interface SheetRootRef {
   snapTo: (
     index: number,
@@ -95,8 +97,12 @@ export interface SheetContentProps extends ComponentBasicProps {
   exitAnimation?: SheetTransition
   /**
    * CSS class name for the inner layer.
-   * Use this for layout or sizing styles specific to the inner area.
-   * @zh 内层容器的 CSS 类名。用于设置内层区域特定的布局或尺寸样式。
+   * Use this for content layout and sizing styles. In horizontal drawer mode,
+   * the drawer width should be set here so `'fit'` can resolve from the
+   * measured drawer width.
+   * @zh 内层容器的 CSS 类名。
+   * 用于设置内容区域的布局和尺寸样式。
+   * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS
    * @Harmony
@@ -104,11 +110,15 @@ export interface SheetContentProps extends ComponentBasicProps {
   innerClassName?: string
   /**
    * Inline styles for the inner layer.
-   * Use this for layout or sizing styles specific to the inner area.
+   * Use this for content layout and sizing styles.
    * Note: Visual styles (background, borderRadius, etc.) should be set via
-   * the main `style` prop which applies to the surface layer.
-   * @zh 内层容器的内联样式。用于设置内层区域特定的布局或尺寸样式。
-   * 注意：视觉样式（背景、圆角等）应通过主 `style` 属性设置，它会应用到 surface 层。
+   * the main `style` prop which applies to the moving surface layer.
+   * In horizontal drawer mode, set drawer width here so `'fit'` can resolve
+   * from the measured drawer width.
+   * @zh 内层容器的内联样式。
+   * 用于设置内容区域的布局和尺寸样式。
+   * 注意：背景、圆角等视觉样式应通过主 `style` 属性设置，该属性会应用到移动的 surface 层。
+   * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS
    * @Harmony
@@ -130,16 +140,38 @@ export interface SheetContentProps extends ComponentBasicProps {
  */
 export interface SheetRootProps extends ComponentBasicProps {
   /**
+   * The side from which the sheet enters.
+   * `bottom` preserves the existing bottom-sheet behavior.
+   * `top` provides top-sheet behavior.
+   * `left` and `right` provide physical drawer behavior.
+   * `start` and `end` provide logical drawer behavior and resolve against `enableRTL`.
+   * @defaultValue 'bottom'
+   * @zh Sheet 进入的边。`bottom` 保持现有底部弹层行为，`top` 提供顶部弹层行为，`left` 和 `right` 提供物理抽屉方向，`start` 和 `end` 提供逻辑抽屉方向并根据 `enableRTL` 解析。
+   */
+  side?: SheetSide
+  /**
+   * Whether logical drawer sides should resolve in RTL mode.
+   * When false, `start` means left and `end` means right.
+   * When true, `start` means right and `end` means left.
+   * Physical `left` and `right` sides are not affected by `enableRTL`.
+   * @defaultValue false
+   * @zh 是否以 RTL 模式解析逻辑抽屉方向。为 false 时，`start` 为左侧、`end` 为右侧；为 true 时，`start` 为右侧、`end` 为左侧。物理 `left` 和 `right` 不受 `enableRTL` 影响。
+   */
+  enableRTL?: boolean
+  /**
    * The snap points of the Sheet. Can be pixel numbers, percentages, or 'fit'.
    * - Numbers are treated as pixel values
-   * - Percentages (e.g., '50%') are relative to screen height
-   * - 'fit' dynamically resolves to the measured content height
+   * - Percentages (e.g., '50%') are relative to screen height for `top` / `bottom`,
+   *   and relative to screen width for `left` / `right` / `start` / `end`
+   * - 'fit' dynamically resolves to the measured content height for `top` / `bottom`,
+   *   and the measured content width for `left` / `right` / `start` / `end`
+   * @defaultValue ['fit']
    * The index order follows the order of this array.
    * @example snapPoints={['fit', '80%']} // First snap fits content, second is 80% of screen
    * @zh Sheet 的吸附点。可以是像素数值、百分比或 'fit'。
    * - 数字被视为像素值
-   * - 百分比（例如 '50%'）相对于屏幕高度
-   * - 'fit' 动态解析为测量的内容高度
+   * - 百分比（例如 '50%'）在 `top` / `bottom` 模式下相对于屏幕高度，在 `left` / `right` / `start` / `end` 模式下相对于屏幕宽度
+   * - 'fit' 在 `top` / `bottom` 模式下动态解析为测量的内容高度，在 `left` / `right` / `start` / `end` 模式下动态解析为测量的内容宽度
    * 索引顺序与该数组顺序一致。
    */
   snapPoints?: Array<number | string>
@@ -152,21 +184,35 @@ export interface SheetRootProps extends ComponentBasicProps {
    * Callback when the snap point changes.
    * `value` is the resolved snap point in pixels.
    * @zh 吸附点变化时的回调。
-   * value 为换算后的像素值。
+   * `value` 表示换算后的像素值。
    */
   onSnapChange?: (index: number, value: number) => void
   /**
    * The height of the Sheet container (screen height).
+   * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points
+   * and dismissal calculations.
    * @zh Sheet 容器的高度（屏幕高度）。
+   * 在垂直模式（`top` / `bottom`）下，用于计算百分比吸附点和关闭阈值。
    */
   screenHeight?: number
   /**
+   * The width of the Sheet container (screen width).
+   * Used in horizontal drawer mode (`left` / `right` / `start` / `end`) for percentage snap points
+   * and dismissal calculations.
+   * @zh Sheet 容器的宽度（屏幕宽度）。在水平抽屉模式（`left` / `right` / `start` / `end`）中用于百分比吸附点和关闭计算。
+   */
+  screenWidth?: number
+  /**
    * The rubber band effect configuration.
+   * By default, rubber band over-drag is enabled for vertical sheets
+   * (`top` / `bottom`) and disabled for horizontal drawers
+   * (`left` / `right` / `start` / `end`).
    * If true, enables default rubber band effect (coefficient 0.5).
    * If false, disables rubber band effect.
    * If number, enables rubber band effect with the specified coefficient.
    * If object, allows specifying coefficient and max distance.
    * @zh 橡皮筋效果配置。
+   * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
    * 如果为 true，启用默认橡皮筋效果（系数 0.5）。
    * 如果为 false，禁用橡皮筋效果。
    * 如果为数字，启用指定系数的橡皮筋效果。
@@ -190,11 +236,11 @@ export interface SheetRootProps extends ComponentBasicProps {
   handleOnly?: boolean
   /**
    * Whether to enable dragging to close the Sheet.
-   * If true, dragging down from the lowest snap point will move the sheet linearly and allow dismissal.
-   * If false, dragging down will trigger rubber band effect and snap back.
+   * If true, dragging from the lowest snap point toward the closed edge will move the sheet linearly and allow dismissal.
+   * If false, dragging toward the closed edge will trigger rubber band effect and snap back.
    * @zh 是否允许拖拽关闭 Sheet。
-   * 如果为 true，从最低吸附点向下拉动将线性移动并允许关闭。
-   * 如果为 false，向下拉动将触发橡皮筋效果并回弹。
+   * 如果为 true，从最低吸附点向关闭边缘拖动将线性移动并允许关闭。
+   * 如果为 false，向关闭边缘拖动将触发橡皮筋效果并回弹。
    * @default true
    */
   enableDragToClose?: boolean
@@ -204,7 +250,10 @@ export interface SheetRootProps extends ComponentBasicProps {
    * will trigger sheet movement, while gestures outside these ranges are passed through.
    * see https://lynxjs.org/api/elements/built-in/view#consume-slide-event for more
    * @example [[-134, -46],[46, 134]] for claiming vertical gesture
-   * @zh Sheet 声明处理的手势角度范围（度数）。每个条目为 [最小角度, 最大角度]。在这些角度范围内的手势会触发 Sheet 移动，范围外的手势会传递给子组件。
+   * @example [[-45, 45],[135, -135]] for claiming horizontal gesture
+   * @zh Sheet 主动接管手势的角度范围（单位：度）。
+   * 每个条目都是 `[最小角度, 最大角度]`。
+   * 落在这些范围内的手势会驱动 Sheet 移动，范围外的手势则继续透传给子组件。
    */
   claimedGestureAngles?: [number, number][]
 
@@ -281,8 +330,10 @@ export interface SheetRootProps extends ComponentBasicProps {
 export interface SheetHandleProps extends ComponentBasicProps {}
 
 /**
- * The view container of Sheet. Can be x-overlay-ng or view. Controls the z-index of the dialog.
- * @zh Sheet 的视图容器。可以是 x-overlay-ng 或 view。控制对话框的 z-index。
+ * The view container of the Sheet. Can be `x-overlay-ng` or `view`.
+ * Controls the Sheet's overlay layer and stacking order.
+ * @zh Sheet 的视图容器，可以是 `x-overlay-ng` 或 `view`。
+ * 用于控制 Sheet 所在的覆盖层及其层级顺序。
  */
 export interface SheetViewProps extends ComponentBasicProps {
   /**
@@ -302,12 +353,20 @@ export interface SheetViewProps extends ComponentBasicProps {
    */
   children: ReactNode
   /**
-   * If you want to use the poppers outside of the LynxView, you need to set this property. The values 'spark', 'bullet', and 'bulletPopup' are the names of native containers. For example, on TikTok it should be 'spark', and on Douyin it should be 'bullet'. If you're using iOS, this prop can be any native view controller on which you want to place the popper. You can use it to handle layers properly.
+   * If you want to render the Sheet outside of the LynxView, set this property.
+   * The values 'spark', 'bullet', and 'bulletPopup' are names of native containers.
+   * For example, on TikTok it should be 'spark', and on Douyin it should be 'bullet'.
+   * On iOS, this prop can also be any native view controller that should host the Sheet.
+   * Use it to place the Sheet in the correct native layer.
    * @Android
    * @iOS
    * @Harmony
    * @docTypeFallback 'spark' | 'bullet' | 'bulletPopup' | (string & {})
-   * @zh 如果你想在 LynxView 外部使用弹出框，则需要设置此属性。值 'spark'、'bullet' 和 'bulletPopup' 是原生容器的名称。例如，在 TikTok 中应该设置为 'spark'，在抖音中应该设置为 'bullet'。如果你使用的是 iOS，此属性可以是任何你想放置弹出框的原生视图控制器。你可以使用它来正确处理层级。
+   * @zh 如果需要将 Sheet 渲染到 LynxView 外部，请设置此属性。
+   * `'spark'`、`'bullet'` 和 `'bulletPopup'` 都是原生容器名称。
+   * 例如在 TikTok 中通常应设置为 `'spark'`，在抖音中通常应设置为 `'bullet'`。
+   * 在 iOS 上，这个属性也可以是任意一个用于承载 Sheet 的原生视图控制器。
+   * 通过它可以将 Sheet 放到正确的原生层级中。
    */
   container?: 'spark' | 'bullet' | 'bulletPopup' | (string & {})
   /**
@@ -315,12 +374,13 @@ export interface SheetViewProps extends ComponentBasicProps {
    * @Android
    * @iOS
    * @Harmony
-   * @zh 仅当 'container' 设置为非空字符串时有效。调整附近元素的显示层级。
+   * @zh 仅当 `container` 为非空字符串时生效。
+   * 用于调整周边元素的显示层级。
    */
   overlayLevel?: 1 | 2 | 3 | 4
   /**
-   * Additional props that will be passthrough to the underlying element
-   * @zh 将被直接传递到底层元素的额外属性
+   * Additional props that will be passed through to the underlying element.
+   * @zh 会透传到底层元素的额外属性。
    * @Android
    * @iOS
    * @Harmony

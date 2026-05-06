@@ -18,7 +18,7 @@
 
 ### Minimal Usable Example
 
-Each `<Swiper>` must provide `data`, `itemWidth`, and render children via a function that returns a `<SwiperItem>`. Use `realIndex` for React `key`, especially in loop mode.
+Each `<Swiper>` must provide `data`, `itemWidth`, and render children via a function that returns a `<SwiperItem>`.
 
 ```tsx
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
@@ -28,8 +28,8 @@ const data = ['red', 'green', 'blue']
 function Example() {
   return (
     <Swiper data={data} itemWidth={300}>
-      {({ item, index, realIndex }) => (
-        <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+      {({ item, index }) => (
+        <SwiperItem>
           <view
             style={{ width: '100%', height: '200px', backgroundColor: item }}
           >
@@ -44,10 +44,9 @@ function Example() {
 
 ### Render Props Mechanics
 
-- `<Swiper>` calls your children function once per item with `{ item, index, realIndex }`.
+- `<Swiper>` calls your children function once per item with `{ item, index }`.
 - You must return a single `<SwiperItem>` as the root of that function; place your content inside it.
-- `index` is the logical index in `data`; `realIndex` is the physical index (differs in loop mode). Use `realIndex` for the React `key`.
-- When `loop={false}`, `index === realIndex`.
+- Use `index` for app content such as labels, item lookup, and indicators.
 
 ### Recommended Prompt Formula
 
@@ -62,7 +61,7 @@ Examples:
 ## 3. Use Cases & Best Practices
 
 - Basic Horizontal: `mode='normal'` with `modeConfig.align` (`start`/`center`/`end`) and optional `spaceBetween`.
-- Loop & Auto Play: set `loop={true}` and `autoPlay={true}` with `autoPlayInterval`. Use `realIndex` as React `key` in children.
+- Loop & Auto Play: set `loop={true}` and `autoPlay={true}` with `autoPlayInterval`.
 - Bounces: configure `bounceConfig` with `startBounceItem`/`endBounceItem` and widths; release callbacks fire with `{ type, offset }`. Bounces are ignored when `loop=true`.
 - Custom Animation: switch to `mode='custom'` and provide `main-thread:customAnimation(value, index) => style`. Duplicate this logic in `customAnimationFirstScreen` for first-screen rendering.
 - RTL: set `RTL={true}` or `RTL={'lynx-rtl'}`. The latter applies Lynx’s `direction: lynx-rtl` explicitly.
@@ -85,8 +84,8 @@ Examples:
   modeConfig={{ align: 'start', spaceBetween: 8 }}
   experimentalHorizontalSwipeOnly
 >
-  {({ item, index, realIndex }) => (
-    <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+  {({ item, index }) => (
+    <SwiperItem>
       <view style={{ width: '100%', height: '100%', backgroundColor: item }} />
       <text>Number.{index}</text>
     </SwiperItem>
@@ -115,8 +114,8 @@ Examples:
     },
   }}
 >
-  {({ index, realIndex }) => (
-    <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+  {({ index }) => (
+    <SwiperItem>
       {/* content */}
     </SwiperItem>
   )}
@@ -167,8 +166,8 @@ function customAnimationFirstScreen(value: number) {
   main-thread:customAnimation={customAnimation}
   customAnimationFirstScreen={customAnimationFirstScreen}
 >
-  {({ index, realIndex }) => (
-    <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+  {({ index }) => (
+    <SwiperItem>
       {/* content */}
     </SwiperItem>
   )}
@@ -186,8 +185,8 @@ function customAnimationFirstScreen(value: number) {
   modeConfig={{ align: 'start', spaceBetween: 8 }}
   RTL={true}
 >
-  {({ index, realIndex }) => (
-    <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
+  {({ index }) => (
+    <SwiperItem>
       {/* content */}
     </SwiperItem>
   )}
@@ -228,8 +227,7 @@ interface SwiperRef {
 
 ## 6. FAQ
 
-- Do children have to be a function? Yes. It receives `{ item, index, realIndex }` and must return `<SwiperItem>`.
-- Why both `index` and `realIndex`? In loop mode, clones shift indices; use `realIndex` for React `key`.
+- Do children have to be a function? Yes. It receives `{ item, index }` and must return `<SwiperItem>`.
 - Why doesn’t `initialIndex` update after mount? It is only applied at first screen; later updates are ignored. Use `swiperKey` or `resetOnReuse` to reset.
 - My last item leaves a blank area when `align='start'`. Provide `offsetLimit={[0, containerWidth - itemWidth]}` to clamp the range.
 - Bounces don’t trigger when `loop=true`. Correct—bounce is ignored in looping.

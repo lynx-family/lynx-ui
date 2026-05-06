@@ -69,7 +69,7 @@ export function KeyboardAwareResponderImpl(props: KeyboardAwareResponderProps) {
               {children}
               <view
                 ref={dummyRefAtKeyboardHeight}
-                style={{ width: '1px', background: 'red' }}
+                style={{ width: '1px' }}
               />
             </view>
           </ScrollView>

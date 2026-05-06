@@ -32,6 +32,9 @@
   "[markdown]": {
     "editor.defaultFormatter": "dprint.dprint",
   },
+  "[mdx]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
   "[yaml]": {
     "editor.defaultFormatter": "dprint.dprint",
   },

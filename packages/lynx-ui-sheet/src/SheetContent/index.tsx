@@ -8,8 +8,9 @@ import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { SheetDragContext, useSheetContext } from '../context'
 import { useSnap, useSnapTouches } from '../hooks'
 import type { SheetContentProps, SheetTransition } from '../types'
+import { getDefaultRubberBand } from '../utils'
 
-const DEFAULT_SNAP_POINTS: Array<number | string> = []
+const DEFAULT_SNAP_POINTS: Array<number | string> = ['fit']
 const DEFAULT_TRANSITION: SheetTransition = {
   type: 'spring',
   stiffness: 200,
@@ -34,12 +35,16 @@ export function SheetContent(props: SheetContentProps) {
     registerMethods,
     snapPoints = DEFAULT_SNAP_POINTS,
     initialSnap = 0,
-    rubberBand = true,
+    side,
+    enableRTL,
+    resolvedSide,
+    rubberBand,
     dragDisabled = false,
     dismissThreshold = 0.15,
     handleOnly,
     enableDragToClose = true,
     screenHeight,
+    screenWidth,
     onSnapChange,
     onShowChange,
     claimedGestureAngles,
@@ -49,6 +54,9 @@ export function SheetContent(props: SheetContentProps) {
     onClose,
     show: showFromContext,
   } = useSheetContext()
+  const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
+  const isTop = resolvedSide === 'top'
+  const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
 
   // Track if show state changes are internal (from controller) vs external (from prop/context)
   const isInternalChangeRef = useRef(false)
@@ -82,11 +90,11 @@ export function SheetContent(props: SheetContentProps) {
     show: showSheet,
     // internals for touch handling
     yRef,
-    screenHeight: resolvedScreenHeight,
+    viewportSize,
     snapOffsets,
     snapPointValues,
     minOffset,
-    sheetHeightMTRef,
+    sheetSizeMTRef,
     maxOffset,
     getResolvedSnapOffsets,
     getResolvedSnapPointValues,
@@ -99,13 +107,17 @@ export function SheetContent(props: SheetContentProps) {
     snapPoints,
     initialSnap,
     snapAnimation,
+    side,
+    enableRTL,
     screenHeight,
+    screenWidth,
     onSnapChange,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,
     onEntered: handleEntered,
     enterAnimation,
     exitAnimation,
+    rubberBand: effectiveRubberBand,
     sheetProgress,
     presenceStateMTRef,
     onUnmount,
@@ -115,20 +127,22 @@ export function SheetContent(props: SheetContentProps) {
   // Touch-based input handling (can be swapped with gesture-handler variant)
   const { handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT } =
     useSnapTouches({
+      side,
+      enableRTL,
       dragDisabled,
-      rubberBand,
+      rubberBand: effectiveRubberBand,
       flingEnabled: true,
       flingDeceleration: 2000,
       flingMinVelocity: 200,
       dismissThreshold,
       enableDragToClose,
       yRef,
-      screenHeight: resolvedScreenHeight,
+      viewportSize,
       snapOffsets,
       snapPointValues,
       minOffset,
       maxOffset,
-      sheetHeightMTRef,
+      sheetSizeMTRef,
       getResolvedSnapOffsets,
       getResolvedSnapPointValues,
       claimedGestureAngles,
@@ -186,11 +200,70 @@ export function SheetContent(props: SheetContentProps) {
     [handleTouchStartMT, handleTouchMoveMT, handleTouchEndMT],
   )
 
+  const horizontalContent = (
+    <view
+      {...rest}
+      className={innerClassName}
+      style={{
+        height: '100%',
+        ...innerStyle,
+      }}
+      event-through={false}
+      main-thread:bindtouchstart={handleOnly ? undefined : handleTouchStartMT}
+      main-thread:bindtouchmove={handleOnly ? undefined : handleTouchMoveMT}
+      main-thread:bindtouchend={handleOnly ? undefined : handleTouchEndMT}
+      main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
+    >
+      <SheetDragContext.Provider value={contextValue}>
+        {children}
+      </SheetDragContext.Provider>
+    </view>
+  )
+
+  if (isHorizontal) {
+    return (
+      <view
+        className={className}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          transform: resolvedSide === 'left'
+            ? `translate(${-viewportSize}px, 0px)`
+            : `translate(${viewportSize}px, 0px)`,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: resolvedSide === 'left'
+            ? 'flex-end'
+            : 'flex-start',
+          ...style,
+        }}
+        main-thread:ref={setSheetMTRef}
+        implicit-animation='false'
+        event-through={true}
+      >
+        {horizontalContent}
+      </view>
+    )
+  }
+
   return (
     <view
       className={className}
       style={{
-        top: '100%',
+        ...(isTop
+          ? {
+            bottom: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }
+          : {
+            top: '100%',
+          }),
         height: '100vh',
         overflow: 'hidden',
         ...style,

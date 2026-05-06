@@ -1,41 +1,50 @@
-.image {
-  width: 100%;
-  height: 100%;
+@import "@lynx-js/luna-styles/index.css";
+
+.bounces-content-area {
+  padding-top: 80px;
+  padding-bottom: 36px;
 }
 
-.image-text {
-  position: absolute;
-}
-
-.container {
-  width: 100%;
-  height: 100%;
-}
-
-.title-container {
-  margin-top: 10px;
-  margin-bottom: 5px;
-}
-
-.title-text {
-  font-size: 16px;
-}
-
-.button {
-  border: 1px solid;
-  border-radius: 4px;
-  width: 150px;
-  background-color: red;
-  margin: 4px 8px;
-  padding: 4px 8px;
-}
-
-.button-text {
-  color: white;
-}
-
-.operation {
+.bounce-loading {
   display: flex;
+  width: 96px;
+  height: 100%;
+  flex-direction: row;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding-left: 18px;
+}
+
+.bounce-loading-dot {
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background-color: var(--gradient-content);
+  animation: bounce-loading-pulse 900ms ease-in-out infinite;
+}
+
+.bounce-loading-dot--second {
+  animation-delay: 150ms;
+}
+
+.bounce-loading-dot--third {
+  animation-delay: 300ms;
+}
+
+@keyframes bounce-loading-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.75);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.3;
+    transform: scale(0.75);
+  }
 }

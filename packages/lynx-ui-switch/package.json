@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/lynx-ui-switch",
-  "version": "3.130.0",
+  "version": "3.131.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lynx-family/lynx-ui.git",
@@ -29,6 +29,7 @@
     "build:watch": "rslib build --watch"
   },
   "dependencies": {
+    "@lynx-js/lynx-ui-common": "workspace:*",
     "clsx": "catalog:"
   },
   "devDependencies": {

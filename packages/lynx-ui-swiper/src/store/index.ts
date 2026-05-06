@@ -8,6 +8,11 @@ import { noop } from '@lynx-js/lynx-ui-common'
 
 import type { SwiperContextProps } from '../types'
 
+export interface SwiperItemContextProps {
+  index: number
+  realIndex: number
+}
+
 export const SwiperContext = createContext<SwiperContextProps>({
   itemWidth: 350,
   itemHeight: 'auto',
@@ -21,3 +26,7 @@ export const SwiperContext = createContext<SwiperContextProps>({
   spaceBetween: 0,
   RTL: false,
 })
+
+export const SwiperItemContext = createContext<
+  SwiperItemContextProps | undefined
+>(undefined)

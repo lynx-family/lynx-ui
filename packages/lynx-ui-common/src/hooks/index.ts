@@ -9,9 +9,6 @@ export { useGlobalEventListener } from './useGlobalEventListener'
 export { useLatest } from './useLatest'
 export { useRegisteredEvents } from './useRegisteredEvents'
 
-export { useRefreshAndBounce } from './useRefresh'
-export type { useRefreshAndBounceReturn } from './useRefresh'
-export { useBounce, type bounceHandlers } from './useBounce'
 export { useMemoizedFn } from './useMemoizedFn'
 export { usePrevious } from './usePrevious'
 

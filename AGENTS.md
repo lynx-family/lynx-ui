@@ -10,7 +10,8 @@ This document provides context, conventions, and guidelines for AI agents workin
 
 - **Framework**: React (Lynx bindings)
 - **Language**: TypeScript
-- **Package Manager**: pnpm
+- **Runtime**: Node.js 24
+- **Package Manager**: pnpm 10.33.2
 - **Build System**: TurboRepo, Rslib
 
 ## Directory Structure
@@ -39,8 +40,12 @@ This repository follows a standard Monorepo structure. Understanding this is cru
 ### 1. Initial Setup
 
 **ALWAYS** ensure dependencies are up to date.
+Use Node.js 24 and pnpm 10.33.2, matching `.nvmrc`, `package.json`, and CI. Prefer Corepack so the pinned pnpm version from `packageManager` is used.
 
 ```bash
+# Enable the package manager pinned by package.json
+corepack enable
+
 # Install dependencies
 pnpm install
 ```
@@ -76,10 +81,11 @@ Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of 
 ### 4. Build & Verify
 
 Before submitting changes, ensure the project builds and passes checks.
+**CRITICAL**: You MUST run `pnpm turbo build` to perform a full workspace build and ensure no compilation errors are introduced.
 
 ```bash
 # Build all packages
-pnpm build
+pnpm run build
 
 # Verify the aggregate lynx-ui entry re-exports the expected package surface
 pnpm check:exports
@@ -229,6 +235,10 @@ This project uses **Biome** for linting and formatting, and **dprint** for Markd
 ## Contribution Rules
 
 1. **Changesets**: All changes that affect package versions must include a changeset (`pnpm changeset`).
+2. **Toolchain Updates**: Keep `.nvmrc`, `package.json` `engines`/`packageManager`, `pnpm-lock.yaml`, and GitHub Actions `actions/setup-node` versions aligned when changing Node.js or pnpm.
+3. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
+   Do not prepend labels like `[codex]` before the release type, because the semantic PR check parses the type from the beginning of the title.
+   Use one of the repository's allowed types, such as `fix`, `feat`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`, `release`, or `security`.
 
 ## Documentation Maintenance
 
@@ -241,7 +251,14 @@ Documentation should be treated as code. While AI can draft updates, humans must
 2. **Component Skills (`SKILL.md`)**:
    - **Drafting**: Ask AI to summarize the component's usage and pitfalls after implementation.
    - **Refining**: Humans must review the "Prompt Formula" to ensure it aligns with the team's mental model.
-3. **Code Review**:
+3. **Scope of `AGENTS.md`**:
+   - Keep `AGENTS.md` focused on repository workflow, build, verification, and contribution guidance.
+   - Do not add component-specific usage, prop documentation, examples, or design guidance to `AGENTS.md`; put that information in the component README, typedoc comments, examples, or component `SKILL.md`.
+4. **Package README Scope**:
+   - Keep package `README.md` files high-level. They should describe purpose, installation, component structure, and point readers to examples or API docs.
+   - Do not turn package READMEs into step-by-step usage manuals by appending narrow usage rules or behavioral footnotes for every change.
+   - Put detailed behavior guidance, caveats, and prompt-oriented instructions in typed API docs, examples, component `SKILL.md`, or `AGENTS.md` when that context is the better fit.
+5. **Code Review**:
    - Documentation changes must be included in the same Pull Request as the code changes.
    - Reviewers should verify that `AGENTS.md` and `SKILL.md` accurately reflect the code changes.
 

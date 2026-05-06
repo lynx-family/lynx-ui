@@ -1,6 +1,9 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
+// Copyright 2025 The Lynx Authors. All rights reserved.
+// Licensed under the Apache License Version 2.0 that can be found in the
+// LICENSE file in the root directory of this source tree.
 
 import * as fs from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -18,17 +21,17 @@ const rootPath = join(__dirname, '../../')
 const excludedPath = [
   'lynx-ui-common',
   'lynx-ui',
-  'lynx-ui-primitives',
-  'lynx-ui-live',
-  'lynx-ui-radio',
-  'lynx-ui-switch',
-  'lynx-ui-primitives-overlay',
-  'lynx-ui-primitives-presence',
+  'lynx-ui-presence',
 ]
 
 const primitivesConfig: Record<string, string[]> = {
   'lynx-ui-button': ['Button'],
-  'lynx-ui-primitives-sheet': [
+  'lynx-ui-switch': [
+    'Switch',
+    'SwitchTrack',
+    'SwitchThumb',
+  ],
+  'lynx-ui-sheet': [
     'SheetRoot',
     'SheetBackdrop',
     'SheetView',
@@ -46,18 +49,6 @@ const primitivesConfig: Record<string, string[]> = {
     'PopoverPositioner',
     'PopoverContent',
     'PopoverArrow',
-  ],
-  'lynx-ui-toast': [
-    'ToastRoot',
-    'ToastPositioner',
-    'ToastContent',
-  ],
-  'lynx-ui-primitives-tooltip': [
-    'TooltipRoot',
-    'TooltipTrigger',
-    'TooltipPositioner',
-    'TooltipContent',
-    'TooltipArrow',
   ],
   'lynx-ui-radio-group': [
     'RadioGroupRoot',
@@ -79,17 +70,31 @@ const primitivesConfig: Record<string, string[]> = {
   ],
 }
 export async function runTypeDocForPackage(
-  entryPoint: string,
+  entryPoints: string | string[],
   tsconfig: string,
   jsonDir: string,
 ): Promise<void> {
+  const normalizedEntryPoints = Array.isArray(entryPoints)
+    ? entryPoints
+    : [entryPoints]
   const app = await Application.bootstrapWithPlugins({
-    entryPoints: [entryPoint],
+    entryPoints: normalizedEntryPoints,
     entryPointStrategy: 'expand',
     tsconfig: tsconfig,
     json: jsonDir,
     emit: 'none',
-    plugin: [join(__dirname, 'plugins/expand-union-plugin.js')],
+    // Keep docs generation running even if unrelated TS errors exist.
+    skipErrorChecking: true,
+    blockTags: [
+      '@zh',
+      '@Android',
+      '@iOS',
+      '@Harmony',
+      '@param',
+      '@defaultValue',
+      '@docTypeFallback',
+    ],
+    plugin: [join(__dirname, 'plugins/expand-union-plugin.ts')],
   })
 
   const project = await app.convert()
@@ -97,51 +102,6 @@ export async function runTypeDocForPackage(
   if (project) {
     await app.generateJson(project, jsonDir)
   }
-}
-
-export async function genHooksDocForPackage(
-  packageName: string,
-  interfacePath: string,
-): Promise<void> {
-  const hooksPackageFolder = join(rootPath, 'packages/lynx-ui-common')
-  const hookTypesPath = join(
-    hooksPackageFolder,
-    'src/types/interfaces/',
-    interfacePath,
-  )
-
-  const hooksPaths = interfacePath.split('.')
-  const hooksLang = hooksPaths.length > 2 && hooksPaths[1] === 'zh'
-    ? 'zh'
-    : 'en'
-  const tsconfigPath = join(hooksPackageFolder, 'tsconfig.json')
-  const metaJsonPath = join(
-    rootPath,
-    hooksLang === 'en' ? 'tools/typedoc/gen/en/' : 'tools/typedoc/gen/zh/',
-    packageName,
-    'tsconfig.json',
-  )
-  const APITplJsonPath = join(
-    rootPath,
-    hooksLang === 'en' ? 'tools/typedoc/gen/en/' : 'tools/typedoc/gen/zh/',
-    `${packageName}-api-tpl.json`,
-  )
-  const APIMdxPath = join(
-    hooksPackageFolder,
-    'docs',
-    packageName,
-    hooksLang === 'en' ? 'APIReference.mdx' : 'APIReference.zh.mdx',
-  )
-
-  await runTypeDocForPackage(hookTypesPath, tsconfigPath, metaJsonPath)
-  await doGenDocData(
-    metaJsonPath,
-    APITplJsonPath,
-  )
-  await doGenTplWithData(
-    APITplJsonPath,
-    APIMdxPath,
-  )
 }
 
 function getTsConfigPath(
@@ -159,8 +119,59 @@ function getTsConfigPath(
 export async function genLynxUIDocForPackage(
   packageName: string,
 ): Promise<void> {
-  const hasMultipleProps = packageName in primitivesConfig
   const subPackageFolder = join(rootPath, 'packages', packageName)
+
+  // Some packages reference types from other workspace packages (e.g. Dialog -> Presence).
+  // Generate those referenced packages' TypeDoc JSON first so templates can inline/expand them.
+  const packageJsonPath = join(subPackageFolder, 'package.json')
+  if (fs.existsSync(packageJsonPath)) {
+    try {
+      const pkgJsonText = fs.readFileSync(packageJsonPath, 'utf8')
+      const pkgJson = JSON.parse(pkgJsonText) as {
+        dependencies?: Record<string, string>
+        peerDependencies?: Record<string, string>
+      }
+      const deps: Record<string, string> = {
+        ...(pkgJson.dependencies ?? {}),
+        ...(pkgJson.peerDependencies ?? {}),
+      }
+      for (const [depName, version] of Object.entries(deps)) {
+        if (
+          depName.startsWith('@lynx-js/lynx-ui-')
+          && depName !== '@lynx-js/lynx-ui-common' && version === 'workspace:*'
+        ) {
+          const depFolderName = depName.replace('@lynx-js/', '')
+          const depFolder = join(rootPath, 'packages', depFolderName)
+          if (!fs.existsSync(depFolder)) continue
+
+          const { path: depTsconfigPath, isDocsConfig: depIsDocsConfig } =
+            getTsConfigPath(depFolder)
+          const depConfigName = depIsDocsConfig
+            ? 'tsconfig.docs.json'
+            : 'tsconfig.json'
+          const depEntryPointPath = join(
+            depFolder,
+            depIsDocsConfig ? 'src/types/index.docs.ts' : 'types/index.docs.ts',
+          )
+
+          await runTypeDocForPackage(
+            depEntryPointPath,
+            depTsconfigPath,
+            join(
+              rootPath,
+              'tools/typedoc/gen/en/',
+              depFolderName,
+              depConfigName,
+            ),
+          )
+        }
+      }
+    } catch (e) {
+      console.warn(`Failed to parse package.json for ${packageName}`, e)
+    }
+  }
+
+  const hasMultipleProps = packageName in primitivesConfig
   const { path: tsconfigPath, isDocsConfig } = getTsConfigPath(subPackageFolder)
   const configName = isDocsConfig ? 'tsconfig.docs.json' : 'tsconfig.json'
   const entryPointPath = join(
@@ -181,29 +192,13 @@ export async function genLynxUIDocForPackage(
   )
   const APIMdxPath = join(subPackageFolder, 'docs', 'APIReference.mdx')
 
-  const entryPointZHPath = join(
-    subPackageFolder,
-    isDocsConfig ? 'src/types/index.docs.ts' : 'types/index.docs.ts',
-  )
-  const metaJsonZHPath = join(
-    rootPath,
-    'tools/typedoc/gen/zh/',
-    packageName,
-    configName,
-  )
-  const APITplJsonZHPath = join(
-    rootPath,
-    'tools/typedoc/gen/zh/',
-    `${packageName}-zh-api-tpl.json`,
-  )
-  const APIMdxZHPath = join(subPackageFolder, 'docs', 'APIReference.zh.mdx')
-
   // generate EN doc
   await runTypeDocForPackage(entryPointPath, tsconfigPath, metaJsonPath)
   await doGenDocData(
     metaJsonPath,
     APITplJsonPath,
     hasMultipleProps,
+    `@lynx-js/${packageName}`,
   )
   await doGenTplWithData(
     APITplJsonPath,
@@ -212,21 +207,11 @@ export async function genLynxUIDocForPackage(
     primitivesConfig[packageName],
   )
 
-  // generate ZH doc
-  await runTypeDocForPackage(entryPointZHPath, tsconfigPath, metaJsonZHPath)
-
-  await doGenDocData(
-    metaJsonZHPath,
-    APITplJsonZHPath,
-    hasMultipleProps,
-  )
-
-  await doGenTplWithData(
-    APITplJsonZHPath,
-    APIMdxZHPath,
-    hasMultipleProps,
-    primitivesConfig[packageName],
-  )
+  // OSS only keeps the default APIReference.mdx output.
+  const APIMdxZHPath = join(subPackageFolder, 'docs', 'APIReference.zh.mdx')
+  if (fs.existsSync(APIMdxZHPath)) {
+    fs.unlinkSync(APIMdxZHPath)
+  }
 }
 
 async function generateDocsForAllPackages(packageName: string[]) {
@@ -297,12 +282,6 @@ if (args.length > 0) {
 
 // Generate documentation for the selected packages
 await generateDocsForAllPackages(packagesToGenerate)
-
-// Always generate hooks documentation
-// await genHooksDocForPackage('useRefresh', 'RefreshInterface.ts')
-// await genHooksDocForPackage('useRefresh', 'RefreshInterface.zh.ts')
-// await genHooksDocForPackage('useBounce', 'BounceableInterface.ts')
-// await genHooksDocForPackage('useBounce', 'BounceableInterface.zh.ts')
 
 console.log('Documentation generation completed!')
 

@@ -1,29 +1,30 @@
 {
-  "name": "lynx-ui-repo",
+  "name": "@lynx-js/lynx-ui-repo",
   "private": true,
   "description": "lynx-ui repo",
   "license": "Apache-2.0",
   "author": "The Lynx Authors",
   "type": "module",
   "scripts": {
-    "analyzeDoc": "pnpm tsx tools/typedoc/index.ts",
     "build": "turbo build",
     "changeset": "changeset",
     "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
-    "check:all": "pnpm run check && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
+    "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
     "coverage": "vitest --coverage",
     "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
-    "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif",
+    "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
     "fix:changed": "sh tools/checkChanged/checkChanged.sh",
     "fix:changed:unsafe": "sh tools/checkChanged/checkChanged.sh --unsafe",
     "fix:manypkg": "pnpm dlx @manypkg/cli fix",
     "fix:sherif": "pnpm dlx sherif@latest --fix",
     "format": "dprint fmt",
+    "genDoc": "pnpm tsx tools/typedoc/index.ts",
     "install:all": "pnpm install",
     "knip": "knip",
     "make-new-component": "tsx tools/make-new-component/index.ts",
@@ -36,6 +37,12 @@
       "eslint --cache --fix --no-warn-ignored",
       "biome lint --write --no-errors-on-unmatched --files-ignore-unknown=true",
       "dprint fmt --allow-no-files --"
+    ],
+    "**/*.mdx": [
+      "dprint fmt --allow-no-files --"
+    ],
+    "packages/lynx-ui-*/docs/**/*.mdx": [
+      "node tools/scripts/check-mdx-top-level-esm.mjs"
     ],
     "*.{toml,css,sass,scss,less,html,yml,yaml}": [
       "dprint fmt --allow-no-files --"
@@ -55,8 +62,8 @@
     "@rsbuild/plugin-react": "catalog:",
     "@rslib/core": "catalog:",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
-    "@types/node": "^18.19.130",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@types/node": "^24",
+    "@vitest/coverage-v8": "2.1.8",
     "@vitest/eslint-plugin": "^1.1.24",
     "cspell": "^8.17.1",
     "dprint": "^0.48.0",
@@ -76,15 +83,15 @@
     "nano-staged": "^0.8.0",
     "sort-package-json": "^2.12.0",
     "tsx": "^4.19.3",
-    "turbo": "^2.3.3",
+    "turbo": "^2.9.3",
     "typedoc": "^0.28.0",
     "typescript": "catalog:",
     "typescript-eslint": "^8.19.1",
     "vitest": "2.1.8"
   },
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@10.33.2",
   "engines": {
-    "node": ">=18.20",
-    "pnpm": "9.12.3"
+    "node": ">=24.0.0",
+    "pnpm": "10.33.2"
   }
 }

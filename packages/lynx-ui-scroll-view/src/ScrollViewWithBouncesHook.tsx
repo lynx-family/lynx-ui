@@ -5,14 +5,17 @@
 import type { ForwardedRef, ReactElement, ReactNode } from '@lynx-js/react'
 
 import '@lynx-js/gesture-runtime'
-import { useBounce } from '@lynx-js/lynx-ui-common'
-import type { BounceableBasicProps } from '@lynx-js/lynx-ui-common'
 import type {
   CSSProperties,
   ScrollViewProps as ScrollViewElementProps,
 } from '@lynx-js/types'
 
-import type { ScrollViewProps, ScrollViewRef } from './types'
+import { useBounce } from './hooks/useBounce'
+import type {
+  BounceableBasicProps,
+  ScrollViewProps,
+  ScrollViewRef,
+} from './types'
 
 export type { ScrollViewProps, ScrollViewRef }
 

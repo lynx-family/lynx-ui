@@ -69,3 +69,40 @@ export interface ButtonProps {
    */
   onClick?: () => void
 }
+
+/**
+ * The interactive status passed to Button's render-prop children.
+ * @zh 传入 Button render-prop children 的交互状态。
+ */
+export interface ButtonRenderProps {
+  /**
+   * Whether the button is currently being pressed (and not disabled).
+   * @zh 按钮当前是否处于按下态（且未被禁用）。
+   */
+  active?: boolean
+
+  /**
+   * Whether the button is disabled.
+   * @zh 按钮是否处于禁用态。
+   */
+  disabled?: boolean
+}
+
+/**
+ * UI variants applied by Button based on its interactive status.
+ * Use them as CSS selectors to style different states.
+ * @zh Button 根据交互状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ */
+export interface ButtonUiVariants {
+  /**
+   * Applied when `status.active` is true.
+   * @zh 当 status.active 为 true 时生效，可用于 `.ui-active { ... }`。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when `status.disabled` is true.
+   * @zh 当 status.disabled 为 true 时生效，可用于 `.ui-disabled { ... }`。
+   */
+  'ui-disabled'?: boolean
+}
