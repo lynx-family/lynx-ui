@@ -18,7 +18,7 @@
     "coverage": "vitest --coverage",
     "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
-    "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif",
+    "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
     "fix:changed": "sh tools/checkChanged/checkChanged.sh",
     "fix:changed:unsafe": "sh tools/checkChanged/checkChanged.sh --unsafe",
     "fix:manypkg": "pnpm dlx @manypkg/cli fix",
