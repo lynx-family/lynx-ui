@@ -21,9 +21,21 @@ _(If necessary, you can still install the standalone package via `pnpm add @lynx
 
 ## Usage
 
-The `lynx-ui-overlay` follows a headless composition pattern.
+Use `OverlayView` when content may need to render in a native overlay container. If `container` is omitted, it falls back to a plain `view`.
 
-[View Full Examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Overlay)
+```tsx
+import { OverlayView } from '@lynx-js/lynx-ui'
+
+export function Example() {
+  return (
+    <OverlayView container='default'>
+      <view className='panel'>
+        <text>Overlay content</text>
+      </view>
+    </OverlayView>
+  )
+}
+```
 
 ## Component Structure
 
@@ -31,6 +43,7 @@ The `Overlay` component is composed of the following sub-components:
 
 ```tsx
 <OverlayView>
+  <view />
 </OverlayView>
 ```
 

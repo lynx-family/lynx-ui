@@ -25,48 +25,50 @@ function SwiperEntry() {
     containWidth,
   )
   return (
-    <view>
-      <Swiper
-        data={colorsArr}
-        itemWidth={itemWidth + SwiperItemGap}
-        itemHeight={219.92727272727276}
-        containerWidth={containWidth}
-        loop={true}
-        duration={500}
-        initialIndex={0}
-        mode='normal'
-        autoPlay={true}
-        onChange={setCurrentIndex}
-        experimentalHorizontalSwipeOnly={true}
-      >
-        {({ item, index, realIndex }) => (
-          <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
-            <view
-              class='block-view'
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: item,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
+    <view class='container lunaris-dark'>
+      <view class='content-area'>
+        <Swiper
+          data={colorsArr}
+          itemWidth={itemWidth + SwiperItemGap}
+          itemHeight={219.92727272727276}
+          containerWidth={containWidth}
+          loop={true}
+          duration={500}
+          initialIndex={0}
+          mode='normal'
+          autoPlay={true}
+          onChange={setCurrentIndex}
+          experimentalHorizontalSwipeOnly={true}
+        >
+          {({ item, index, realIndex }) => (
+            <SwiperItem index={index} key={realIndex} realIndex={realIndex}>
               <view
+                class='block-view'
                 style={{
-                  backgroundColor: 'white',
-                  width: '4px',
-                  height: '4px',
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: item,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
+                <view
+                  style={{
+                    backgroundColor: 'white',
+                    width: '4px',
+                    height: '4px',
+                  }}
+                >
+                </view>
               </view>
-            </view>
-            <text class='image-text'>Number.{index}</text>
-          </SwiperItem>
-        )}
-      </Swiper>
-      <view>
-        <text>currentIndex: {currentIndex}</text>
+              <text class='image-text'>Number.{index}</text>
+            </SwiperItem>
+          )}
+        </Swiper>
+        <view>
+          <text class='index-text'>currentIndex: {currentIndex}</text>
+        </view>
       </view>
     </view>
   )

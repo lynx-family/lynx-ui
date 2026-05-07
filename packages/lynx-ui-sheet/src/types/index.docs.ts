@@ -162,6 +162,9 @@ export interface SheetRootProps extends ComponentBasicProps {
   /**
    * The threshold to dismiss the Sheet.
    * @zh Sheet 关闭的阈值。
+   * @Android
+   * @iOS
+   * @Harmony
    */
   dismissThreshold?: number
   /**

@@ -62,7 +62,7 @@ export const Checkbox = (props: CheckboxProps): ReactNode => {
         style={style}
         className={clsx(className, {
           'ui-indeterminate': indeterminate,
-          'ui-checked': checked,
+          'ui-checked': actualChecked,
         })}
         buttonProps={checkboxProps}
       >
