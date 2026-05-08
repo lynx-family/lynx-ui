@@ -23,7 +23,7 @@
   background: linear-gradient(
     0deg,
     var(--gradient-a),
-    var(--gradient-b),
+    var(--gradient-b)
   );
   padding-top: 96px;
   flex-direction: column;

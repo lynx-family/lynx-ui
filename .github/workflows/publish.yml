@@ -29,6 +29,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          package-manager-cache: false
       - name: Install
         run: |
           npm install -g corepack@latest
@@ -94,7 +98,7 @@ jobs:
           corepack pnpm turbo build --summarize
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date -u +'%Y-%m-%d %H:%M:%S')"
+        run: echo "date=$(date -u +'%Y-%m-%d %H:%M:%S')" >> "${GITHUB_OUTPUT}"
       - name: Check release run is current
         id: current-main
         shell: bash
