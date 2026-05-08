@@ -81,13 +81,14 @@ jobs:
         pnpm --recursive publish --no-git-checks --access public --registry=http://localhost:4873
         PKG_NAME=$(node -p "require('./packages/lynx-ui-button/package.json').name")
         PKG_VERSION=$(node -p "require('./packages/lynx-ui-button/package.json').version")
+        PNPM_PACKAGE_MANAGER=$(node -p "require('./package.json').packageManager")
         echo "Testing $PKG_NAME@$PKG_VERSION"
         cd `mktemp -d`
         mkdir smoke-test
         cd smoke-test
-        pnpm init
+        corepack "$PNPM_PACKAGE_MANAGER" init
         echo "registry=http://localhost:4873" > .npmrc
-        pnpm add $PKG_NAME@$PKG_VERSION
+        corepack "$PNPM_PACKAGE_MANAGER" add $PKG_NAME@$PKG_VERSION
          if [ ! -f "node_modules/$PKG_NAME/package.json" ]; then
            echo "Package failed to install"
            exit 1
