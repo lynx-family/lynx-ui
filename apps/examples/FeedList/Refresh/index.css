@@ -1,0 +1,119 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  position: relative;
+  background-color: var(--canvas-ambient);
+  width: 100%;
+  height: 100%;
+  padding-top: 48px;
+}
+
+.demo-actions {
+  position: absolute;
+  bottom: 24px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 12px;
+  background-color: var(--neutral-content);
+  border-top: 1px;
+  border-color: var(--line);
+}
+
+.command-button {
+  width: 100%;
+  background-color: var(--neutral);
+  border-radius: 999px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.command-button.ui-active {
+  background-color: var(--neutral-2);
+}
+
+.command-button--secondary {
+  background-color: var(--fill-primary);
+}
+
+.command-button__text {
+  color: var(--content-inverse, #111111);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.feed-list {
+  width: 100%;
+  height: 100%;
+  background-color: var(--canvas-ambient);
+}
+
+.bottom-spacer {
+  width: 100%;
+  height: 168px;
+}
+
+.refresh-header {
+  width: 100%;
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.refresh-header__spinner {
+  width: 32px;
+  height: 32px;
+}
+
+.refresh-header__text {
+  font-size: 14px;
+  color: var(--content-subtle);
+}
+
+.rectangle-card {
+  background-color: var(--canvas);
+  border-color: var(--line);
+  border-width: 1px;
+  border-radius: 16px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 12px;
+  padding-top: 80px;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.rectangle-card__letter {
+  font-size: 224px;
+  font-weight: 600;
+  padding-left: 48px;
+  padding-right: 48px;
+  color: var(--canvas);
+  border-radius: 16px;
+  background: linear-gradient(
+    150deg,
+    var(--primary) 8.42%,
+    var(--primary-2) 81.71%
+  );
+}
+
+.rectangle-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: auto;
+  color: var(--content);
+}
+
+.rectangle-card__subtitle {
+  font-size: 12px;
+  color: var(--content-subtle);
+}

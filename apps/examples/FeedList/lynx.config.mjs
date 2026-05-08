@@ -8,6 +8,7 @@ const defaultConfig = exampleConfig({
   FeedListBasic: './Basic/index.tsx',
   FeedListHorizontal: './Horizontal/index.tsx',
   FeedListHorizontalRTL: './HorizontalRTL/index.tsx',
+  FeedListRefresh: './Refresh/index.tsx',
 }, { needWeb: false })
 
 export default defaultConfig
