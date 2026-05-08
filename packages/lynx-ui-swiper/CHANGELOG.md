@@ -1,5 +1,20 @@
 # @lynx-js/lynx-ui-swiper
 
+## 3.132.0
+
+### Minor Changes
+
+- Allow SwiperItem to receive item metadata from Swiper context. In normal usage, users can now write `<SwiperItem>` directly without passing `index`, `realIndex`, or `key={realIndex}`. ([#152](https://github.com/lynx-family/lynx-ui/pull/152))
+
+  ```diff
+   {({ index, realIndex }) => (
+  -  <SwiperItem index={index} realIndex={realIndex} key={realIndex}>
+  +  <SwiperItem>
+       {content}
+     </SwiperItem>
+   )}
+  ```
+
 ## 3.131.0
 
 ### Patch Changes

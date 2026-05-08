@@ -1,5 +1,14 @@
 # @lynx-example/lynx-ui-swiper
 
+## 0.0.6
+
+### Patch Changes
+
+- Fix background syntax in web ([#163](https://github.com/lynx-family/lynx-ui/pull/163))
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.132.0
+
 ## 0.0.5
 
 ### Patch Changes

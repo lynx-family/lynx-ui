@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-scroll-view
 
+## 3.132.0
+
+### Minor Changes
+
+- Add `enableRTL` support for horizontal bounce and refresh interactions. ([#160](https://github.com/lynx-family/lynx-ui/pull/160))
+
 ## 3.131.0
 
 ### Minor Changes

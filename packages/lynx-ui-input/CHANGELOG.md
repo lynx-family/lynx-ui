@@ -1,5 +1,14 @@
 # @lynx-js/lynx-ui-input
 
+## 3.132.0
+
+### Patch Changes
+
+- Remove redundant background style from dummy view ([#162](https://github.com/lynx-family/lynx-ui/pull/162))
+
+- Updated dependencies [[`01c4896`](https://github.com/lynx-family/lynx-ui/commit/01c48967ebb106cfe5a844c2072b995edb500ff4)]:
+  - @lynx-js/lynx-ui-scroll-view@3.132.0
+
 ## 3.131.0
 
 ### Patch Changes

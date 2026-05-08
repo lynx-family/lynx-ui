@@ -1,5 +1,14 @@
 # @lynx-example/lynx-ui-feed-list
 
+## 0.0.6
+
+### Patch Changes
+
+- feat: Implement new FeedListRefresh example with refresh functionality ([#169](https://github.com/lynx-family/lynx-ui/pull/169))
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.132.0
+
 ## 0.0.5
 
 ### Patch Changes

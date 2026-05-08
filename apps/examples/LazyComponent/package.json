@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-lazy-component",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Example app demonstrating LazyComponent usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/LazyComponent#readme",
   "repository": {
