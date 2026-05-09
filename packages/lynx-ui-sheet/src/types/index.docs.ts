@@ -327,7 +327,16 @@ export interface SheetRootProps extends ComponentBasicProps {
  * The handle of the Sheet.
  * @zh Sheet 的拖拽手柄。
  */
-export interface SheetHandleProps extends ComponentBasicProps {}
+export interface SheetHandleProps extends ComponentBasicProps {
+  /**
+   * children
+   * @zh 子元素
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  children?: ReactNode
+}
 
 /**
  * The view container of the Sheet. Can be `x-overlay-ng` or `view`.
