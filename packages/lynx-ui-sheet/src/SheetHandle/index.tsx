@@ -5,7 +5,7 @@ import { useSheetDragContext } from '../context'
 import type { SheetHandleProps } from '../types'
 
 export function SheetHandle(props: SheetHandleProps) {
-  const { className, style, ...rest } = props
+  const { className, style, children, ...rest } = props
   const { dragHandlers } = useSheetDragContext()
 
   return (
@@ -16,6 +16,8 @@ export function SheetHandle(props: SheetHandleProps) {
       main-thread:bindtouchstart={dragHandlers.handleTouchStartMT}
       main-thread:bindtouchmove={dragHandlers.handleTouchMoveMT}
       main-thread:bindtouchend={dragHandlers.handleTouchEndMT}
-    />
+    >
+      {children}
+    </view>
   )
 }
