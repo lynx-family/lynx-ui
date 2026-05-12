@@ -36,11 +36,11 @@
 }
 
 .command-button--secondary {
-  background-color: var(--fill-primary);
+  background-color: var(--primary);
 }
 
 .command-button__text {
-  color: var(--content-inverse, #111111);
+  color: var(--neutral-content, #111111);
   font-size: 14px;
   font-weight: 600;
 }

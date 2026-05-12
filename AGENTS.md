@@ -90,6 +90,8 @@ Examples should use the in-repo LUNA theme foundation by default instead of ad-h
 - Prefer semantic LUNA tokens over literal color values.
 - When you need the exact token names or meanings, look them up in the in-repo `luna/` workspace and the imported LUNA styles source used by the example.
 - Use token semantics rather than visual guesses. Choose surface, content, accent, backdrop, divider, or gradient roles based on purpose, then resolve the exact token from the source of truth in `luna/`.
+- After adding or editing demo CSS, run `pnpm check:luna-vars` from `lynx-ui-open-source` to verify every referenced CSS variable is known.
+- Fix every `check:luna-vars` violation before handing off or submitting the demo change.
 - When an example needs RTL support, set `direction: rtl` on the outer container and let descendants inherit it through CSS instead of duplicating directional styles on every node.
 
 ### 4. Build & Verify
@@ -103,6 +105,9 @@ pnpm run build
 
 # Verify the aggregate lynx-ui entry re-exports the expected package surface
 pnpm check:exports
+
+# Verify demo CSS variables
+pnpm check:luna-vars
 
 # Run all checks (format, lint, manypkg, sherif)
 pnpm check:all
