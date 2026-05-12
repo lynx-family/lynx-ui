@@ -9,7 +9,7 @@ import {
   SliderRoot,
   SliderThumb,
   SliderTrack,
-} from '@lynx-js/lynx-ui-slider'
+} from '@lynx-js/lynx-ui'
 
 import './index.css'
 

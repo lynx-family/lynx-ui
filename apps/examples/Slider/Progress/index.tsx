@@ -4,11 +4,7 @@
 
 import { root, useEffect, useRef, useState } from '@lynx-js/react'
 
-import {
-  SliderIndicator,
-  SliderRoot,
-  SliderTrack,
-} from '@lynx-js/lynx-ui-slider'
+import { SliderIndicator, SliderRoot, SliderTrack } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

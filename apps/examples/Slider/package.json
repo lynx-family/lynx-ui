@@ -1,7 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-slider",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.0.6",
   "description": "Example app demonstrating Slider usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Slider#readme",
   "repository": {
@@ -14,6 +13,15 @@
     "name": "The Lynx Authors"
   },
   "type": "module",
+  "files": [
+    "LICENSE",
+    "CHANGELOG.md",
+    "dist/",
+    "**/*.tsx",
+    "**/*.ts",
+    "**/*.css",
+    "lynx.config.mjs"
+  ],
   "scripts": {
     "build": "rspeedy build",
     "build:dev": "rspeedy build --mode=development",
@@ -22,7 +30,7 @@
   },
   "dependencies": {
     "@lynx-js/luna-styles": "workspace:*",
-    "@lynx-js/lynx-ui-slider": "workspace:*",
+    "@lynx-js/lynx-ui": "workspace:*",
     "@lynx-js/react": "catalog:"
   },
   "devDependencies": {

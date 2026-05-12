@@ -11,7 +11,7 @@
 - **RTL Support**: Set `enableRTL` to make the indicator and thumb resolve right-to-left.
 - **Stepping**: Set `step` to snap values to discrete increments.
 - **Disabled Mode**: Set `disabled` to prevent dragging while still displaying the current value.
-- **Interaction Callbacks**: `onDragging(value)` when dragging starts, `onValueChange(value, source)` for slider-driven updates, `onValueCommit(value)` at drag end.
+- **Interaction Callbacks**: `onDragging(value)` when dragging state changes, `onValueChange(value, source)` for slider-driven updates, `onValueCommit(value)` at drag end.
 - **Headless Styling**: Supports styling via `className` and `style` props on every primitive.
 
 ## 2. AI Coding Guide
@@ -24,7 +24,7 @@ import {
   SliderTrack,
   SliderIndicator,
   SliderThumb,
-} from '@lynx-js/lynx-ui-slider'
+} from '@lynx-js/lynx-ui'
 
 function BasicSlider() {
   return (
@@ -52,7 +52,7 @@ import {
   SliderTrack,
   SliderIndicator,
   SliderThumb,
-} from '@lynx-js/lynx-ui-slider'
+} from '@lynx-js/lynx-ui'
 
 function ControlledSlider() {
   const [value, setValue] = useState(0.5)
@@ -109,8 +109,8 @@ function ControlledSlider() {
 | `step`          | `number`                          | —       | Snap interval in `[0, 1]`.                                                          |
 | `disabled`      | `boolean`                         | `false` | Prevent interaction while keeping the slider value visible.                         |
 | `enableRTL`     | `boolean`                         | `false` | Reverse range direction (right-to-left).                                            |
-| `onDragging`    | `(value: number) => void`         | —       | Fires once when the interaction enters dragging state.                              |
-| `onValueChange` | `(value: number, source) => void` | —       | Fires for drag updates and `updateValue` calls. Source is `'drag'` or `'external'`. |
+| `onDragging`    | `(value: number) => void`         | —       | Fires when dragging starts and when dragging ends.                                  |
+| `onValueChange` | `(value: number, source) => void` | —       | Fires after drag updates and `updateValue` calls. Source is `'drag'` or `'external'`. |
 | `onValueCommit` | `(value: number) => void`         | —       | Fires at drag end with final value.                                                 |
 
 ### SliderRef (uncontrolled only)
@@ -128,7 +128,7 @@ A: Use controlled (`value` + `onValueChange`) when you need to sync slider state
 
 **Q: What is the difference between `onDragging`, `onValueChange`, and `onValueCommit`?**
 
-A: `onDragging` fires once when dragging starts. `onValueChange` fires for slider-driven value updates during drag and imperative `updateValue` calls. `onValueCommit` fires once at drag end — useful for persisting the final value.
+A: `onDragging` fires when dragging starts and when dragging ends. `onValueChange` fires after slider-driven value updates during drag and imperative `updateValue` calls. `onValueCommit` fires once at drag end — useful for persisting the final value.
 
 **Q: How do I prevent user interaction while still showing the value?**
 
@@ -136,7 +136,7 @@ A: Set `disabled` on `SliderRoot`. The slider will display the current value but
 
 **Q: What happens if I call `updateValue` / `getValue` in controlled mode?**
 
-A: They will throw an error. In controlled mode, update the `value` prop directly instead.
+A: They will throw an error. In controlled mode, update external state through `onValueChange` so the `value` prop stays in sync with the rendered value.
 
 **Q: Can I set value outside `[0, 1]`?**
 

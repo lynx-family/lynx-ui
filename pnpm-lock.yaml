@@ -562,9 +562,9 @@ importers:
       '@lynx-js/luna-styles':
         specifier: workspace:*
         version: link:../../../luna/packages/luna-styles
-      '@lynx-js/lynx-ui-slider':
+      '@lynx-js/lynx-ui':
         specifier: workspace:*
-        version: link:../../../packages/lynx-ui-slider
+        version: link:../../../packages/lynx-ui
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.114.0(@lynx-js/types@3.6.0)(@types/react@18.3.27)
@@ -809,6 +809,9 @@ importers:
       '@lynx-js/lynx-ui-sheet':
         specifier: workspace:*
         version: link:../lynx-ui-sheet
+      '@lynx-js/lynx-ui-slider':
+        specifier: workspace:*
+        version: link:../lynx-ui-slider
       '@lynx-js/lynx-ui-sortable':
         specifier: workspace:*
         version: link:../lynx-ui-sortable
