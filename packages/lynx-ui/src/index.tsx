@@ -259,6 +259,21 @@ export type {
   SheetTransition,
 } from '@lynx-js/lynx-ui-sheet'
 
+// slider
+export {
+  SliderRoot,
+  SliderTrack,
+  SliderIndicator,
+  SliderThumb,
+} from '@lynx-js/lynx-ui-slider'
+export type {
+  SliderRootProps,
+  SliderTrackProps,
+  SliderIndicatorProps,
+  SliderThumbProps,
+  SliderRef,
+} from '@lynx-js/lynx-ui-slider'
+
 // only presence types are exported
 export type {
   PresenceAnimationStatus,

@@ -24,7 +24,7 @@ import {
   SliderTrack,
   SliderIndicator,
   SliderThumb,
-} from '@lynx-js/lynx-ui-slider'
+} from '@lynx-js/lynx-ui'
 
 function BasicSlider() {
   return (
@@ -52,7 +52,7 @@ import {
   SliderTrack,
   SliderIndicator,
   SliderThumb,
-} from '@lynx-js/lynx-ui-slider'
+} from '@lynx-js/lynx-ui'
 
 function ControlledSlider() {
   const [value, setValue] = useState(0.5)

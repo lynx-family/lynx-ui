@@ -809,6 +809,9 @@ importers:
       '@lynx-js/lynx-ui-sheet':
         specifier: workspace:*
         version: link:../lynx-ui-sheet
+      '@lynx-js/lynx-ui-slider':
+        specifier: workspace:*
+        version: link:../lynx-ui-slider
       '@lynx-js/lynx-ui-sortable':
         specifier: workspace:*
         version: link:../lynx-ui-sortable
