@@ -1,6 +1,8 @@
 # @lynx-js/lynx-ui-slider
 
-## 3.130.1
+## 3.132.0
+
+### Minor Changes
 
 - Introduced primitives-first slider components:
   - `SliderRoot`

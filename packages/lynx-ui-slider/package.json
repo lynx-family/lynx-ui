@@ -1,7 +1,6 @@
 {
   "name": "@lynx-js/lynx-ui-slider",
-  "version": "0.0.1",
-  "private": true,
+  "version": "3.132.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lynx-family/lynx-ui.git",
