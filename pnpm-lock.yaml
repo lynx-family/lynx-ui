@@ -1411,6 +1411,15 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  packages/skill-lynx-ui:
+    devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.12.2
+      vitest:
+        specifier: 2.1.8
+        version: 2.1.8(@types/node@24.12.2)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)
+
   tools/canary-release:
     dependencies:
       '@manypkg/get-packages':
