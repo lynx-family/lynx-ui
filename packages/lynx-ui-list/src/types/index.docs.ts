@@ -13,7 +13,11 @@ import type {
   BaseUITouchEvents,
   ComponentBasicProps,
 } from '@lynx-js/lynx-ui-common'
-import type { ListScrollStateChangeEvent, ListSnapEvent } from '@lynx-js/types'
+import type {
+  CommonEvent,
+  ListScrollStateChangeEvent,
+  ListSnapEvent,
+} from '@lynx-js/types'
 
 export type List = (props: ListProps) => ReactElement
 
@@ -559,6 +563,14 @@ export interface ListProps
    * @eventProperty
    */
   onSnapToItem?: (e: ListSnapEvent) => void
+  /**
+   * Send when a wheel event is triggered on the list.
+   * @zh 当列表触发滚轮事件时发送。
+   * @eventProperty
+   * @PC
+   * @Web
+   */
+  onWheel?: (e: CommonEvent) => void
   /**
    * exposure-scene for global exposure
    * @zh 全局曝光的曝光场景

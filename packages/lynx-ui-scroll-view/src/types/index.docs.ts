@@ -14,7 +14,7 @@ import type {
   ComponentBasicProps,
   LazyOptions,
 } from '@lynx-js/lynx-ui-common'
-import type { CSSProperties } from '@lynx-js/types'
+import type { CSSProperties, CommonEvent } from '@lynx-js/types'
 
 export type ScrollView = (props: ScrollViewProps) => ReactElement
 
@@ -286,6 +286,14 @@ export interface ScrollViewProps
   onContentSizeChange?: (res: {
     detail: { scrollWidth: number, scrollHeight: number }
   }) => void
+  /**
+   * Send when a wheel event is triggered on the scroll-view.
+   * @zh 当 scroll-view 触发滚轮事件时发送。
+   * @eventProperty
+   * @PC
+   * @Web
+   */
+  onWheel?: (e: CommonEvent) => void
 }
 
 export interface scrollToBouncesInfo {

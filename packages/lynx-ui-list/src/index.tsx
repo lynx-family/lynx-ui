@@ -34,6 +34,7 @@ export const ListEventMapping: Record<string, string> = {
   onLayoutComplete: 'bindlayoutcomplete',
   onScrollStateChange: 'bindscrollstatechange',
   onSnapToItem: 'bindsnap',
+  onWheel: 'bindwheel',
 }
 
 enum DEBUG_LEVEL {

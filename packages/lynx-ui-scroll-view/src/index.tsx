@@ -39,6 +39,7 @@ export const ScrollView = memo(forwardRef(ScrollViewImpl)) as ScrollViewType
 
 const ScrollViewEventMapping: Record<string, string> = {
   onContentSizeChange: 'bindcontentsizechanged',
+  onWheel: 'bindwheel',
 }
 
 /**
