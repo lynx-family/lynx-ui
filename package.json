@@ -32,7 +32,8 @@
     "make-new-component": "tsx tools/make-new-component/index.ts",
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
-    "test": "vitest"
+    "test": "vitest",
+    "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
