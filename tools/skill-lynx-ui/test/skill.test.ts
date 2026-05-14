@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
+import { collectIncludedComponents } from '../generate-references.mjs'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const packageRoot = path.resolve(
@@ -19,6 +21,7 @@ const packageRoot = path.resolve(
   'skill-lynx-ui',
 )
 const skillPath = path.join(packageRoot, 'SKILL.md')
+const referencePath = path.join(packageRoot, 'reference.md')
 
 describe('skill-lynx-ui SKILL.md', () => {
   it('contains valid frontmatter and progressive-disclosure guidance', async () => {
@@ -34,5 +37,16 @@ describe('skill-lynx-ui SKILL.md', () => {
     expect(skillText).toContain('examples.md')
     expect(skillText).not.toContain('## Examples')
     expect(skillText).not.toContain('## API Definition')
+  })
+
+  it('routes every included component reference', async () => {
+    const referenceText = await fs.readFile(referencePath, 'utf8')
+    const components = await collectIncludedComponents()
+
+    for (const component of components) {
+      expect(referenceText).toContain(
+        `references/components/${component.slug}/guide.md`,
+      )
+    }
   })
 })
