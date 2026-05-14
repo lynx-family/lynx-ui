@@ -7,18 +7,10 @@ import { root, useState } from '@lynx-js/react'
 import { Checkbox, CheckboxIndicator } from '@lynx-js/lynx-ui'
 
 import { CheckMark } from '../shared/Checkmark'
+import { hitSlop } from '../shared/hitSlop'
 import './index.css'
 
 const FRUITS = ['Apple', 'Banana', 'Orange']
-
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
 
 function IndeterminateMark() {
   return <view className='indeterminate-mark' />
@@ -45,8 +37,8 @@ function App() {
   }
 
   return (
-    <view className='container lunaris-dark luna-gradient-ocean'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-dark luna-gradient-ocean'>
+      <view className='demo-canvas'>
         <view className='section'>
           <text className='title'>Indeterminate</text>
 
@@ -56,7 +48,7 @@ function App() {
               checked={allSelected}
               indeterminate={indeterminate}
               onChange={handleSelectAll}
-              checkboxProps={HitSlop}
+              checkboxProps={hitSlop}
             >
               <CheckboxIndicator className='checkbox-indicator'>
                 {indeterminate ? <IndeterminateMark /> : <CheckMark />}
@@ -72,7 +64,7 @@ function App() {
                   className='checkbox'
                   checked={selected.includes(fruit)}
                   onChange={(checked) => handleItem(fruit, checked)}
-                  checkboxProps={HitSlop}
+                  checkboxProps={hitSlop}
                 >
                   <CheckboxIndicator className='checkbox-indicator'>
                     <CheckMark />

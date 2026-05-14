@@ -5,16 +5,9 @@
 import { root, useState } from '@lynx-js/react'
 
 import { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui'
-import './index.css'
 
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
+import { hitSlop } from '../shared/hitSlop'
+import './index.css'
 
 function App() {
   const [checked, setChecked] = useState(true)
@@ -25,7 +18,7 @@ function App() {
         {/* Uncontrolled */}
         <view className='section'>
           <view className='row'>
-            <Switch className='switch' switchProps={HitSlop}>
+            <Switch className='switch' switchProps={hitSlop}>
               <SwitchTrack className='switch-track' />
               <SwitchThumb className='switch-thumb' />
             </Switch>
@@ -40,7 +33,7 @@ function App() {
               className='switch'
               checked={checked}
               onChange={setChecked}
-              switchProps={HitSlop}
+              switchProps={hitSlop}
             >
               <SwitchTrack className='switch-track' />
               <SwitchThumb className='switch-thumb' />
@@ -56,7 +49,7 @@ function App() {
               className='switch'
               disabled
               defaultChecked
-              switchProps={HitSlop}
+              switchProps={hitSlop}
             >
               <SwitchTrack className='switch-track' />
               <SwitchThumb className='switch-thumb' />

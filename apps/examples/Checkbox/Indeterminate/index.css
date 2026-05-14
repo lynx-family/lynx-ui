@@ -3,7 +3,7 @@
 /* =========================
  * Container
  * ========================= */
-.container {
+.demo-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,7 +16,7 @@
   color: var(--content);
 }
 
-.canvas {
+.demo-canvas {
   background-color: var(--canvas);
   display: flex;
   flex-direction: column;
