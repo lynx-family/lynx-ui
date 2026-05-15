@@ -222,6 +222,37 @@ importers:
         specifier: 'catalog:'
         version: 18.3.27
 
+  apps/examples/Common:
+    dependencies:
+      '@lynx-js/luna-styles':
+        specifier: workspace:*
+        version: link:../../../luna/packages/luna-styles
+      '@lynx-js/lynx-ui':
+        specifier: workspace:*
+        version: link:../../../packages/lynx-ui
+      '@lynx-js/react':
+        specifier: 'catalog:'
+        version: 0.114.0(@lynx-js/types@3.6.0)(@types/react@18.3.27)
+    devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.4.6
+      '@lynx-js/react-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.12.4(@lynx-js/react@0.114.0(@lynx-js/types@3.6.0)(@types/react@18.3.27))(webpack@5.104.1)
+      '@lynx-js/rspeedy':
+        specifier: 'catalog:'
+        version: 0.12.2(@rspack/core@1.6.8(@swc/helpers@0.5.18))(typescript@5.9.3)(webpack@5.104.1)
+      '@lynx-js/types':
+        specifier: 'catalog:'
+        version: 3.6.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.27
+      rsbuild-plugin-select-entry:
+        specifier: workspace:*
+        version: link:../../../tools/rsbuild-plugin-select-entry
+
   apps/examples/Dialog:
     dependencies:
       '@lynx-js/luna-styles':

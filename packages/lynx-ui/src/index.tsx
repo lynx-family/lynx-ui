@@ -14,6 +14,8 @@ export {
   useRegisteredEvents,
   useMemoizedFn,
   usePrevious,
+  supportUsePreCommit,
+  usePreCommit,
   useFirstRender,
   useJSFirstRender,
   useLepusFirstRender,
