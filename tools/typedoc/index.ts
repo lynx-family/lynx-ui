@@ -68,6 +68,12 @@ const primitivesConfig: Record<string, string[]> = {
     'Checkbox',
     'CheckboxIndicator',
   ],
+  'lynx-ui-slider': [
+    'SliderRoot',
+    'SliderTrack',
+    'SliderIndicator',
+    'SliderThumb',
+  ],
 }
 export async function runTypeDocForPackage(
   entryPoints: string | string[],

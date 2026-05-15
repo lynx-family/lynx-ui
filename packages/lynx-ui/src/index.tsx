@@ -14,6 +14,8 @@ export {
   useRegisteredEvents,
   useMemoizedFn,
   usePrevious,
+  supportUsePreCommit,
+  usePreCommit,
   useFirstRender,
   useJSFirstRender,
   useLepusFirstRender,
@@ -267,11 +269,13 @@ export {
   SliderThumb,
 } from '@lynx-js/lynx-ui-slider'
 export type {
-  SliderRootProps,
-  SliderTrackProps,
   SliderIndicatorProps,
-  SliderThumbProps,
   SliderRef,
+  SliderRootProps,
+  SliderThumbProps,
+  SliderTrackProps,
+  SliderUpdateValueOptions,
+  SliderValueChangeSource,
 } from '@lynx-js/lynx-ui-slider'
 
 // only presence types are exported

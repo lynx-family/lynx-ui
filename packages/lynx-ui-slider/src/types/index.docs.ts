@@ -98,13 +98,13 @@ export interface SliderRootProps extends ComponentBasicProps {
    */
   enableRTL?: boolean
   /**
-   * Triggered once when an interaction enters dragging state, with the current progress value.
-   * @zh 交互进入拖拽态时触发一次，传入当前进度值。
+   * Triggered when dragging state changes, with the current progress value. The callback fires when dragging starts and when dragging ends.
+   * @zh 拖拽状态变化时触发，传入当前进度值。开始拖拽和结束拖拽时都会触发。
    */
   onDragging?: (value: number) => void
   /**
-   * Triggered for slider-driven value updates, including dragging and `SliderRef.updateValue`. In controlled mode, the slider does **not** update its internal value automatically; use this callback to update the controlled `value` prop.
-   * @zh 由滑块自身驱动的值更新时触发，包括拖拽和 `SliderRef.updateValue`。在受控模式下，滑块不会自动更新内部值，需要通过此回调更新外部的 `value` 属性。
+   * Triggered after slider-driven value updates, including dragging and `SliderRef.updateValue`. In controlled mode, use this callback to keep the external `value` prop in sync with the rendered value.
+   * @zh 由滑块自身驱动的值更新后触发，包括拖拽和 `SliderRef.updateValue`。在受控模式下，请通过此回调让外部 `value` 属性与渲染值保持同步。
    */
   onValueChange?: (value: number, source: SliderValueChangeSource) => void
   /**

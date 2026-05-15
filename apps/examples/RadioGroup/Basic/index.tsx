@@ -6,16 +6,9 @@ import { root, useState } from '@lynx-js/react'
 
 import { Radio, RadioGroupRoot, RadioIndicator } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
-import './index.css'
 
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
+import { hitSlop } from '../shared/hitSlop'
+import './index.css'
 
 const radioTags = ['lunaris-dark', 'lunaris-light', 'luna-dark', 'luna-light']
 
@@ -23,8 +16,8 @@ function App() {
   const [value, setValue] = useState(radioTags[0])
 
   return (
-    <view className={clsx('container luna-gradient-rose', value)}>
-      <view className='canvas'>
+    <view className={clsx('demo-container luna-gradient-rose', value)}>
+      <view className='demo-canvas'>
         <RadioGroupRoot
           value={value}
           onValueChange={setValue}
@@ -35,7 +28,7 @@ function App() {
                 <Radio
                   className='radio-item'
                   value={tag}
-                  radioProps={HitSlop}
+                  radioProps={hitSlop}
                 >
                   <RadioIndicator className='radio-indicator'>
                     <view className='radio-indicator-dot' />

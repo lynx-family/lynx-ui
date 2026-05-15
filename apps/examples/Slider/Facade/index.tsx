@@ -10,8 +10,8 @@ import {
   SliderRoot,
   SliderThumb,
   SliderTrack,
-} from '@lynx-js/lynx-ui-slider'
-import type { SliderRef, SliderRootProps } from '@lynx-js/lynx-ui-slider'
+} from '@lynx-js/lynx-ui'
+import type { SliderRef, SliderRootProps } from '@lynx-js/lynx-ui'
 
 import './index.css'
 

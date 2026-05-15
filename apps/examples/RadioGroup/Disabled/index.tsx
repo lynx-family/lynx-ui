@@ -3,19 +3,12 @@
 // LICENSE file in the root directory of this source tree.
 
 import { root, useState } from '@lynx-js/react'
-import './index.css'
 
 import { Button, Radio, RadioGroupRoot, RadioIndicator } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
+import { hitSlop } from '../shared/hitSlop'
+import './index.css'
 
 const radioTags = ['Dawn', 'Bloom', 'Glow', 'Fade', 'Rest']
 
@@ -24,8 +17,8 @@ function App() {
   const [disabled, setDisabled] = useState(false)
 
   return (
-    <view className='container lunaris-light luna-gradient-rose'>
-      <view className='canvas'>
+    <view className='demo-container lunaris-light luna-gradient-rose'>
+      <view className='demo-canvas'>
         <view className='section'>
           <text className='label'>
             Status: {disabled ? 'Disabled' : 'Enabled'}
@@ -50,7 +43,7 @@ function App() {
                       className='radio-item'
                       value={tag}
                       disabled={itemDisabled}
-                      radioProps={HitSlop}
+                      radioProps={hitSlop}
                     >
                       <RadioIndicator className='radio-indicator'>
                         <view className='radio-indicator-dot' />
@@ -74,7 +67,9 @@ function App() {
         {/* toggle group disabled */}
         <view className='section'>
           <Button className='button' onClick={() => setDisabled((v) => !v)}>
-            <text>{disabled ? 'Enable group' : 'Disable group'}</text>
+            <text className='button-text'>
+              {disabled ? 'Enable group' : 'Disable group'}
+            </text>
           </Button>
         </view>
       </view>

@@ -4,7 +4,7 @@
 
 ## 安装
 
-强烈建议通过主包 `@lynx-js/lynx-ui` 安装并使用该包：
+建议通过主包 `@lynx-js/lynx-ui` 安装并使用该包：
 
 ```bash
 # pnpm（推荐）
@@ -26,9 +26,14 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-slider` 单独安�
 ## 组件结构
 
 ```tsx
-<Slider>
-  {/* Your content */}
-</Slider>
+<SliderRoot>
+  <SliderTrack>
+    <SliderIndicator />
+    <SliderThumb>
+      <view />
+    </SliderThumb>
+  </SliderTrack>
+</SliderRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

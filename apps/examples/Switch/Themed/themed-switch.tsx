@@ -14,14 +14,7 @@ import type {
 } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
+import { hitSlop } from '../shared/hitSlop'
 
 type ThemedSwitchRootProps = SwitchProps
 
@@ -37,7 +30,7 @@ export function ThemedSwitchRoot({
         'ui-disabled:opacity-50',
         className,
       )}
-      switchProps={{ ...HitSlop, ...switchProps }}
+      switchProps={{ ...hitSlop, ...switchProps }}
       {...props}
     />
   )

@@ -39,6 +39,8 @@ function BasicScrollView() {
 
 When you need `flex` layout, add a wrapper as the first child of `ScrollView`, and apply `flex` styles on that wrapper:
 
+Also make sure the direct child of `ScrollView` is larger than the `ScrollView` viewport on the scrolling axis. Otherwise, the content does not overflow and the `ScrollView` will not scroll.
+
 ```tsx
 import { ScrollView } from '@lynx-js/lynx-ui'
 
@@ -142,7 +144,7 @@ function LoadMoreScrollView() {
 
 **Q: Why can't my `ScrollView` scroll?**
 
-A: `ScrollView` needs a determined boundary. Set a fixed size (e.g., `height: '300px'`) or place it in a flex container and use `flex: 1`.
+A: `ScrollView` needs a determined boundary. Set a fixed size (e.g., `height: '300px'`) or place it in a flex container and use `flex: 1`. Also ensure the direct child of `ScrollView` is larger than the viewport on the scrolling axis. For example, a vertical `ScrollView` with `height: '300px'` needs a direct child taller than `300px`; otherwise it will not scroll.
 
 **Q: `ScrollView` inside `Popup` causes drag conflicts?**
 

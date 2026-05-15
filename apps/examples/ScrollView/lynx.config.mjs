@@ -9,6 +9,7 @@ const defaultConfig = exampleConfig({
   ScrollViewHorizontal: './Horizontal/index.tsx',
   ScrollViewHorizontalRTL: './HorizontalRTL/index.tsx',
   ScrollViewInnerFlex: './InnerFlex/index.tsx',
+  ScrollViewZIndex: './ZIndex/index.tsx',
 }, { needWeb: false })
 
 export default defaultConfig

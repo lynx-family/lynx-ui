@@ -8,14 +8,18 @@
   "scripts": {
     "build": "turbo build",
     "changeset": "changeset",
-    "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
-    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
+    "check": "pnpm run check:luna-vars && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
+    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
+    "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
+    "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\"",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
+    "check:skills-references": "pnpm --filter @lynx-js/skill-lynx-ui check:references",
     "coverage": "vitest --coverage",
+    "ensure:skills-changeset": "node tools/skill-lynx-ui/ensure-changeset.mjs",
     "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
     "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
@@ -30,7 +34,8 @@
     "make-new-component": "tsx tools/make-new-component/index.ts",
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
-    "test": "vitest"
+    "test": "vitest",
+    "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
@@ -44,7 +49,11 @@
     "packages/lynx-ui-*/docs/**/*.mdx": [
       "node tools/scripts/check-mdx-top-level-esm.mjs"
     ],
-    "*.{toml,css,sass,scss,less,html,yml,yaml}": [
+    "*.{css,sass,scss,less}": [
+      "stylelint --allow-empty-input --config ./stylelint.config.cjs",
+      "dprint fmt --allow-no-files --"
+    ],
+    "*.{toml,html,yml,yaml}": [
       "dprint fmt --allow-no-files --"
     ],
     "*package.json": "sort-package-json",
@@ -81,7 +90,9 @@
     "jsonc-parser": "3.3.1",
     "knip": "^5.80.0",
     "nano-staged": "^0.8.0",
+    "postcss-value-parser": "^4.2.0",
     "sort-package-json": "^2.12.0",
+    "stylelint": "^17.11.0",
     "tsx": "^4.19.3",
     "turbo": "^2.9.3",
     "typedoc": "^0.28.0",

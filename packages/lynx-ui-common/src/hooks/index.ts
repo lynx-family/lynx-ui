@@ -11,6 +11,7 @@ export { useRegisteredEvents } from './useRegisteredEvents'
 
 export { useMemoizedFn } from './useMemoizedFn'
 export { usePrevious } from './usePrevious'
+export { supportUsePreCommit, usePreCommit } from './usePreCommit'
 
 export function useFirstRender(cb: () => void): boolean {
   const isFirst = useRef(true)

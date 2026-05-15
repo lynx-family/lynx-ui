@@ -39,6 +39,7 @@ binduiappear
 binduidisappear
 bindupdate
 bindwillchange
+bindwheel
 bounceable
 catchlongpress
 catchtap

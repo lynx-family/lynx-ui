@@ -39,6 +39,7 @@ export const ScrollView = memo(forwardRef(ScrollViewImpl)) as ScrollViewType
 
 const ScrollViewEventMapping: Record<string, string> = {
   onContentSizeChange: 'bindcontentsizechanged',
+  onWheel: 'bindwheel',
 }
 
 /**
@@ -106,6 +107,10 @@ function ScrollViewImpl(
     props,
     scrollViewRegisteredEvents.current,
   )
+  const normalizedStyle: CSSProperties = {
+    zIndex: 0,
+    ...style,
+  }
 
   const isHorizontal = () => {
     return scrollOrientation ? scrollOrientation === 'horizontal' : horizontal
@@ -210,7 +215,7 @@ function ScrollViewImpl(
       : shouldEnableNested(),
     'enable-new-nested': true,
     'className': className,
-    'style': style,
+    'style': normalizedStyle,
     'bounces': platformBounces,
     'enable-scroll': enableScroll,
     ...(androidTouchSlop !== undefined

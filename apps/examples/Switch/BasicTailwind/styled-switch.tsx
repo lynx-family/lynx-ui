@@ -6,14 +6,7 @@ import { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui'
 import type { SwitchProps } from '@lynx-js/lynx-ui'
 import { clsx } from 'clsx'
 
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
+import { hitSlop } from '../shared/hitSlop'
 
 export function StyledSwitch({
   checked,
@@ -36,7 +29,7 @@ export function StyledSwitch({
       disabled={disabled}
       onChange={onChange}
       style={style}
-      switchProps={{ ...HitSlop, ...switchProps }}
+      switchProps={{ ...hitSlop, ...switchProps }}
     >
       {/* Track */}
       <SwitchTrack
