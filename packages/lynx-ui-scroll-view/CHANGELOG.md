@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-scroll-view
 
+## 3.133.0
+
+### Minor Changes
+
+- Support onWheel events on ScrollView and List for PC ([#184](https://github.com/lynx-family/lynx-ui/pull/184))
+
+### Patch Changes
+
+- Add a default `z-index: 0` to the underlying `scroll-view` element. ([#179](https://github.com/lynx-family/lynx-ui/pull/179))
+
+- Updated dependencies [[`85d2e9d`](https://github.com/lynx-family/lynx-ui/commit/85d2e9d12e9aeee3256856f1be0076524ddb7d8a)]:
+  - @lynx-js/lynx-ui-common@3.133.0
+  - @lynx-js/lynx-ui-lazy-component@3.133.0
+
 ## 3.132.0
 
 ### Minor Changes

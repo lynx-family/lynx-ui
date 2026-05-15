@@ -1,5 +1,16 @@
 # @lynx-example/lynx-ui-checkbox
 
+## 0.0.7
+
+### Patch Changes
+
+- Align example container class names. ([#185](https://github.com/lynx-family/lynx-ui/pull/185))
+
+- Extract shared `hitSlop` helpers within each component example package. ([#185](https://github.com/lynx-family/lynx-ui/pull/185))
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.0
+
 ## 0.0.6
 
 ### Patch Changes

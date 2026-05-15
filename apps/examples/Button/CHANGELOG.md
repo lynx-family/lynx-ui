@@ -1,5 +1,14 @@
 # @lynx-example/lynx-ui-button
 
+## 0.0.7
+
+### Patch Changes
+
+- Add `:active` pseudo-class selectors to example button styles for lynx for web compatibility. ([#185](https://github.com/lynx-family/lynx-ui/pull/185))
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.0
+
 ## 0.0.6
 
 ### Patch Changes

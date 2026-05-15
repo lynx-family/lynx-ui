@@ -1,5 +1,14 @@
 # @lynx-example/lynx-ui-scroll-view
 
+## 0.0.7
+
+### Patch Changes
+
+- Fix non-luna CSS vars. ([#180](https://github.com/lynx-family/lynx-ui/pull/180))
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.0
+
 ## 0.0.6
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui-input
 
+## 3.133.0
+
+### Patch Changes
+
+- Updated dependencies [[`256a52a`](https://github.com/lynx-family/lynx-ui/commit/256a52a00c99f6cb27a928379989198ba8721308), [`85d2e9d`](https://github.com/lynx-family/lynx-ui/commit/85d2e9d12e9aeee3256856f1be0076524ddb7d8a), [`cae4ada`](https://github.com/lynx-family/lynx-ui/commit/cae4adaf87da354842a428f131c5090fdfd68b2e)]:
+  - @lynx-js/lynx-ui-scroll-view@3.133.0
+  - @lynx-js/lynx-ui-common@3.133.0
+
 ## 3.132.0
 
 ### Patch Changes

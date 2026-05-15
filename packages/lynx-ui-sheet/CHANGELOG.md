@@ -1,5 +1,17 @@
 # @lynx-js/lynx-ui-sheet
 
+## 3.133.0
+
+### Patch Changes
+
+- Allow `SheetHandle` to render children so consumers can make custom handle visuals the drag target. ([#175](https://github.com/lynx-family/lynx-ui/pull/175))
+
+- Updated dependencies [[`85d2e9d`](https://github.com/lynx-family/lynx-ui/commit/85d2e9d12e9aeee3256856f1be0076524ddb7d8a)]:
+  - @lynx-js/lynx-ui-common@3.133.0
+  - @lynx-js/lynx-ui-dialog@3.133.0
+  - @lynx-js/lynx-ui-overlay@3.133.0
+  - @lynx-js/lynx-ui-presence@3.133.0
+
 ## 3.131.0
 
 ### Minor Changes

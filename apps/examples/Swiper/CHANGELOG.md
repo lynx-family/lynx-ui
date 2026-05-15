@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-swiper
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.0
+
 ## 0.0.6
 
 ### Patch Changes

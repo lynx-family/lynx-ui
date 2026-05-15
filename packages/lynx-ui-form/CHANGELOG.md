@@ -1,5 +1,17 @@
 # @lynx-js/lynx-ui-form
 
+## 3.133.0
+
+### Patch Changes
+
+- Updated dependencies [[`85d2e9d`](https://github.com/lynx-family/lynx-ui/commit/85d2e9d12e9aeee3256856f1be0076524ddb7d8a)]:
+  - @lynx-js/lynx-ui-common@3.133.0
+  - @lynx-js/lynx-ui-input@3.133.0
+  - @lynx-js/lynx-ui-button@3.133.0
+  - @lynx-js/lynx-ui-checkbox@3.133.0
+  - @lynx-js/lynx-ui-radio-group@3.133.0
+  - @lynx-js/lynx-ui-switch@3.133.0
+
 ## 3.132.0
 
 ### Patch Changes

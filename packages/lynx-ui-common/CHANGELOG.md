@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.133.0
+
+### Minor Changes
+
+- Add an experimental `usePreCommit` hook for running main-thread work before native commit. ([#188](https://github.com/lynx-family/lynx-ui/pull/188))
+
 ## 3.131.0
 
 ### Minor Changes
