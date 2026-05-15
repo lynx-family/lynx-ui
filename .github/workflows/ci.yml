@@ -47,6 +47,8 @@ jobs:
           pnpm dlx sherif@latest
       - name: Skill References Check
         run: pnpm check:skills-references
+      - name: Changeset Target Check
+        run: pnpm check:changesets
       - name: Changeset Check
         run: pnpm changeset status --since=origin/main || echo "::warning::Changeset check failed, but continuing execution."
 
