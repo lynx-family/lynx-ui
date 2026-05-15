@@ -18,7 +18,8 @@
   gap: 6px;
 }
 
-.button.active, .button.ui-active {
+/* Keep :active pseudo-class selector for lynx web active-state compatibility. */
+.button.active, .button.ui-active, .button:active {
   background-color: var(--primary-2);
 }
 

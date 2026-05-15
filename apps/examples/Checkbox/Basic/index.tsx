@@ -7,16 +7,8 @@ import { root, useState } from '@lynx-js/react'
 import { Checkbox, CheckboxIndicator } from '@lynx-js/lynx-ui'
 
 import { CheckMark } from '../shared/Checkmark'
+import { hitSlop } from '../shared/hitSlop'
 import './index.css'
-
-const HitSlop = {
-  'hit-slop': {
-    top: '8px' as `${number}px`,
-    left: '8px' as `${number}px`,
-    right: '8px' as `${number}px`,
-    bottom: '8px' as `${number}px`,
-  },
-}
 
 function App() {
   const [checked, setChecked] = useState(false)
@@ -32,7 +24,7 @@ function App() {
               className='checkbox'
               defaultChecked={true}
               onChange={(value) => console.log('Uncontrolled changed:', value)}
-              checkboxProps={HitSlop}
+              checkboxProps={hitSlop}
             >
               <CheckboxIndicator className='checkbox-indicator'>
                 <CheckMark />
@@ -53,7 +45,7 @@ function App() {
                 console.log('Controlled changed:', value)
                 setChecked(value)
               }}
-              checkboxProps={HitSlop}
+              checkboxProps={hitSlop}
             >
               <CheckboxIndicator className='checkbox-indicator'>
                 <CheckMark />
