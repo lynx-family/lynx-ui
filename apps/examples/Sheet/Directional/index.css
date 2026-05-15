@@ -98,7 +98,7 @@
   margin-right: auto;
   margin-bottom: 36px;
   border-radius: 999px;
-  background-color: var(--border);
+  background-color: var(--line);
 }
 
 .bottom-sheet-panel {

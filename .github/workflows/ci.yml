@@ -52,6 +52,13 @@ jobs:
       - name: Changeset Check
         run: pnpm changeset status --since=origin/main || echo "::warning::Changeset check failed, but continuing execution."
 
+  luna-vars:
+    needs: build
+    uses: ./.github/workflows/common-test.yml
+    with:
+      runs-on: lynx-ubuntu-24.04-medium
+      run: pnpm check:luna-vars
+
   eslint:
     needs: build
     uses: ./.github/workflows/common-test.yml
@@ -142,6 +149,7 @@ jobs:
   done:
     needs:
       - code-style-check
+      - luna-vars
       - check-exports
       - eslint
       - test-publish
