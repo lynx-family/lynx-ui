@@ -8,10 +8,11 @@
   "scripts": {
     "build": "turbo build",
     "changeset": "changeset",
-    "check": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
+    "check": "pnpm run check:luna-vars && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
     "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
+    "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\"",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
@@ -47,7 +48,11 @@
     "packages/lynx-ui-*/docs/**/*.mdx": [
       "node tools/scripts/check-mdx-top-level-esm.mjs"
     ],
-    "*.{toml,css,sass,scss,less,html,yml,yaml}": [
+    "*.{css,sass,scss,less}": [
+      "stylelint --allow-empty-input --config ./stylelint.config.cjs",
+      "dprint fmt --allow-no-files --"
+    ],
+    "*.{toml,html,yml,yaml}": [
       "dprint fmt --allow-no-files --"
     ],
     "*package.json": "sort-package-json",
@@ -84,7 +89,9 @@
     "jsonc-parser": "3.3.1",
     "knip": "^5.80.0",
     "nano-staged": "^0.8.0",
+    "postcss-value-parser": "^4.2.0",
     "sort-package-json": "^2.12.0",
+    "stylelint": "^17.11.0",
     "tsx": "^4.19.3",
     "turbo": "^2.9.3",
     "typedoc": "^0.28.0",

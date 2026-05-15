@@ -56,13 +56,13 @@
 
 .layer-card__badge--raised {
   z-index: 3;
-  background-color: var(--fill-primary);
+  background-color: var(--primary);
 }
 
 .layer-card__badge-text {
   font-size: 12px;
   font-weight: 600;
-  color: var(--content-inverse);
+  color: var(--neutral-content);
 }
 
 .layer-card__title {
