@@ -1,6 +1,5 @@
 ---
 "@lynx-js/lynx-ui-common": minor
-"@lynx-js/lynx-ui": minor
 "@lynx-example/lynx-ui-common": patch
 ---
 
