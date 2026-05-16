@@ -89,6 +89,7 @@ export default tseslint.config(
             'Android',
             'iOS',
             'Harmony',
+            'PC',
             'experimental',
             'zh',
             'docTypeFallback',

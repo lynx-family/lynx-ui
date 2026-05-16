@@ -25,7 +25,6 @@
   padding-right: 48px;
   border-radius: 16px;
   overflow: hidden;
-  color: var(--content);
   background-color: var(--canvas);
 }
 

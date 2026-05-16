@@ -30,7 +30,7 @@ function App() {
                 <CheckMark />
               </CheckboxIndicator>
             </Checkbox>
-            <text>Uncontrolled Checkbox</text>
+            <text className='label'>Uncontrolled Checkbox</text>
           </view>
         </view>
 
@@ -51,7 +51,7 @@ function App() {
                 <CheckMark />
               </CheckboxIndicator>
             </Checkbox>
-            <text>{checked ? 'Checked' : 'Unchecked'}</text>
+            <text className='label'>{checked ? 'Checked' : 'Unchecked'}</text>
           </view>
         </view>
 

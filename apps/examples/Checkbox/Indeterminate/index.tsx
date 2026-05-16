@@ -54,7 +54,7 @@ function App() {
                 {indeterminate ? <IndeterminateMark /> : <CheckMark />}
               </CheckboxIndicator>
             </Checkbox>
-            <text>Select All</text>
+            <text className='label'>Select All</text>
           </view>
 
           <view className='fruits'>
@@ -70,7 +70,7 @@ function App() {
                     <CheckMark />
                   </CheckboxIndicator>
                 </Checkbox>
-                <text>{fruit}</text>
+                <text className='label'>{fruit}</text>
               </view>
             ))}
           </view>

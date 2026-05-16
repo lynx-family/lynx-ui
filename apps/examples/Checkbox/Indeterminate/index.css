@@ -3,6 +3,7 @@
 /* =========================
  * Container
  * ========================= */
+
 .demo-container {
   display: flex;
   flex-direction: column;
@@ -13,7 +14,6 @@
   padding-left: 48px;
   padding-right: 48px;
   background-color: var(--canvas);
-  color: var(--content);
 }
 
 .demo-canvas {
@@ -46,7 +46,7 @@
   row-gap: 10px;
 }
 
-.title {
+.title, .label {
   font-size: 16px;
   color: var(--content-2);
 }
