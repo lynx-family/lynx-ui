@@ -18,6 +18,7 @@ env:
   NPM_CONFIG_PROVENANCE: true
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: github.repository == 'lynx-family/lynx-ui'
@@ -38,7 +39,7 @@ jobs:
           npm install -g corepack@latest
           corepack enable && corepack prepare
           corepack pnpm install --frozen-lockfile
-      - name: build
+      - name: Build
         run: |
           corepack pnpm turbo build --summarize
       - name: Save Turbo Result
@@ -52,7 +53,8 @@ jobs:
           include-hidden-files: true
   # We make a build here to make sure cache works for pull requests
   # See: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
-  changeset-version:
+  release:
+    name: Release
     timeout-minutes: 30
     needs: build
     runs-on: ubuntu-latest
@@ -89,24 +91,24 @@ jobs:
         with:
           name: deploy-${{ github.sha }}
           path: .turbo
-      - name: Print npm and pnpm version
+      - name: Print Package Manager Versions
         run: |
           npm --version
           corepack pnpm --version
-      - name: build
+      - name: Build
         run: |
           corepack pnpm turbo build --summarize
-      - name: Get current date
+      - name: Get Current Date
         id: date
         run: echo "date=$(date -u +'%Y-%m-%d %H:%M:%S')" >> "${GITHUB_OUTPUT}"
-      - name: Check release run is current
+      - name: Check Release Run Is Current
         id: current-main
         shell: bash
         run: |
           set -eu
           read -r latest_main_sha _ < <(git ls-remote --exit-code origin refs/heads/main)
           echo "sha=${latest_main_sha}" >> "${GITHUB_OUTPUT}"
-      - name: publish
+      - name: Create Version PR Or Publish
         if: github.sha == steps.current-main.outputs.sha
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:

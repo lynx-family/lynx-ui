@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   validate-pr-title:
-    name: Validate PR title
+    name: Validate PR Title
     runs-on: lynx-ubuntu-24.04-medium
     timeout-minutes: 10
     steps:

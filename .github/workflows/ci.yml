@@ -21,8 +21,10 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
+    name: Build
     uses: ./.github/workflows/build.yml
   code-style-check:
+    name: Code Style Check
     runs-on: lynx-ubuntu-24.04-medium
     timeout-minutes: 10
     steps:
@@ -53,6 +55,7 @@ jobs:
         run: pnpm changeset status --since=origin/main || echo "::warning::Changeset check failed, but continuing execution."
 
   luna-vars:
+    name: LUNA Vars
     needs: build
     uses: ./.github/workflows/common-test.yml
     with:
@@ -60,6 +63,7 @@ jobs:
       run: pnpm check:luna-vars
 
   eslint:
+    name: ESLint
     needs: build
     uses: ./.github/workflows/common-test.yml
     with:
@@ -67,6 +71,7 @@ jobs:
       run: pnpm eslint . --flag v10_config_lookup_from_file
 
   check-exports:
+    name: Check Exports
     needs: build
     uses: ./.github/workflows/common-test.yml
     with:
@@ -74,6 +79,7 @@ jobs:
       run: pnpm check:exports
 
   test-publish:
+    name: Test Publish
     needs: build
     uses: ./.github/workflows/common-test.yml
     secrets: inherit
@@ -113,6 +119,7 @@ jobs:
         echo "Smoke test passed for $PKG_NAME"
 
   test-typos:
+    name: Test Typos
     runs-on: lynx-ubuntu-24.04-medium
     steps:
       - uses: actions/checkout@v4
@@ -120,6 +127,7 @@ jobs:
         with:
           files: .
   test-vitest:
+    name: Vitest (${{ matrix.runs-on.name }})
     needs: build
     uses: ./.github/workflows/common-test.yml
     strategy:
@@ -128,7 +136,6 @@ jobs:
         runs-on:
           - name: Ubuntu
             label: lynx-ubuntu-24.04-medium
-    name: Vitest (${{ matrix.runs-on.name }})
     with:
       runs-on: ${{ matrix.runs-on.label }}
       run: >
