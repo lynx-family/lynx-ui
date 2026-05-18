@@ -431,8 +431,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
       style={{
         ...style,
         listMainAxisGap: `${mainAxisGap.toString()}px`,
-        // @ts-expect-error error
-        // listCrossAxisGap is temporarily missing in ReactLynx lib
+        // @ts-expect-error listCrossAxisGap is temporarily missing in ReactLynx lib
         listCrossAxisGap: `${crossAxisGap.toString()}px`,
         display: 'linear',
         linearOrientation: scrollOrientation,

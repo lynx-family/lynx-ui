@@ -20,8 +20,8 @@ export function comparePropsWithObject(
     return false
   }
 
-  const prevKeys = Object.keys(prev as DeepObject)
-  const nextKeys = Object.keys(next as DeepObject)
+  const prevKeys = Object.keys(prev)
+  const nextKeys = Object.keys(next)
 
   if (prevKeys.length !== nextKeys.length) {
     return false

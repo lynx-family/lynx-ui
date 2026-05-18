@@ -86,7 +86,7 @@ export const Draggable = forwardRef<NodesRef, DraggableProps>(
 
 const DraggableContext = createContext<
   { eventHandlers: useDraggableEventsHandlers | Record<string, never> }
->({ eventHandlers: {} as useDraggableEventsHandlers | Record<string, never> })
+>({ eventHandlers: {} })
 
 export const DraggableRoot = forwardRef<NodesRef, DraggableProps>(
   (props, ref) => {

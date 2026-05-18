@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/react-use": "catalog:",
     "clsx": "catalog:"
   },
   "devDependencies": {

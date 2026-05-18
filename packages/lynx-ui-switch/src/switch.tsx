@@ -48,8 +48,10 @@ function Switch({
     onChange?.(next)
   }
 
-  const { pressed, bindtap, bindtouchcancel, bindtouchend, bindtouchstart } =
-    usePressTap({ disabled, onTap: handleChange })
+  const { pressed, bindtap, ...touchHandlers } = usePressTap({
+    disabled,
+    onTap: handleChange,
+  })
 
   const active = useMemo(() => pressed && !disabled, [pressed, disabled])
 
@@ -63,9 +65,7 @@ function Switch({
     <SwitchContext.Provider value={switchContextValue}>
       <view
         bindtap={bindtap}
-        bindtouchstart={bindtouchstart}
-        bindtouchend={bindtouchend}
-        bindtouchcancel={bindtouchcancel}
+        {...touchHandlers}
         event-through={false}
         style={style}
         className={clsx(className, {

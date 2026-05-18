@@ -7,6 +7,7 @@ import type {
   LynxBindCatchEvent,
   LynxEvent,
   Target,
+  TouchEvent,
 } from '@lynx-js/types'
 
 export interface BaseUITouchEvents {
@@ -18,7 +19,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  onTouchCancel?: (e: LynxEvent<Target>['TouchCancel']) => void
+  onTouchCancel?: (e: TouchEvent) => void
   /**
    * Send when a touch-point is placed on the UI.
    * @zh 当触摸点放置在 UI 上时发送。
@@ -27,7 +28,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  onTouchStart?: (e: LynxEvent<Target>['TouchStart']) => void
+  onTouchStart?: (e: TouchEvent) => void
   /**
    * Send when a touch-point is removed from the UI.
    * @zh 当触摸点从 UI 上移除时发送。
@@ -36,7 +37,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  onTouchEnd?: (e: LynxEvent<Target>['TouchEnd']) => void
+  onTouchEnd?: (e: TouchEvent) => void
   /**
    * Send when a touch-point is moving on the UI.
    * @zh 当触摸点在 UI 上移动时发送。
@@ -45,7 +46,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  onTouchMove?: (e: LynxEvent<Target>['TouchMove']) => void
+  onTouchMove?: (e: TouchEvent) => void
   /**
    * Send when a touch-point is held on the UI for a period of time.
    * @zh 当触摸点在 UI 上按住一段时间后发送。
@@ -72,7 +73,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  catchTouchCancel?: (e: LynxEvent<Target>['TouchCancel']) => void
+  catchTouchCancel?: (e: TouchEvent) => void
   /**
    * Same as onTouchStart, but stops the event from propagating to parent elements.
    * @zh 与 onTouchStart 相同，但会阻止事件冒泡。
@@ -81,7 +82,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  catchTouchStart?: (e: LynxEvent<Target>['TouchStart']) => void
+  catchTouchStart?: (e: TouchEvent) => void
   /**
    * Same as onTouchEnd, but stops the event from propagating to parent elements.
    * @zh 与 onTouchEnd 相同，但会阻止事件冒泡。
@@ -90,7 +91,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  catchTouchEnd?: (e: LynxEvent<Target>['TouchEnd']) => void
+  catchTouchEnd?: (e: TouchEvent) => void
   /**
    * Same as onTouchMove, but stops the event from propagating to parent elements.
    * @zh 与 onTouchMove 相同，但会阻止事件冒泡。
@@ -99,7 +100,7 @@ export interface BaseUITouchEvents {
    * @Harmony
    * @eventProperty
    */
-  catchTouchMove?: (e: LynxEvent<Target>['TouchMove']) => void
+  catchTouchMove?: (e: TouchEvent) => void
   /**
    * Same as onLongPress, but stops the event from propagating to parent elements.
    * @zh 与 onLongPress 相同，但会阻止事件冒泡。

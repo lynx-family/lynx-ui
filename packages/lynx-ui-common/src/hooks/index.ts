@@ -85,9 +85,8 @@ export function useThrottle(
   return useCallback(function f(...args: unknown[]) {
     if (!current.timer) {
       current.timer = setTimeout(() => {
-        // @ts-expect-error Error
-        delete current.timer
-      }, delay) as unknown as number
+        current.timer = 0
+      }, delay)
       current.fn(...args)
     }
   }, dep)

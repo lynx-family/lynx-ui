@@ -35,7 +35,7 @@ export function useGCCollector(options: UseGCCollectorOptions = {}) {
       timeRef.current = setTimeout(() => {
         requestTimeout()
         runOnMainThread(triggerGCMT)()
-      }, interval) as unknown as number
+      }, interval)
     }
   })
 

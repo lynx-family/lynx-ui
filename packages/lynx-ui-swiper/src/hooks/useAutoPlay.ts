@@ -41,7 +41,7 @@ export function useAutoplay({
     timerMTRef.current = setTimeout(() => {
       nextMT()
       playMT()
-    }, autoPlayInterval + duration) as unknown as number
+    }, autoPlayInterval + duration)
   }
 
   function pauseMT() {

@@ -4,21 +4,14 @@
 
 import { useState } from '@lynx-js/react'
 
+import { useTouchEmulation } from '@lynx-js/react-use'
 import type { TouchEvent } from '@lynx-js/types'
 
 import { useEffectEvent } from './use-effect-event'
 
-interface UsePressTapReturnValue {
+interface UsePressTapReturnValue extends ReturnType<typeof useTouchEmulation> {
   pressed: boolean
   bindtap: (e: TouchEvent) => void
-  bindtouchstart: (e: TouchEvent) => void
-  bindtouchend: (e: TouchEvent) => void
-  bindtouchcancel: (e: TouchEvent) => void
-}
-
-interface UsePressTapOptions {
-  disabled?: boolean
-  onTap?: () => void
 }
 
 /**
@@ -33,7 +26,7 @@ interface UsePressTapOptions {
  *   - The active state is cleared immediately.
  */
 export function usePressTap(
-  { disabled = false, onTap }: UsePressTapOptions = {},
+  { disabled = false, onTap }: { disabled?: boolean, onTap?: () => void } = {},
 ): UsePressTapReturnValue {
   const [pressed, setPressed] = useState(false)
 
@@ -51,11 +44,15 @@ export function usePressTap(
     onTap?.()
   })
 
+  const touchHandlers = useTouchEmulation({
+    onTouchStart: press,
+    onTouchEnd: reset,
+    onTouchCancel: reset,
+  })
+
   return {
     pressed,
     bindtap: handleTap,
-    bindtouchstart: press,
-    bindtouchend: reset,
-    bindtouchcancel: reset,
+    ...touchHandlers,
   }
 }

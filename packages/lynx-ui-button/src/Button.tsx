@@ -5,6 +5,7 @@
 import { createContext, useContext, useMemo, useState } from '@lynx-js/react'
 
 import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
+import { useTouchEmulation } from '@lynx-js/react-use'
 import { clsx } from 'clsx'
 
 import type { ButtonProps } from './types'
@@ -52,6 +53,12 @@ export const Button = (prop: ButtonProps) => {
     onClick?.()
   })
 
+  const touchHandlers = useTouchEmulation({
+    onTouchStart: handleTouchStart,
+    onTouchEnd: handleTouchEnd,
+    onTouchCancel: handleTouchEnd,
+  })
+
   const contextValue = useMemo(
     () => ({ active: isEffectiveActive, disabled }),
     [isEffectiveActive, disabled],
@@ -61,9 +68,7 @@ export const Button = (prop: ButtonProps) => {
     <ButtonContext.Provider value={contextValue}>
       <view
         bindtap={handleTap}
-        bindtouchstart={handleTouchStart}
-        bindtouchend={handleTouchEnd}
-        bindtouchcancel={handleTouchEnd}
+        {...touchHandlers}
         event-through={false}
         style={style}
         className={clsx(className, {

@@ -5,7 +5,6 @@
 import { useMemo, useRef } from '@lynx-js/react'
 
 import type {
-  CompoundCustomModeConfig,
   CompoundModeConfig,
   CompoundNormalModeConfig,
   SwiperProps,
@@ -31,7 +30,7 @@ export function useModeConfig({
 
   const normalizedModeConfig = useMemo(() => {
     const newConfig: CompoundModeConfig = mode === 'custom'
-      ? { mode, ...(modeConfig ?? {}) } as CompoundCustomModeConfig
+      ? { mode, ...(modeConfig ?? {}) }
       : {
         mode,
         ...(modeConfig ?? { align: 'start' }),

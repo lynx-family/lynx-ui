@@ -24,11 +24,7 @@ import type { DraggableRef } from '@lynx-js/lynx-ui-draggable'
 import type { MainThread, NodesRef } from '@lynx-js/types'
 
 import { SortableContext } from './SortableContext'
-import type {
-  SortableData,
-  SortableItemProps,
-  SortableRootProps,
-} from './types'
+import type { SortableItemProps, SortableRootProps } from './types'
 import { useSortable } from './useSortable'
 
 export { DraggableArea as SortableItemArea }
@@ -75,12 +71,12 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     childrenMTSRefMap.current[key] = refI.current
   }, [])
 
-  const { handleDragEnd, handleDragMove, handleDragStart } = useSortable({
-    data: data as SortableData<unknown>[],
+  const { handleDragEnd, handleDragMove, handleDragStart } = useSortable<T>({
+    data,
     sizeMap: sizeMap,
     itemRefMap: childrenRefMap,
     itemMTSRefMap: childrenMTSRefMap,
-    onDragEnd: onSortEnd as (sortedData: SortableData<unknown>[]) => void,
+    onDragEnd: onSortEnd,
     onDragStart: onSortStart,
     debugLog,
   })

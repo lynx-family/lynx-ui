@@ -4,7 +4,18 @@
 
 import { useMainThreadRef } from '@lynx-js/react'
 
+import { useTouchEmulation } from '@lynx-js/react-use'
+import type { TouchEvent } from '@lynx-js/types'
+
 import { mainThreadifyEventsMapping } from '../utils'
+
+// These standard touch callbacks are registered through useTouchEmulation to fit the base touch-style API for both touch and mouse inputs.
+const EMULATED_TOUCH_EVENT_NAMES = new Set([
+  'onTouchStart',
+  'onTouchMove',
+  'onTouchEnd',
+  'onTouchCancel',
+])
 
 const useMainThreadifyEvents = (
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -53,11 +64,28 @@ export const useRegisteredEvents = (
   type reducedEventsType = Record<string, any>
   const reducedEvents: reducedEventsType = {}
   for (const event of Object.keys(events)) {
-    if (event in registeredEventsMapping) {
+    if (
+      event in registeredEventsMapping
+      && !EMULATED_TOUCH_EVENT_NAMES.has(event)
+    ) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       reducedEvents[registeredEventsMapping[event]] = events[event]
     }
   }
+  const touchHandlers = useTouchEmulation({
+    onTouchStart: events.onTouchStart as
+      | ((event: TouchEvent) => void)
+      | undefined,
+    onTouchMove: events.onTouchMove as
+      | ((event: TouchEvent) => void)
+      | undefined,
+    onTouchEnd: events.onTouchEnd as
+      | ((event: TouchEvent) => void)
+      | undefined,
+    onTouchCancel: events.onTouchCancel as
+      | ((event: TouchEvent) => void)
+      | undefined,
+  })
   const mainThreadifyEvents = mainThreadifyEventsMapping(
     registeredEventsMapping,
   )
@@ -65,5 +93,5 @@ export const useRegisteredEvents = (
     events,
     mainThreadifyEvents,
   )
-  return { ...reducedEvents, ...mainThreadifyEventsContents }
+  return { ...reducedEvents, ...touchHandlers, ...mainThreadifyEventsContents }
 }

@@ -17,18 +17,18 @@ import type { MainThread } from '@lynx-js/types'
 
 import type { SortableData } from './types'
 
-interface SortableOptionsType {
-  data: SortableData<unknown>[] // sorting key array
+interface SortableOptionsType<T> {
+  data: SortableData<T>[] // sorting key array
   sizeMap: MainThreadRef<Record<string, number>> // sorting key -> size
   itemRefMap: RefObject<Record<string, DraggableRef | null>>
   itemMTSRefMap: MainThreadRef<Record<string, DraggableRef | null>> // sortingKey -> element Ref
-  onDragEnd?: (sortedKeyArray: SortableData<unknown>[]) => void
+  onDragEnd?: (sortedKeyArray: SortableData<T>[]) => void
   onDragStart?: () => void
   debugLog?: boolean
 }
 
-export function useSortable(
-  useSortableOptions: SortableOptionsType,
+export function useSortable<T>(
+  useSortableOptions: SortableOptionsType<T>,
 ) {
   const {
     data,

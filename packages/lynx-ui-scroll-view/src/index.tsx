@@ -202,7 +202,7 @@ function ScrollViewImpl(
     'scroll-y': !isHorizontal(),
     'enable-scroll-monitor': enableScrollMonitor,
     'scroll-monitor-tag': scrollMonitorTag,
-    'main-thread:gesture': gesture as GestureKind,
+    'main-thread:gesture': gesture,
     'force-can-scroll': scrollPropagationBehavior === 'preventPropagate',
     'ios-block-gesture-class': scrollPropagationBehavior === 'preventPropagate'
       ? temporaryBlockScrollClass
