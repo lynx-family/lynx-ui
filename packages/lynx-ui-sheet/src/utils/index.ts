@@ -8,6 +8,7 @@ export {
   getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
+  getMaxSnapSize,
   getMainAxisTouchCoordinate,
   getNextMainAxisOffset,
   getSheetTransform,

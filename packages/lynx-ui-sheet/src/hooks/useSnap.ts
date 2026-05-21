@@ -27,6 +27,7 @@ import {
   getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
+  getMaxSnapSize,
   getSheetTransform,
   isHorizontalSide,
   resolveSheetSide,
@@ -94,8 +95,11 @@ export function useSnap({
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const allowOverDrag = effectiveRubberBand !== false
   const sheetMTRef = useMainThreadRef<MainThread.Element | null>(null)
+  const contentMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const yRef = useMotionValueRef<number>(0)
   const sheetSizeMTRef = useMainThreadRef<number>(0)
+  const contentSizeMTRef = useMainThreadRef<number>(0)
+  const fitSizeMTRef = useMainThreadRef<number>(0)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -120,6 +124,10 @@ export function useSnap({
     () => snapPoints.some(p => String(p).trim() === 'fit'),
     [snapPoints],
   )
+  const hasOnlyFitSnapPoints = useMemo(
+    () => snapPoints.every(p => String(p).trim() === 'fit'),
+    [snapPoints],
+  )
 
   // Keep snap points order stable: indices should match `snapPoints` order.
   const { snapPointValues, snapOffsets } = useMemo(() => {
@@ -135,6 +143,7 @@ export function useSnap({
   const maxOffset = validOffsets.length > 0
     ? Math.max(...validOffsets)
     : 0
+  const maxSnapSize = getMaxSnapSize(snapPointValues)
 
   function getResolvedSnapOffsets() {
     'main thread'
@@ -161,6 +170,27 @@ export function useSnap({
   function setSheetMTRef(el: MainThread.Element) {
     'main thread'
     sheetMTRef.current = el
+  }
+
+  function setContentMTRef(el: MainThread.Element) {
+    'main thread'
+    contentMTRef.current = el
+  }
+
+  function updateContentSizeMT(size: number) {
+    'main thread'
+    contentSizeMTRef.current = size
+    const el = contentMTRef.current
+    if (!el) return
+    if (isHorizontalSide(resolvedSide)) {
+      el.setStyleProperties({
+        width: `${size}px`,
+      })
+    } else {
+      el.setStyleProperties({
+        height: `${size}px`,
+      })
+    }
   }
 
   useMotionValueRefEvent(yRef, 'change', v => {
@@ -342,20 +372,29 @@ export function useSnap({
     const innerSnapOffsets = snapOffsets
 
     if (hasFitSnapPoint) {
+      if (fitSizeMTRef.current === 0 && layoutSize <= 0) return
+      const fitSize = layoutSize > 0 ? layoutSize : fitSizeMTRef.current
+      fitSizeMTRef.current = fitSize
       resolvedSnapPointMTRef.current = innerSnapPointValues.map(v =>
-        v === -1 ? layoutSize : v
+        v === -1 ? fitSize : v
       )
       resolvedSnapOffsetsMTRef.current = innerSnapOffsets.map(o =>
-        o === -1 ? layoutSize : o
+        o === -1 ? fitSize : o
       )
+      if (!hasOnlyFitSnapPoints) {
+        updateContentSizeMT(getMaxSnapSize(innerSnapPointValues, fitSize))
+      }
 
       // Resolve any pending snap operation
       controller.resolvePendingSnapMT()
+    } else if (contentSizeMTRef.current !== maxSnapSize) {
+      updateContentSizeMT(maxSnapSize)
     }
   }
 
   return {
     setSheetMTRef,
+    setContentMTRef,
     snapTo,
     expand,
     collapse,
@@ -378,6 +417,7 @@ export function useSnap({
     snapPointValues,
     minOffset,
     maxOffset,
+    maxSnapSize,
     getClampedValueMT,
     animateToMT,
     nearestSnapMT,

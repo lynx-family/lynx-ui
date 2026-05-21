@@ -9,6 +9,7 @@ import {
   getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
+  getMaxSnapSize,
   getNextMainAxisOffset,
   getSheetTransform,
   resolveSheetSide,
@@ -69,6 +70,12 @@ describe('sheet side utils', () => {
         detail: { height: 420, width: 260 },
       }),
     ).toBe(260)
+  })
+
+  it('uses the highest resolved snap point as the stable layout size', () => {
+    expect(getMaxSnapSize([400, 800])).toBe(800)
+    expect(getMaxSnapSize([400, -1, 800], 520)).toBe(800)
+    expect(getMaxSnapSize([400, -1, 800], 920)).toBe(920)
   })
 
   it('uses vertical gesture angles for vertical sheets', () => {

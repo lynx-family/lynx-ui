@@ -23,6 +23,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - In `top` and `bottom` mode, percentage snap points resolve against the vertical main-axis basis: `screenHeight` when provided, otherwise viewport height.
 - In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against the horizontal main-axis basis: `screenWidth` when provided, otherwise viewport width.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
+- The inner layout uses `maxSnapSize`, the highest resolved `snapPoints` value, as its stable main-axis size so `flex: 1` children have a snap-related height/width basis. Pure `'fit'` snap point sheets stay content-driven.
 - `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.
 - Rubber-band over-drag defaults to enabled for `top` / `bottom` and disabled for horizontal modes. Use `rubberBand` to override the default.
 
