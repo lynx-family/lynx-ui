@@ -22,13 +22,13 @@ pnpm add @lynx-js/luna-core
 ### Pair With Tokens (Get Concrete Color Values)
 
 ```ts
-import type { LunaThemeTokens } from '@lynx-js/luna-core'
-import { lunarisDarkTokens } from '@lynx-js/luna-tokens'
+import type { LunaThemeTokens } from '@lynx-js/luna-core';
+import { lunarisDarkTokens } from '@lynx-js/luna-tokens';
 
-const theme: LunaThemeTokens = lunarisDarkTokens
+const theme: LunaThemeTokens = lunarisDarkTokens;
 
-const primary = theme.colors['primary']
-const contentMuted = theme.colors['content-muted']
+const primary = theme.colors['primary'];
+const contentMuted = theme.colors['content-muted'];
 ```
 
 ### ColorId / ColorKey
@@ -42,25 +42,25 @@ import {
   colorIdToColorKey,
   colorKeyToColorId,
   createEmptyLunaColors,
-} from '@lynx-js/luna-core'
+} from '@lynx-js/luna-core';
 
-const firstId = LUNA_COLOR_IDS[0]
-const key = colorIdToColorKey('primary-content')
-const id = colorKeyToColorId('primaryContent')
+const firstId = LUNA_COLOR_IDS[0];
+const key = colorIdToColorKey('primary-content');
+const id = colorKeyToColorId('primaryContent');
 
-const emptyColors = createEmptyLunaColors()
-emptyColors.primary = '#ff8ab5'
+const emptyColors = createEmptyLunaColors();
+emptyColors.primary = '#ff8ab5';
 ```
 
 ### Theme Resolver (Pick the Best Match From an Allowlist)
 
 ```ts
-import { resolveThemeKeyFromList } from '@lynx-js/luna-core'
+import { resolveThemeKeyFromList } from '@lynx-js/luna-core';
 
-const allowed = ['luna-light', 'lunaris-dark'] as const
+const allowed = ['luna-light', 'lunaris-dark'] as const;
 
-const resolved1 = resolveThemeKeyFromList(allowed, 'lunaris-light')
-const resolved2 = resolveThemeKeyFromList(allowed, 'luna-dark')
+const resolved1 = resolveThemeKeyFromList(allowed, 'lunaris-light');
+const resolved2 = resolveThemeKeyFromList(allowed, 'luna-dark');
 ```
 
 ## LUNA Packages

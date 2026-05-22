@@ -43,7 +43,7 @@
     "@lynx-js/luna-core": "workspace:*"
   },
   "devDependencies": {
-    "@dugyu/luna-tailwind": "0.3.1",
+    "@dugyu/luna-tailwind": "0.5.0",
     "tailwindcss": "catalog:tailwind"
   },
   "peerDependencies": {

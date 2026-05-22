@@ -60,7 +60,7 @@
     "sync:readme": "node ./scripts/sync-readme.mjs"
   },
   "devDependencies": {
-    "@dugyu/luna-tokens": "0.3.1"
+    "@dugyu/luna-tokens": "0.5.0"
   },
   "publishConfig": {
     "access": "public"

@@ -39,12 +39,12 @@ The default foundation. Luna is neutral and intentionally unopinionated — suit
 
 Surfaces form a layered system from background to foreground, defined by how they are perceived rather than by explicit elevation.
 
-| Token            | Role                                                             |
-| ---------------- | ---------------------------------------------------------------- |
-| `canvas-ambient` | Deepest background, diffused, structural, below all content      |
-| `canvas`         | Base surface, where interface begins                             |
-| `paper`          | Primary surface, distinct from the background, used for content  |
-| `paper-clear`    | Nested surface within `paper`, perceptible only through contrast |
+| Token            | Role                                                                   |
+| ---------------- | ---------------------------------------------------------------------- |
+| `canvas-ambient` | Deepest background, diffused, structural, below all content            |
+| `canvas`         | Base surface, where interface begins                                   |
+| `paper`          | Primary content surfaces such as cards and panels                      |
+| `paper-clear`    | Floating surfaces that lift above `paper`, such as popovers and sheets |
 
 Two translucent layers are derived from the canvas(background) direction. They dissolve a surface toward the environment — the surface recedes, blending into the background.
 
@@ -73,13 +73,13 @@ Semi-transparent variants for foreground elements. These describe the element's 
 
 ### Primary
 
-| Token                   | Role                                   |
-| ----------------------- | -------------------------------------- |
-| `primary`               | Brand accent, interactive highlight    |
-| `primary-2`             | Stronger primary variant               |
-| `primary-muted`         | Subdued primary, used for backgrounds  |
-| `primary-content`       | Text/icons on top of primary           |
-| `primary-content-faded` | Reduced-presence text/icons on primary |
+| Token                   | Role                                        |
+| ----------------------- | ------------------------------------------- |
+| `primary`               | Brand accent, interactive highlight         |
+| `primary-2`             | Variant of `primary` used for active states |
+| `primary-muted`         | Subdued primary, used for backgrounds       |
+| `primary-content`       | Text/icons on top of primary                |
+| `primary-content-faded` | Reduced-presence text/icons on primary      |
 
 ### Secondary
 
@@ -88,7 +88,7 @@ Semi-transparent variants for foreground elements. These describe the element's 
 | Token                     | Role                                     |
 | ------------------------- | ---------------------------------------- |
 | `secondary`               | Supporting accent                        |
-| `secondary-2`             | Deeper secondary variant                 |
+| `secondary-2`             | Softened variant of `secondary`          |
 | `secondary-content`       | Text/icons on top of secondary           |
 | `secondary-content-faded` | Reduced-presence text/icons on secondary |
 
@@ -130,10 +130,13 @@ Backdrop tokens are full-screen scrim overlays operating at the spatial layer be
 
 ### Lines
 
-| Token  | Role                             |
-| ------ | -------------------------------- |
-| `line` | Subtle divider, semi-transparent |
-| `rule` | Solid divider                    |
+| Token  | Role                                                                     |
+| ------ | ------------------------------------------------------------------------ |
+| `line` | Thin, airy outlines around components such as buttons, inputs, and cards |
+| `rule` | Dividers that separate regions, such as list items or sections           |
+
+Use `line` to outline a component, and `rule` to separate one region from
+another. The distinction is about role, not weight.
 
 ### Gradient
 
@@ -213,19 +216,19 @@ pnpm add @lynx-js/luna-tokens
 ## Usage
 
 ```typescript
-import { lunarisDarkTokens, lunarisLightTokens } from '@lynx-js/luna-tokens'
-import { lunaDarkTokens, lunaLightTokens } from '@lynx-js/luna-tokens'
+import { lunarisDarkTokens, lunarisLightTokens } from '@lynx-js/luna-tokens';
+import { lunaDarkTokens, lunaLightTokens } from '@lynx-js/luna-tokens';
 
-const theme = lunarisDarkTokens
+const theme = lunarisDarkTokens;
 
-theme.key // "lunaris-dark"
-theme.variant // "lunaris"
-theme.mode // "dark"
+theme.key; // "lunaris-dark"
+theme.variant; // "lunaris"
+theme.mode; // "dark"
 
-const canvas = theme.colors['canvas']
-const paper = theme.colors['paper']
-const primary = theme.colors['primary']
-const contentMuted = theme.colors['content-muted']
+const canvas = theme.colors['canvas'];
+const paper = theme.colors['paper'];
+const primary = theme.colors['primary'];
+const contentMuted = theme.colors['content-muted'];
 ```
 
 This package exports token objects directly. You will not typically need to import from this package unless you are building a custom theme.

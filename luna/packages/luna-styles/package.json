@@ -54,7 +54,7 @@
     "sync:readme": "node ./scripts/sync-readme.mjs"
   },
   "devDependencies": {
-    "@dugyu/luna-styles": "0.3.1"
+    "@dugyu/luna-styles": "0.5.0"
   },
   "publishConfig": {
     "access": "public"

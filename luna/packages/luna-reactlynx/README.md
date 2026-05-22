@@ -25,8 +25,8 @@ pnpm add @lynx-js/luna-reactlynx @lynx-js/luna-styles
 
 ## Entry points
 
-| Entry                                          | Contents                                                |
-| ---------------------------------------------- | ------------------------------------------------------- |
+| Entry                                        | Contents                                                |
+| -------------------------------------------- | ------------------------------------------------------- |
 | `@lynx-js/luna-reactlynx`                      | Provider, hooks, `createLunaTheme`, type re-exports     |
 | `@lynx-js/luna-reactlynx/theming`              | Theming-only subpath                                    |
 | `@lynx-js/luna-reactlynx/runtime`              | Runtime shell (`LunaTheme`)                             |
@@ -43,13 +43,13 @@ import {
   LunaThemeProvider,
   createLunaTheme,
   useLunaColors,
-} from '@lynx-js/luna-reactlynx'
-import { lunarisDarkTokens, lunarisLightTokens } from '@lynx-js/luna-tokens'
+} from '@lynx-js/luna-reactlynx';
+import { lunarisDarkTokens, lunarisLightTokens } from '@lynx-js/luna-tokens';
 
 const themes = [
   createLunaTheme(lunarisLightTokens),
   createLunaTheme(lunarisDarkTokens),
-]
+];
 
 export function App() {
   return (
@@ -59,12 +59,12 @@ export function App() {
     >
       <Demo />
     </LunaThemeProvider>
-  )
+  );
 }
 
 function Demo() {
-  const colors = useLunaColors()
-  return <view style={{ backgroundColor: colors.canvas }} />
+  const colors = useLunaColors();
+  return <view style={{ backgroundColor: colors.canvas }} />;
 }
 ```
 
@@ -73,7 +73,7 @@ function Demo() {
 ```tsx
 <LunaThemeProvider theme={createLunaTheme(lunarisLightTokens)}>
   {children}
-</LunaThemeProvider>
+</LunaThemeProvider>;
 ```
 
 ### Color consumption format
@@ -94,15 +94,15 @@ Supported output shapes:
 Example:
 
 ```tsx
-import { useLunaColor } from '@lynx-js/luna-reactlynx'
+import { useLunaColor } from '@lynx-js/luna-reactlynx';
 
-const getValue = useLunaColor({ format: 'value' })
-const getVarRef = useLunaColor({ format: 'var-ref' })
-const getVarName = useLunaColor({ as: 'var-name' })
+const getValue = useLunaColor({ format: 'value' });
+const getVarRef = useLunaColor({ format: 'var-ref' });
+const getVarName = useLunaColor({ as: 'var-name' });
 
-getValue('primary') // '#ff1a6e' (values-backed theme only)
-getVarRef('primary') // 'var(--primary)'
-getVarName('primary') // '--primary'
+getValue('primary'); // '#ff1a6e' (values-backed theme only)
+getVarRef('primary'); // 'var(--primary)'
+getVarName('primary'); // '--primary'
 ```
 
 #### CSS var prefix
@@ -114,24 +114,24 @@ import {
   LunaThemeProvider,
   createLunaTheme,
   useLunaColor,
-} from '@lynx-js/luna-reactlynx'
-import { lunarisLightTokens } from '@lynx-js/luna-tokens'
+} from '@lynx-js/luna-reactlynx';
+import { lunarisLightTokens } from '@lynx-js/luna-tokens';
 
 const theme = createLunaTheme(lunarisLightTokens, {
   consumptionFormat: 'var-ref',
   cssVarPrefix: 'luna',
-})
+});
 
 <LunaThemeProvider theme={theme}>
   <Demo />
-</LunaThemeProvider>
+</LunaThemeProvider>;
 
 function Demo() {
-  const getColor = useLunaColor()
-  getColor('primary') // 'var(--luna-primary)'
+  const getColor = useLunaColor();
+  getColor('primary'); // 'var(--luna-primary)'
 
-  const getUnprefixed = useLunaColor({ cssVarPrefix: '' })
-  getUnprefixed('primary') // 'var(--primary)'
+  const getUnprefixed = useLunaColor({ cssVarPrefix: '' });
+  getUnprefixed('primary'); // 'var(--primary)'
 }
 ```
 
@@ -144,15 +144,15 @@ Import the LUNA stylesheet globally, then apply a theme class (e.g., `lunaris-li
 If you prefer to manage the class yourself, you can skip `LunaTheme` entirely:
 
 ```tsx
-import '@lynx-js/luna-styles/index.css'
-import './app.css'
+import '@lynx-js/luna-styles/index.css';
+import './app.css';
 
 export function App() {
   return (
     <page className='lunaris-light'>
       <view className='app' />
     </page>
-  )
+  );
 }
 ```
 
@@ -161,15 +161,15 @@ export function App() {
 ### Inline style (Lynx SDK >= 3.6)
 
 ```tsx
-import { LunaTheme } from '@lynx-js/luna-reactlynx/runtime'
-import '@lynx-js/luna-styles/index.css'
+import { LunaTheme } from '@lynx-js/luna-reactlynx/runtime';
+import '@lynx-js/luna-styles/index.css';
 
 export function App() {
   return (
     <LunaTheme>
       <view style={{ backgroundColor: 'var(--canvas)' }} />
     </LunaTheme>
-  )
+  );
 }
 ```
 
@@ -182,7 +182,7 @@ export function App() {
 **Optional:** for typed `lynx.__globalProps.lunaTheme`, import the augmentation once at your app entry:
 
 ```ts
-import '@lynx-js/luna-reactlynx/runtime/global-props'
+import '@lynx-js/luna-reactlynx/runtime/global-props';
 ```
 
 ### Tailwind (Lynx SDK < 3.6 friendly)
@@ -190,8 +190,8 @@ import '@lynx-js/luna-reactlynx/runtime/global-props'
 If you use Tailwind, pair `@lynx-js/luna-styles` (variables) with `@lynx-js/luna-tailwind` (utilities). Then you can consume colors via semantic utilities like `bg-canvas` / `text-content` without relying on inline `var(...)`.
 
 ```tsx
-import { LunaTheme } from '@lynx-js/luna-reactlynx/runtime'
-import '@lynx-js/luna-styles/index.css'
+import { LunaTheme } from '@lynx-js/luna-reactlynx/runtime';
+import '@lynx-js/luna-styles/index.css';
 
 export function App() {
   return (
@@ -200,7 +200,7 @@ export function App() {
         <text className='text-content'>Hello</text>
       </view>
     </LunaTheme>
-  )
+  );
 }
 ```
 
@@ -216,16 +216,16 @@ Consume `var(--xxx)` in a stylesheet, then reference it by `className`:
 ```
 
 ```tsx
-import { LunaTheme } from '@lynx-js/luna-reactlynx/runtime'
-import '@lynx-js/luna-styles/index.css'
-import './app.css'
+import { LunaTheme } from '@lynx-js/luna-reactlynx/runtime';
+import '@lynx-js/luna-styles/index.css';
+import './app.css';
 
 export function App() {
   return (
     <LunaTheme>
       <view className='app' />
     </LunaTheme>
-  )
+  );
 }
 ```
 
@@ -243,7 +243,7 @@ In other words, `LunaTheme` is a convenience for applying the theme class; if yo
 |                                                        | JS Tokens        | CSS Variables                     |
 | ------------------------------------------------------ | ---------------- | --------------------------------- |
 | Color consumption                                      | Raw values in JS | `var(--xxx)` / Tailwind utilities |
-| Already using `@lynx-js/luna-styles`                   | —                | ✓                                 |
+| Already using `@lynx-js/luna-styles`                     | —                | ✓                                 |
 | Need theme object in JS (e.g. animation, inline style) | ✓                | —                                 |
 
 ## LUNA Packages

@@ -62,7 +62,7 @@ function App() {
     <view className='canvas lunaris-dark luna-gradient-rose'>
       {/* Your Demo */}
     </view>
-  )
+  );
 }
 ```
 
