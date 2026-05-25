@@ -9,8 +9,8 @@ import type { FeedListRef } from '@lynx-js/lynx-ui'
 
 import { FEED_INITIAL, FEED_REFRESH } from './data'
 import type { LetterItem } from './data'
-import { RectangleCard } from './RectangleCard'
-import { RefreshHeader } from './RefreshHeader'
+import { RectangleCard } from '../shared/RectangleCard'
+import { RefreshHeader } from '../shared/RefreshHeader'
 import './index.css'
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
   }, [])
 
   const refreshHeader = useMemo(
-    () => <RefreshHeader />,
+    () => <RefreshHeader text='Refreshing' />,
     [],
   )
 
@@ -78,30 +78,29 @@ function App() {
         useRefactorList={true}
         bounces={false}
       >
+        <list-item item-key='demo-header'>
+          <view className='demo-header' />
+        </list-item>
         {items.map((item: LetterItem) => (
           <list-item key={item.key} item-key={item.key}>
             <RectangleCard
-              cardKey={item.key}
               letter={item.letter}
               height={500}
             />
           </list-item>
         ))}
-        <list-item
-          item-key='commandRefreshFooterSpace'
-          key='commandRefreshFooterSpace'
-        >
-          <view className='bottom-spacer' />
+        <list-item item-key='demo-footer'>
+          <view className='demo-footer' />
         </list-item>
       </FeedList>
       <view className='demo-actions'>
         <Button
-          className='command-button'
+          className='action-button'
           onClick={() => {
             startRefresh()
           }}
         >
-          <text className='command-button__text'>Refresh</text>
+          <text className='action-button__text'>Refresh</text>
         </Button>
       </view>
     </view>

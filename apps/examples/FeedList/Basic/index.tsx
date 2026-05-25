@@ -9,7 +9,8 @@ import type { FeedListRef } from '@lynx-js/lynx-ui'
 
 import { FEED_INITIAL, FEED_MORE, FEED_REFRESH } from './data'
 import type { LetterItem } from './data'
-import { RectangleCard } from './RectangleCard'
+import { RectangleCard } from '../shared/RectangleCard'
+import { RefreshHeader } from '../shared/RefreshHeader'
 
 import './index.css'
 
@@ -20,14 +21,7 @@ function App() {
   const isLoadingMore = useRef(false)
 
   const renderRefreshHeader = useMemo(
-    () => (
-      <view className='refresh-header'>
-        <image
-          src='https://lf-lynx.tiktok-cdns.com/obj/lynx-artifacts-oss-sg/plugin/static/loading.gif'
-          className='refresh-header__spinner'
-        />
-      </view>
-    ),
+    () => <RefreshHeader />,
     [],
   )
 
@@ -108,7 +102,6 @@ function App() {
         {items.map((item: LetterItem) => (
           <list-item key={item.key} item-key={item.key}>
             <RectangleCard
-              cardKey={item.key}
               letter={item.letter}
               height={500}
             />

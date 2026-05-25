@@ -17,7 +17,7 @@ function App() {
   const [disabled, setDisabled] = useState(false)
 
   return (
-    <view className='demo-container lunaris-light luna-gradient-rose'>
+    <view className='demo-container lunaris-dark luna-gradient-rose'>
       <view className='demo-canvas'>
         <view className='section'>
           <text className='label'>
