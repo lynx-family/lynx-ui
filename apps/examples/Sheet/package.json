@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-sheet",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Example app demonstrating Sheet usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sheet#readme",
   "repository": {

@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-sheet
 
+## 3.133.1
+
+### Patch Changes
+
+- Fix side drawer positioning with oversized SheetContent surfaces, make `enableRTL` set the Sheet viewport direction, fix mixed `fit` snap point sizing on the main thread, and fix `SheetHandle` drag touch handling. ([#196](https://github.com/lynx-family/lynx-ui/pull/196))
+
+- Use the highest resolved sheet snap point as the stable inner layout size. Pure `'fit'` snap point sheets continue to preserve content-driven sizing. ([#196](https://github.com/lynx-family/lynx-ui/pull/196))
+
+- Updated dependencies [[`3932070`](https://github.com/lynx-family/lynx-ui/commit/393207073522e221a79e65c643df2afb329ec931)]:
+  - @lynx-js/lynx-ui-common@3.133.1
+  - @lynx-js/lynx-ui-dialog@3.133.1
+  - @lynx-js/lynx-ui-overlay@3.133.1
+  - @lynx-js/lynx-ui-presence@3.133.1
+
 ## 3.133.0
 
 ### Patch Changes

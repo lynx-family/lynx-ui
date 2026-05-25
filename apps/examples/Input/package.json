@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-input",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Example app demonstrating Input usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Input#readme",
   "repository": {

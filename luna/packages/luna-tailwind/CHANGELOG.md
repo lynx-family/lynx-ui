@@ -1,5 +1,16 @@
 # @lynx-js/luna-tailwind
 
+## 0.2.0
+
+### Minor Changes
+
+- Add the `luna-gradient-afterglow` utility class. ([#197](https://github.com/lynx-family/lynx-ui/pull/197))
+
+### Patch Changes
+
+- Updated dependencies [[`3e1927b`](https://github.com/lynx-family/lynx-ui/commit/3e1927b99e67dd5900316400eb7ee57409b98b33)]:
+  - @lynx-js/luna-core@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

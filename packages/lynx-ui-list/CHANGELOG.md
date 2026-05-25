@@ -1,5 +1,15 @@
 # @lynx-js/lynx-ui-list
 
+## 3.133.1
+
+### Patch Changes
+
+- Improve Web and desktop touch compatibility by routing `onTouchStart`, ([#200](https://github.com/lynx-family/lynx-ui/pull/200))
+  `onTouchMove`, `onTouchEnd`, and `onTouchCancel` through shared touch
+  emulation.
+- Updated dependencies [[`3932070`](https://github.com/lynx-family/lynx-ui/commit/393207073522e221a79e65c643df2afb329ec931)]:
+  - @lynx-js/lynx-ui-common@3.133.1
+
 ## 3.133.0
 
 ### Minor Changes

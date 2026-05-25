@@ -1,5 +1,13 @@
 # @lynx-example/lynx-ui-slider
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.1
+  - @lynx-js/luna-styles@0.2.0
+
 ## 0.0.7
 
 ### Patch Changes

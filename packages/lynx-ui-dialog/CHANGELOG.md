@@ -1,5 +1,15 @@
 # @lynx-js/lynx-ui-dialog
 
+## 3.133.1
+
+### Patch Changes
+
+- Updated dependencies [[`3932070`](https://github.com/lynx-family/lynx-ui/commit/393207073522e221a79e65c643df2afb329ec931)]:
+  - @lynx-js/lynx-ui-button@3.133.1
+  - @lynx-js/lynx-ui-common@3.133.1
+  - @lynx-js/lynx-ui-overlay@3.133.1
+  - @lynx-js/lynx-ui-presence@3.133.1
+
 ## 3.133.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @lynx-example/lynx-ui-checkbox
 
+## 0.0.8
+
+### Patch Changes
+
+- Apply explicit text classes in Checkbox examples so text styling no longer relies ([#191](https://github.com/lynx-family/lynx-ui/pull/191))
+  on inherited container styles, which can be overridden by higher-priority host
+  site text rules in lynx for web environments such as lynx-website.
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.1
+  - @lynx-js/luna-styles@0.2.0
+
 ## 0.0.7
 
 ### Patch Changes
