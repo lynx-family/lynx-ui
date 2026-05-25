@@ -6,6 +6,7 @@ This is the routing layer for the skill:
 
 - `SKILL.md` tells the agent how to work
 - `reference.md` tells the agent where to route the task
+- `references/components.md` helps choose the closest official component family
 - `references/components/<component>/guide.md` tells the agent how to use the chosen component
 
 ## How to route

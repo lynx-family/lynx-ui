@@ -11,13 +11,22 @@ packages/skill-lynx-ui
 ├── SKILL.md
 ├── reference.md
 ├── examples.md
+├── evals/
+│   └── evals.json
 └── references
+    ├── foundation.md
+    ├── components.md
+    ├── theming-and-tokens.md
+    ├── motion.md
+    ├── screen-recipes.md
     ├── index.md
     └── components/<component>/
         ├── guide.md
         ├── api.md
         └── examples.md
 ```
+
+该包同时包含手写的 Lynx UI 总体参考资料，以及按组件生成的细粒度参考资料。
 
 ## 维护
 

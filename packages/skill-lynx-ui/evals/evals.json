@@ -1,0 +1,137 @@
+{
+  "skill_name": "lynx-ui",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I already have a ReactLynx app and want to add Lynx UI for a new interactive list flow. Please use the official Lynx UI approach and keep the code close to the docs unless the project structure forces small changes.",
+      "expected_output": "The response routes through Lynx UI setup or capability guidance, prefers official docs examples, and avoids generic React rewrites.",
+      "files": [],
+      "assertions": [
+        "Mentions an official Lynx UI docs page or example as the recommended source of truth",
+        "Points to a local Lynx UI reference file or section in addition to the official docs anchor",
+        "Frames the answer around adapting the official Lynx UI approach rather than inventing a generic React abstraction"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you help me add consistent theming to this Lynx UI screen? I think we should use Luna tokens if that's the recommended path.",
+      "expected_output": "The response routes into theming and tokens guidance, points to the Luna docs, and keeps the answer in Lynx UI terms.",
+      "files": [],
+      "assertions": [
+        "Recommends Luna themes or tokens as the default theming path",
+        "Points to the Luna themes/tokens docs page rather than only naming token concepts",
+        "Maps the recommendation to concrete Luna semantic tokens for surfaces, text, borders, or actions"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a small transition for a Lynx UI interaction. Should I use motion or motion-mini, and can you keep it aligned with the official docs?",
+      "expected_output": "The response routes into motion guidance, explains motion vs motion-mini, and prefers the official docs path.",
+      "files": [],
+      "assertions": [
+        "Chooses between motion and motion-mini with an explicit recommendation",
+        "Justifies the choice using Lynx UI or official-doc-aligned criteria",
+        "Avoids generic animation-library advice that ignores Lynx UI"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Can you build me a Lynx UI settings screen with notification toggles, a theme radio group, and a save button? Please stay close to the official Lynx UI way instead of inventing a custom design system.",
+      "expected_output": "The response treats this as a multi-part screen task, composes the screen from official Lynx UI primitives, and stays close to the local screen-recipes guidance rather than inventing a generic wrapper system.",
+      "files": [],
+      "assertions": [
+        "Treats the request as a screen-level composition problem rather than only a single component lookup",
+        "Composes the answer from official Lynx UI primitives such as ScrollView, Switch, RadioGroup, Input, or Button",
+        "Explicitly explains why the chosen primitive composition stays close to the official Lynx UI way"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I am not sure whether this Lynx UI action should use a dialog, a sheet, or a popover. Can you help me choose the closest official pattern before we write code?",
+      "expected_output": "The response uses Lynx UI routing guidance to compare the relevant primitives, points back to official component docs, and helps the user choose instead of jumping into arbitrary code.",
+      "files": [],
+      "assertions": [
+        "Compares the relevant Lynx UI primitives instead of picking one without explanation",
+        "Points back to the closest official Lynx UI component docs or local component-routing guidance",
+        "Avoids jumping straight into unrelated implementation code before choosing the component family"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "My Lynx UI example looks fine structurally, but the setup and types are breaking in my ReactLynx project. Can you troubleshoot it and tell me if this is actually a Lynx UI problem or another Lynx skill should handle it?",
+      "expected_output": "The response identifies the likely boundary between Lynx UI and adjacent Lynx skills, keeps the fix anchored in official docs if appropriate, and hands off cleanly if the issue is really about ReactLynx architecture or Lynx TypeScript config.",
+      "files": [],
+      "assertions": [
+        "Names the likely boundary between Lynx UI guidance and another local Lynx skill",
+        "Mentions reactlynx-best-practices or lynx-typescript when the issue appears architectural or type/config related",
+        "Includes a minimal boundary check that still verifies an official Lynx UI install/import assumption before handing off"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I have a Lynx UI screen with a primary action button. Should I wire the click with onClick or bindtap? Please keep it aligned with the official Lynx UI Button API.",
+      "expected_output": "The response explicitly keeps Lynx UI Button on its documented onClick prop and distinguishes that from raw native event props like bindtap or catchtap.",
+      "files": [],
+      "assertions": [
+        "States that Lynx UI Button uses onClick",
+        "Explicitly warns against using bindtap or catchtap on the Lynx UI Button component",
+        "Distinguishes component props from raw native view event props rather than treating them as interchangeable"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Can you show me how to set up styling and theming for Lynx UI and apply one of the built-in Luna themes? Please stay close to the official docs, including the setup path.",
+      "expected_output": "The response points to the official styling/theming setup doc, explains the setup path in Lynx UI terms, and recommends a built-in Luna or Lunaris theme as the default application path.",
+      "files": [],
+      "assertions": [
+        "Points to the official styling and theming setup doc, not only the Luna tokens page",
+        "Explains setup in terms of documented theme wiring or imports instead of generic theming abstractions",
+        "Recommends a built-in Luna or Lunaris theme as the default before suggesting a custom theme"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "We need our own brand theme in Lynx UI, not just luna-light or luna-dark. Can you explain the official way to define a custom theme and which semantic tokens we should override first?",
+      "expected_output": "The response points to the official custom-theme section, keeps the explanation in Luna semantic token terms, and frames custom themes as an override path rather than the default recommendation.",
+      "files": [],
+      "assertions": [
+        "Points to the official Define your own theme section",
+        "Frames custom themes as a branding or override path rather than the default recommendation",
+        "Explains the first overrides in semantic token terms such as primary, paper, content, or line"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I want to set up Luna theming with Tailwind in a Lynx UI app. What is the official setup path, which presets do I need, and how do I apply a built-in theme like luna-dark?",
+      "expected_output": "The response points to the official styling/theming setup doc, includes the official Tailwind preset packages and preset order, and explains that built-in themes are applied through theme classes such as luna-dark.",
+      "files": [],
+      "assertions": [
+        "Mentions @lynx-js/tailwind-preset for runtime compatibility",
+        "Names LunaPreset from @lynx-js/luna-tailwind and LynxPreset from @lynx-js/tailwind-preset with the order [LynxPreset, LunaPreset]",
+        "Explains that built-in themes can be applied with classes such as luna-light, luna-dark, lunaris-light, or lunaris-dark"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "My Lynx app loads Luna theme tokens, but classes like bg-paper, flex, and rounded-2xl never show up in the built CSS. What does that imply, and should I debug Luna or the Tailwind integration first?",
+      "expected_output": "The response identifies the missing utility classes as a base Rspeedy/Lynx Tailwind integration problem, explains the two-layer model, and avoids treating Luna theme loading as proof that the utility pipeline is working.",
+      "files": [],
+      "assertions": [
+        "Explains the two-layer model: base Rspeedy/Lynx Tailwind integration first, then Luna theming",
+        "States that missing generic utilities such as flex indicates the base Tailwind integration is incomplete",
+        "Distinguishes loaded Luna tokens from generated utility selectors instead of treating them as the same signal"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "I updated Tailwind v3, PostCSS, presets, and the Tailwind directives, but the output still looks stale. Then a plugin reload made it start working. What should you conclude before suggesting more config edits?",
+      "expected_output": "The response recognizes that config may already be correct, recommends rebuild plus plugin or session refresh after integration changes, and avoids inventing more configuration changes before ruling out stale tool state.",
+      "files": [],
+      "assertions": [
+        "Recommends rebuild and plugin or session refresh after Tailwind integration changes",
+        "Treats stale output as possible cached tool or session state rather than immediate proof of another missing config step",
+        "Avoids prescribing extra config edits before ruling out reload or refresh behavior"
+      ]
+    }
+  ]
+}

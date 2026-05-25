@@ -16,7 +16,8 @@
     "SKILL.md",
     "references",
     "reference.md",
-    "examples.md"
+    "examples.md",
+    "evals"
   ],
   "scripts": {
     "check:references": "node ../../tools/skill-lynx-ui/check-references.mjs",

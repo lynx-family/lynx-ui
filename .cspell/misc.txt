@@ -77,4 +77,8 @@ yoavbls
 zizmor
 n'BDX
 overscroll
+pressable
+autoplay
+subcomponent
+evals
 Rects

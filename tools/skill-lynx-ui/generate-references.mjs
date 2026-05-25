@@ -18,6 +18,7 @@ const exampleRoots = [
   },
 ]
 const defaultOutputRoot = packageRoot
+const bundledReferenceSourceRoot = path.join(__dirname, 'references')
 
 const guideRewriteRules = []
 
@@ -294,6 +295,23 @@ async function ensureCleanDir(dirPath) {
   await fs.mkdir(dirPath, { recursive: true })
 }
 
+async function copyBundledReferences(outputRoot) {
+  const copiedReferenceFiles = [
+    'foundation.md',
+    'components.md',
+    'theming-and-tokens.md',
+    'motion.md',
+    'screen-recipes.md',
+  ]
+
+  for (const relativePath of copiedReferenceFiles) {
+    const sourcePath = path.join(bundledReferenceSourceRoot, relativePath)
+    const destinationPath = path.join(outputRoot, 'references', relativePath)
+    await fs.mkdir(path.dirname(destinationPath), { recursive: true })
+    await fs.copyFile(sourcePath, destinationPath)
+  }
+}
+
 async function writeFile(filePath, content) {
   await fs.mkdir(path.dirname(filePath), { recursive: true })
   await fs.writeFile(filePath, content, 'utf8')
@@ -303,6 +321,7 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
   const components = await collectIncludedComponents()
 
   await ensureCleanDir(path.join(outputRoot, 'references'))
+  await copyBundledReferences(outputRoot)
   const componentExamples = []
 
   for (const component of components) {
