@@ -232,13 +232,13 @@ export function SheetContent(props: SheetContentProps) {
         style={{
           position: 'absolute',
           top: 0,
-          left: 0,
-          width: '100vw',
+          ...(resolvedSide === 'left'
+            ? { right: '100%' }
+            : { left: '100%' }),
+          width: '150vw',
           height: '100vh',
           overflow: 'hidden',
-          transform: resolvedSide === 'left'
-            ? `translate(${-viewportSize}px, 0px)`
-            : `translate(${viewportSize}px, 0px)`,
+          transform: 'translate(0px, 0px)',
           display: 'flex',
           flexDirection: 'row',
           justifyContent: resolvedSide === 'left'
@@ -259,6 +259,8 @@ export function SheetContent(props: SheetContentProps) {
     <view
       className={className}
       style={{
+        position: 'absolute',
+        left: 0,
         ...(isTop
           ? {
             bottom: '100%',
@@ -269,8 +271,10 @@ export function SheetContent(props: SheetContentProps) {
           : {
             top: '100%',
           }),
-        height: '100vh',
+        width: '100vw',
+        height: '150vh',
         overflow: 'hidden',
+        transform: 'translate(0px, 0px)',
         ...style,
       }}
       main-thread:ref={setSheetMTRef}

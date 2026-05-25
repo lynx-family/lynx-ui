@@ -125,7 +125,6 @@ export function getNextMainAxisOffset(
 export function getSheetTransform(
   side: SheetResolvedSide,
   value: number,
-  viewportSize: number,
 ) {
   'main thread'
   if (side === 'bottom') {
@@ -135,7 +134,7 @@ export function getSheetTransform(
     return `translate(0px, ${value}px)`
   }
   if (side === 'left') {
-    return `translate(${value - viewportSize}px, 0px)`
+    return `translate(${value}px, 0px)`
   }
-  return `translate(${viewportSize - value}px, 0px)`
+  return `translate(${-value}px, 0px)`
 }

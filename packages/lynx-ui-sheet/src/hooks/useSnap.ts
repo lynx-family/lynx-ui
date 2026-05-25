@@ -167,6 +167,18 @@ export function useSnap({
     return clamp(targetY, Math.max(sheetSizeMTRef.current, maxSnap))
   }
 
+  function getMaxSnapSizeMT(points: number[], fitSize = 0) {
+    'main thread'
+    let max = fitSize
+    for (const point of points) {
+      const value = point === -1 ? fitSize : point
+      if (value > max) {
+        max = value
+      }
+    }
+    return max
+  }
+
   function setSheetMTRef(el: MainThread.Element) {
     'main thread'
     sheetMTRef.current = el
@@ -204,11 +216,7 @@ export function useSnap({
         ? Math.min(v, opened)
         : v
       el.setStyleProperties({
-        transform: getSheetTransform(
-          resolvedSide,
-          transformValue,
-          viewportSize,
-        ),
+        transform: getSheetTransform(resolvedSide, transformValue),
         transition: 'none',
       })
       if (sheetProgress?.current) {
@@ -382,7 +390,7 @@ export function useSnap({
         o === -1 ? fitSize : o
       )
       if (!hasOnlyFitSnapPoints) {
-        updateContentSizeMT(getMaxSnapSize(innerSnapPointValues, fitSize))
+        updateContentSizeMT(getMaxSnapSizeMT(innerSnapPointValues, fitSize))
       }
 
       // Resolve any pending snap operation

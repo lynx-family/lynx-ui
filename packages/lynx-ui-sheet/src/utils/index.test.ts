@@ -111,17 +111,17 @@ describe('sheet side utils', () => {
   })
 
   it('computes the expected transforms for each resolved side', () => {
-    expect(getSheetTransform('top', 120, 360)).toBe(
+    expect(getSheetTransform('top', 120)).toBe(
       'translate(0px, 120px)',
     )
-    expect(getSheetTransform('bottom', 120, 360)).toBe(
+    expect(getSheetTransform('bottom', 120)).toBe(
       'translate(0px, -120px)',
     )
-    expect(getSheetTransform('left', 120, 360)).toBe(
-      'translate(-240px, 0px)',
+    expect(getSheetTransform('left', 120)).toBe(
+      'translate(120px, 0px)',
     )
-    expect(getSheetTransform('right', 120, 360)).toBe(
-      'translate(240px, 0px)',
+    expect(getSheetTransform('right', 120)).toBe(
+      'translate(-120px, 0px)',
     )
   })
 })

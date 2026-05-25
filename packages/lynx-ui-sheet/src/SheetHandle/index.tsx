@@ -13,6 +13,7 @@ export function SheetHandle(props: SheetHandleProps) {
       className={className}
       style={style}
       {...rest}
+      event-through={false}
       main-thread:bindtouchstart={dragHandlers.handleTouchStartMT}
       main-thread:bindtouchmove={dragHandlers.handleTouchMoveMT}
       main-thread:bindtouchend={dragHandlers.handleTouchEndMT}
