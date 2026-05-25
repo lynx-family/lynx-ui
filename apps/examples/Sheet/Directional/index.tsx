@@ -55,6 +55,8 @@ function App() {
   const rightDrawerRef = useRef<SheetRootRef>(null)
   const startDrawerRef = useRef<SheetRootRef>(null)
   const endDrawerRef = useRef<SheetRootRef>(null)
+  const rtlLeftDrawerRef = useRef<SheetRootRef>(null)
+  const rtlRightDrawerRef = useRef<SheetRootRef>(null)
   const topSheetRef = useRef<SheetRootRef>(null)
   const bottomSheetRef = useRef<SheetRootRef>(null)
 
@@ -81,6 +83,14 @@ function App() {
         <TriggerButton
           onClick={() => endDrawerRef.current?.open()}
           text='Open End Drawer'
+        />
+        <TriggerButton
+          onClick={() => rtlLeftDrawerRef.current?.open()}
+          text='Open RTL Left Drawer'
+        />
+        <TriggerButton
+          onClick={() => rtlRightDrawerRef.current?.open()}
+          text='Open RTL Right Drawer'
         />
         <TriggerButton
           onClick={() => topSheetRef.current?.open()}
@@ -164,6 +174,44 @@ function App() {
             description='This drawer uses side="end" with a percentage snap point.'
             note='Without enableRTL, end resolves to right. Turn enableRTL on to make end resolve to left.'
             close={() => endDrawerRef.current?.close()}
+            surfaceClassName='drawer-content drawer-content-right'
+            innerClassName='drawer-inner-content drawer-inner-content-percent'
+          />
+        </SheetView>
+      </SheetRoot>
+
+      <SheetRoot
+        ref={rtlLeftDrawerRef}
+        side='left'
+        snapPoints={['fit']}
+        initialSnap={0}
+      >
+        <SheetView className='sheet-viewport' style={{ direction: 'rtl' }}>
+          <SheetBackdrop className='sheet-overlay' clickToClose={true} />
+          <DrawerSection
+            title='RTL Left Drawer'
+            description='This drawer uses side="left" while the container direction is RTL.'
+            note='Physical left should stay left even when text and inline layout run right-to-left.'
+            close={() => rtlLeftDrawerRef.current?.close()}
+            surfaceClassName='drawer-content drawer-content-left'
+            innerClassName='drawer-inner-content drawer-inner-content-fit'
+          />
+        </SheetView>
+      </SheetRoot>
+
+      <SheetRoot
+        ref={rtlRightDrawerRef}
+        side='right'
+        snapPoints={['72%']}
+        initialSnap={0}
+      >
+        <SheetView className='sheet-viewport' style={{ direction: 'rtl' }}>
+          <SheetBackdrop className='sheet-overlay' clickToClose={true} />
+          <DrawerSection
+            title='RTL Right Drawer'
+            description='This drawer uses side="right" while the container direction is RTL.'
+            note='Physical right should stay right even when text and inline layout run right-to-left.'
+            close={() => rtlRightDrawerRef.current?.close()}
             surfaceClassName='drawer-content drawer-content-right'
             innerClassName='drawer-inner-content drawer-inner-content-percent'
           />
