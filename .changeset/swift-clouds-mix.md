@@ -11,4 +11,4 @@
 
 Improve Web and desktop touch compatibility by routing `onTouchStart`,
 `onTouchMove`, `onTouchEnd`, and `onTouchCancel` through shared touch
-emulation in `Button`, `Switch`, `List`, and `ScrollView`.
+emulation.
