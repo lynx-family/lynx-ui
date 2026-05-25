@@ -124,11 +124,6 @@ export function useSnap({
     () => snapPoints.some(p => String(p).trim() === 'fit'),
     [snapPoints],
   )
-  const hasOnlyFitSnapPoints = useMemo(
-    () => snapPoints.every(p => String(p).trim() === 'fit'),
-    [snapPoints],
-  )
-
   // Keep snap points order stable: indices should match `snapPoints` order.
   const { snapPointValues, snapOffsets } = useMemo(() => {
     const values = snapPoints.map(p => toPxJS(p, viewportSize))
@@ -165,18 +160,6 @@ export function useSnap({
     const maxSnap = offsets.length > 0 ? Math.max(...offsets) : 0
     // Allow snapping up to the max snap point, even if content is shorter
     return clamp(targetY, Math.max(sheetSizeMTRef.current, maxSnap))
-  }
-
-  function getMaxSnapSizeMT(points: number[], fitSize = 0) {
-    'main thread'
-    let max = fitSize
-    for (const point of points) {
-      const value = point === -1 ? fitSize : point
-      if (value > max) {
-        max = value
-      }
-    }
-    return max
   }
 
   function setSheetMTRef(el: MainThread.Element) {
@@ -389,10 +372,6 @@ export function useSnap({
       resolvedSnapOffsetsMTRef.current = innerSnapOffsets.map(o =>
         o === -1 ? fitSize : o
       )
-      if (!hasOnlyFitSnapPoints) {
-        updateContentSizeMT(getMaxSnapSizeMT(innerSnapPointValues, fitSize))
-      }
-
       // Resolve any pending snap operation
       controller.resolvePendingSnapMT()
     } else if (contentSizeMTRef.current !== maxSnapSize) {
