@@ -29,6 +29,20 @@ mkdir raw
 
 Output goes to `./raw/processed/` by default. Use `-o ./covers` to specify a different directory.
 
+## Recommended Usage
+
+The script has built-in defaults, so `./process_covers.sh -i ./raw` works out of the box.
+
+However, those defaults are tuned for **iPhone 13** (`--device iphone-13`). If your recording is from any other device, you should explicitly add `--device` so the crop matches the correct status bar and home indicator.
+
+```bash
+# Default profile: iPhone 13
+./process_covers.sh -i ./raw
+
+# Recommended for non-default devices
+./process_covers.sh -i ./raw --device iphone-16-pro
+```
+
 ## Raw File Naming
 
 This tool does **not** do video trimming — make sure the timeline is trimmed before placing files in `./raw`.
@@ -65,7 +79,7 @@ Filenames are auto-converted to kebab-case. Underscores are preserved as the com
 
 ## Device Presets
 
-Use `--device` to automatically set `-t` and `-b` for a specific device's status bar and home indicator:
+Use `--device` to automatically set `-t` and `-b` for a specific device's status bar and home indicator. This is the main flag to set when your source recording is not using the default profile:
 
 | Preset              | `-t` | `-b` | Device                              |
 | ------------------- | ---- | ---- | ----------------------------------- |
@@ -90,16 +104,39 @@ Explicit `-t`/`-b` flags after `--device` override the preset values.
 
 ## Default Configuration
 
-Without `--device`, the script uses defaults tuned for **iPhone 13** screen recordings (1170 × 2532, viewport 390 × 844 @3x):
+Without `--device`, the script uses defaults tuned for **iPhone 13** screen recordings (1170 × 2532, viewport 390 × 844 @3x).
 
-| Parameter | Default | Description                                         |
-| --------- | ------- | --------------------------------------------------- |
-| `-w`      | 480     | Output width                                        |
-| `-h`      | 960     | Output height                                       |
-| `-t`      | 44      | Top crop — removes status bar + recording indicator |
-| `-b`      | 20      | Bottom crop — removes home indicator                |
-| `-q`      | 85      | JPEG quality                                        |
-| `-c`      | 30      | Video CRF (lower = better quality, larger file)     |
+That means the default command below already works without extra parameters:
+
+```bash
+./process_covers.sh -i ./raw
+```
+
+In practice, you usually only need to add `--device <preset>` when recording on a different device. All other flags are optional overrides.
+
+The table below lists the options with built-in default values:
+
+| Parameter   | Default            | Description                                         |
+| ----------- | ------------------ | --------------------------------------------------- |
+| `-p`        | `lynx-ui-cover-`   | Output filename prefix                              |
+| `-w`        | 480                | Output width                                        |
+| `-h`        | 960                | Output height                                       |
+| `-t`        | 44                 | Top crop — removes status bar + recording indicator |
+| `-b`        | 20                 | Bottom crop — removes home indicator                |
+| `-q`        | 85                 | JPEG quality                                        |
+| `-c`        | 30                 | Video CRF (lower = better quality, larger file)     |
+
+Other supported options:
+
+| Parameter   | Default               | Description                                            |
+| ----------- | --------------------- | ------------------------------------------------------ |
+| `-i`        | Required              | Input directory                                         |
+| `-o`        | `<input>/processed`   | Output directory                                        |
+| `--device`  | Unset                 | Device preset for `-t` and `-b`; when unset, the script keeps `DEVICE` empty and uses defaults tuned for iPhone 13 |
+| `--devices` | No value (flag)       | List available device presets and exit                  |
+| `-d`        | Off (flag)            | Dry run; print actions without executing                |
+| `-v`        | Off (flag)            | Show ffmpeg warnings and, with ImageMagick 7 `magick`, ImageMagick warnings; on ImageMagick 6 `convert`, warnings may still appear even when `-v` is off |
+| `--help`    | No value (flag)       | Show help and exit                                      |
 
 Crop values (`-t`, `-b`) are in **output coordinate space** and automatically scale to match any source resolution. The same values work across different devices.
 
