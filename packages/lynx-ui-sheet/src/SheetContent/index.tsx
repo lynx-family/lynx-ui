@@ -208,6 +208,10 @@ export function SheetContent(props: SheetContentProps) {
       {...rest}
       className={innerClassName}
       style={{
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        ...(resolvedSide === 'left' ? { right: 0 } : { left: 0 }),
         height: '100%',
         ...innerStyle,
         ...(hasFitSnapPoint ? {} : { width: `${maxSnapSize}px` }),
@@ -239,11 +243,6 @@ export function SheetContent(props: SheetContentProps) {
           height: '100vh',
           overflow: 'hidden',
           transform: 'translate(0px, 0px)',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: resolvedSide === 'left'
-            ? 'flex-end'
-            : 'flex-start',
           ...style,
         }}
         main-thread:ref={setSheetMTRef}
