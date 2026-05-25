@@ -150,12 +150,14 @@ export interface SheetRootProps extends ComponentBasicProps {
    */
   side?: SheetSide
   /**
-   * Whether logical drawer sides should resolve in RTL mode.
+   * Whether the Sheet should use RTL direction.
+   * This sets the Sheet viewport direction to `rtl` by default and resolves
+   * logical drawer sides in RTL mode.
    * When false, `start` means left and `end` means right.
    * When true, `start` means right and `end` means left.
    * Physical `left` and `right` sides are not affected by `enableRTL`.
    * @defaultValue false
-   * @zh 是否以 RTL 模式解析逻辑抽屉方向。为 false 时，`start` 为左侧、`end` 为右侧；为 true 时，`start` 为右侧、`end` 为左侧。物理 `left` 和 `right` 不受 `enableRTL` 影响。
+   * @zh Sheet 是否使用 RTL 方向。默认会将 Sheet 视口方向设置为 `rtl`，并以 RTL 模式解析逻辑抽屉方向。为 false 时，`start` 为左侧、`end` 为右侧；为 true 时，`start` 为右侧、`end` 为左侧。物理 `left` 和 `right` 不受 `enableRTL` 影响。
    */
   enableRTL?: boolean
   /**

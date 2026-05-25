@@ -183,15 +183,16 @@ function App() {
       <SheetRoot
         ref={rtlLeftDrawerRef}
         side='left'
+        enableRTL={true}
         snapPoints={['fit']}
         initialSnap={0}
       >
-        <SheetView className='sheet-viewport' style={{ direction: 'rtl' }}>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
           <DrawerSection
             title='RTL Left Drawer'
-            description='This drawer uses side="left" while the container direction is RTL.'
-            note='Physical left should stay left even when text and inline layout run right-to-left.'
+            description='This drawer uses side="left" with enableRTL.'
+            note='Physical left stays left, while the Sheet viewport direction becomes RTL.'
             close={() => rtlLeftDrawerRef.current?.close()}
             surfaceClassName='drawer-content drawer-content-left'
             innerClassName='drawer-inner-content drawer-inner-content-fit'
@@ -202,15 +203,16 @@ function App() {
       <SheetRoot
         ref={rtlRightDrawerRef}
         side='right'
+        enableRTL={true}
         snapPoints={['72%']}
         initialSnap={0}
       >
-        <SheetView className='sheet-viewport' style={{ direction: 'rtl' }}>
+        <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' clickToClose={true} />
           <DrawerSection
             title='RTL Right Drawer'
-            description='This drawer uses side="right" while the container direction is RTL.'
-            note='Physical right should stay right even when text and inline layout run right-to-left.'
+            description='This drawer uses side="right" with enableRTL.'
+            note='Physical right stays right, while the Sheet viewport direction becomes RTL.'
             close={() => rtlRightDrawerRef.current?.close()}
             surfaceClassName='drawer-content drawer-content-right'
             innerClassName='drawer-inner-content drawer-inner-content-percent'

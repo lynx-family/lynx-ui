@@ -16,7 +16,7 @@ export const SheetView = (props: SheetViewProps) => {
     nativeProps,
   } = props
 
-  const { mounted, forceMount } = useSheetContext()
+  const { mounted, forceMount, enableRTL } = useSheetContext()
 
   if (!mounted && !forceMount) {
     return null
@@ -27,6 +27,7 @@ export const SheetView = (props: SheetViewProps) => {
       container={container}
       className={className}
       style={{
+        direction: enableRTL ? 'rtl' : 'ltr',
         ...style,
         position: container ? 'relative' : 'fixed',
       }}
