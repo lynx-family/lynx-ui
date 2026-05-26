@@ -40,6 +40,7 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
   const isKFAnimating = useRef<boolean>(false)
   // Track the initial render, to prevent effects from running on mount.
   const isInitialRender = useRef(true)
+  const hasNotifiedOpen = useRef(false)
   const showRef = useRef(show)
   // The core state to control the mounting and unmounting of the component.
   const [mount, setMount] = useState<boolean>(false)
@@ -55,6 +56,10 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
   const MAX_WAIT_FRAMES = 24
 
   showRef.current = show
+
+  const cancelShowTimer = () => {
+    showScheduleIdRef.current += 1
+  }
 
   const notAnimating = () => (isKFAnimating.current === false
     && isTransitionAnimating.current === false)
@@ -82,7 +87,12 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
       }
     }
     if (state === PresenceState.Leaving && notAnimating()) {
-      setPresenceState(PresenceState.Left)
+      cancelShowTimer()
+      if (showRef.current) {
+        setPresenceState(enteringStateWithDelay)
+      } else {
+        setPresenceState(PresenceState.Left)
+      }
     }
   }
 
@@ -147,11 +157,26 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
 
   // ==== state controller ====
   const handleStateEntered = () => {
+    if (hasNotifiedOpen.current) {
+      return
+    }
+    hasNotifiedOpen.current = true
     onOpen?.()
   }
 
   const handleStateLeft = () => {
-    if (!isInitialRender.current) {
+    if (showRef.current) {
+      log(
+        debugLog,
+        '[lynx-ui-presence][usePresence] skip mount=false because show=true (Left)',
+      )
+      setMount(true)
+      cancelShowTimer()
+      setPresenceState(enteringStateWithDelay)
+      return
+    }
+    if (!isInitialRender.current && hasNotifiedOpen.current) {
+      hasNotifiedOpen.current = false
       onClose?.()
     }
     log(debugLog, '[lynx-ui-presence][usePresence] set mount=false (Left)')
@@ -176,7 +201,12 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
           debugLog,
           `[lynx-ui-presence][usePresence] leaving timeout reached, loopId: ${loopId}, frames: ${leavingWaitFramesRef.current}`,
         )
-        setPresenceState(PresenceState.Left)
+        cancelShowTimer()
+        if (showRef.current) {
+          setPresenceState(enteringStateWithDelay)
+        } else {
+          setPresenceState(PresenceState.Left)
+        }
         return
       }
       leavingWaitFramesRef.current += 1
@@ -269,10 +299,12 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
         '[lynx-ui-presence][usePresence] show=false -> set PresenceState.Leaving',
       )
       setPresenceState(PresenceState.Leaving)
-    } else if (state === PresenceState.Initial && mount) {
+    } else if (
+      (state === PresenceState.Initial || state === PresenceState.Left) && mount
+    ) {
       log(
         debugLog,
-        '[lynx-ui-presence][usePresence] show=false in Initial -> set mount=false',
+        '[lynx-ui-presence][usePresence] show=false before entering -> set mount=false',
       )
       setMount(false)
     }
@@ -283,7 +315,7 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
       debugLog,
       `[lynx-ui-presence][usePresence] show effect show:${show}, enableDelay:${enableDelay}, state:${state}, mount:${mount}`,
     )
-    showScheduleIdRef.current += 1
+    cancelShowTimer()
     const scheduleId = showScheduleIdRef.current
     if (show) {
       handleShow(scheduleId)

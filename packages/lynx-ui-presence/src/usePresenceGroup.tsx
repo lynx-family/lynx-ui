@@ -118,7 +118,6 @@ export const usePresenceGroup: (
       const count = prev - 1
       if (count === 0) {
         onClose?.()
-        setMountView(false)
       }
       return count
     })
@@ -177,8 +176,10 @@ export const usePresenceGroup: (
   useEffect(() => {
     if (show) {
       setMountView(true)
+    } else if (stateGroup.every(state => state === PresenceState.Left)) {
+      setMountView(false)
     }
-  }, [show])
+  }, [show, stateGroup])
 
   return {
     renderChildren,

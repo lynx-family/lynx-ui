@@ -9,6 +9,7 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const baseConfig = exampleConfig({
   DialogBasic: './Basic/index.tsx',
   DialogBasicTailwind: './BasicTailwind/index.tsx',
+  DialogTimingRace: './TimingRace/index.tsx',
 })
 
 const defaultConfig = defineConfig({

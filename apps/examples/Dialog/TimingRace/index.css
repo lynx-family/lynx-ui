@@ -1,0 +1,195 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.lunaris-dark,
+.lunaris-light,
+.luna-dark,
+.luna-light {
+  --ease-out-smooth: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --fade-duration: 220ms;
+  --font-semibold: 600;
+  --text-sm: 12px;
+  --lh-sm: 16px;
+  --text-base: 14px;
+  --lh-base: 18px;
+  --text-lg: 16px;
+  --lh-lg: 21px;
+}
+
+.demo-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--primary-muted);
+  row-gap: 20px;
+}
+
+.toolbar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+.demo-button,
+.probe-button {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: var(--neutral);
+  transition: background-color 150ms ease;
+}
+
+.demo-button.ui-active,
+.probe-button.ui-active {
+  background-color: var(--neutral-2);
+}
+
+.probe-button {
+  background-color: var(--primary);
+}
+
+.probe-button.ui-active {
+  background-color: var(--primary-2);
+}
+
+.demo-button-text,
+.probe-button-text,
+.dialog-action-text {
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  font-weight: var(--font-semibold);
+  color: var(--neutral-content);
+}
+
+.probe-button-text {
+  color: var(--primary-content);
+}
+
+.dialog-viewport {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-left: 24px;
+  padding-right: 24px;
+  overflow: hidden;
+}
+
+.dialog-backdrop {
+  background-color: var(--backdrop);
+  opacity: 0;
+  transition: opacity var(--fade-duration) var(--ease-out-smooth);
+}
+
+.dialog-backdrop.ui-open {
+  opacity: 1;
+}
+
+.dialog-backdrop.ui-closed {
+  opacity: 0;
+}
+
+.dialog-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background-color: var(--canvas);
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity var(--fade-duration) var(--ease-out-smooth),
+    transform var(--fade-duration) var(--ease-out-smooth);
+}
+
+.dialog-content.ui-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.dialog-content.ui-closed {
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+}
+
+.dialog-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 8px;
+  padding-bottom: 20px;
+}
+
+.dialog-title {
+  font-size: var(--text-lg);
+  line-height: var(--lh-lg);
+  font-weight: var(--font-semibold);
+  color: var(--content);
+}
+
+.dialog-desc {
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  color: var(--content-muted);
+}
+
+.dialog-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.dialog-action {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: var(--primary);
+  transition: background-color 150ms ease;
+}
+
+.dialog-action.ui-active {
+  background-color: var(--primary-2);
+}
+
+.dialog-action-muted {
+  background-color: var(--neutral);
+}
+
+.dialog-action-muted.ui-active {
+  background-color: var(--neutral-2);
+}
+
+.event-log {
+  width: 100%;
+  min-height: 156px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background-color: var(--canvas);
+  row-gap: 6px;
+}
+
+.event-text {
+  font-size: var(--text-sm);
+  line-height: var(--lh-sm);
+  color: var(--content-muted);
+}
