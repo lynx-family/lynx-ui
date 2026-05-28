@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-radio-group",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Example app demonstrating RadioGroup usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/RadioGroup#readme",
   "repository": {
