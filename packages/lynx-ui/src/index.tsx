@@ -278,6 +278,10 @@ export type {
   SliderValueChangeSource,
 } from '@lynx-js/lynx-ui-slider'
 
+// select
+export { Select } from '@lynx-js/lynx-ui-select'
+export type { SelectOption, SelectProps } from '@lynx-js/lynx-ui-select'
+
 // only presence types are exported
 export type {
   PresenceAnimationStatus,

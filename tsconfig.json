@@ -45,16 +45,19 @@
       "path": "./packages/lynx-ui-presence"
     },
     {
-      "path": "./packages/lynx-ui-slider"
-    },
-    {
       "path": "./packages/lynx-ui-radio-group"
     },
     {
       "path": "./packages/lynx-ui-scroll-view"
     },
     {
+      "path": "./packages/lynx-ui-select"
+    },
+    {
       "path": "./packages/lynx-ui-sheet"
+    },
+    {
+      "path": "./packages/lynx-ui-slider"
     },
     {
       "path": "./packages/lynx-ui-sortable"
