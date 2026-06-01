@@ -17,7 +17,6 @@ packages/skill-lynx-ui
     ├── theming-and-tokens.md
     ├── motion.md
     ├── component-composition.md
-    ├── index.md
     └── components/<component>/
         ├── guide.md
         ├── api.md

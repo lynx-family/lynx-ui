@@ -87,9 +87,8 @@ describe('skill-lynx-ui generated output', () => {
 
       await expect(fs.stat(path.join(tempRoot, 'examples.md'))).rejects
         .toBeTruthy()
-      await expect(
-        fs.stat(path.join(tempRoot, 'references', 'index.md')),
-      ).resolves.toBeTruthy()
+      await expect(fs.stat(path.join(tempRoot, 'references', 'index.md')))
+        .rejects.toBeTruthy()
       await expect(
         fs.stat(path.join(tempRoot, 'references', 'component-overview.md')),
       ).resolves.toBeTruthy()

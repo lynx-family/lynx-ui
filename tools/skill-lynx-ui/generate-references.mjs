@@ -301,33 +301,6 @@ function buildExamplesMarkdown(examples) {
   return lines.join('\n')
 }
 
-function buildIndexMarkdown(components) {
-  const lines = [
-    '# @lynx-js/skill-lynx-ui References',
-    '',
-    '`@lynx-js/skill-lynx-ui` is the umbrella skill package for curated lynx-ui component references.',
-    '',
-    'Use the package-level `SKILL.md` as the entrypoint, then open the relevant component references below.',
-    '',
-    '## Included Components',
-    '',
-  ]
-
-  for (const component of components) {
-    lines.push(`### ${component.label}`, '')
-    if (component.skillPath) {
-      lines.push(`- Guide: [guide.md](./components/${component.slug}/guide.md)`)
-    }
-    lines.push(
-      `- API: [api.md](./components/${component.slug}/api.md)`,
-      `- Examples: [examples.md](./components/${component.slug}/examples.md)`,
-      '',
-    )
-  }
-
-  return lines.join('\n')
-}
-
 function buildComponentOverviewMarkdown(components) {
   const lines = [
     '# lynx-ui Component Overview',
@@ -436,10 +409,6 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
     )
   }
 
-  await writeFile(
-    path.join(outputRoot, 'references', 'index.md'),
-    buildIndexMarkdown(components),
-  )
   await writeFile(
     path.join(outputRoot, 'references', 'component-overview.md'),
     buildComponentOverviewMarkdown(components),

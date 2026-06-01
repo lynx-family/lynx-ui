@@ -74,7 +74,6 @@ async function main() {
     const requiredFiles = [
       'references/component-overview.md',
       'references/foundation.md',
-      'references/index.md',
       'references/motion.md',
       'references/component-composition.md',
       'references/theming-and-tokens.md',
@@ -88,6 +87,9 @@ async function main() {
 
     if (generatedFiles.includes('examples.md')) {
       throw new Error('Top-level examples.md should not be generated.')
+    }
+    if (generatedFiles.includes('references/index.md')) {
+      throw new Error('references/index.md should not be generated.')
     }
 
     const componentDirs = await fs.readdir(

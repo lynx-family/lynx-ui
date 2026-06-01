@@ -17,7 +17,6 @@ packages/skill-lynx-ui
     |-- theming-and-tokens.md
     |-- motion.md
     |-- component-composition.md
-    |-- index.md
     `-- components/<component>/
         |-- guide.md
         |-- api.md
@@ -43,7 +42,6 @@ Detailed content lives in these files:
 - `references/theming-and-tokens.md`: Luna themes and token guidance
 - `references/motion.md`: motion versus motion-mini guidance
 - `references/component-composition.md`: common component combinations
-- `references/index.md`: included generated components and links
 - `guide.md`: component usage guidance copied from the component `SKILL.md`
 - `api.md`: component API source extracted from `types/index.docs.ts` or `src/types/index.docs.ts`
 - `references/components/*/examples.md`: aggregated example entries for a component, sourced from this repo
