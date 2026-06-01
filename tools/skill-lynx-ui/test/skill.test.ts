@@ -8,8 +8,6 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { collectIncludedComponents } from '../generate-references.mjs'
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const packageRoot = path.resolve(
@@ -21,7 +19,6 @@ const packageRoot = path.resolve(
   'skill-lynx-ui',
 )
 const skillPath = path.join(packageRoot, 'SKILL.md')
-const referencePath = path.join(packageRoot, 'reference.md')
 
 describe('skill-lynx-ui SKILL.md', () => {
   it('contains valid frontmatter and progressive-disclosure guidance', async () => {
@@ -30,8 +27,9 @@ describe('skill-lynx-ui SKILL.md', () => {
     expect(skillText.startsWith('---')).toBe(true)
     expect(skillText).toContain('name: lynx-ui')
     expect(skillText).toContain('description:')
-    expect(skillText).toContain('reference.md')
-    expect(skillText).toContain('routing guide')
+    expect(skillText).toContain('references/component-overview.md')
+    expect(skillText).toContain('references/component-composition.md')
+    expect(skillText).toContain('Component selection:')
     expect(skillText).toContain('guide.md')
     expect(skillText).toContain('api.md')
     expect(skillText).toContain('examples.md')
@@ -39,14 +37,11 @@ describe('skill-lynx-ui SKILL.md', () => {
     expect(skillText).not.toContain('## API Definition')
   })
 
-  it('routes every included component reference', async () => {
-    const referenceText = await fs.readFile(referencePath, 'utf8')
-    const components = await collectIncludedComponents()
+  it('routes component selection through the generated overview', async () => {
+    const skillText = await fs.readFile(skillPath, 'utf8')
 
-    for (const component of components) {
-      expect(referenceText).toContain(
-        `references/components/${component.slug}/guide.md`,
-      )
-    }
+    expect(skillText).toContain('references/component-overview.md')
+    expect(skillText).not.toContain('reference.md')
+    expect(skillText).not.toContain('screen-recipes.md')
   })
 })

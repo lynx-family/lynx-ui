@@ -19,6 +19,10 @@ const exampleRoots = [
 ]
 const defaultOutputRoot = packageRoot
 const bundledReferenceSourceRoot = path.join(__dirname, 'references')
+const componentRoutingManifestPath = path.join(
+  __dirname,
+  'component-routing.json',
+)
 
 const guideRewriteRules = []
 
@@ -81,17 +85,8 @@ function getCodeFence(content) {
   return content.includes('```') ? '````' : '```'
 }
 
-function getComponentDisplayName(skillContent, fallbackName) {
-  for (const line of skillContent.split('\n')) {
-    if (!line.startsWith('name:')) {
-      continue
-    }
-
-    const displayName = line.slice('name:'.length).trim()
-    return displayName || fallbackName
-  }
-
-  return fallbackName
+function getMarkdownHeadingAnchor(value) {
+  return value.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')
 }
 
 async function findApiSourcePath(packageDir) {
@@ -109,9 +104,83 @@ async function findApiSourcePath(packageDir) {
   return undefined
 }
 
+export async function loadComponentRoutingManifest() {
+  return JSON.parse(await readFileUtf8(componentRoutingManifestPath))
+}
+
+function formatSlugList(slugs) {
+  return slugs.map(slug => `- ${slug}`).join('\n')
+}
+
+export function validateComponentRoutingManifest(manifest, discoveredSlugs) {
+  const routedSlugs = Object.keys(manifest.components ?? {})
+  const excludedSlugs = Object.keys(manifest.excludedComponents ?? {})
+  const discoveredSlugSet = new Set(discoveredSlugs)
+  const routedSlugSet = new Set(routedSlugs)
+  const excludedSlugSet = new Set(excludedSlugs)
+  const overlappingSlugs = routedSlugs.filter(slug => excludedSlugSet.has(slug))
+  const missingSlugs = discoveredSlugs.filter(
+    slug => !routedSlugSet.has(slug) && !excludedSlugSet.has(slug),
+  )
+  const staleSlugs = [...routedSlugs, ...excludedSlugs].filter(
+    slug => !discoveredSlugSet.has(slug),
+  )
+  const incompleteSlugs = routedSlugs.filter(slug => {
+    const entry = manifest.components[slug]
+    return !entry.label || !entry.useWhen || !entry.avoidWhen
+  })
+  const unexplainedExclusions = excludedSlugs.filter(
+    slug => !manifest.excludedComponents[slug],
+  )
+
+  if (overlappingSlugs.length > 0) {
+    throw new Error(
+      `Component routing entries cannot also be excluded:\n${
+        formatSlugList(overlappingSlugs)
+      }`,
+    )
+  }
+
+  if (missingSlugs.length > 0) {
+    throw new Error(
+      [
+        'Missing component routing entries:',
+        formatSlugList(missingSlugs),
+        '',
+        'Add each component to tools/skill-lynx-ui/component-routing.json',
+        'or add an excludedComponents entry with a reason.',
+      ].join('\n'),
+    )
+  }
+
+  if (staleSlugs.length > 0) {
+    throw new Error(
+      `Routing manifest entries do not match documented component packages:\n${
+        formatSlugList(staleSlugs)
+      }`,
+    )
+  }
+
+  if (incompleteSlugs.length > 0) {
+    throw new Error(
+      `Routing manifest entries require label, useWhen, and avoidWhen:\n${
+        formatSlugList(incompleteSlugs)
+      }`,
+    )
+  }
+
+  if (unexplainedExclusions.length > 0) {
+    throw new Error(
+      `Excluded components require a reason:\n${
+        formatSlugList(unexplainedExclusions)
+      }`,
+    )
+  }
+}
+
 export async function collectIncludedComponents() {
   const entries = await fs.readdir(packagesRoot, { withFileTypes: true })
-  const components = []
+  const discoveredComponents = []
 
   for (const entry of entries) {
     if (!entry.isDirectory() || !entry.name.startsWith('lynx-ui-')) {
@@ -123,33 +192,39 @@ export async function collectIncludedComponents() {
 
     const packageDir = path.join(packagesRoot, entry.name)
     const skillPath = path.join(packageDir, 'SKILL.md')
-    if (!(await exists(skillPath))) {
-      continue
-    }
-
     const apiSourcePath = await findApiSourcePath(packageDir)
     if (!apiSourcePath) {
       continue
     }
 
     const slug = componentSlugFromPackageName(entry.name)
-    const exampleDirName = getExampleAppDirname(slug)
-    const skillContent = await readFileUtf8(skillPath)
 
-    components.push({
+    discoveredComponents.push({
       apiSourcePath,
-      displayName: getComponentDisplayName(skillContent, exampleDirName),
       exampleAppPaths: getExampleAppPaths(slug),
       packageDirName: entry.name,
-      skillPath,
+      skillPath: await exists(skillPath) ? skillPath : undefined,
       slug,
     })
   }
 
-  return sortComponents(components)
+  const manifest = await loadComponentRoutingManifest()
+  validateComponentRoutingManifest(
+    manifest,
+    discoveredComponents.map(component => component.slug),
+  )
+
+  return sortComponents(
+    discoveredComponents
+      .filter(component => manifest.components[component.slug])
+      .map(component => ({
+        ...component,
+        ...manifest.components[component.slug],
+      })),
+  )
 }
 
-async function collectExampleCasesFromApp(exampleAppPath, sourceLabel) {
+async function collectExampleCasesFromApp(exampleAppPath) {
   if (!(await exists(exampleAppPath.path))) {
     return []
   }
@@ -171,7 +246,6 @@ async function collectExampleCasesFromApp(exampleAppPath, sourceLabel) {
       content: await readFileUtf8(indexPath),
       indexPath,
       name: entry.name,
-      sourceLabel,
     })
   }
 
@@ -181,7 +255,7 @@ async function collectExampleCasesFromApp(exampleAppPath, sourceLabel) {
 async function collectExampleCases(exampleAppPaths) {
   const exampleGroups = await Promise.all(
     exampleAppPaths.map(exampleAppPath =>
-      collectExampleCasesFromApp(exampleAppPath, exampleAppPath.label)
+      collectExampleCasesFromApp(exampleAppPath)
     ),
   )
 
@@ -192,17 +266,11 @@ async function collectExampleCases(exampleAppPaths) {
   )
 }
 
-function buildApiMarkdown(component, sourceContent) {
-  const relativeSourcePath = path.relative(
-    workspaceRoot,
-    component.apiSourcePath,
-  )
+function buildApiMarkdown(sourceContent) {
   const fence = getCodeFence(sourceContent)
 
   return [
     '## API Definition',
-    '',
-    `### ${relativeSourcePath}`,
     '',
     `${fence}typescript`,
     sourceContent.trimEnd(),
@@ -219,14 +287,9 @@ function buildExamplesMarkdown(examples) {
   const lines = ['## Examples', '']
 
   for (const example of examples) {
-    const relativeSourcePath = path.relative(workspaceRoot, example.indexPath)
     const fence = getCodeFence(example.content)
     lines.push(
       `### ${example.name}`,
-      '',
-      `Origin: ${example.sourceLabel}`,
-      '',
-      `Source: \`${relativeSourcePath}\``,
       '',
       `${fence}tsx`,
       example.content.trimEnd(),
@@ -251,12 +314,67 @@ function buildIndexMarkdown(components) {
   ]
 
   for (const component of components) {
+    lines.push(`### ${component.label}`, '')
+    if (component.skillPath) {
+      lines.push(`- Guide: [guide.md](./components/${component.slug}/guide.md)`)
+    }
     lines.push(
-      `### ${component.displayName}`,
-      '',
-      `- Guide: [guide.md](./components/${component.slug}/guide.md)`,
       `- API: [api.md](./components/${component.slug}/api.md)`,
       `- Examples: [examples.md](./components/${component.slug}/examples.md)`,
+      '',
+    )
+  }
+
+  return lines.join('\n')
+}
+
+function buildComponentOverviewMarkdown(components) {
+  const lines = [
+    '# lynx-ui Component Overview',
+    '',
+    'Use this file to choose the closest lynx-ui component before loading implementation details.',
+    '',
+    '## Routing Rules',
+    '',
+    '- Select a route from the user-visible behavior.',
+    '- Open the API reference before writing code.',
+    '- Open the guide when one is available for usage patterns and pitfalls.',
+    '- Use examples as implementation patterns after verifying the API.',
+    '- State the coverage limit when no route matches.',
+    '',
+    '## Combining Components',
+    '',
+    'When a task combines components, check [component-composition.md](./component-composition.md) for common supported combinations.',
+    '',
+    '## Table of Contents',
+    '',
+    ...components.map(component =>
+      `- [${component.label}](#${getMarkdownHeadingAnchor(component.label)})`
+    ),
+    '',
+    '## Components',
+    '',
+  ]
+
+  for (const component of components) {
+    lines.push(
+      `### \`${component.label}\``,
+      '',
+      `- Choose when: ${component.useWhen}`,
+      `- Avoid when: ${component.avoidWhen}`,
+      `- Official docs: \`${
+        component.officialDocsUrl
+          ?? `https://lynxjs.org/next/lynx-ui/components/${component.slug}.html`
+      }\``,
+    )
+    if (component.skillPath) {
+      lines.push(`- Guide: \`./components/${component.slug}/guide.md\``)
+    } else {
+      lines.push('- Guide: Not available yet.')
+    }
+    lines.push(
+      `- API: \`./components/${component.slug}/api.md\``,
+      `- Examples: \`./components/${component.slug}/examples.md\``,
       '',
     )
   }
@@ -273,7 +391,7 @@ function buildRootExamplesMarkdown(componentExamples) {
   ]
 
   for (const { component, examples } of componentExamples) {
-    lines.push(`## ${component.displayName}`, '')
+    lines.push(`## ${component.label}`, '')
 
     if (examples.length === 0) {
       lines.push('- No bundled examples yet.', '')
@@ -298,10 +416,9 @@ async function ensureCleanDir(dirPath) {
 async function copyBundledReferences(outputRoot) {
   const copiedReferenceFiles = [
     'foundation.md',
-    'components.md',
     'theming-and-tokens.md',
     'motion.md',
-    'screen-recipes.md',
+    'component-composition.md',
   ]
 
   for (const relativePath of copiedReferenceFiles) {
@@ -325,18 +442,20 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
   const componentExamples = []
 
   for (const component of components) {
-    const guideSource = await readFileUtf8(component.skillPath)
     const apiSource = await readFileUtf8(component.apiSourcePath)
     const examples = await collectExampleCases(component.exampleAppPaths)
     const componentOutputDir = getComponentOutputDir(outputRoot, component.slug)
 
-    await writeFile(
-      path.join(componentOutputDir, 'guide.md'),
-      `${rewriteGuideContent(guideSource).trimEnd()}\n`,
-    )
+    if (component.skillPath) {
+      const guideSource = await readFileUtf8(component.skillPath)
+      await writeFile(
+        path.join(componentOutputDir, 'guide.md'),
+        `${rewriteGuideContent(guideSource).trimEnd()}\n`,
+      )
+    }
     await writeFile(
       path.join(componentOutputDir, 'api.md'),
-      buildApiMarkdown(component, apiSource),
+      buildApiMarkdown(apiSource),
     )
     await writeFile(
       path.join(componentOutputDir, 'examples.md'),
@@ -349,6 +468,10 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
   await writeFile(
     path.join(outputRoot, 'references', 'index.md'),
     buildIndexMarkdown(components),
+  )
+  await writeFile(
+    path.join(outputRoot, 'references', 'component-overview.md'),
+    buildComponentOverviewMarkdown(components),
   )
   await writeFile(
     path.join(outputRoot, 'examples.md'),

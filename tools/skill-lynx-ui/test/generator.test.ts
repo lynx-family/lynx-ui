@@ -13,6 +13,7 @@ import {
   getComponentOutputDir,
   getExampleAppPaths,
   getExampleAppDirname,
+  validateComponentRoutingManifest,
 } from '../generate-references.mjs'
 
 import { describe, expect, it } from 'vitest'
@@ -47,7 +48,7 @@ describe('skill-lynx-ui generator helpers', () => {
     )
   })
 
-  it('includes only packages that provide SKILL.md and API docs', async () => {
+  it('includes routed packages that provide API docs', async () => {
     const components = await collectIncludedComponents()
     const slugs = components.map(component => component.slug)
 
@@ -57,7 +58,21 @@ describe('skill-lynx-ui generator helpers', () => {
     expect(slugs).toContain('sheet')
     expect(slugs).toContain('slider')
     expect(slugs).toContain('swiper')
-    expect(slugs).not.toContain('checkbox')
+    expect(slugs).toContain('checkbox')
+    expect(slugs).not.toContain('presence')
+    expect(
+      components.find(component => component.slug === 'checkbox')?.skillPath,
+    )
+      .toBeUndefined()
+  })
+
+  it('requires new documented components to be routed or excluded', () => {
+    expect(() =>
+      validateComponentRoutingManifest(
+        { components: { button: {} }, excludedComponents: {} },
+        ['button', 'toast'],
+      )
+    ).toThrow('Missing component routing entries:\n- toast')
   })
 })
 
@@ -76,12 +91,23 @@ describe('skill-lynx-ui generated output', () => {
       await expect(
         fs.stat(path.join(tempRoot, 'references', 'index.md')),
       ).resolves.toBeTruthy()
+      await expect(
+        fs.stat(path.join(tempRoot, 'references', 'component-overview.md')),
+      ).resolves.toBeTruthy()
+      await expect(
+        fs.readFile(
+          path.join(tempRoot, 'references', 'component-overview.md'),
+          'utf8',
+        ),
+      ).resolves.toContain('./component-composition.md')
 
       for (const component of components) {
         const componentDir = getComponentOutputDir(tempRoot, component.slug)
-        await expect(
-          fs.stat(path.join(componentDir, 'guide.md')),
-        ).resolves.toBeTruthy()
+        if (component.skillPath) {
+          await expect(
+            fs.stat(path.join(componentDir, 'guide.md')),
+          ).resolves.toBeTruthy()
+        }
         await expect(
           fs.stat(path.join(componentDir, 'api.md')),
         ).resolves.toBeTruthy()
@@ -92,6 +118,42 @@ describe('skill-lynx-ui generated output', () => {
 
       await expect(
         fs.stat(path.join(tempRoot, 'references', 'components', 'checkbox')),
+      ).resolves.toBeTruthy()
+      const lazyComponentApi = await fs.readFile(
+        path.join(
+          tempRoot,
+          'references',
+          'components',
+          'lazy-component',
+          'api.md',
+        ),
+        'utf8',
+      )
+      const lazyComponentExamples = await fs.readFile(
+        path.join(
+          tempRoot,
+          'references',
+          'components',
+          'lazy-component',
+          'examples.md',
+        ),
+        'utf8',
+      )
+      expect(lazyComponentApi).not.toContain(
+        'packages/lynx-ui-lazy-component/src/types/index.docs.ts',
+      )
+      expect(lazyComponentExamples).not.toContain('Origin:')
+      expect(lazyComponentExamples).not.toContain('Source:')
+      await expect(
+        fs.stat(
+          path.join(
+            tempRoot,
+            'references',
+            'components',
+            'checkbox',
+            'guide.md',
+          ),
+        ),
       ).rejects.toBeTruthy()
       await expect(fs.stat(path.join(tempRoot, 'examples'))).rejects
         .toBeTruthy()

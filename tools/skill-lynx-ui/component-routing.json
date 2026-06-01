@@ -1,0 +1,102 @@
+{
+  "components": {
+    "button": {
+      "label": "Button",
+      "useWhen": "The user needs an explicit pressable action or submit control.",
+      "avoidWhen": "The interaction is selection, toggling, dragging, or text entry."
+    },
+    "checkbox": {
+      "label": "Checkbox",
+      "useWhen": "The user needs boolean selection or an indeterminate partial-selection state.",
+      "avoidWhen": "The interaction represents an immediate on/off setting; use Switch."
+    },
+    "dialog": {
+      "label": "Dialog",
+      "useWhen": "The UI needs a blocking centered modal for confirmation, alerts, or focused content.",
+      "avoidWhen": "The content is a sliding panel or anchored floating surface; use Sheet or Popover."
+    },
+    "draggable": {
+      "label": "Draggable",
+      "useWhen": "The user needs direct manipulation, bounded dragging, or gesture-aware movement.",
+      "avoidWhen": "The user needs to reorder a collection; use Sortable."
+    },
+    "feed-list": {
+      "label": "FeedList",
+      "useWhen": "A virtualized feed needs refresh, pagination, or load-more semantics.",
+      "avoidWhen": "The collection only needs general virtualization; use List."
+    },
+    "form": {
+      "label": "Form",
+      "useWhen": "Multiple fields need coordinated value collection and submission.",
+      "avoidWhen": "The task only needs one standalone input or selection control."
+    },
+    "input": {
+      "label": "Input and TextArea",
+      "useWhen": "The user needs text entry or keyboard-aware input layout behavior.",
+      "avoidWhen": "The content is read-only text."
+    },
+    "lazy-component": {
+      "label": "LazyComponent",
+      "useWhen": "An expensive subtree should defer mounting until it approaches visibility.",
+      "avoidWhen": "The content is lightweight or always visible."
+    },
+    "list": {
+      "label": "List",
+      "useWhen": "A repeated collection can grow large and needs virtualization.",
+      "avoidWhen": "The content is small or structurally mixed; use ScrollView."
+    },
+    "overlay": {
+      "label": "OverlayView",
+      "useWhen": "Content must render above the normal view tree in a native overlay layer.",
+      "avoidWhen": "A higher-level Dialog, Sheet, or Popover already matches the interaction."
+    },
+    "popover": {
+      "label": "Popover",
+      "useWhen": "The user needs anchored floating content relative to a trigger or anchor.",
+      "avoidWhen": "The content should interrupt the full flow or slide from an edge; use Dialog or Sheet."
+    },
+    "radio-group": {
+      "label": "RadioGroup",
+      "useWhen": "The user needs one selected value from a mutually exclusive option set.",
+      "avoidWhen": "Multiple options may be selected independently; use Checkbox."
+    },
+    "scroll-view": {
+      "label": "ScrollView",
+      "useWhen": "A bounded region with mixed or relatively small content needs scrolling.",
+      "avoidWhen": "The content is a large repeated collection; use List or FeedList."
+    },
+    "sheet": {
+      "label": "Sheet",
+      "useWhen": "The UI needs a bottom sheet, top sheet, or side drawer with snap or drag behavior.",
+      "avoidWhen": "The content is a centered blocking modal or an anchored floating surface."
+    },
+    "slider": {
+      "label": "Slider",
+      "useWhen": "The user needs to select a numeric value along a continuous or stepped track.",
+      "avoidWhen": "The user should select from discrete text options; use a selection control."
+    },
+    "sortable": {
+      "label": "Sortable",
+      "useWhen": "The user needs drag-driven reordering of a collection.",
+      "avoidWhen": "The interaction moves one item without collection reordering; use Draggable."
+    },
+    "swipe-action": {
+      "label": "SwipeAction",
+      "useWhen": "A row needs secondary actions revealed by a swipe gesture.",
+      "avoidWhen": "The action should always remain visible."
+    },
+    "swiper": {
+      "label": "Swiper",
+      "useWhen": "The UI needs horizontal paging or carousel-style interactions.",
+      "avoidWhen": "The content needs free scrolling without page snapping; use ScrollView."
+    },
+    "switch": {
+      "label": "Switch",
+      "useWhen": "The UI needs an immediate binary on/off setting.",
+      "avoidWhen": "The interaction represents form selection or an indeterminate state; use Checkbox."
+    }
+  },
+  "excludedComponents": {
+    "presence": "Internal composition primitive used by higher-level components."
+  }
+}
