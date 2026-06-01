@@ -15,7 +15,6 @@
   "files": [
     "SKILL.md",
     "references",
-    "examples.md",
     "evals"
   ],
   "scripts": {

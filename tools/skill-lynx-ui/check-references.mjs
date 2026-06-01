@@ -72,7 +72,6 @@ async function main() {
 
     const generatedFiles = await listFiles(tempRoot)
     const requiredFiles = [
-      'examples.md',
       'references/component-overview.md',
       'references/foundation.md',
       'references/index.md',
@@ -85,6 +84,10 @@ async function main() {
       if (!generatedFiles.includes(relativePath)) {
         throw new Error(`Missing generated file: ${relativePath}`)
       }
+    }
+
+    if (generatedFiles.includes('examples.md')) {
+      throw new Error('Top-level examples.md should not be generated.')
     }
 
     const componentDirs = await fs.readdir(

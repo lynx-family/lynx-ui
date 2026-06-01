@@ -9,7 +9,6 @@ It is structured so ``another platform can copy the package contents directly in
 ```text
 packages/skill-lynx-ui
 |-- SKILL.md
-|-- examples.md
 |-- evals/
 |   `-- evals.json
 `-- references
@@ -44,7 +43,6 @@ Detailed content lives in these files:
 - `references/theming-and-tokens.md`: Luna themes and token guidance
 - `references/motion.md`: motion versus motion-mini guidance
 - `references/component-composition.md`: common component combinations
-- `examples.md`: top-level generated example catalog
 - `references/index.md`: included generated components and links
 - `guide.md`: component usage guidance copied from the component `SKILL.md`
 - `api.md`: component API source extracted from `types/index.docs.ts` or `src/types/index.docs.ts`

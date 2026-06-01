@@ -9,7 +9,6 @@
 ```text
 packages/skill-lynx-ui
 ├── SKILL.md
-├── examples.md
 ├── evals/
 │   └── evals.json
 └── references

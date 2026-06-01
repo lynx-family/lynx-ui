@@ -382,32 +382,6 @@ function buildComponentOverviewMarkdown(components) {
   return lines.join('\n')
 }
 
-function buildRootExamplesMarkdown(componentExamples) {
-  const lines = [
-    '# @lynx-js/skill-lynx-ui Examples',
-    '',
-    'This file indexes the aggregated component example references bundled in this package.',
-    '',
-  ]
-
-  for (const { component, examples } of componentExamples) {
-    lines.push(`## ${component.label}`, '')
-
-    if (examples.length === 0) {
-      lines.push('- No bundled examples yet.', '')
-      continue
-    }
-
-    lines.push(
-      `- [Open aggregated examples](./references/components/${component.slug}/examples.md)`,
-      `- Example count: ${examples.length}`,
-      '',
-    )
-  }
-
-  return lines.join('\n')
-}
-
 async function ensureCleanDir(dirPath) {
   await fs.rm(dirPath, { force: true, recursive: true })
   await fs.mkdir(dirPath, { recursive: true })
@@ -439,7 +413,6 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
 
   await ensureCleanDir(path.join(outputRoot, 'references'))
   await copyBundledReferences(outputRoot)
-  const componentExamples = []
 
   for (const component of components) {
     const apiSource = await readFileUtf8(component.apiSourcePath)
@@ -461,8 +434,6 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
       path.join(componentOutputDir, 'examples.md'),
       buildExamplesMarkdown(examples),
     )
-
-    componentExamples.push({ component, examples })
   }
 
   await writeFile(
@@ -472,10 +443,6 @@ export async function generateReferences(outputRoot = defaultOutputRoot) {
   await writeFile(
     path.join(outputRoot, 'references', 'component-overview.md'),
     buildComponentOverviewMarkdown(components),
-  )
-  await writeFile(
-    path.join(outputRoot, 'examples.md'),
-    buildRootExamplesMarkdown(componentExamples),
   )
 
   return components

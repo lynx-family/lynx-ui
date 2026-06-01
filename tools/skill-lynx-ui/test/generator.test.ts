@@ -85,9 +85,8 @@ describe('skill-lynx-ui generated output', () => {
     try {
       const components = await generateReferences(tempRoot)
 
-      await expect(
-        fs.stat(path.join(tempRoot, 'examples.md')),
-      ).resolves.toBeTruthy()
+      await expect(fs.stat(path.join(tempRoot, 'examples.md'))).rejects
+        .toBeTruthy()
       await expect(
         fs.stat(path.join(tempRoot, 'references', 'index.md')),
       ).resolves.toBeTruthy()
