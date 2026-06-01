@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui-list
 
+## 3.133.2
+
+### Patch Changes
+
+- add listProps escape hatch prop ([#206](https://github.com/lynx-family/lynx-ui/pull/206))
+
+  add listProps to allow passing raw props to the underlying list element, as an escape hatch for uncovered platform attributes, and update related type definitions
+
 ## 3.133.1
 
 ### Patch Changes

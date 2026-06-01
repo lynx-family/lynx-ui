@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-sheet
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.133.2
+
 ## 0.0.8
 
 ### Patch Changes

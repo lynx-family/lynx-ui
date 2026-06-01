@@ -1,0 +1,14 @@
+# Default owners for lynx-ui.
+* @MoonfaceX @fzx2666-fz @f0rdream
+
+# Repository automation and governance files.
+/.github/ @MoonfaceX @toretto-wt
+
+# Aggregate package.
+/packages/lynx-ui/ @MoonfaceX @fzx2666-fz @f0rdream @AdrianLCA
+
+# Examples.
+/apps/examples/ @Dugyu @MoonfaceX @fzx2666-fz @f0rdream @Huxpro
+
+# LUNA.
+/luna/ @Dugyu

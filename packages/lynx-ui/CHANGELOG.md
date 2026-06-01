@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui
 
+## 3.133.2
+
+### Patch Changes
+
+- Updated dependencies [[`1f75772`](https://github.com/lynx-family/lynx-ui/commit/1f75772d48be2cbf2c2a2729adeb7a1cb4b196f9)]:
+  - @lynx-js/lynx-ui-list@3.133.2
+  - @lynx-js/lynx-ui-feed-list@3.133.2
+
 ## 3.133.1
 
 ### Patch Changes

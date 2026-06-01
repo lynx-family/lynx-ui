@@ -17,6 +17,7 @@ import type {
   CommonEvent,
   ListScrollStateChangeEvent,
   ListSnapEvent,
+  ListProps as elementListProps,
 } from '@lynx-js/types'
 
 export type List = (props: ListProps) => ReactElement
@@ -293,6 +294,14 @@ export interface ListProps
    * @Harmony
    */
   children?: ReactNode
+  /**
+   * Original list props to spread directly onto the underlying list element.
+   * This is an escape hatch for platform or engine attributes that are not yet covered by ListProps.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  listProps?: elementListProps
   /**
    * Enable vertical scroll.
    * @zh 启用垂直滚动。

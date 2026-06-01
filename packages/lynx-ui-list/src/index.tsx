@@ -124,6 +124,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
     itemSnap,
     preloadBufferCount = 0,
     listMaxSize,
+    listProps,
     temporaryAndroidEnableOverflow = true,
     'main-thread:gesture': gesture,
     // @ts-expect-error Expected
@@ -504,6 +505,7 @@ function ListImpl(props: ListProps, ref: ForwardedRef<ListRef>) {
       }}
       main-thread:gesture={gesture}
       {...(itemSnap ? { 'item-snap': itemSnap } : {})}
+      {...listProps}
     >
       {children}
     </list>
