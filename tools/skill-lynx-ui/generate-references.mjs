@@ -330,24 +330,24 @@ function buildComponentOverviewMarkdown(components) {
   ]
 
   for (const component of components) {
+    const officialDocsUrl = component.officialDocsUrl
+      ?? `https://lynxjs.org/next/lynx-ui/components/${component.slug}.html`
+
     lines.push(
       `### \`${component.label}\``,
       '',
       `- Choose when: ${component.useWhen}`,
       `- Avoid when: ${component.avoidWhen}`,
-      `- Official docs: \`${
-        component.officialDocsUrl
-          ?? `https://lynxjs.org/next/lynx-ui/components/${component.slug}.html`
-      }\``,
+      `- [Official docs](${officialDocsUrl})`,
     )
     if (component.skillPath) {
-      lines.push(`- Guide: \`./components/${component.slug}/guide.md\``)
+      lines.push(`- [Guide](./components/${component.slug}/guide.md)`)
     } else {
       lines.push('- Guide: Not available yet.')
     }
     lines.push(
-      `- API: \`./components/${component.slug}/api.md\``,
-      `- Examples: \`./components/${component.slug}/examples.md\``,
+      `- [API](./components/${component.slug}/api.md)`,
+      `- [Examples](./components/${component.slug}/examples.md)`,
       '',
     )
   }

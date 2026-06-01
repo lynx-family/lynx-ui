@@ -34,13 +34,14 @@ function getMarkdownHeadingAnchor(value) {
 async function validateLocalMarkdownLinks(rootDir, relativePath) {
   const sourcePath = path.join(rootDir, relativePath)
   const source = await fs.readFile(sourcePath, 'utf8')
-  const linkPattern = /\]\((\.\/[^)#]+)(?:#([^)]+))?\)/g
+  const linkPattern = /\]\((?:(\.\/[^)#]+)(?:#([^)]+))?|#([^)]+))\)/g
 
   for (const match of source.matchAll(linkPattern)) {
-    const [, linkedPath, anchor] = match
-    const linkedRelativePath = path.normalize(
-      path.join(path.dirname(relativePath), linkedPath),
-    )
+    const [, linkedPath, linkedAnchor, currentFileAnchor] = match
+    const anchor = linkedAnchor ?? currentFileAnchor
+    const linkedRelativePath = linkedPath
+      ? path.normalize(path.join(path.dirname(relativePath), linkedPath))
+      : relativePath
     const targetPath = path.join(rootDir, linkedRelativePath)
 
     try {
@@ -57,7 +58,8 @@ async function validateLocalMarkdownLinks(rootDir, relativePath) {
     const anchors = [...target.matchAll(/^#{1,6} ([^\r\n]+)$/gm)]
       .map(heading => getMarkdownHeadingAnchor(heading[1]))
     if (!anchors.includes(anchor)) {
-      throw new Error(`Broken link in ${relativePath}: ${linkedPath}#${anchor}`)
+      const link = linkedPath ? `${linkedPath}#${anchor}` : `#${anchor}`
+      throw new Error(`Broken link in ${relativePath}: ${link}`)
     }
   }
 }
@@ -139,10 +141,14 @@ async function main() {
       }
     }
 
-    await validateLocalMarkdownLinks(
-      tempRoot,
-      'references/component-composition.md',
-    )
+    for (
+      const relativePath of [
+        'references/component-overview.md',
+        'references/component-composition.md',
+      ]
+    ) {
+      await validateLocalMarkdownLinks(tempRoot, relativePath)
+    }
 
     console.info('Reference generation check passed.')
   } finally {
