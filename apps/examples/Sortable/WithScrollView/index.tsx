@@ -54,6 +54,7 @@ export function App() {
 
   return (
     <scroll-view
+      id='sortableScrollView'
       className='scroll-view lunaris-dark luna-gradient-berry'
       enable-scroll={enableScroll}
       scroll-orientation='vertical'
@@ -69,6 +70,7 @@ export function App() {
           onSortStart={handleSortStart}
           onSortEnd={handleSortEnd}
           boundaryId='sortableRoot'
+          scrollableBoundaryId='sortableScrollView'
         >
           {renderSortableItem}
         </SortableRoot>

@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { createContext } from '@lynx-js/react'
-import type { RefObject } from '@lynx-js/react'
+import type { MutableRefObject, RefObject } from '@lynx-js/react'
 
 import { noop } from '@lynx-js/lynx-ui-common'
 import type { Point } from '@lynx-js/lynx-ui-common'
@@ -14,12 +14,27 @@ import type { SortableData } from './types'
 
 interface SortableContextType<T = unknown> {
   data: SortableData<T>[]
+  isDragOverlay: boolean
   boundaryId?: string
+  scrollableBoundaryId?: string
+  scrollableBoundaryUpperEdgeRef?: MutableRefObject<boolean>
+  scrollableBoundaryLowerEdgeRef?: MutableRefObject<boolean>
+  scrollableScrollTopRef?: MutableRefObject<number>
+  dragOverlayRefMap?: MutableRefObject<
+    Record<string, MainThread.Element | null>
+  >
+  scrollableStickyUpperOffset: number
+  scrollableStickyLowerOffset: number
+  debugLog: boolean
   enableSorting: boolean
   updateItemSize: (sortingKey: string, size: number) => void
   setChildrenRef: (refI: RefObject<DraggableRef>, key: string) => void
   setChildrenMTSRef: (
     refI: RefObject<DraggableRef>,
+    key: string,
+  ) => void
+  setDragOverlayRef: (
+    refI: RefObject<MainThread.Element | null>,
     key: string,
   ) => void
   handleDragStart: (
@@ -40,10 +55,15 @@ interface SortableContextType<T = unknown> {
 
 export const SortableContext = createContext<SortableContextType>({
   data: [],
+  isDragOverlay: false,
+  debugLog: false,
   enableSorting: true,
+  scrollableStickyUpperOffset: 0,
+  scrollableStickyLowerOffset: 0,
   updateItemSize: noop,
   setChildrenRef: noop,
   setChildrenMTSRef: noop,
+  setDragOverlayRef: noop,
   handleDragStart: noop,
   handleDragMove: noop,
   handleDragEnd: noop,

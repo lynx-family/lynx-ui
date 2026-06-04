@@ -73,7 +73,7 @@ export function useSortable<T>(
       runOnBackground(handleDragStartJS)()
       touchStartPoint.current = pagePoint
       changedKey.current.push(sortingKey)
-      changeItemZIndex(10000, sortingKey)
+      // changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag start]', event)
     },
     [handleDragStartJS, touchStartPoint, changedKey, changeItemZIndex],
@@ -135,7 +135,7 @@ export function useSortable<T>(
     (item: DraggableRef | null, translate: number) => {
       'main thread'
 
-      item?.MTSSetOtherStyles({ 'transform': `translateY(${translate}px)` })
+      item?.MTSSetTransform(0, translate)
     },
     [],
   )
@@ -283,7 +283,7 @@ export function useSortable<T>(
     ) => {
       'main thread'
       switchHandler(delta.y, sortingKey)
-      changeItemZIndex(10000, sortingKey)
+      // changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag move]', event)
     },
     [switchHandler, changeItemZIndex],
@@ -309,12 +309,18 @@ export function useSortable<T>(
     return swappedKeyArray
   }, [keyArray, lastSwappedKey])
 
-  const resetStatus = useCallback(() => {
+  const resetStatus = useCallback((draggingKey?: string) => {
     'main thread'
     changedKey.current.map((key: string) => {
+      if (key === draggingKey) {
+        return
+      }
       const item = itemMTSRefMap?.current?.[key]
-      if (item && typeof item.MTSResetInternalTranslateValues === 'function') {
-        item?.MTSResetInternalTranslateValues()
+      if (
+        item
+        && typeof item.MTSResetInternalTranslateValues === 'function'
+      ) {
+        item.MTSResetInternalTranslateValues()
       }
     })
     lastSwappedKey.current = ''
@@ -341,7 +347,7 @@ export function useSortable<T>(
       mtsLog(debugLog, '[event drag end]', event)
       const sortedKey = sortArray(sortingKey)
       runOnBackground(rootDragEnd)(sortedKey)
-      resetStatus()
+      resetStatus(sortingKey)
     },
     [resetStatus, rootDragEnd, sortArray],
   )
