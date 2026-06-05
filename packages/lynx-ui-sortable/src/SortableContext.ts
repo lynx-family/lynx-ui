@@ -14,6 +14,7 @@ import type { SortableData } from './types'
 
 interface SortableContextType<T = unknown> {
   data: SortableData<T>[]
+  dataKeySignature: string
   boundaryId?: string
   enableSorting: boolean
   updateItemSize: (sortingKey: string, size: number) => void
@@ -40,6 +41,7 @@ interface SortableContextType<T = unknown> {
 
 export const SortableContext = createContext<SortableContextType>({
   data: [],
+  dataKeySignature: '[]',
   enableSorting: true,
   updateItemSize: noop,
   setChildrenRef: noop,
