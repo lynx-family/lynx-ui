@@ -73,7 +73,7 @@ export function useSortable<T>(
       runOnBackground(handleDragStartJS)()
       touchStartPoint.current = pagePoint
       changedKey.current.push(sortingKey)
-      // changeItemZIndex(10000, sortingKey)
+      changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag start]', event)
     },
     [handleDragStartJS, touchStartPoint, changedKey, changeItemZIndex],
@@ -283,7 +283,7 @@ export function useSortable<T>(
     ) => {
       'main thread'
       switchHandler(delta.y, sortingKey)
-      // changeItemZIndex(10000, sortingKey)
+      changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag move]', event)
     },
     [switchHandler, changeItemZIndex],
