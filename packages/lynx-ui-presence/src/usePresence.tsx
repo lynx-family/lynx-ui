@@ -61,6 +61,48 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
     showScheduleIdRef.current += 1
   }
 
+  const cancelEnteringWait = () => {
+    enteringLoopIdRef.current += 1
+  }
+
+  const cancelLeavingWait = () => {
+    leavingLoopIdRef.current += 1
+  }
+
+  const scheduleShow = () => {
+    const scheduleId = showScheduleIdRef.current
+    log(
+      debugLog,
+      '[lynx-ui-presence][usePresence] set mount=true',
+    )
+    setMount(true)
+    log(
+      debugLog,
+      '[lynx-ui-presence][usePresence] schedule set Entering in 8 frames',
+    )
+    delayFrames(8, () => {
+      if (scheduleId !== showScheduleIdRef.current || !showRef.current) return
+      setPresenceState(PresenceState.Entering)
+    })
+    if (enableDelay) {
+      log(
+        debugLog,
+        '[lynx-ui-presence][usePresence] schedule set DelayedEntering in 16 frames',
+      )
+      delayFrames(16, () => {
+        if (scheduleId !== showScheduleIdRef.current || !showRef.current) {
+          return
+        }
+        setPresenceState(PresenceState.DelayedEntering)
+      })
+    }
+  }
+
+  const restartShow = () => {
+    cancelShowTimer()
+    scheduleShow()
+  }
+
   const notAnimating = () => (isKFAnimating.current === false
     && isTransitionAnimating.current === false)
 
@@ -87,9 +129,9 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
       }
     }
     if (state === PresenceState.Leaving && notAnimating()) {
-      cancelShowTimer()
+      cancelLeavingWait()
       if (showRef.current) {
-        setPresenceState(enteringStateWithDelay)
+        restartShow()
       } else {
         setPresenceState(PresenceState.Left)
       }
@@ -170,9 +212,7 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
         debugLog,
         '[lynx-ui-presence][usePresence] skip mount=false because show=true (Left)',
       )
-      setMount(true)
-      cancelShowTimer()
-      setPresenceState(enteringStateWithDelay)
+      restartShow()
       return
     }
     if (!isInitialRender.current && hasNotifiedOpen.current) {
@@ -184,6 +224,7 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
   }
 
   const handleStateLeaving = () => {
+    cancelEnteringWait()
     leavingWaitFramesRef.current = 0
     leavingLoopIdRef.current += 1
     const loopId = leavingLoopIdRef.current
@@ -201,9 +242,8 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
           debugLog,
           `[lynx-ui-presence][usePresence] leaving timeout reached, loopId: ${loopId}, frames: ${leavingWaitFramesRef.current}`,
         )
-        cancelShowTimer()
         if (showRef.current) {
-          setPresenceState(enteringStateWithDelay)
+          restartShow()
         } else {
           setPresenceState(PresenceState.Left)
         }
@@ -217,6 +257,7 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
   }
 
   const handleStateEnteringWithDelay = () => {
+    cancelLeavingWait()
     enteringWaitFramesRef.current = 0
     enteringLoopIdRef.current += 1
     const loopId = enteringLoopIdRef.current
@@ -233,7 +274,11 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
           debugLog,
           `[lynx-ui-presence][usePresence] entering timeout reached, loopId: ${loopId}, frames: ${enteringWaitFramesRef.current}`,
         )
-        setPresenceState(PresenceState.Entered)
+        if (showRef.current) {
+          setPresenceState(PresenceState.Entered)
+        } else {
+          setPresenceState(PresenceState.Leaving)
+        }
         return
       }
       enteringWaitFramesRef.current += 1
@@ -263,32 +308,6 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
   }, [state])
 
   // ==== Show change part ====
-  const handleShow = (scheduleId: number) => {
-    log(
-      debugLog,
-      '[lynx-ui-presence][usePresence] set mount=true',
-    )
-    setMount(true)
-    log(
-      debugLog,
-      '[lynx-ui-presence][usePresence] schedule set Entering in 8 frames',
-    )
-    delayFrames(8, () => {
-      if (scheduleId !== showScheduleIdRef.current) return
-      setPresenceState(PresenceState.Entering)
-    })
-    if (enableDelay) {
-      log(
-        debugLog,
-        '[lynx-ui-presence][usePresence] schedule set DelayedEntering in 16 frames',
-      )
-      delayFrames(16, () => {
-        if (scheduleId !== showScheduleIdRef.current) return
-        setPresenceState(PresenceState.DelayedEntering)
-      })
-    }
-  }
-
   const handleDismiss = () => {
     if (
       state === PresenceState.Entered || state === PresenceState.Entering
@@ -298,6 +317,7 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
         debugLog,
         '[lynx-ui-presence][usePresence] show=false -> set PresenceState.Leaving',
       )
+      cancelEnteringWait()
       setPresenceState(PresenceState.Leaving)
     } else if (
       (state === PresenceState.Initial || state === PresenceState.Left) && mount
@@ -315,11 +335,10 @@ export function usePresence(props: usePresenceProps): usePresenceReturnType {
       debugLog,
       `[lynx-ui-presence][usePresence] show effect show:${show}, enableDelay:${enableDelay}, state:${state}, mount:${mount}`,
     )
-    cancelShowTimer()
-    const scheduleId = showScheduleIdRef.current
     if (show) {
-      handleShow(scheduleId)
+      restartShow()
     } else {
+      cancelShowTimer()
       handleDismiss()
     }
   }, [show, enableDelay])

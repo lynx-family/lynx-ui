@@ -150,7 +150,9 @@ export const DialogBackdrop = (props: DialogBackdropProps) => {
 
   const {
     handleKFStart,
+    handleKFCancel,
     handleKFEnd,
+    handleTransitionCancel,
     handleTransitionEnd,
     handleTransitionStart,
   } = animationHandlers
@@ -171,8 +173,9 @@ export const DialogBackdrop = (props: DialogBackdropProps) => {
       bindanimationstart={handleKFStart}
       bindanimationend={handleKFEnd}
       bindtransitionstart={handleTransitionStart}
+      bindtransitioncancel={handleTransitionCancel}
       bindtransitionend={handleTransitionEnd}
-      bindanimationcancel={handleKFEnd}
+      bindanimationcancel={handleKFCancel}
       event-through={false}
       style={{
         width: '100%',
@@ -271,7 +274,9 @@ export function DialogContent(props: DialogContentProps) {
   })
   const {
     handleKFStart,
+    handleKFCancel,
     handleKFEnd,
+    handleTransitionCancel,
     handleTransitionEnd,
     handleTransitionStart,
   } = animationHandlers
@@ -285,8 +290,9 @@ export function DialogContent(props: DialogContentProps) {
       bindanimationstart={handleKFStart}
       bindanimationend={handleKFEnd}
       bindtransitionstart={handleTransitionStart}
+      bindtransitioncancel={handleTransitionCancel}
       bindtransitionend={handleTransitionEnd}
-      bindanimationcancel={handleKFEnd}
+      bindanimationcancel={handleKFCancel}
       {...dialogContentProps}
     >
       {children}
