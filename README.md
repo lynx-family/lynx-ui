@@ -1,5 +1,7 @@
 # @lynx-js/lynx-ui
 
+[![pkg.pr.new](https://pkg.pr.new/badge/lynx-family/lynx-ui)](https://pkg.pr.new/~/lynx-family/lynx-ui)
+
 `@lynx-js/lynx-ui` is the official headless UI library for ReactLynx, provided as a reference for building flexible, universal, and high-performance ReactLynx components.
 
 ## Introduction

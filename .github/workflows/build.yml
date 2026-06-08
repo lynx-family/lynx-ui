@@ -2,6 +2,11 @@ name: Build
 
 on:
   workflow_call:
+    inputs:
+      upload-package-artifacts:
+        default: false
+        required: false
+        type: boolean
 env:
   CI: 1
   TURBO_TELEMETRY_DISABLED: 1
@@ -100,6 +105,18 @@ jobs:
           pnpm turbo build --summarize
         env:
           NODE_OPTIONS: --max-old-space-size=32768
+      - name: Pack Package Artifacts
+        if: inputs.upload-package-artifacts
+        run: tar -czf package-artifacts.tgz packages/*/dist
+      - name: Upload Package Artifacts
+        if: inputs.upload-package-artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: package-artifacts-${{ github.sha }}
+          path: package-artifacts.tgz
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true
       - name: Upload Turbo Summary
         if: runner.debug == '1'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
