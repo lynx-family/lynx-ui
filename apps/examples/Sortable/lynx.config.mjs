@@ -9,6 +9,7 @@ const defaultConfig = exampleConfig({
   SortableWithScrollView: './WithScrollView/index.tsx',
   SortableNoBoundary: './NoBoundary/index.tsx',
   SortableDisableSorting: './DisableSorting/index.tsx',
+  SortablePropsDataReset: './PropsDataReset/index.tsx',
 }, { needWeb: false })
 
 export default defaultConfig

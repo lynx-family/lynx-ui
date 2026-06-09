@@ -1,0 +1,30 @@
+@import "@lynx-js/luna-styles/index.css";
+
+@import "../shared/base.css";
+@import "../shared/palette.css";
+
+.props-data-reset-root {
+  justify-content: flex-start;
+  padding-top: 96px;
+}
+
+.props-data-reset-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.props-data-reset-title {
+  color: var(--neutral-content);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.props-data-reset-counter {
+  margin-top: 8px;
+  color: var(--neutral-content-faded);
+  font-size: 12px;
+  font-weight: 600;
+}

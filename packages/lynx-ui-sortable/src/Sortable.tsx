@@ -80,8 +80,12 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     onDragStart: onSortStart,
     debugLog,
   })
+  const dataKeySignature = JSON.stringify(
+    data?.map(item => item.getSortingKey()) ?? [],
+  )
   const sortableContextValue = useMemo(() => ({
     data,
+    dataKeySignature,
     enableSorting,
     boundaryId,
     updateItemSize,
@@ -92,6 +96,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     handleDragStart,
   }), [
     data,
+    dataKeySignature,
     enableSorting,
     boundaryId,
     updateItemSize,
@@ -128,7 +133,7 @@ interface boundingClientRectRes {
 export function SortableItem(props: SortableItemProps) {
   const { className, children, sortingKey, as = 'Draggable' } = props
   const {
-    data,
+    dataKeySignature,
     enableSorting,
     boundaryId,
     updateItemSize,
@@ -178,7 +183,13 @@ export function SortableItem(props: SortableItemProps) {
       })
         .exec()
     }
-  }, [setChildrenRef, setChildrenMTSRef, sortingKey, data, boundaryId])
+  }, [
+    setChildrenRef,
+    setChildrenMTSRef,
+    sortingKey,
+    dataKeySignature,
+    boundaryId,
+  ])
 
   const handleMTSLayoutChange = (e: MainThread.LayoutChangeEvent) => {
     'main thread'
@@ -211,7 +222,7 @@ export function SortableItem(props: SortableItemProps) {
 
   const resetStyle = useMemo(
     () => ({ transform: 'translate(0, 0)', zIndex: '0' }),
-    [data],
+    [dataKeySignature],
   )
 
   if (as === 'Draggable') {
