@@ -1,5 +1,13 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.3
+
+### Patch Changes
+
+- Enrich the Lynx UI skill package with bundled routing references and eval coverage. ([#202](https://github.com/lynx-family/lynx-ui/pull/202))
+
+- Add trigger eval coverage to the lynx-ui skill package. ([#215](https://github.com/lynx-family/lynx-ui/pull/215))
+
 ## 3.133.2
 
 ### Patch Changes

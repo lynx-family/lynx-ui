@@ -1,5 +1,16 @@
 # @lynx-js/lynx-ui
 
+## 3.134.0
+
+### Patch Changes
+
+- Updated dependencies [[`1a5762f`](https://github.com/lynx-family/lynx-ui/commit/1a5762f02b40e3894e38f8708cceec2b889f5795), [`92ae41f`](https://github.com/lynx-family/lynx-ui/commit/92ae41f375edc015087c352211a82f582ac1d010)]:
+  - @lynx-js/lynx-ui-sortable@3.134.0
+  - @lynx-js/lynx-ui-dialog@3.134.0
+  - @lynx-js/lynx-ui-presence@3.134.0
+  - @lynx-js/lynx-ui-sheet@3.134.0
+  - @lynx-js/lynx-ui-popover@3.134.0
+
 ## 3.133.2
 
 ### Patch Changes

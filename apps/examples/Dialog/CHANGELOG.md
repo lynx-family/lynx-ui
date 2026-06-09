@@ -1,5 +1,19 @@
 # @lynx-example/lynx-ui-dialog
 
+## 0.0.10
+
+### Patch Changes
+
+- Fix presence edge cases for rapid visibility toggles during enter and exit transitions: ([#204](https://github.com/lynx-family/lynx-ui/pull/204))
+
+  - Recover when an enter interrupts an in-progress exit.
+  - Keep open and close callbacks balanced across interrupted transitions.
+  - Remove mounted containers when dismissal occurs before entering starts.
+  - Handle cancelled Dialog transitions during rapid visibility changes.
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.134.0
+
 ## 0.0.9
 
 ### Patch Changes

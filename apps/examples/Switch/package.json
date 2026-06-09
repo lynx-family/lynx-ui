@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-switch",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Example app demonstrating Switch usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Switch#readme",
   "repository": {

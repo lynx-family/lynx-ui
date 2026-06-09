@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-scroll-view
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.134.0
+
 ## 0.0.9
 
 ### Patch Changes
