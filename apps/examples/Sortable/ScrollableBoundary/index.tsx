@@ -23,15 +23,9 @@ export function App() {
   const [data, setData] = useState<SortableData<SortableDemoItem>[]>(
     () => createDemoData(16),
   )
-  const [enableScroll, setEnableScroll] = useState(true)
-
-  const handleSortStart = useCallback(() => {
-    setEnableScroll(false)
-  }, [])
 
   const handleSortEnd = useCallback(
     (sortedData: SortableData<SortableDemoItem>[]) => {
-      setEnableScroll(true)
       setData(sortedData)
     },
     [],
@@ -97,14 +91,12 @@ export function App() {
       </view>
       <SortableRoot
         data={data}
-        onSortStart={handleSortStart}
         onSortEnd={handleSortEnd}
         boundaryId='sortableRoot'
-        scrollable
+        as='ScrollView'
         scrollableBoundaryId='sortableScrollableBoundary'
         scrollableClassName='scroll-view'
         scrollableContentClassName='sortable-root scrollable-boundary-root'
-        scrollableEnableScroll={enableScroll}
         scrollableStickyUpperOffset={12}
         scrollableStickyLowerOffset={12}
       >

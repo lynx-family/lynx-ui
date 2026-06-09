@@ -23,15 +23,9 @@ export function App() {
   const [data, setData] = useState<SortableData<SortableDemoItem>[]>(
     () => createDemoData(18),
   )
-  const [enableScroll, setEnableScroll] = useState(true)
-
-  const handleSortStart = useCallback(() => {
-    setEnableScroll(false)
-  }, [])
 
   const handleSortEnd = useCallback(
     (sortedData: SortableData<SortableDemoItem>[]) => {
-      setEnableScroll(true)
       setData(sortedData)
     },
     [],
@@ -73,6 +67,16 @@ export function App() {
     [],
   )
 
+  const handleScrollUpTap = useCallback(() => {
+    'main thread'
+    scrollShortBoundaryBy(-160)
+  }, [])
+
+  const handleScrollDownTap = useCallback(() => {
+    'main thread'
+    scrollShortBoundaryBy(160)
+  }, [])
+
   return (
     <view className='demo-container lunaris-dark luna-gradient-berry'>
       <view className='outside-panel outside-panel--top'>
@@ -86,19 +90,13 @@ export function App() {
       <view className='scroll-by-actions'>
         <view
           className='scroll-by-button'
-          main-thread:bindtap={() => {
-            'main thread'
-            scrollShortBoundaryBy(-160)
-          }}
+          main-thread:bindtap={handleScrollUpTap}
         >
           <text className='scroll-by-button-text'>Scroll Up</text>
         </view>
         <view
           className='scroll-by-button scroll-by-button--primary'
-          main-thread:bindtap={() => {
-            'main thread'
-            scrollShortBoundaryBy(160)
-          }}
+          main-thread:bindtap={handleScrollDownTap}
         >
           <text className='scroll-by-button-text'>Scroll Down</text>
         </view>
@@ -106,14 +104,12 @@ export function App() {
 
       <SortableRoot
         data={data}
-        onSortStart={handleSortStart}
         onSortEnd={handleSortEnd}
         boundaryId='shortSortableRoot'
-        scrollable
+        as='ScrollView'
         scrollableBoundaryId='shortSortableScrollView'
         scrollableClassName='short-scroll-view'
         scrollableContentClassName='sortable-root short-sortable-root'
-        scrollableEnableScroll={enableScroll}
         scrollableStickyUpperOffset={12}
         scrollableStickyLowerOffset={12}
       >

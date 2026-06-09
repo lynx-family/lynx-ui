@@ -22,6 +22,7 @@ interface SortableOptionsType<T> {
   sizeMap: MainThreadRef<Record<string, number>> // sorting key -> size
   itemRefMap: RefObject<Record<string, DraggableRef | null>>
   itemMTSRefMap: MainThreadRef<Record<string, DraggableRef | null>> // sortingKey -> element Ref
+  dirtyKeysRef: MainThreadRef<Record<string, boolean>>
   onDragEnd?: (sortedKeyArray: SortableData<T>[]) => void
   onDragStart?: () => void
   debugLog?: boolean
@@ -34,6 +35,7 @@ export function useSortable<T>(
     data,
     sizeMap,
     itemMTSRefMap,
+    dirtyKeysRef,
     onDragEnd,
     onDragStart,
     debugLog = false,
@@ -57,7 +59,8 @@ export function useSortable<T>(
     item?.MTSSetOtherStyles({
       'z-index': `${zIndex}`,
     })
-  }, [itemMTSRefMap])
+    dirtyKeysRef.current[sortingKey] = true
+  }, [itemMTSRefMap, dirtyKeysRef])
 
   const handleDragStartJS = useCallback(() => {
     onDragStart?.()
@@ -132,12 +135,16 @@ export function useSortable<T>(
   )
 
   const setTransform = useCallback(
-    (item: DraggableRef | null, translate: number) => {
+    (key: string, translate: number) => {
       'main thread'
 
+      const item = key ? itemMTSRefMap.current[key] : null
       item?.MTSSetTransform(0, translate)
+      if (key) {
+        dirtyKeysRef.current[key] = true
+      }
     },
-    [],
+    [itemMTSRefMap, dirtyKeysRef],
   )
 
   // Clamp the previous interacting item to the grid
@@ -149,19 +156,17 @@ export function useSortable<T>(
     )
     const draggingItemSize = sizeMap.current[sortingKey]
     if (lastSwappingKey.current !== null) {
-      const lastSwappingItem = lastSwappingKey.current
-        ? itemMTSRefMap.current[lastSwappingKey.current]
-        : null
+      const lastSwappingItemKey = lastSwappingKey.current
       if (
         Math.abs(swappingItemTranslation.current)
           > draggingItemSize * swapConfirmedPercentage.current
       ) {
         setTransform(
-          lastSwappingItem,
+          lastSwappingItemKey,
           (movingDistance < 0 ? 1 : -1) * draggingItemSize,
         )
       } else {
-        setTransform(lastSwappingItem, 0)
+        setTransform(lastSwappingItemKey, 0)
       }
     }
   }
@@ -252,7 +257,6 @@ export function useSortable<T>(
         return
       }
       const swappingKey = keyArray[swappingIndex]
-      const swappingItem = itemMTSRefMap.current[swappingKey]
 
       if (swappingKey !== lastSwappingKey.current) {
         updateLastSwappingItem(movingDistance, sortingKey, swappingKey)
@@ -261,7 +265,7 @@ export function useSortable<T>(
 
       const unconsumedDistance = movingDistance - consumedDistance
       updateConfirmedInteractedID(unconsumedDistance, sortingKey)
-      setTransform(swappingItem, -unconsumedDistance)
+      setTransform(swappingKey, -unconsumedDistance)
     },
     [
       changedKey,
@@ -309,6 +313,14 @@ export function useSortable<T>(
     return swappedKeyArray
   }, [keyArray, lastSwappedKey])
 
+  const resetSwapTrackingRefs = useCallback(() => {
+    'main thread'
+    lastSwappedKey.current = ''
+    lastSwappingKey.current = ''
+    swappingItemTranslation.current = 0
+    changedKey.current = []
+  }, [changedKey, lastSwappedKey, lastSwappingKey, swappingItemTranslation])
+
   const resetStatus = useCallback((draggingKey?: string) => {
     'main thread'
     changedKey.current.map((key: string) => {
@@ -316,17 +328,18 @@ export function useSortable<T>(
         return
       }
       const item = itemMTSRefMap?.current?.[key]
-      if (
-        item
-        && typeof item.MTSResetInternalTranslateValues === 'function'
-      ) {
+      if (!item) {
+        return
+      }
+      if (typeof item.MTSSetTransform === 'function') {
+        item.MTSSetTransform(0, 0)
+      }
+      if (typeof item.MTSResetInternalTranslateValues === 'function') {
         item.MTSResetInternalTranslateValues()
       }
     })
-    lastSwappedKey.current = ''
-    lastSwappingKey.current = ''
-    changedKey.current = []
-  }, [changedKey, itemMTSRefMap, lastSwappedKey, lastSwappingKey])
+    resetSwapTrackingRefs()
+  }, [changedKey, itemMTSRefMap, resetSwapTrackingRefs])
 
   const rootDragEnd = useCallback((sortedKey: string[]) => {
     const keyToItemMap = new Map(data.map((item, index) => {
@@ -342,14 +355,33 @@ export function useSortable<T>(
     (
       sortingKey: string,
       event: MainThread.MouseEvent | MainThread.TouchEvent,
-    ) => {
+    ): boolean => {
       'main thread'
       mtsLog(debugLog, '[event drag end]', event)
       const sortedKey = sortArray(sortingKey)
-      runOnBackground(rootDragEnd)(sortedKey)
-      resetStatus(sortingKey)
+      let orderChanged = sortedKey.length !== keyArray.length
+      if (!orderChanged) {
+        for (let i = 0; i < sortedKey.length; i++) {
+          if (sortedKey[i] !== keyArray[i]) {
+            orderChanged = true
+            break
+          }
+        }
+      }
+      if (orderChanged) {
+        // data will be updated by consumer -> usePreCommit will reset dirty items
+        runOnBackground(rootDragEnd)(sortedKey)
+        // dom transforms are reset by usePreCommit, but swap tracking refs
+        // must be cleared synchronously to avoid stale state on next drag
+        resetSwapTrackingRefs()
+      } else {
+        // no data update -> no precommit -> reset dirty items synchronously here
+        resetStatus(sortingKey)
+        runOnBackground(rootDragEnd)(sortedKey)
+      }
+      return orderChanged
     },
-    [resetStatus, rootDragEnd, sortArray],
+    [keyArray, resetStatus, resetSwapTrackingRefs, rootDragEnd, sortArray],
   )
 
   return {

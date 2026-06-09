@@ -29,28 +29,31 @@ export interface SortableData<T> {
 
 export interface SortableRootProps<T> {
   /**
-   * Whether SortableRoot should render and own a vertical `scroll-view` as its scrollable boundary.
-   * @defaultValue false
+   * Specifies which container element SortableRoot should render and own as the scrollable boundary.
+   * - `'ScrollView'`: render an internal vertical `scroll-view`.
+   * - Omit (default): render a plain `view` without scrolling capability.
    * @Android
    * @iOS
    * @Harmony
-   * @zh SortableRoot 是否渲染并持有一个纵向 `scroll-view` 作为可滚动边界。
+   * @zh 指定 SortableRoot 渲染并持有的滚动容器类型。
+   * - `'ScrollView'`：渲染一个内部的纵向 `scroll-view`。
+   * - 不传（默认）：渲染普通 `view`，不带滚动能力。
    */
-  scrollable?: boolean
+  as?: 'ScrollView'
   /**
-   * Class name applied to the owned `scroll-view` when `scrollable` is true.
+   * Class name applied to the owned `scroll-view` when `as` is `'ScrollView'`.
    * @Android
    * @iOS
    * @Harmony
-   * @zh `scrollable` 为 true 时应用到内部 `scroll-view` 的类名。
+   * @zh `as` 为 `'ScrollView'` 时应用到内部 `scroll-view` 的类名。
    */
   scrollableClassName?: string
   /**
-   * Class name applied to the owned content boundary view when `scrollable` is true.
+   * Class name applied to the owned content boundary view when `as` is `'ScrollView'`.
    * @Android
    * @iOS
    * @Harmony
-   * @zh `scrollable` 为 true 时应用到内部内容边界 view 的类名。
+   * @zh `as` 为 `'ScrollView'` 时应用到内部内容边界 view 的类名。
    */
   scrollableContentClassName?: string
   /**

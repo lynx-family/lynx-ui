@@ -3,14 +3,13 @@
 // LICENSE file in the root directory of this source tree.
 
 import {
-  runOnBackground,
   runOnMainThread,
   useCallback,
   useContext,
   useEffect,
   useMainThreadRef,
   useMemo,
-  useRef,
+  useState,
 } from '@lynx-js/react'
 import type { RefObject } from '@lynx-js/react'
 
@@ -25,7 +24,11 @@ import type { DraggableRef } from '@lynx-js/lynx-ui-draggable'
 import type { MainThread, ScrollEvent } from '@lynx-js/types'
 
 import { SortableContext } from './SortableContext'
-import type { SortableItemProps, SortableRootProps } from './types'
+import type {
+  SortableData,
+  SortableItemProps,
+  SortableRootProps,
+} from './types'
 import { useSortable } from './useSortable'
 
 export { DraggableArea as SortableItemArea }
@@ -96,7 +99,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     debugLog = false,
     boundaryId,
     scrollableBoundaryId,
-    scrollable = false,
+    as,
     scrollableClassName,
     scrollableContentClassName,
     scrollableEnableScroll = true,
@@ -106,6 +109,19 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     onSortStart,
     enableSorting = true,
   } = props
+  const scrollable = as === 'ScrollView'
+  const [isDragging, setIsDragging] = useState(false)
+  const handleInternalSortStart = useCallback(() => {
+    setIsDragging(true)
+    onSortStart?.()
+  }, [onSortStart])
+  const handleInternalSortEnd = useCallback(
+    (sortedData: SortableData<T>[]) => {
+      setIsDragging(false)
+      onSortEnd(sortedData)
+    },
+    [onSortEnd],
+  )
   const scrollableElementId = useMemo(
     () => scrollableBoundaryId ?? 'sortable-scrollable-boundary',
     [scrollableBoundaryId],
@@ -130,6 +146,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
   >(
     {},
   )
+  const dirtyKeysRef = useMainThreadRef<Record<string, boolean>>({})
   const scrollableBoundaryUpperEdgeRef = useMainThreadRef(false)
   const scrollableBoundaryLowerEdgeRef = useMainThreadRef(false)
   const scrollableScrollTopRef = useMainThreadRef(0)
@@ -192,8 +209,9 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     sizeMap: sizeMap,
     itemRefMap: childrenRefMap,
     itemMTSRefMap: childrenMTSRefMap,
-    onDragEnd: onSortEnd,
-    onDragStart: onSortStart,
+    dirtyKeysRef,
+    onDragEnd: handleInternalSortEnd,
+    onDragStart: handleInternalSortStart,
     debugLog,
   })
   const sortableContextValue = useMemo(() => ({
@@ -215,6 +233,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
       ? scrollableScrollTopRef
       : undefined,
     dragOverlayRefMap: scrollable ? dragOverlayRefMap : undefined,
+    dirtyKeysRef,
     scrollableStickyUpperOffset,
     scrollableStickyLowerOffset,
     updateItemSize,
@@ -237,6 +256,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     scrollableBoundaryUpperEdgeRef,
     scrollableScrollTopRef,
     dragOverlayRefMap,
+    dirtyKeysRef,
     scrollableStickyLowerOffset,
     scrollableStickyUpperOffset,
     updateItemSize,
@@ -269,7 +289,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
         <scroll-view
           id={scrollableElementId}
           className={scrollableClassName}
-          enable-scroll={scrollableEnableScroll}
+          enable-scroll={scrollableEnableScroll && !isDragging}
           scroll-orientation='vertical'
           main-thread:bindscroll={handleScrollableBoundaryScroll}
         >
@@ -385,6 +405,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
     scrollableBoundaryLowerEdgeRef,
     scrollableScrollTopRef,
     dragOverlayRefMap,
+    dirtyKeysRef,
     scrollableStickyUpperOffset,
     scrollableStickyLowerOffset,
     updateItemSize,
@@ -396,7 +417,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
   } = useContext(SortableContext)
 
   const MTSRef = useMainThreadRef<DraggableRef>(null)
-  const itemRect = useMainThreadRef<boundingClientRectRes>({
+  const [itemRect, setItemRect] = useState<boundingClientRectRes>({
     height: 0,
     width: 0,
     top: 0,
@@ -404,7 +425,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
     bottom: 0,
     right: 0,
   })
-  const boundaryRect = useMainThreadRef<boundingClientRectRes>({
+  const [boundaryRect, setBoundaryRect] = useState<boundingClientRectRes>({
     height: 0,
     width: 0,
     top: 0,
@@ -412,33 +433,9 @@ function SortableInteractiveItem(props: SortableItemProps) {
     bottom: 0,
     right: 0,
   })
-  const scrollableBoundaryRect = useMainThreadRef<
+  const [scrollableBoundaryRect, setScrollableBoundaryRect] = useState<
     boundingClientRectRes
   >({
-    height: 0,
-    width: 0,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  })
-  const itemRectCopy = useRef<boundingClientRectRes>({
-    height: 0,
-    width: 0,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  })
-  const boundaryRectCopy = useRef<boundingClientRectRes>({
-    height: 0,
-    width: 0,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  })
-  const scrollableBoundaryRectCopy = useRef<boundingClientRectRes>({
     height: 0,
     width: 0,
     top: 0,
@@ -516,76 +513,40 @@ function SortableInteractiveItem(props: SortableItemProps) {
     'main thread'
     autoScrollingRef.current = isAutoScrolling
   }, [autoScrollingRef])
-  const setItemRectOnMainThread = useCallback((rect: boundingClientRectRes) => {
+  const captureItemMeasuredScrollTop = useCallback(() => {
     'main thread'
-    itemRect.current = rect
     itemMeasuredScrollTop.current = scrollableScrollTopRef?.current ?? 0
-  }, [itemMeasuredScrollTop, itemRect, scrollableScrollTopRef])
-  const setBoundaryRectOnMainThread = useCallback(
-    (rect: boundingClientRectRes) => {
-      'main thread'
-      boundaryRect.current = rect
-    },
-    [boundaryRect],
-  )
-  const setScrollableBoundaryRectOnMainThread = useCallback(
-    (rect: boundingClientRectRes) => {
-      'main thread'
-      scrollableBoundaryRect.current = rect
-    },
-    [scrollableBoundaryRect],
-  )
-  const syncItemRectCopy = useCallback((rect: boundingClientRectRes) => {
-    itemRectCopy.current = rect
-  }, [])
-  const syncBoundaryRectCopy = useCallback((rect: boundingClientRectRes) => {
-    boundaryRectCopy.current = rect
-  }, [])
-  const syncScrollableBoundaryRectCopy = useCallback(
-    (rect: boundingClientRectRes) => {
-      scrollableBoundaryRectCopy.current = rect
-    },
-    [],
-  )
+  }, [itemMeasuredScrollTop, scrollableScrollTopRef])
 
   const measureRectById = useCallback((
     id: string | undefined,
     target: RectTarget,
   ) => {
-    'main thread'
     if (!id) {
       return
     }
 
-    const element = lynx.querySelector(`#${id}`)
-    element?.invoke('boundingClientRect', {})
-      .then((res) => {
+    lynx.createSelectorQuery().select(`#${id}`)?.invoke({
+      method: 'boundingClientRect',
+      params: {},
+      success: (res: unknown) => {
         const rect = res as boundingClientRectRes
         if (target === 'item') {
-          setItemRectOnMainThread(rect)
-          runOnBackground(syncItemRectCopy)(rect)
+          setItemRect(rect)
+          runOnMainThread(captureItemMeasuredScrollTop)()
           return
         }
         if (target === 'boundary') {
-          setBoundaryRectOnMainThread(rect)
-          runOnBackground(syncBoundaryRectCopy)(rect)
+          setBoundaryRect(rect)
           return
         }
 
-        setScrollableBoundaryRectOnMainThread(rect)
-        runOnBackground(syncScrollableBoundaryRectCopy)(rect)
-      })
-  }, [
-    setBoundaryRectOnMainThread,
-    setItemRectOnMainThread,
-    setScrollableBoundaryRectOnMainThread,
-    syncBoundaryRectCopy,
-    syncItemRectCopy,
-    syncScrollableBoundaryRectCopy,
-  ])
+        setScrollableBoundaryRect(rect)
+      },
+    }).exec()
+  }, [captureItemMeasuredScrollTop])
 
   const refreshDraggingRects = useCallback(() => {
-    'main thread'
     measureRectById(itemElementId, 'item')
     measureRectById(boundaryId, 'boundary')
     measureRectById(scrollableBoundaryId, 'scrollableBoundary')
@@ -642,9 +603,9 @@ function SortableInteractiveItem(props: SortableItemProps) {
 
   const getDragStartItemBounds = useCallback((translateY: number) => {
     'main thread'
-    const measuredTopAtDragStart = itemRect.current.top
+    const measuredTopAtDragStart = itemRect.top
       - dragStartScrollDeltaFromMeasuredRect.current
-    const measuredBottomAtDragStart = itemRect.current.bottom
+    const measuredBottomAtDragStart = itemRect.bottom
       - dragStartScrollDeltaFromMeasuredRect.current
 
     return {
@@ -682,14 +643,14 @@ function SortableInteractiveItem(props: SortableItemProps) {
     'main thread'
     const scrollDelta = syncScrollDeltaForItemTranslateY()
     if (autoScrollStickyDirection.current > 0) {
-      return scrollableBoundaryRect.current.bottom
-        - itemRect.current.bottom
+      return scrollableBoundaryRect.bottom
+        - itemRect.bottom
         - scrollableStickyLowerOffset
         + scrollDelta.measuredRectDeltaY
     }
     if (autoScrollStickyDirection.current < 0) {
-      return scrollableBoundaryRect.current.top
-        - itemRect.current.top
+      return scrollableBoundaryRect.top
+        - itemRect.top
         + scrollableStickyUpperOffset
         + scrollDelta.measuredRectDeltaY
     }
@@ -708,11 +669,11 @@ function SortableInteractiveItem(props: SortableItemProps) {
     'main thread'
     const scrollDelta = syncScrollDeltaForItemTranslateY()
     return {
-      top: itemRect.current.top - scrollDelta.measuredRectDeltaY
+      top: itemRect.top - scrollDelta.measuredRectDeltaY
         + visualTranslateY,
-      left: itemRect.current.left + latestDragTranslate.current.x,
-      width: itemRect.current.width,
-      height: itemRect.current.height,
+      left: itemRect.left + latestDragTranslate.current.x,
+      width: itemRect.width,
+      height: itemRect.height,
     }
   }, [
     itemRect,
@@ -736,10 +697,13 @@ function SortableInteractiveItem(props: SortableItemProps) {
       opacity: '0',
     })
     dragSourceHidden.current = true
+    dirtyKeysRef.current[sortingKey] = true
   }, [
     MTSRef,
     dragSourceHidden,
     scrollableBoundaryId,
+    dirtyKeysRef,
+    sortingKey,
   ])
 
   const showDragSourceItem = useCallback(() => {
@@ -814,6 +778,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
     const visualTranslateY = getVisualTranslateY()
     if (scrollableBoundaryId) {
       MTSRef.current?.MTSSetTransform(0, 0)
+      console.info('reset local drag visual')
       updateDragOverlayTransform(visualTranslateY)
     } else {
       MTSRef.current?.MTSSetTransform(
@@ -821,6 +786,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
         visualTranslateY,
       )
     }
+    dirtyKeysRef.current[sortingKey] = true
     return visualTranslateY
   }, [
     MTSRef,
@@ -828,6 +794,8 @@ function SortableInteractiveItem(props: SortableItemProps) {
     latestDragTranslate,
     scrollableBoundaryId,
     updateDragOverlayTransform,
+    dirtyKeysRef,
+    sortingKey,
   ])
 
   const emitSortableDragMove = useCallback((
@@ -940,7 +908,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
 
   useEffect(() => {
     runOnMainThread(setChildrenMTSRef)(MTSRef, sortingKey)
-    runOnMainThread(refreshDraggingRects)()
+    refreshDraggingRects()
   }, [
     data,
     refreshDraggingRects,
@@ -984,8 +952,23 @@ function SortableInteractiveItem(props: SortableItemProps) {
     dragStartScrollDeltaFromMeasuredRect.current = scrollTop
       - itemMeasuredScrollTop.current
     latestDragEvent.current = event
+    if (scrollableBoundaryId && scrollableBoundaryRect.height > 0) {
+      const draggedItem = getDragStartItemBounds(0)
+      const { distanceToTop, distanceToBottom } = getEdgeDistance(
+        draggedItem,
+        scrollableBoundaryRect,
+      )
+      const overflow = getAutoScrollOverflow(distanceToTop, distanceToBottom)
+      if (overflow !== 0) {
+        autoScrollStickyDirection.current = overflow > 0 ? 1 : -1
+      }
+    }
     activateDragOverlay()
     handleDragStart?.(pagePoint, sortingKey, event)
+    if (autoScrollStickyDirection.current !== 0) {
+      const visualTranslateY = getVisualTranslateY()
+      emitSortableDragMove(visualTranslateY, event)
+    }
   }
 
   const itemDragging = (
@@ -995,11 +978,11 @@ function SortableInteractiveItem(props: SortableItemProps) {
     'main thread'
     latestDragTranslate.current = translate
     latestDragEvent.current = event
-    if (scrollableBoundaryId && scrollableBoundaryRect.current.height > 0) {
+    if (scrollableBoundaryId && scrollableBoundaryRect.height > 0) {
       const draggedItem = getDragStartItemBounds(translate.y)
       const { distanceToTop, distanceToBottom } = getEdgeDistance(
         draggedItem,
-        scrollableBoundaryRect.current,
+        scrollableBoundaryRect,
       )
       const translateDeltaY = translate.y - lastAutoScrollTranslateY.current
       const overflow = getAutoScrollOverflow(distanceToTop, distanceToBottom)
@@ -1037,26 +1020,12 @@ function SortableInteractiveItem(props: SortableItemProps) {
     handleDragMove?.(translate, sortingKey, event)
   }
 
-  const itemDragEnd = (
-    _pagePoint: Point,
-    event: MainThread.MouseEvent | MainThread.TouchEvent,
-  ) => {
+  const resetLocalDragVisuals = () => {
     'main thread'
-    resetAutoScrollDragState()
-    autoScrollStartScrollTop.current = 0
-    dragStartScrollDeltaFromMeasuredRect.current = 0
-    latestDragEvent.current = null
-    stopAutoScrollLoop()
-    handleDragEnd?.(sortingKey, event)
-  }
-
-  const dataKeyOrderSignature = useMemo(
-    () => (data ?? []).map(item => item.getSortingKey()).join('|'),
-    [data],
-  )
-
-  usePreCommit(() => {
-    'main thread'
+    if (!dirtyKeysRef.current[sortingKey]) {
+      return
+    }
+    console.info('reset local drag visual2')
     MTSRef.current?.MTSSetTransform(0, 0)
     const overlayWasActive = dragSourceHidden.current
     showDragSourceItem()
@@ -1070,6 +1039,35 @@ function SortableInteractiveItem(props: SortableItemProps) {
         })
       }
     }
+    dirtyKeysRef.current[sortingKey] = false
+  }
+
+  const itemDragEnd = (
+    _pagePoint: Point,
+    event: MainThread.MouseEvent | MainThread.TouchEvent,
+  ) => {
+    'main thread'
+    resetAutoScrollDragState()
+    autoScrollStartScrollTop.current = 0
+    dragStartScrollDeltaFromMeasuredRect.current = 0
+    latestDragEvent.current = null
+    stopAutoScrollLoop()
+    const orderChanged = handleDragEnd?.(sortingKey, event) ?? false
+    if (!orderChanged) {
+      // no data update -> no precommit will run -> reset locally now
+      resetLocalDragVisuals()
+    }
+    // if orderChanged: precommit will run resetLocalDragVisuals in the same frame as setData
+  }
+
+  const dataKeyOrderSignature = useMemo(
+    () => (data ?? []).map(item => item.getSortingKey()).join('|'),
+    [data],
+  )
+
+  usePreCommit(() => {
+    'main thread'
+    resetLocalDragVisuals()
   }, [dataKeyOrderSignature])
 
   if (as === 'Draggable') {
@@ -1089,10 +1087,9 @@ function SortableInteractiveItem(props: SortableItemProps) {
         allowedDirection={['up', 'down']}
         {...(!scrollableBoundaryId && boundaryId
           && {
-            minTranslateY:
-              -(itemRectCopy.current.top - boundaryRectCopy.current.top),
-            maxTranslateY: boundaryRectCopy.current.bottom
-              - itemRectCopy.current.bottom,
+            minTranslateY: -(itemRect.top - boundaryRect.top),
+            maxTranslateY: boundaryRect.bottom
+              - itemRect.bottom,
           })}
       >
         {children}
@@ -1114,10 +1111,9 @@ function SortableInteractiveItem(props: SortableItemProps) {
         enableDragging={enableSorting}
         {...(!scrollableBoundaryId && boundaryId
           && {
-            minTranslateY:
-              -(itemRectCopy.current.top - boundaryRectCopy.current.top),
-            maxTranslateY: boundaryRectCopy.current.bottom
-              - itemRectCopy.current.bottom,
+            minTranslateY: -(itemRect.top - boundaryRect.top),
+            maxTranslateY: boundaryRect.bottom
+              - itemRect.bottom,
           })}
         allowedDirection={['up', 'down']}
       >
