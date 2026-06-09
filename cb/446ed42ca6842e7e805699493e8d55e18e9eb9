@@ -1,0 +1,108 @@
+packages/lynx-ui-sortable/src/Sortable.tsx
+  350a425a83875c03 764
+  7a510f80e8e9e761 1011 gitai:{"mixed_line_ranges":[{"Single":1011}],"operations":[]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "cb446ed42ca6842e7e805699493e8d55e18e9eb9",
+  "prompts": {
+    "1db5145a80a671b6": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-d1fc11dd-fa32-4afa-9ddd-3b7c4b7e39b8",
+        "model": "default"
+      },
+      "human_author": "fangark <201952784+fzx2666-fz@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "2b534aeabfb73a03": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-7467873f-acf0-460c-bd88-2a69dc1dae41",
+        "model": "default"
+      },
+      "human_author": "fangark <201952784+fzx2666-fz@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "350a425a83875c03": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-4f860520-2a00-4d5d-8b79-2c17e24887e6",
+        "model": "default"
+      },
+      "human_author": "fangark <201952784+fzx2666-fz@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "784eb1da66bf615e": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-e71b9a26-3478-471c-84d3-d8702e27e5c6",
+        "model": "default"
+      },
+      "human_author": "fangark <201952784+fzx2666-fz@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "7a510f80e8e9e761": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-245c0912-3b76-4489-956c-1fb20751c722",
+        "model": "default"
+      },
+      "human_author": "fangark <201952784+fzx2666-fz@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 1
+    },
+    "d0b96e664a1d4f22": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-3383367c-a26f-4bd3-adff-450cb83b4255",
+        "model": "default"
+      },
+      "human_author": "fangark <201952784+fzx2666-fz@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  },
+  "attestation_metadata": {
+    "packages/lynx-ui-sortable/src/Sortable.tsx": [
+      {
+        "hash": "7a510f80e8e9e761",
+        "line_ranges": [
+          {
+            "Single": 1011
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 1011
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
