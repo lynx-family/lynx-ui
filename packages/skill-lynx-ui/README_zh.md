@@ -10,7 +10,8 @@
 packages/skill-lynx-ui
 ├── SKILL.md
 ├── evals/
-│   └── evals.json
+│   ├── evals.json
+│   └── trigger_eval.json
 └── references
     ├── foundation.md
     ├── component-overview.md

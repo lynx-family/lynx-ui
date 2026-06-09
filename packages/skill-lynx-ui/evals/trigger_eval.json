@@ -1,0 +1,66 @@
+[
+  {
+    "query": "Help me choose the right lynx-ui primitive for a temporary action panel: Dialog, Sheet, or Popover.",
+    "should_trigger": true
+  },
+  {
+    "query": "I am adding @lynx-js/lynx-ui Button to a ReactLynx screen. Should the handler use onClick or bindtap?",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up Luna theming for a lynx-ui app and apply lunaris-dark using the documented theme classes.",
+    "should_trigger": true
+  },
+  {
+    "query": "My lynx-ui ScrollView contains expensive cards. Which component should wrap the card body so it mounts near visibility?",
+    "should_trigger": true
+  },
+  {
+    "query": "Build a lynx-ui screen with Checkbox, RadioGroup, and Switch, and verify the public props before coding.",
+    "should_trigger": true
+  },
+  {
+    "query": "I need lynx-ui styling with Tailwind and LunaPreset. What preset order and theme setup should I use?",
+    "should_trigger": true
+  },
+  {
+    "query": "Can motion-mini handle this small lynx-ui transition, or should I use the full motion package?",
+    "should_trigger": true
+  },
+  {
+    "query": "Troubleshoot a lynx-ui import issue where @lynx-js/lynx-ui does not expose the component I expected.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review this ReactLynx main thread script and explain whether runOnMainThread is used correctly.",
+    "should_trigger": false
+  },
+  {
+    "query": "Analyze this Lynx trace URL and find the FCP bottleneck in LoadTemplate and LoadJSApp.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix TypeScript module augmentation for GlobalProps and InitData in a ReactLynx project.",
+    "should_trigger": false
+  },
+  {
+    "query": "Convert this React class component to a ReactLynx function component with hooks.",
+    "should_trigger": false
+  },
+  {
+    "query": "Decode a .tasm file into JSON using the Lynx TASM CLI and compare the result.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a responsive React web dashboard with shadcn/ui cards and a desktop sidebar.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain how CSS flex gap works in Lynx compared with the web rendering model.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Node.js to read a CSV file and generate a chart in an Excel workbook.",
+    "should_trigger": false
+  }
+]

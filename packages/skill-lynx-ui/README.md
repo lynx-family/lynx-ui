@@ -10,7 +10,8 @@ It is structured so ``another platform can copy the package contents directly in
 packages/skill-lynx-ui
 |-- SKILL.md
 |-- evals/
-|   `-- evals.json
+|   |-- evals.json
+|   `-- trigger_eval.json
 `-- references
     |-- foundation.md
     |-- component-overview.md
@@ -46,6 +47,7 @@ Detailed content lives in these files:
 - `api.md`: component API source extracted from `types/index.docs.ts` or `src/types/index.docs.ts`
 - `references/components/*/examples.md`: aggregated example entries for a component, sourced from this repo
 - `evals/evals.json`: eval coverage for enriched lynx-ui task routing
+- `evals/trigger_eval.json`: trigger coverage for lynx-ui skill activation
 
 ## Maintenance
 
