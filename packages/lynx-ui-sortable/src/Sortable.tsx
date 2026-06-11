@@ -14,7 +14,7 @@ import {
 import type { RefObject } from '@lynx-js/react'
 
 import type { Point } from '@lynx-js/lynx-ui-common'
-import { usePreCommit } from '@lynx-js/lynx-ui-common'
+import { delayFrames, usePreCommit } from '@lynx-js/lynx-ui-common'
 import {
   Draggable,
   DraggableArea,
@@ -908,7 +908,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
 
   useEffect(() => {
     runOnMainThread(setChildrenMTSRef)(MTSRef, sortingKey)
-    refreshDraggingRects()
+    delayFrames(1, refreshDraggingRects)
   }, [
     data,
     refreshDraggingRects,
