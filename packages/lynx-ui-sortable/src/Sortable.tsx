@@ -147,6 +147,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     {},
   )
   const dirtyKeysRef = useMainThreadRef<Record<string, boolean>>({})
+  const disabledKeysRef = useMainThreadRef<Record<string, boolean>>({})
   const scrollableBoundaryUpperEdgeRef = useMainThreadRef(false)
   const scrollableBoundaryLowerEdgeRef = useMainThreadRef(false)
   const scrollableScrollTopRef = useMainThreadRef(0)
@@ -210,6 +211,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     itemRefMap: childrenRefMap,
     itemMTSRefMap: childrenMTSRefMap,
     dirtyKeysRef,
+    disabledKeysRef,
     onDragEnd: handleInternalSortEnd,
     onDragStart: handleInternalSortStart,
     debugLog,
@@ -234,6 +236,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
       : undefined,
     dragOverlayRefMap: scrollable ? dragOverlayRefMap : undefined,
     dirtyKeysRef,
+    disabledKeysRef,
     scrollableStickyUpperOffset,
     scrollableStickyLowerOffset,
     updateItemSize,
@@ -257,6 +260,7 @@ export function SortableRoot<T>(props: SortableRootProps<T>) {
     scrollableScrollTopRef,
     dragOverlayRefMap,
     dirtyKeysRef,
+    disabledKeysRef,
     scrollableStickyLowerOffset,
     scrollableStickyUpperOffset,
     updateItemSize,
@@ -395,7 +399,13 @@ function SortableDragOverlayItem(props: SortableItemProps) {
 }
 
 function SortableInteractiveItem(props: SortableItemProps) {
-  const { className, children, sortingKey, as = 'Draggable' } = props
+  const {
+    className,
+    children,
+    sortingKey,
+    as = 'Draggable',
+    disabled = false,
+  } = props
   const {
     data,
     enableSorting,
@@ -406,6 +416,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
     scrollableScrollTopRef,
     dragOverlayRefMap,
     dirtyKeysRef,
+    disabledKeysRef,
     scrollableStickyUpperOffset,
     scrollableStickyLowerOffset,
     updateItemSize,
@@ -917,6 +928,25 @@ function SortableInteractiveItem(props: SortableItemProps) {
     sortingKey,
   ])
 
+  const syncDisabledKey = useCallback(
+    (key: string, isDisabled: boolean) => {
+      'main thread'
+      if (isDisabled) {
+        disabledKeysRef.current[key] = true
+      } else {
+        delete disabledKeysRef.current[key]
+      }
+    },
+    [disabledKeysRef],
+  )
+
+  useEffect(() => {
+    runOnMainThread(syncDisabledKey)(sortingKey, disabled)
+    return () => {
+      runOnMainThread(syncDisabledKey)(sortingKey, false)
+    }
+  }, [disabled, sortingKey, syncDisabledKey])
+
   const handleMTSLayoutChange = (e: MainThread.LayoutChangeEvent) => {
     'main thread'
     updateItemSize(sortingKey, e.detail.height)
@@ -1070,6 +1100,8 @@ function SortableInteractiveItem(props: SortableItemProps) {
     resetLocalDragVisuals()
   }, [dataKeyOrderSignature])
 
+  const itemDraggable = enableSorting && !disabled
+
   if (as === 'Draggable') {
     return (
       <Draggable
@@ -1077,7 +1109,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
         MTSRef={MTSRef}
         trigger='immediate'
         className={className}
-        enableDragging={enableSorting}
+        enableDragging={itemDraggable}
         draggableProps={{
           'main-thread:bindlayoutchange': handleMTSLayoutChange,
         }}
@@ -1108,7 +1140,7 @@ function SortableInteractiveItem(props: SortableItemProps) {
         onMTSDragStart={itemDragStart}
         onMTSDragEnd={itemDragEnd}
         onMTSDragging={itemDragging}
-        enableDragging={enableSorting}
+        enableDragging={itemDraggable}
         {...(!scrollableBoundaryId && boundaryId
           && {
             minTranslateY: -(itemRect.top - boundaryRect.top),

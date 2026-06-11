@@ -11,6 +11,7 @@ const defaultConfig = exampleConfig({
   SortableShortScrollView: './ShortScrollView/index.tsx',
   SortableNoBoundary: './NoBoundary/index.tsx',
   SortableDisableSorting: './DisableSorting/index.tsx',
+  SortableDisableItems: './DisableItems/index.tsx',
 }, { needWeb: false })
 
 export default defaultConfig

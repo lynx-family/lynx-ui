@@ -24,6 +24,7 @@ interface SortableContextType<T = unknown> {
     Record<string, MainThread.Element | null>
   >
   dirtyKeysRef: MutableRefObject<Record<string, boolean>>
+  disabledKeysRef: MutableRefObject<Record<string, boolean>>
   scrollableStickyUpperOffset: number
   scrollableStickyLowerOffset: number
   debugLog: boolean
@@ -62,6 +63,7 @@ export const SortableContext = createContext<SortableContextType>({
   scrollableStickyUpperOffset: 0,
   scrollableStickyLowerOffset: 0,
   dirtyKeysRef: { current: {} },
+  disabledKeysRef: { current: {} },
   updateItemSize: noop,
   setChildrenRef: noop,
   setChildrenMTSRef: noop,

@@ -1,0 +1,151 @@
+@import "../shared/base.css";
+@import "../shared/palette.css";
+
+.demo-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  z-index: 0;
+}
+
+.outside-panel {
+  width: 100%;
+  height: 112px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  padding: 18px 20px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.outside-panel--top {
+  margin-bottom: 12px;
+}
+
+.outside-panel--bottom {
+  margin-top: 12px;
+}
+
+.outside-panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.outside-panel-copy {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 18px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.scroll-by-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 12px;
+}
+
+.scroll-by-button {
+  flex: 1;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.scroll-by-button--primary {
+  background-color: #ffffff;
+}
+
+.scroll-by-button-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.scroll-by-button--primary .scroll-by-button-text {
+  color: #1f2937;
+}
+
+.short-scroll-view {
+  width: 100%;
+  height: 360px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.22);
+  background-color: rgba(0, 0, 0, 0.16);
+  z-index: 0;
+}
+
+.short-sortable-root {
+  justify-content: flex-start;
+  min-height: 100%;
+  padding: 16px 12px;
+  height: max-content;
+}
+
+.sortable-item {
+  display: flex;
+  flex-direction: column;
+  height: 92px;
+  padding-bottom: 10px;
+  flex-shrink: 0;
+  background-color: transparent;
+}
+
+.sortable-item-surface {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  height: 82px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.sortable-item-surface--locked {
+  opacity: 0.55;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.sortable-item-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 18px;
+}
+
+.sortable-item-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sortable-item-subtitle {
+  margin-top: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.sortable-item-area {
+  width: 76px;
+}
+
+.sortable-item-area--locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.28);
+}
+
+.drag-here-text--locked {
+  color: rgba(255, 255, 255, 0.85);
+}

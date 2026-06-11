@@ -189,4 +189,34 @@ export interface SortableItemProps {
    * @zh 指定底层组件。若整个子节点区域均可拖动，使用默认值 'Draggable'；否则使用 'DraggableRoot'，'DraggableRoot' 需与子节点 'DraggableArea' 一起使用。仅触摸其子节点 'DraggableArea' 时可拖动。
    */
   as?: 'Draggable' | 'DraggableRoot'
+  /**
+   * Whether this item is locked from sorting.
+   *
+   * A disabled item:
+   * - Cannot be dragged itself. Touch / long-press gestures are not bound on
+   *   it, so interacting with it never starts a sort operation.
+   * - Cannot be displaced by other items being dragged. It always stays at
+   *   its current position.
+   * - Always keeps its absolute position in the final sorted order. Other
+   *   items can still freely cross over it; only the relative order of
+   *   non-disabled items can change.
+   *
+   * Note that this only affects the disabled item itself. Other (non-disabled)
+   * items keep their full interactivity.
+   *
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 是否禁用该项的拖拽排序。
+   *
+   * 被禁用的项：
+   * - 自身无法被拖动。其上不会绑定 touch / longpress 等手势，触摸该项不会触发任何排序操作。
+   * - 不会因为其他项的拖动而发生位移，始终保持在原位置。
+   * - 在最终排序结果中始终保持其绝对位置不变；其他项仍可自由地越过它进行排序，
+   *   仅未被禁用项之间的相对顺序会发生变化。
+   *
+   * 该属性只影响被禁用的项自身；其它（未被禁用的）项的交互能力不受影响。
+   */
+  disabled?: boolean
 }

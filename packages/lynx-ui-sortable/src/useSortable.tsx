@@ -23,6 +23,7 @@ interface SortableOptionsType<T> {
   itemRefMap: RefObject<Record<string, DraggableRef | null>>
   itemMTSRefMap: MainThreadRef<Record<string, DraggableRef | null>> // sortingKey -> element Ref
   dirtyKeysRef: MainThreadRef<Record<string, boolean>>
+  disabledKeysRef: MainThreadRef<Record<string, boolean>>
   onDragEnd?: (sortedKeyArray: SortableData<T>[]) => void
   onDragStart?: () => void
   debugLog?: boolean
@@ -36,6 +37,7 @@ export function useSortable<T>(
     sizeMap,
     itemMTSRefMap,
     dirtyKeysRef,
+    disabledKeysRef,
     onDragEnd,
     onDragStart,
     debugLog = false,
@@ -49,6 +51,7 @@ export function useSortable<T>(
   const touchStartPoint = useMainThreadRef<Point>({ x: 0, y: 0 })
   const lastSwappingKey = useMainThreadRef<string>('')
   const swappingItemTranslation = useMainThreadRef<number>(0)
+  const lastCrossedDisabledSize = useMainThreadRef<number>(0)
   const changedKey = useMainThreadRef<string[]>([]) // Store all the moved item. Remember to reset them
   const lastSwappedKey = useMainThreadRef<string>('') // Store the last swapped item. Use it to do the sorting.
 
@@ -85,54 +88,115 @@ export function useSortable<T>(
   const swappingIndexAndDistance: (
     movingDistance: number,
     sortingKey: string,
-  ) => { index: number, distance: number } = useCallback(
-    (movingDistance, sortingKey) => {
-      'main thread'
-      const index = keyArray.indexOf(sortingKey)
-      if (keyArray.length === 0 || index < 0 || index >= keyArray.length) {
-        mtsLog(debugLog, '[swappingIndexAndDistance] invalid index', index)
-        return { index: -1, distance: 0 }
-      }
+  ) => { index: number, distance: number, crossedDisabledSize: number } =
+    useCallback(
+      (movingDistance, sortingKey) => {
+        'main thread'
+        const index = keyArray.indexOf(sortingKey)
+        if (keyArray.length === 0 || index < 0 || index >= keyArray.length) {
+          mtsLog(debugLog, '[swappingIndexAndDistance] invalid index', index)
+          return { index: -1, distance: 0, crossedDisabledSize: 0 }
+        }
 
-      const absDistance = Math.abs(movingDistance)
-      const direction = movingDistance > 0 ? 1 : -1
-      let currentIndex = index + direction
-      let accumulatedDistance = 0
-      while (true) {
-        if (currentIndex < 0 || currentIndex >= keyArray.length) {
-          return {
-            index: -1,
-            distance: (movingDistance > 0 ? 1 : -1)
-              * (absDistance - accumulatedDistance),
+        const absDistance = Math.abs(movingDistance)
+        const direction = movingDistance > 0 ? 1 : -1
+        let currentIndex = index + direction
+        let accumulatedDistance = 0
+        // The total size of the contiguous disabled (locked) items immediately
+        // preceding the current candidate movable, i.e. the disabled gap
+        // between the previous movable neighbor (or the drag start) and the
+        // movable we are about to evaluate. Every time we pass a movable
+        // without picking it as the swap target, this gap resets to 0, so
+        // each potential swap target only sees the locked items strictly
+        // between it and its previous movable neighbor — never a cumulative
+        // total from the drag origin.
+        let disabledGap = 0
+        while (true) {
+          if (currentIndex < 0 || currentIndex >= keyArray.length) {
+            return {
+              index: -1,
+              distance: (movingDistance > 0 ? 1 : -1)
+                * (absDistance - accumulatedDistance),
+              crossedDisabledSize: disabledGap,
+            }
           }
-        }
-        const size = sizeMap.current[keyArray[currentIndex]]
-        if (typeof size !== 'number') {
-          mtsLog(
-            debugLog,
-            `[swappingIndexAndDistance] item size not found for key ${sortingKey}, stopping at index ${currentIndex}.`,
-          )
-          return {
-            index: -1,
-            distance: (movingDistance > 0 ? 1 : -1) * accumulatedDistance,
+          const currentKey = keyArray[currentIndex]
+          // Disabled (locked) items are never picked as a swap candidate and
+          // never displaced. The dragged item is allowed to cross over them by
+          // skipping past while still consuming their height, so the dragged
+          // item's physical displacement keeps in sync with `accumulatedDistance`
+          // and the disabled item's absolute position is preserved.
+          if (disabledKeysRef.current[currentKey]) {
+            const disabledSize = sizeMap.current[currentKey]
+            if (typeof disabledSize !== 'number') {
+              mtsLog(
+                debugLog,
+                `[swappingIndexAndDistance] disabled item size not found for key ${currentKey}, stopping at index ${currentIndex}.`,
+              )
+              return {
+                index: -1,
+                distance: (movingDistance > 0 ? 1 : -1) * accumulatedDistance,
+                crossedDisabledSize: disabledGap,
+              }
+            }
+            // The dragged item is still physically over this disabled item,
+            // so no swap target should be produced yet.
+            if (accumulatedDistance + disabledSize >= absDistance) {
+              mtsLog(
+                debugLog,
+                `[swappingIndexAndDistance] still over disabled item ${currentKey} at index ${currentIndex}.`,
+              )
+              return {
+                index: -1,
+                distance: (movingDistance > 0 ? 1 : -1) * accumulatedDistance,
+                crossedDisabledSize: disabledGap,
+              }
+            }
+            mtsLog(
+              debugLog,
+              `[swappingIndexAndDistance] cross disabled item ${currentKey} at index ${currentIndex}.`,
+            )
+            accumulatedDistance += disabledSize
+            disabledGap += disabledSize
+            currentIndex += direction
+            continue
           }
-        }
-        accumulatedDistance += size
+          const size = sizeMap.current[currentKey]
+          if (typeof size !== 'number') {
+            mtsLog(
+              debugLog,
+              `[swappingIndexAndDistance] item size not found for key ${sortingKey}, stopping at index ${currentIndex}.`,
+            )
+            return {
+              index: -1,
+              distance: (movingDistance > 0 ? 1 : -1) * accumulatedDistance,
+              crossedDisabledSize: disabledGap,
+            }
+          }
+          accumulatedDistance += size
 
-        if (accumulatedDistance >= absDistance) {
-          return {
-            index: currentIndex,
-            // This distance is the remained dragging distance needs to be consumed by current interacting item.
-            // E.g.: the total delta is 458 and all item is all 100px tall. Then the first 400 will be consumed the previous clamped items. And the 58 is current interacting item.
-            distance: (movingDistance > 0 ? 1 : -1)
-              * (accumulatedDistance - size),
+          if (accumulatedDistance >= absDistance) {
+            return {
+              index: currentIndex,
+              // This distance is the remained dragging distance needs to be consumed by current interacting item.
+              // E.g.: the total delta is 458 and all item is all 100px tall. Then the first 400 will be consumed the previous clamped items. And the 58 is current interacting item.
+              distance: (movingDistance > 0 ? 1 : -1)
+                * (accumulatedDistance - size),
+              // Only the disabled items strictly between the previous movable
+              // neighbor and this swap target. Locked items further back have
+              // already been accounted for when their own following movable
+              // became (and was clamped as) a swap target.
+              crossedDisabledSize: disabledGap,
+            }
           }
+          // We just passed this movable without choosing it as the swap target,
+          // so the disabled gap "in front of" the next candidate restarts here.
+          disabledGap = 0
+          currentIndex += direction
         }
-        currentIndex += direction
-      }
-    },
-    [keyArray, sizeMap],
-  )
+      },
+      [keyArray, sizeMap, disabledKeysRef],
+    )
 
   const setTransform = useCallback(
     (key: string, translate: number) => {
@@ -161,9 +225,14 @@ export function useSortable<T>(
         Math.abs(swappingItemTranslation.current)
           > draggingItemSize * swapConfirmedPercentage.current
       ) {
+        // The previous swap target's "swapped" position must include the
+        // height of any disabled items the dragged item had crossed over to
+        // reach it; otherwise it would visually overlap with the (still
+        // in-place) disabled items after we leave it behind.
         setTransform(
           lastSwappingItemKey,
-          (movingDistance < 0 ? 1 : -1) * draggingItemSize,
+          (movingDistance < 0 ? 1 : -1)
+            * (draggingItemSize + lastCrossedDisabledSize.current),
         )
       } else {
         setTransform(lastSwappingItemKey, 0)
@@ -244,13 +313,17 @@ export function useSortable<T>(
   const switchHandler = useCallback(
     (movingDistance: number, sortingKey: string) => {
       'main thread'
-      const { index: swappingIndex, distance: consumedDistance } =
-        swappingIndexAndDistance(movingDistance, sortingKey)
+      const {
+        index: swappingIndex,
+        distance: consumedDistance,
+        crossedDisabledSize = 0,
+      } = swappingIndexAndDistance(movingDistance, sortingKey)
       mtsLog(
         debugLog,
         'swappingIndexAndDistance',
         swappingIndex,
         consumedDistance,
+        crossedDisabledSize,
       )
       if (swappingIndex < 0) {
         clampPreviousItem(consumedDistance, sortingKey)
@@ -265,7 +338,18 @@ export function useSortable<T>(
 
       const unconsumedDistance = movingDistance - consumedDistance
       updateConfirmedInteractedID(unconsumedDistance, sortingKey)
-      setTransform(swappingKey, -unconsumedDistance)
+      // When the dragged item has crossed over disabled items, those items do
+      // not translate. To avoid the swap target jumping, scale its translate
+      // proportionally as the dragged item progresses over it: while the
+      // dragged item moves `swappingItemSize` over the swap target, the swap
+      // target translates `swappingItemSize + crossedDisabledSize`, ending
+      // exactly at the dragged item's original slot without any jump.
+      const swappingItemSize = sizeMap.current[swappingKey] ?? 0
+      const speedMultiplier = swappingItemSize > 0
+        ? (swappingItemSize + crossedDisabledSize) / swappingItemSize
+        : 1
+      setTransform(swappingKey, -unconsumedDistance * speedMultiplier)
+      lastCrossedDisabledSize.current = crossedDisabledSize
     },
     [
       changedKey,
@@ -297,7 +381,6 @@ export function useSortable<T>(
     'main thread'
     const draggingIndex = keyArray.indexOf(sortingKey)
     const swappedIndex = keyArray.indexOf(lastSwappedKey.current)
-    const swappedKeyArray = [...keyArray]
 
     mtsLog(debugLog, 'sortArray with lastSwappedKey ', lastSwappedKey.current)
 
@@ -305,21 +388,56 @@ export function useSortable<T>(
       draggingIndex === -1 || swappedIndex === -1
       || draggingIndex === swappedIndex
     ) {
-      return swappedKeyArray
+      return [...keyArray]
     }
 
-    const [draggedItem] = swappedKeyArray.splice(draggingIndex, 1)
-    swappedKeyArray.splice(swappedIndex, 0, draggedItem)
-    return swappedKeyArray
-  }, [keyArray, lastSwappedKey])
+    // Disabled items must keep their absolute positions in the result. We
+    // splice only the movable (non-disabled) sequence and then reinsert
+    // disabled items at their original indices.
+    const disabledIndices: Record<number, string> = {}
+    const movableKeys: string[] = []
+    for (let i = 0; i < keyArray.length; i++) {
+      const k = keyArray[i]
+      if (disabledKeysRef.current[k]) {
+        disabledIndices[i] = k
+      } else {
+        movableKeys.push(k)
+      }
+    }
+    const movableDraggingIdx = movableKeys.indexOf(sortingKey)
+    const movableSwappedIdx = movableKeys.indexOf(lastSwappedKey.current)
+    if (movableDraggingIdx === -1 || movableSwappedIdx === -1) {
+      return [...keyArray]
+    }
+    const [draggedItem] = movableKeys.splice(movableDraggingIdx, 1)
+    movableKeys.splice(movableSwappedIdx, 0, draggedItem)
+    const result: string[] = []
+    let cursor = 0
+    for (let i = 0; i < keyArray.length; i++) {
+      if (disabledIndices[i] === undefined) {
+        result.push(movableKeys[cursor])
+        cursor++
+      } else {
+        result.push(disabledIndices[i])
+      }
+    }
+    return result
+  }, [keyArray, lastSwappedKey, disabledKeysRef])
 
   const resetSwapTrackingRefs = useCallback(() => {
     'main thread'
     lastSwappedKey.current = ''
     lastSwappingKey.current = ''
     swappingItemTranslation.current = 0
+    lastCrossedDisabledSize.current = 0
     changedKey.current = []
-  }, [changedKey, lastSwappedKey, lastSwappingKey, swappingItemTranslation])
+  }, [
+    changedKey,
+    lastSwappedKey,
+    lastSwappingKey,
+    swappingItemTranslation,
+    lastCrossedDisabledSize,
+  ])
 
   const resetStatus = useCallback((draggingKey?: string) => {
     'main thread'
