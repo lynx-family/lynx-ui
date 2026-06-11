@@ -18,6 +18,7 @@
     "evals"
   ],
   "scripts": {
+    "check:eval-definitions": "node ../../tools/skill-lynx-ui/check-eval-definitions.mjs",
     "check:references": "node ../../tools/skill-lynx-ui/check-references.mjs",
     "clean:generated": "node ../../tools/skill-lynx-ui/clean-generated.mjs",
     "generate:references": "node ../../tools/skill-lynx-ui/generate-references.mjs",
