@@ -1,5 +1,26 @@
 # @lynx-js/lynx-ui-sortable
 
+## 3.135.0
+
+### Minor Changes
+
+- feat(sortable): support `disabled` items that always keep their absolute position ([#220](https://github.com/lynx-family/lynx-ui/pull/220))
+
+  `SortableItem` now accepts a `disabled` prop. Disabled items cannot be dragged
+  themselves and are never displaced by other items' dragging — they always keep
+  their absolute position in the final sorted order. Other items can still
+  freely cross over them, and only the relative order of non-disabled items can
+  change.
+
+  The cross-over translate compensation is scoped to the disabled gap strictly
+  between the swap target and its previous movable neighbor, so consecutive
+  swaps across alternating locked / unlocked items land each item at the
+  expected slot without over-shooting.
+
+### Patch Changes
+
+- fix: delay rect refresh to avoid layout jank ([#216](https://github.com/lynx-family/lynx-ui/pull/216))
+
 ## 3.134.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-scroll-view",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Example app demonstrating ScrollView usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/ScrollView#readme",
   "repository": {

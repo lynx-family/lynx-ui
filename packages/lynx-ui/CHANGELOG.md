@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui
 
+## 3.135.0
+
+### Patch Changes
+
+- Updated dependencies [[`12e6e54`](https://github.com/lynx-family/lynx-ui/commit/12e6e5456e720d1fdbef250e2c87c91f7589cf5b), [`f5db6b5`](https://github.com/lynx-family/lynx-ui/commit/f5db6b57dba17b6472c9cbbd992ad2d9586169bf)]:
+  - @lynx-js/lynx-ui-sortable@3.135.0
+
 ## 3.134.0
 
 ### Patch Changes

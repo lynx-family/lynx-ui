@@ -1,5 +1,11 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.4
+
+### Patch Changes
+
+- Align lynx-ui skill eval definitions with the marketplace validation schema. ([#218](https://github.com/lynx-family/lynx-ui/pull/218))
+
 ## 3.133.3
 
 ### Patch Changes
