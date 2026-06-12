@@ -1,6 +1,6 @@
 ---
 name: lynx-ui
-description: Use when building with lynx-ui: select components, verify public APIs, adapt examples, configure Luna themes, choose motion packages, compose screens, or troubleshoot lynx-ui usage.
+description: "Use when building with lynx-ui: select components, verify public APIs, adapt examples, configure Luna themes, choose motion packages, compose screens, or troubleshoot lynx-ui usage."
 ---
 
 # lynx-ui

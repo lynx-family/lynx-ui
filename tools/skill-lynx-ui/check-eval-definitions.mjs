@@ -7,6 +7,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { parseDocument } from 'yaml'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const workspaceRoot = path.resolve(__dirname, '..', '..')
@@ -62,29 +64,32 @@ async function main() {
 }
 
 function parseSkillFrontmatter(content) {
-  const lines = content.split(/\r?\n/u)
-  if (lines[0]?.trim() !== '---') {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/u.exec(content)
+  if (!match) {
     throw new Error(`${skillMdPath} missing frontmatter`)
   }
 
-  const frontmatter = []
-  for (let index = 1; index < lines.length; index += 1) {
-    const line = lines[index]
-    if (line.trim() === '---') {
-      break
-    }
-    frontmatter.push(line)
+  const document = parseDocument(match[1])
+  if (document.errors.length > 0) {
+    throw new Error(
+      `${skillMdPath} has invalid YAML frontmatter: ${
+        document.errors[0].message
+      }`,
+    )
   }
 
-  const nameLine = frontmatter.find(line => line.startsWith('name:'))
-  const name = nameLine
-    ?.slice('name:'.length)
-    .trim()
-    .replace(/^['"]|['"]$/g, '')
-  if (!name) {
+  const frontmatter = document.toJS()
+  assertObject(frontmatter, `${skillMdPath} frontmatter`)
+  if (typeof frontmatter.name !== 'string' || frontmatter.name.trim() === '') {
     throw new Error(`${skillMdPath} frontmatter missing name`)
   }
-  return { name }
+  if (
+    typeof frontmatter.description !== 'string'
+    || frontmatter.description.trim() === ''
+  ) {
+    throw new Error(`${skillMdPath} frontmatter missing description`)
+  }
+  return { name: frontmatter.name }
 }
 
 async function validateTaskEvals(skillName, filePath) {
