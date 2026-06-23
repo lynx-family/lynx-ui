@@ -52,6 +52,10 @@ export default tseslint.config(
       'tools/typings/**/*.d.ts',
       '**/tools/make-new-component/examplesTemplate/**',
       '**/tools/make-new-component/template/**',
+
+      // Standalone Vue Lynx port: managed by its own toolchain (npm + Volar),
+      // outside the pnpm workspace and root tsconfig program.
+      'vue-lynx-ui/**',
     ],
   },
   js.configs.recommended,

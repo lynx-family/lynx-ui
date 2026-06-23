@@ -40,6 +40,9 @@
     "**/dist",
     "**/lib",
 
+    // Standalone Vue Lynx port (own toolchain)
+    "vue-lynx-ui/**",
+
     // Test snapshots
     "**/expected/**",
     "**/rspack-expected/**",

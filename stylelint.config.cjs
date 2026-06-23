@@ -4,6 +4,7 @@ module.exports = {
   ignoreFiles: [
     '**/dist/**',
     '**/node_modules/**',
+    'vue-lynx-ui/**',
   ],
   plugins: [
     path.resolve(__dirname, './tools/stylelint/luna-known-css-vars.mjs'),

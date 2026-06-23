@@ -46,6 +46,8 @@
     // Output
     "dist",
     "lib",
+    // Standalone Vue Lynx port (own toolchain)
+    "vue-lynx-ui",
     // Dependencies
     "lynx-stack",
     "node_modules",

@@ -15,7 +15,7 @@
     "enabled": false,
   },
   "files": {
-    "ignore": [".vscode"],
+    "ignore": [".vscode", "vue-lynx-ui/**"],
   },
   "linter": {
     "enabled": true,
