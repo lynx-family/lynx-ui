@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-sortable
 
+## 0.0.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.135.1
+
 ## 0.0.11
 
 ### Patch Changes

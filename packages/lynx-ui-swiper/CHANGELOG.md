@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-swiper
 
+## 3.135.1
+
+### Patch Changes
+
+- Keep custom-mode swiper navigation from being locked when item content does not fill the container. ([#223](https://github.com/lynx-family/lynx-ui/pull/223))
+
 ## 3.133.1
 
 ### Patch Changes

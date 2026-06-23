@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-checkbox",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Example app demonstrating Checkbox usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Checkbox#readme",
   "repository": {

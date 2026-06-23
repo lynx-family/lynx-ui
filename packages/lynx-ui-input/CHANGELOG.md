@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-input
 
+## 3.135.1
+
+### Patch Changes
+
+- Refresh KeyboardAwareResponder scroll metrics when the responder layout changes. ([#221](https://github.com/lynx-family/lynx-ui/pull/221))
+
 ## 3.133.1
 
 ### Patch Changes
