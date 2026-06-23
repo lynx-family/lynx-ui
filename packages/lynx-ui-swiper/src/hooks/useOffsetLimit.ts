@@ -55,7 +55,10 @@ export function useOffsetLimit({
       }
     } else {
       // If SwiperItem can not occupy the screen, do not apply offsetLimit.
-      if (totalContentWidth <= containerWidth + epsilon) {
+      if (
+        modeConfig.mode === 'normal'
+        && totalContentWidth <= containerWidth + epsilon
+      ) {
         return {
           startLimit: 0,
           // Lock both start/end to the same offset to disable scroll.
