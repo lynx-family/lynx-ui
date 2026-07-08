@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-scroll-view
 
+## 3.135.2
+
+### Patch Changes
+
+- Forward experimental nested scroll behavior props to the underlying scroll-view element. ([#226](https://github.com/lynx-family/lynx-ui/pull/226))
+
 ## 3.133.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-sortable",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Example app demonstrating Sortable usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Sortable#readme",
   "repository": {

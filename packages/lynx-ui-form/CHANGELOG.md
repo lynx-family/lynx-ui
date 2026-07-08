@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui-form
 
+## 3.135.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui-input@3.135.2
+
 ## 3.135.1
 
 ### Patch Changes
