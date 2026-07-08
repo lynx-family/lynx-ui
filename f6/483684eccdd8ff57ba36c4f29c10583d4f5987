@@ -1,0 +1,25 @@
+.changeset/forward-nested-scroll-props.md
+  s_fcfcb5ddd316d5::t_d5f78180d7c341 5
+packages/lynx-ui-scroll-view/src/index.tsx
+  s_fcfcb5ddd316d5::t_feb69dfff515fe 92-93,196,199,231-232,234-235
+packages/lynx-ui-scroll-view/src/types/index.docs.ts
+  s_fcfcb5ddd316d5::t_3ac976d524c4d9 277,288
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f6483684eccdd8ff57ba36c4f29c10583d4f5987",
+  "prompts": {},
+  "sessions": {
+    "s_fcfcb5ddd316d5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f4042-21e4-7110-b0cf-00333a7e4db1",
+        "model": "unknown"
+      },
+      "human_author": "Moonface <mr.moonfacex@gmail.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
