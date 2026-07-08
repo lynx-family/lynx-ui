@@ -1,0 +1,21 @@
+packages/lynx-ui-scroll-view/src/types/index.docs.ts
+  s_fcfcb5ddd316d5::t_ba94c7e94b370c 273-274,284-285
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d603799b3eab9fe3df0c8634d150c62b55f07c4b",
+  "prompts": {},
+  "sessions": {
+    "s_fcfcb5ddd316d5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f4042-21e4-7110-b0cf-00333a7e4db1",
+        "model": "unknown"
+      },
+      "human_author": "Moonface <mr.moonfacex@gmail.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
