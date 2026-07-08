@@ -89,6 +89,8 @@ function ScrollViewImpl(
     temporaryBlockScrollClass = 'BDXLynxViewPager',
     temporaryBlockScrollTag = 0,
     temporaryNestedScroll,
+    experimentalNestedScrollForward,
+    experimentalNestedScrollBackward,
     androidTouchSlop,
     'main-thread:gesture': gesture,
   } = props
@@ -190,6 +192,12 @@ function ScrollViewImpl(
     'main-thread:gesture'?: GestureKind
     'enable-new-nested'?: boolean
     'enable-nested-scroll'?: boolean
+    'temporary-nested-scroll-forward'?: ScrollViewProps[
+      'experimentalNestedScrollForward'
+    ]
+    'temporary-nested-scroll-backward'?: ScrollViewProps[
+      'experimentalNestedScrollBackward'
+    ]
     'force-can-scroll'?: boolean
     'ios-block-gesture-class'?: string
     'ios-recognized-view-tag'?: number
@@ -220,6 +228,12 @@ function ScrollViewImpl(
     'enable-scroll': enableScroll,
     ...(androidTouchSlop !== undefined
       && { 'android-touch-slop': androidTouchSlop }),
+    ...(experimentalNestedScrollForward !== undefined && {
+      'temporary-nested-scroll-forward': experimentalNestedScrollForward,
+    }),
+    ...(experimentalNestedScrollBackward !== undefined && {
+      'temporary-nested-scroll-backward': experimentalNestedScrollBackward,
+    }),
     ...registerEvents,
   }
 

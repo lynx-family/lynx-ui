@@ -270,6 +270,28 @@ export interface ScrollViewProps
   'main-thread:gesture'?: BaseGesture
 
   /**
+   * Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time.
+   * @zh 适配 Harmony 的嵌套滚动行为。'selfOnly' 表示只自身滚动，不与父组件联动。'selfFirst' 表示自身先滚动，自身滚动到边界以后父组件滚动。'parentFirst' 表示父组件先滚动，父组件滚动到边界以后自身滚动。'parallel' 表示自身和父组件同时滚动。
+   * @Harmony
+   */
+  experimentalNestedScrollForward?:
+    | 'selfOnly'
+    | 'selfFirst'
+    | 'parentFirst'
+    | 'parallel'
+
+  /**
+   * Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time.
+   * @zh 适配 Harmony 的嵌套滚动行为。'selfOnly' 表示只自身滚动，不与父组件联动。'selfFirst' 表示自身先滚动，自身滚动到边界以后父组件滚动。'parentFirst' 表示父组件先滚动，父组件滚动到边界以后自身滚动。'parallel' 表示自身和父组件同时滚动。
+   * @Harmony
+   */
+  experimentalNestedScrollBackward?:
+    | 'selfOnly'
+    | 'selfFirst'
+    | 'parentFirst'
+    | 'parallel'
+
+  /**
    * Android touch recognition mode. When inside a component that supports 'paging' mode, 'paging' must be enabled.
    * @zh Android 触摸识别模式，当处于支持 'paging' 模式的元件中时，需要开启 'paging' 模式。
    * @Android
