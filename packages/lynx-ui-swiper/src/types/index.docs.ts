@@ -135,13 +135,52 @@ export interface SwiperProps<T> {
    */
   'main-thread:onOffsetChange'?: (offset: number) => void
   /**
-   * Custom easing function for paging effect
+   * Legacy custom easing function for paging effect.
+   * Will be merged into `easingConfig.easing`, while `easingConfig.easing` takes higher priority.
+   * Should be a MainThread function.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 自定义翻页效果的缓动函数
+   * @zh 翻页动画的旧版自定义缓动函数。会被合并到`easingConfig.easing`中，但`easingConfig.easing`优先级更高。应为主线程函数。
    */
   'main-thread:easing'?: (progress: number) => number
+  /**
+   * Easing-related configuration for paging effect.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 翻页动画相关的缓动配置。
+   */
+  easingConfig?: {
+    /**
+     * Custom easing function for paging effect.
+     * Should be a MainThread function.
+     * @Android
+     * @iOS
+     * @Harmony
+     * @zh 自定义翻页效果的缓动函数，应为主线程函数
+     */
+    'main-thread:easing'?: (progress: number) => number
+    /**
+     * Infers the original time progress `t` from an eased progress ratio for paging effect.
+     * Should be a MainThread function.
+     * @Android
+     * @iOS
+     * @Harmony
+     * @zh 自定义翻页效果中，根据缓动后的 progress 比例反推出原始时间进度 `t` 的函数。应为主线程函数。
+     */
+    'main-thread:inferProgressFromEasingRatio'?: (progress: number) => number
+    /**
+     * Whether to infer the animation start progress from the current eased progress.
+     * This should be enabled when `easing` and `inferProgressFromEasingRatio` are provided together.
+     * @defaultValue false
+     * @Android
+     * @iOS
+     * @Harmony
+     * @zh 是否根据松手后的位移情况来推断缓动函数的起始 progress。
+     */
+    enableInferStartProgress?: boolean
+  }
   /**
    * Custom animation effect, should be a MainThread function
    * @Android

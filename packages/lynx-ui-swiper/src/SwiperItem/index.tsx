@@ -17,6 +17,8 @@ import type { CSSProperties, MainThread } from '@lynx-js/types'
 import { SwiperContext, SwiperItemContext } from '../store'
 import type { CompoundModeConfig, SwiperContextProps } from '../types'
 
+import './styles.css'
+
 export interface SwiperItemProps {
   /**
    * Index of current SwiperItem, out of Swiper's data.

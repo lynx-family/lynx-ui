@@ -1,0 +1,4 @@
+.swiper-item-container {
+  display: linear;
+  linear-orientation: horizontal;
+}

@@ -49,7 +49,10 @@ export function useModeConfig({
     return newConfig
   }, [mode, modeConfig])
 
-  const spaceBetween = (modeConfig.spaceBetween as number) ?? 0
+  const normalModeConfig = modeConfig as SwiperProps<unknown>['modeConfig'] & {
+    spaceBetween?: number
+  }
+  const spaceBetween = normalModeConfig?.spaceBetween ?? 0
 
   return { modeConfig: normalizedModeConfig, spaceBetween }
 }
