@@ -86,6 +86,35 @@ function limiterMTS(
   return { offset: finalOffset, reachingLimit }
 }
 
+function normalizeLoopOffset(offset: number, totalSize: number) {
+  'main thread'
+  if (totalSize <= 0) {
+    return 0
+  }
+
+  const normalizedOffset = -(((-offset % totalSize) + totalSize) % totalSize)
+  return normalizedOffset === 0 ? 0 : normalizedOffset
+}
+
+function normalizeLoopTransition(
+  startOffset: number,
+  finalOffset: number,
+  totalSize: number,
+) {
+  'main thread'
+  if (totalSize <= 0) {
+    return { offset: 0, finalOffset: 0 }
+  }
+
+  const normalizedFinalOffset = normalizeLoopOffset(finalOffset, totalSize)
+  const normalizationDelta = normalizedFinalOffset - finalOffset
+
+  return {
+    offset: startOffset + normalizationDelta,
+    finalOffset: normalizedFinalOffset,
+  }
+}
+
 const EPSILON = 1e-10
 
 export function fixPrecisionMT(num: number): number {
@@ -114,4 +143,11 @@ export function eqOrLtMT(a: number, b: number, epsilon = EPSILON) {
   return Math.abs(a - b) < epsilon || a < b
 }
 
-export { easeOut, limiter, limiterMTS, limiterForFirstScreen }
+export {
+  easeOut,
+  limiter,
+  limiterForFirstScreen,
+  limiterMTS,
+  normalizeLoopOffset,
+  normalizeLoopTransition,
+}

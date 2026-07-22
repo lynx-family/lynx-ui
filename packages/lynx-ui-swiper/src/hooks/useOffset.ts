@@ -11,7 +11,7 @@ import {
 import { useTapLock } from '@lynx-js/react-use'
 import type { MainThread } from '@lynx-js/types'
 
-import { limiter } from '../utils'
+import { limiter, normalizeLoopOffset, normalizeLoopTransition } from '../utils'
 import { useAnimate } from './useAnimate'
 import { useAutoplay } from './useAutoPlay'
 import { useAxisLock } from './useAxisLock'
@@ -239,27 +239,15 @@ function useOffset(
 
   function calcLoop(start: number, end: number) {
     'main thread'
-    let startOffset = start
-    let finalOffset = end
     if (dataCount === 0) {
       return { offset: 0, finalOffset: 0 }
     }
-    const totalWidth = fullSize * dataCount
-    if (loop) {
-      if (finalOffset < -totalWidth + fullSize) {
-        // If go beyond last item, like n + 1 item, let the destination be 1
-        finalOffset = finalOffset + totalWidth
-        startOffset = startOffset + totalWidth
-      } else if (finalOffset > 0) {
-        // If go before first item, like -1 item, let the destination be n - 1
-        finalOffset = finalOffset - totalWidth
-        startOffset = startOffset - totalWidth
-      }
+
+    if (!loop) {
+      return { offset: start, finalOffset: end }
     }
-    return {
-      offset: startOffset,
-      finalOffset,
-    }
+
+    return normalizeLoopTransition(start, end, fullSize * dataCount)
   }
 
   const {
@@ -527,6 +515,9 @@ function useOffset(
     let offsetInner = sign * (event.detail.x - touchStartRef.current)
       + lastScrollOffsetRef.current
     offsetInner = calcBounceOffsetAndLimit(offsetInner)
+    if (loop) {
+      offsetInner = normalizeLoopOffset(offsetInner, fullSize * dataCount)
+    }
     setOffset(offsetInner)
     velocityTouchMove(event)
     swipeCallbackTouchMove(event)
