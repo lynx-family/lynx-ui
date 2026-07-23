@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-dialog
 
+## 0.0.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.135.3
+
 ## 0.0.13
 
 ### Patch Changes

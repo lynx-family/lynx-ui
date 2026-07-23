@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.135.3
+
+### Patch Changes
+
+- Update `@lynx-js/react-use` to 0.2.2. ([#228](https://github.com/lynx-family/lynx-ui/pull/228))
+
 ## 3.133.1
 
 ### Patch Changes

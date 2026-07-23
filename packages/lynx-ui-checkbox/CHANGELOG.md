@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui-checkbox
 
+## 3.135.3
+
+### Patch Changes
+
+- Updated dependencies [[`44c1de6`](https://github.com/lynx-family/lynx-ui/commit/44c1de68cf47e03c5136431a9efea7cbee69e752)]:
+  - @lynx-js/lynx-ui-button@3.135.3
+  - @lynx-js/lynx-ui-common@3.135.3
+
 ## 3.133.1
 
 ### Patch Changes

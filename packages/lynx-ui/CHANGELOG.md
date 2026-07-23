@@ -1,5 +1,31 @@
 # @lynx-js/lynx-ui
 
+## 3.135.3
+
+### Patch Changes
+
+- Updated dependencies [[`44c1de6`](https://github.com/lynx-family/lynx-ui/commit/44c1de68cf47e03c5136431a9efea7cbee69e752), [`841ec37`](https://github.com/lynx-family/lynx-ui/commit/841ec37c9ebe9f938db76fd49c159accd6ffbd68)]:
+  - @lynx-js/lynx-ui-button@3.135.3
+  - @lynx-js/lynx-ui-common@3.135.3
+  - @lynx-js/lynx-ui-draggable@3.135.3
+  - @lynx-js/lynx-ui-swiper@3.135.3
+  - @lynx-js/lynx-ui-switch@3.135.3
+  - @lynx-js/lynx-ui-checkbox@3.135.3
+  - @lynx-js/lynx-ui-dialog@3.135.3
+  - @lynx-js/lynx-ui-form@3.135.3
+  - @lynx-js/lynx-ui-popover@3.135.3
+  - @lynx-js/lynx-ui-radio-group@3.135.3
+  - @lynx-js/lynx-ui-feed-list@3.135.3
+  - @lynx-js/lynx-ui-input@3.135.3
+  - @lynx-js/lynx-ui-lazy-component@3.135.3
+  - @lynx-js/lynx-ui-list@3.135.3
+  - @lynx-js/lynx-ui-presence@3.135.3
+  - @lynx-js/lynx-ui-scroll-view@3.135.3
+  - @lynx-js/lynx-ui-sheet@3.135.3
+  - @lynx-js/lynx-ui-slider@3.135.3
+  - @lynx-js/lynx-ui-sortable@3.135.3
+  - @lynx-js/lynx-ui-swipe-action@3.135.3
+
 ## 3.135.2
 
 ### Patch Changes

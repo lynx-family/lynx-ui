@@ -1,5 +1,14 @@
 # @lynx-js/lynx-ui-switch
 
+## 3.135.3
+
+### Patch Changes
+
+- Update `@lynx-js/react-use` to 0.2.2. ([#228](https://github.com/lynx-family/lynx-ui/pull/228))
+
+- Updated dependencies [[`44c1de6`](https://github.com/lynx-family/lynx-ui/commit/44c1de68cf47e03c5136431a9efea7cbee69e752)]:
+  - @lynx-js/lynx-ui-common@3.135.3
+
 ## 3.133.1
 
 ### Patch Changes
