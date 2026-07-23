@@ -1,0 +1,46 @@
+{
+  "name": "@lynx-js/lynx-ui-storybook",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"pnpm run lynx:watch\" \"pnpm run storybook\"",
+    "lynx:build": "rspeedy build --environment web",
+    "lynx:watch": "rspeedy build --watch --environment web",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@lynx-js/react": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/lynx-ui-button": "workspace:*",
+    "@lynx-js/lynx-ui-checkbox": "workspace:*",
+    "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/lynx-ui-dialog": "workspace:*",
+    "@lynx-js/lynx-ui-draggable": "workspace:*",
+    "@lynx-js/lynx-ui-form": "workspace:*",
+    "@lynx-js/lynx-ui-input": "workspace:*",
+    "@lynx-js/lynx-ui-list": "workspace:*",
+    "@lynx-js/lynx-ui-overlay": "workspace:*",
+    "@lynx-js/lynx-ui-popover": "workspace:*",
+    "@lynx-js/lynx-ui-presence": "workspace:*",
+    "@lynx-js/lynx-ui-radio-group": "workspace:*",
+    "@lynx-js/lynx-ui-scroll-view": "workspace:*",
+    "@lynx-js/lynx-ui-sheet": "workspace:*",
+    "@lynx-js/lynx-ui-slider": "workspace:*",
+    "@lynx-js/lynx-ui-sortable": "workspace:*",
+    "@lynx-js/lynx-ui-swipe-action": "workspace:*",
+    "@lynx-js/lynx-ui-swiper": "workspace:*",
+    "@lynx-js/lynx-ui-switch": "workspace:*",
+    "clsx": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-js/react-rsbuild-plugin": "catalog:",
+    "@lynx-js/rspeedy": "catalog:",
+    "@rsbuild/core": "^2.0.0",
+    "storybook": "^10.5.3",
+    "storybook-lynx-rsbuild": "^0.1.0",
+    "concurrently": "^9.0.0"
+  }
+}
