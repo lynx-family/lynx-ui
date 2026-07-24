@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - apps/examples/*
+  - apps/storybook
   - luna/packages/*
   - tools/rsbuild-plugin-select-entry
   - tools/canary-release
