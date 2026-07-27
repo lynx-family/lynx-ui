@@ -35,7 +35,7 @@
   "devDependencies": {
     "@lynx-js/react": "catalog:",
     "@lynx-js/types": "catalog:",
-    "@rslib/core": "^0.16.0",
+    "@rslib/core": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"
   },

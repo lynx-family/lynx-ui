@@ -1174,7 +1174,7 @@ importers:
         specifier: 'catalog:'
         version: 3.6.0
       '@rslib/core':
-        specifier: ^0.16.0
+        specifier: 'catalog:'
         version: 0.16.1(typescript@5.9.3)
       '@types/react':
         specifier: 'catalog:'
@@ -1233,7 +1233,7 @@ importers:
         specifier: 'catalog:'
         version: 3.6.0
       '@rslib/core':
-        specifier: ^0.16.0
+        specifier: 'catalog:'
         version: 0.16.1(typescript@5.9.3)
       '@types/react':
         specifier: 'catalog:'
