@@ -27,8 +27,8 @@
     "test": "vitest run --config ../../tools/skill-lynx-ui/vitest.config.ts"
   },
   "devDependencies": {
-    "@types/node": "^24",
-    "vitest": "2.1.8"
+    "@types/node": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"
