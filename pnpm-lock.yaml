@@ -761,6 +761,37 @@ importers:
         specifier: catalog:tailwind
         version: 3.4.17
 
+  apps/examples/select:
+    dependencies:
+      '@lynx-js/luna-styles':
+        specifier: workspace:*
+        version: link:../../../luna/packages/luna-styles
+      '@lynx-js/lynx-ui':
+        specifier: workspace:*
+        version: link:../../../packages/lynx-ui
+      '@lynx-js/react':
+        specifier: 'catalog:'
+        version: 0.114.0(@lynx-js/types@3.6.0)(@types/react@18.3.28)
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+    devDependencies:
+      '@lynx-js/qrcode-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.4.6
+      '@lynx-js/react-rsbuild-plugin':
+        specifier: 'catalog:'
+        version: 0.12.4(@lynx-js/react@0.114.0(@lynx-js/types@3.6.0)(@types/react@18.3.28))(webpack@5.106.2(postcss@8.5.14))
+      '@lynx-js/rspeedy':
+        specifier: 'catalog:'
+        version: 0.12.2(@rspack/core@1.6.6(@swc/helpers@0.5.21))(typescript@5.9.3)(webpack@5.106.2(postcss@8.5.14))
+      '@lynx-js/types':
+        specifier: 'catalog:'
+        version: 3.6.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.28
+
   luna/packages/luna-core:
     devDependencies:
       '@dugyu/luna-core':
@@ -855,6 +886,9 @@ importers:
       '@lynx-js/lynx-ui-scroll-view':
         specifier: workspace:*
         version: link:../lynx-ui-scroll-view
+      '@lynx-js/lynx-ui-select':
+        specifier: workspace:*
+        version: link:../lynx-ui-select
       '@lynx-js/lynx-ui-sheet':
         specifier: workspace:*
         version: link:../lynx-ui-sheet
@@ -1297,6 +1331,31 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 0.23.2(core-js@3.47.0)(typescript@5.9.3)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.28
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/lynx-ui-select:
+    dependencies:
+      '@lynx-js/lynx-ui-common':
+        specifier: workspace:*
+        version: link:../lynx-ui-common
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+    devDependencies:
+      '@lynx-js/react':
+        specifier: 'catalog:'
+        version: 0.114.0(@lynx-js/types@3.6.0)(@types/react@18.3.28)
+      '@lynx-js/types':
+        specifier: 'catalog:'
+        version: 3.6.0
+      '@rslib/core':
+        specifier: 'catalog:'
+        version: 0.16.1(typescript@5.9.3)
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
