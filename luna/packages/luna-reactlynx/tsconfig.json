@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": ".",
+    "noEmit": true,
+    "paths": { "*": ["./*"] },
+    "outDir": "dist",
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "rslib.config.ts"],
+  "references": [
+    { "path": "../luna-core/tsconfig.build.json" },
+  ],
+}

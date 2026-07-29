@@ -776,18 +776,24 @@ importers:
         specifier: workspace:*
         version: link:../luna-core
     devDependencies:
-      '@dugyu/luna-reactlynx':
-        specifier: 0.5.0
-        version: 0.5.0(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)(@types/react@18.3.28)
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
       '@lynx-js/types':
         specifier: 'catalog:'
         version: 4.1.0
+      '@rsbuild/plugin-react':
+        specifier: 'catalog:'
+        version: 2.1.0(@rsbuild/core@2.1.8(core-js@3.47.0))(@rspack/core@2.1.5(@swc/helpers@0.5.23))
+      '@rslib/core':
+        specifier: 'catalog:'
+        version: 0.23.2(core-js@3.47.0)(typescript@5.9.3)
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   luna/packages/luna-styles:
     devDependencies:
@@ -2064,16 +2070,6 @@ packages:
     resolution: {integrity: sha512-9JOKWWngo5vPBFxJgFogAS4rfFC2GaB9Yew6JZbRBUik7j5Num2muuw5p1tMYnl2NUBdS2W4EgsSLM3uUDyhBQ==}
     cpu: [x64]
     os: [win32]
-
-  '@dugyu/luna-core@0.5.0':
-    resolution: {integrity: sha512-2i/I9YedSrt8U9zMxB3JB2JEsh7/deS4zF7NTtQyinumOqPc9io1xSWzCAkOZEHIElfbqst2BwGKIyEDKx22mg==}
-
-  '@dugyu/luna-reactlynx@0.5.0':
-    resolution: {integrity: sha512-LhOCPjjJXckPN6i0d5Bk/LF+twB7YDAfR/H3UjKluRzwMFpUVGkMAxu5YoRXHHDwSHFqxDEWluSO3sJrVvNYzA==}
-    peerDependencies:
-      '@lynx-js/react': '>=0.100.0'
-      '@lynx-js/types': '*'
-      '@types/react': ^18
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -7239,15 +7235,6 @@ snapshots:
 
   '@dprint/win32-x64@0.48.0':
     optional: true
-
-  '@dugyu/luna-core@0.5.0': {}
-
-  '@dugyu/luna-reactlynx@0.5.0(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)(@types/react@18.3.28)':
-    dependencies:
-      '@dugyu/luna-core': 0.5.0
-      '@lynx-js/react': 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
-      '@lynx-js/types': 4.1.0
-      '@types/react': 18.3.28
 
   '@emnapi/core@1.10.0':
     dependencies:

@@ -49,17 +49,18 @@
     "README.md"
   ],
   "scripts": {
-    "build": "node ./scripts/sync-dist.mjs",
-    "sync:readme": "node ./scripts/sync-readme.mjs"
+    "build": "rslib build"
   },
   "dependencies": {
     "@lynx-js/luna-core": "workspace:*"
   },
   "devDependencies": {
-    "@dugyu/luna-reactlynx": "0.5.0",
     "@lynx-js/react": "catalog:",
     "@lynx-js/types": "catalog:",
-    "@types/react": "catalog:"
+    "@rsbuild/plugin-react": "catalog:",
+    "@rslib/core": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@lynx-js/react": ">=0.100.0",
