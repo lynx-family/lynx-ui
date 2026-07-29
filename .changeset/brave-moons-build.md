@@ -1,9 +1,15 @@
 ---
 "@lynx-js/luna-core": patch
+"@lynx-js/luna-tokens": patch
+"@lynx-js/luna-styles": patch
+"@lynx-js/luna-tailwind": patch
+"@lynx-js/luna-reactlynx": patch
 ---
 
-Migrate luna-core from a shim package to a source-built package in lynx-ui.
+Migrate the LUNA foundation packages from shim packages to source-built packages
+in lynx-ui.
 
-The package now builds its artifacts from migrated source with Rslib instead of
-syncing the upstream distribution. Public exports remain
-unchanged.
+The packages now build from migrated source with the local Rslib/Rsbuild 2.x
+toolchain instead of syncing upstream distributions. Public package exports,
+runtime entry points, CSS entry points, Tailwind entry points, and type entry
+points remain unchanged.
