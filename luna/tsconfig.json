@@ -29,5 +29,8 @@
     {
       "path": "./packages/luna-tokens/tsconfig.build.json",
     },
+    {
+      "path": "./packages/luna-styles/tsconfig.json",
+    },
   ],
 }

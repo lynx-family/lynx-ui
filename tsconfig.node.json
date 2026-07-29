@@ -14,6 +14,7 @@
     "packages/**/rslib.config.ts",
     "tools/configs/exampleConfig.mjs",
     "apps/**/lynx.config.ts",
-    "luna/**/rslib.config.ts"
+    "luna/**/rslib.config.ts",
+    "luna/**/scripts/**/*.ts"
   ]
 }

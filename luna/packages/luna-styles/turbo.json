@@ -3,10 +3,15 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "outputLogs": "full",
+      "dependsOn": ["^build"],
       "inputs": [
         "package.json",
+        "src/**",
         "scripts/**",
-        "../../tools/shim/**"
+        "rslib.config.ts",
+        "tsconfig.json",
+        "../../tsconfig.json"
       ],
       "outputs": ["dist/**"]
     }

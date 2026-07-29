@@ -791,9 +791,21 @@ importers:
 
   luna/packages/luna-styles:
     devDependencies:
-      '@dugyu/luna-styles':
-        specifier: 0.5.0
-        version: 0.5.0
+      '@lynx-js/luna-core':
+        specifier: workspace:*
+        version: link:../luna-core
+      '@lynx-js/luna-tokens':
+        specifier: workspace:*
+        version: link:../luna-tokens
+      '@rslib/core':
+        specifier: 'catalog:'
+        version: 0.23.2(core-js@3.47.0)(typescript@5.9.3)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   luna/packages/luna-tailwind:
     dependencies:
@@ -2059,9 +2071,6 @@ packages:
       '@lynx-js/react': '>=0.100.0'
       '@lynx-js/types': '*'
       '@types/react': ^18
-
-  '@dugyu/luna-styles@0.5.0':
-    resolution: {integrity: sha512-YjBRDutd5KE2rlyXT6S6iYXTBioXz7NEmxIAL8C11Q0+rdjv+o0EoDIkWH0dBI40s/QMrR0gk0TGyfIwK658Tg==}
 
   '@dugyu/luna-tailwind@0.5.0':
     resolution: {integrity: sha512-FOIFCClFNO4WY84joPjZZLnLTT2IDN8VkNLZsTQOq4Su1WEZ4z64+EGwEdNzADVbsqCYWHx6IQhe460Wg2oMTg==}
@@ -7241,8 +7250,6 @@ snapshots:
       '@lynx-js/react': 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
       '@lynx-js/types': 4.1.0
       '@types/react': 18.3.28
-
-  '@dugyu/luna-styles@0.5.0': {}
 
   '@dugyu/luna-tailwind@0.5.0(tailwindcss@3.4.17)':
     dependencies:

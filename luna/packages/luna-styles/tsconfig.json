@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ES2022"],
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+  },
+  "include": ["scripts", "src", "rslib.config.ts"],
+  "references": [
+    { "path": "../luna-core/tsconfig.build.json" },
+    { "path": "../luna-tokens/tsconfig.build.json" },
+  ],
+}
