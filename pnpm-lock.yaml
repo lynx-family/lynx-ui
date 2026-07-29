@@ -810,9 +810,15 @@ importers:
 
   luna/packages/luna-tokens:
     devDependencies:
-      '@dugyu/luna-tokens':
-        specifier: 0.5.0
-        version: 0.5.0
+      '@lynx-js/luna-core':
+        specifier: workspace:*
+        version: link:../luna-core
+      '@rslib/core':
+        specifier: 'catalog:'
+        version: 0.23.2(core-js@3.47.0)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/lynx-ui:
     dependencies:
@@ -2061,9 +2067,6 @@ packages:
     resolution: {integrity: sha512-FOIFCClFNO4WY84joPjZZLnLTT2IDN8VkNLZsTQOq4Su1WEZ4z64+EGwEdNzADVbsqCYWHx6IQhe460Wg2oMTg==}
     peerDependencies:
       tailwindcss: ^3.4.0
-
-  '@dugyu/luna-tokens@0.5.0':
-    resolution: {integrity: sha512-jct1eU7Y99z6ZbYfvuNymhcNNLQqlm2VDfqy4B+p9uXJETokZoXnRcmIzjbM9evk1nZ6ZtlBxCC1t9GyOrFJLA==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -7245,8 +7248,6 @@ snapshots:
     dependencies:
       '@dugyu/luna-core': 0.5.0
       tailwindcss: 3.4.17
-
-  '@dugyu/luna-tokens@0.5.0': {}
 
   '@emnapi/core@1.10.0':
     dependencies:

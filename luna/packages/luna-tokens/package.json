@@ -56,11 +56,12 @@
     "README.md"
   ],
   "scripts": {
-    "build": "node ./scripts/sync-dist.mjs",
-    "sync:readme": "node ./scripts/sync-readme.mjs"
+    "build": "rslib build"
   },
   "devDependencies": {
-    "@dugyu/luna-tokens": "0.5.0"
+    "@lynx-js/luna-core": "workspace:*",
+    "@rslib/core": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public"

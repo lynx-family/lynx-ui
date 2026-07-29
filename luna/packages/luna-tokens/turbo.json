@@ -3,10 +3,13 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "dependsOn": ["@lynx-js/luna-core#build"],
       "inputs": [
         "package.json",
-        "scripts/**",
-        "../../tools/shim/**"
+        "src/**",
+        "rslib.config.ts",
+        "tsconfig.build.json",
+        "../../tsconfig.json"
       ],
       "outputs": ["dist/**"]
     }
