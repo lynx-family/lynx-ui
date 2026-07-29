@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "jsxImportSource": "@lynx-js/react",
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+}

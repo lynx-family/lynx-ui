@@ -13,7 +13,7 @@
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
     "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
-    "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\"",
+    "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\" \"luna/examples/**/*.css\"",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:sherif": "pnpm dlx sherif@latest",

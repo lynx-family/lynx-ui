@@ -2,6 +2,7 @@ packages:
   - packages/*
   - apps/examples/*
   - luna/packages/*
+  - luna/examples/*
   - tools/rsbuild-plugin-select-entry
   - tools/canary-release
   - "!**/node_modules/**"
