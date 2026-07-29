@@ -32,5 +32,8 @@
     {
       "path": "./packages/luna-styles/tsconfig.json",
     },
+    {
+      "path": "./packages/luna-tailwind/tsconfig.build.json",
+    },
   ],
 }
