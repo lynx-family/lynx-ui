@@ -1,25 +1,26 @@
 {
   "compilerOptions": {
     "composite": true,
+
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
     "jsx": "react-jsx",
-    "strict": true,
-    "strictNullChecks": true,
-    "useDefineForClassFields": true,
-
     "module": "ESNext",
     "moduleResolution": "bundler",
 
-    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
 
+    "strict": true,
+    "strictNullChecks": true,
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
+
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
   },
   "files": [],
   "references": [

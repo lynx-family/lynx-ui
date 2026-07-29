@@ -4,7 +4,10 @@
   "tasks": {
     "build": {
       "outputLogs": "full",
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "@lynx-js/luna-core#build",
+        "@lynx-js/luna-tokens#build"
+      ],
       "inputs": [
         "package.json",
         "src/**",

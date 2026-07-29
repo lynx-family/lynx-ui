@@ -7,4 +7,4 @@ lynx-ui.
 
 The package now builds its ReactLynx theming and runtime primitives from
 migrated source with Rslib instead of syncing the upstream
-`@dugyu/luna-reactlynx` distribution. Public exports remain unchanged.
+distribution. Public exports remain unchanged.
