@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "composite": true,
+
+    "rootDir": "./",
+    "noEmit": true,
+  },
+  "include": ["src/**/*.ts", "examples/**/*.ts", "rslib.config.ts"],
+}

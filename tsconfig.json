@@ -3,6 +3,9 @@
   "files": [],
   "references": [
     {
+      "path": "./luna"
+    },
+    {
       "path": "./packages/lynx-ui"
     },
     {

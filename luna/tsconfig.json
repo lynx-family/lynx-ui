@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "strictNullChecks": true,
+    "useDefineForClassFields": true,
+
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/luna-core/tsconfig.build.json",
+    },
+  ],
+}

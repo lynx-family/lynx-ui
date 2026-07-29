@@ -763,9 +763,12 @@ importers:
 
   luna/packages/luna-core:
     devDependencies:
-      '@dugyu/luna-core':
-        specifier: 0.5.0
-        version: 0.5.0
+      '@rslib/core':
+        specifier: 'catalog:'
+        version: 0.23.2(core-js@3.47.0)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   luna/packages/luna-reactlynx:
     dependencies:
