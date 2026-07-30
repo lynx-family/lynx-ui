@@ -9,8 +9,9 @@ import { Button } from './Button.js'
 import './App.css'
 
 export function App() {
+  // LunaTheme applies the resolved LUNA theme class to its wrapper.
   return (
-    <LunaTheme>
+    <LunaTheme themeKey='lunaris-dark'>
       <view className='container'>
         {/* Button Demo */}
         <Button>Let it bloom</Button>

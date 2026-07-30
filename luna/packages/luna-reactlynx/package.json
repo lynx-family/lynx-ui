@@ -24,23 +24,23 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.jsx"
+      "import": "./dist/index.js"
     },
     "./theming": {
       "types": "./dist/theming/index.d.ts",
-      "import": "./dist/theming/index.jsx"
+      "import": "./dist/theming/index.js"
     },
     "./runtime": {
       "types": "./dist/runtime/index.d.ts",
-      "import": "./dist/runtime/index.jsx"
+      "import": "./dist/runtime/index.js"
     },
     "./runtime/global-props": {
       "types": "./dist/runtime/global-props.d.ts",
-      "import": "./dist/runtime/global-props.jsx"
+      "import": "./dist/runtime/global-props.js"
     }
   },
-  "main": "./dist/index.jsx",
-  "module": "./dist/index.jsx",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",

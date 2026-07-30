@@ -20,7 +20,7 @@ export function App() {
   return (
     <LunaThemeProvider
       themes={themes}
-      themeKey={lynx.__globalProps.lunaTheme ?? 'lunaris-light'}
+      themeKey={lynx?.__globalProps?.lunaTheme ?? 'lunaris-light'}
     >
       <Demo />
     </LunaThemeProvider>

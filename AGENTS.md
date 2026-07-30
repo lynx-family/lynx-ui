@@ -94,6 +94,16 @@ Examples should use the in-repo LUNA theme foundation by default instead of ad-h
 - Fix every `check:luna-vars` violation before handing off or submitting the demo change.
 - When an example needs RTL support, set `direction: rtl` on the outer container and let descendants inherit it through CSS instead of duplicating directional styles on every node.
 
+### 3.2 LUNA Source Builds
+
+LUNA foundation packages under `luna/packages/` build from local source with Rslib/Rsbuild.
+
+- Do not reintroduce shim synchronization scripts or depend on installed upstream LUNA distributions during builds.
+- Keep LUNA package outputs under `dist/**`, and keep `package.json` `exports`, `main`, `module`, and `types` aligned with the emitted files.
+- Use `workspace:*` for internal `@lynx-js/luna-*` dependencies.
+- Declare required LUNA build ordering explicitly in package `turbo.json` files when the build DAG must be independent from runtime or development dependency classification.
+- `@lynx-js/luna-styles` generates CSS from local token packages during its Rslib build. Keep its CSS exports and `sideEffects` declaration aligned with the generated `dist/*.css` files.
+
 ### 4. Build & Verify
 
 Before submitting changes, ensure the project builds and passes checks.

@@ -20,7 +20,6 @@ export default defineConfig({
     format: 'esm',
     syntax: 'esnext',
     output: {
-      filename: { js: '[name].jsx' },
       sourceMap: true,
     },
     dts: true,

@@ -36,7 +36,7 @@ export function generateLunaCssPlugin(
 
           const css = `.${theme.key} {\n${lines}\n}\n`
           writeFileSync(join(dist, `${theme.key}.css`), css, 'utf8')
-          process.stderr.write(`Generated: ${theme.key}.css`)
+          process.stderr.write(`Generated: ${theme.key}.css\n`)
         }
 
         const indexContent = themes
@@ -44,7 +44,7 @@ export function generateLunaCssPlugin(
           .join('\n')
 
         writeFileSync(join(dist, 'index.css'), indexContent, 'utf8')
-        process.stderr.write(`Generated: index.css`)
+        process.stderr.write(`Generated: index.css\n`)
 
         try {
           const files = readdirSync(dist)
@@ -54,12 +54,12 @@ export function generateLunaCssPlugin(
           for (const file of jsFiles) {
             const filePath = join(dist, file)
             rmSync(filePath)
-            process.stderr.write(`Deleted: ${file}`)
+            process.stderr.write(`Deleted: ${file}\n`)
           }
         } catch (error) {
           console.warn('Error when cleaning up entry file:', error)
         }
-        process.stderr.write(`\n L.U.N.A CSS Files Generated\n`)
+        process.stderr.write(`L.U.N.A CSS Files Generated\n`)
       })
     },
   }

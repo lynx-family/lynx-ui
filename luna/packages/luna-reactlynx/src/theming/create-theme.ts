@@ -48,6 +48,8 @@ export function createLunaTheme(
       )
     }
 
+    Object.freeze(colors)
+
     return {
       key: input.key,
       variant: input.variant,
