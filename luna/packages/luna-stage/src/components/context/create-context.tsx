@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
 
 /**
@@ -79,15 +79,8 @@ function createContextWithProvider<
   ) => {
     const { children, ...context } = props
 
-    // Uses JSON.stringify to ensure dependency array stability.
-    // biome-ignore lint/correctness/useExhaustiveDependencies: context values intentionally form the memo key.
-    const memoizedValue = useMemo(
-      () => context,
-      Object.values(context),
-    ) as T
-
     return (
-      <Context.Provider value={memoizedValue}>
+      <Context.Provider value={context as T}>
         {children}
       </Context.Provider>
     )
@@ -98,8 +91,8 @@ function createContextWithProvider<
 
   function useContextValue(): T {
     const context = useContext(Context)
-    if (context) return context
-    if (defaultValue) return defaultValue
+    if (context !== undefined) return context
+    if (defaultValue !== undefined) return defaultValue
 
     if (throwIfMissing) {
       throw new Error(

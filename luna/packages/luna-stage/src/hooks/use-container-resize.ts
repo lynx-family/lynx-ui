@@ -2,10 +2,11 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { useEffect, useRef, useState } from 'react'
-import type { MutableRefObject } from 'react'
+import { useRef, useState } from 'react'
+import type { RefObject } from 'react'
 
 import { useEventCallback } from './use-event-callback'
+import { useIsomorphicLayoutEffect } from './use-isomorphic-layout-effect'
 
 interface Size {
   width?: number
@@ -19,7 +20,7 @@ type ResizeObserverCtor = new(
 
 interface UseContainerResizeOptions<T> {
   /** The ref of the element to observe. */
-  ref: MutableRefObject<T | null>
+  ref: RefObject<T | null>
   /**
    * Optional: inject a polyfill constructor (e.g. `resize-observer-polyfill`)
    */
@@ -47,8 +48,28 @@ function useContainerResize<T extends HTMLElement = HTMLElement>({
   const onResize = useEventCallback(onResizeProp)
   const hasOnResize = onResizeProp !== undefined
 
-  useEffect(() => {
-    if (!ref.current) return
+  useIsomorphicLayoutEffect(() => {
+    const element = ref.current
+    if (!element) return
+
+    const updateSize = (width: number, height: number) => {
+      const changed = width !== prev.current.width
+        || height !== prev.current.height
+
+      if (!changed) return
+
+      const next: Size = { width, height }
+      prev.current = next
+      if (hasOnResize) {
+        onResize(next)
+      } else {
+        setSize(next)
+      }
+    }
+
+    const rect = element.getBoundingClientRect()
+    updateSize(rect.width, rect.height)
+
     // SSR & Polyfill
     // Prefer injected ctor; otherwise read from the environment in a typed way.
     const RO: ResizeObserverCtor | undefined = ResizeObserverImpl
@@ -84,22 +105,11 @@ function useContainerResize<T extends HTMLElement = HTMLElement>({
           height = entry.contentRect.height
         }
 
-        const changed = width !== prev.current.width
-          || height !== prev.current.height
-
-        if (!changed) return
-
-        const next: Size = { width, height }
-        prev.current = next
-        if (hasOnResize) {
-          onResize(next)
-        } else if (ref.current) {
-          setSize(next)
-        }
+        updateSize(width, height)
       },
     )
 
-    observer.observe(ref.current)
+    observer.observe(element)
     return () => observer.disconnect()
   }, [ref, ResizeObserverImpl, hasOnResize, onResize])
 

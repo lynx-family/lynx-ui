@@ -133,22 +133,22 @@ export function useLynxStage({
     if (!ready) return
     const view = lynxViewRef.current as LynxViewWithExtensions | null
     if (!view) {
-      debugLog(`nativeModules(${entry}): no view yet`)
+      debugLog(`nativeModules(${entry}): no view yet`, src)
       return
     }
-    debugLog(`nativeModules(${entry}): wiring`)
+    debugLog(`nativeModules(${entry}): wiring`, src)
     view.onNativeModulesCall = (name, data, moduleName) =>
       onNativeModulesCallEvent(name, data, moduleName)
-  }, [ready, onNativeModulesCallEvent, entry])
+  }, [ready, src, onNativeModulesCallEvent, entry])
 
   // Inject globalProps whenever they change
   useEffect(() => {
-    if (!globalProps || !lynxViewRef.current) return
-    debugLog(`globalProps(${entry}): updating`)
+    if (!ready || !globalProps || !lynxViewRef.current) return
+    debugLog(`globalProps(${entry}): updating`, src)
     lynxViewRef.current.updateGlobalProps(
       globalProps as unknown as UpdateGlobalPropsArg,
     )
-  }, [globalProps, entry])
+  }, [ready, src, globalProps, entry])
 
   useEffect(() => {
     const lynxView = lynxViewRef.current as LynxViewWithExtensions | null
@@ -191,11 +191,6 @@ export function useLynxStage({
     const t = setTimeout(() => {
       if (renderedRef.current || errored) return
       renderedRef.current = true
-      if (globalProps) {
-        lynxView.updateGlobalProps(
-          globalProps as unknown as UpdateGlobalPropsArg,
-        )
-      }
       reportReadyEvent()
     }, 0)
 
@@ -210,7 +205,6 @@ export function useLynxStage({
     ready,
     entry,
     src,
-    globalProps,
     reportReadyEvent,
     reportErrorEvent,
   ])

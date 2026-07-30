@@ -3,18 +3,12 @@
 // LICENSE file in the root directory of this source tree.
 
 import { useMotionValue, useTransform } from 'motion/react'
-import type {
-  MotionNodeOptions,
-  MotionStyle,
-  TransformTemplate,
-} from 'motion/react'
+import type { MotionStyle, TransformTemplate } from 'motion/react'
 import * as motion from 'motion/react-client'
 import { forwardRef, useRef } from 'react'
 import type {
-  DetailedHTMLProps,
   ForwardRefExoticComponent,
   ForwardedRef,
-  HTMLAttributes,
   RefAttributes,
 } from 'react'
 
@@ -62,15 +56,7 @@ const ANCHOR_LOCKED_STYLE: MotionStyle = {
  * the exiting node out of normal layout flow while siblings reflow.
  */
 const MotionStageContainer: ForwardRefExoticComponent<
-  & Omit<MotionNodeOptions, 'transformTemplate'>
-  & Omit<
-    DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-    'ref'
-  >
-  & {
-    layoutId: string
-  }
-  & RefAttributes<HTMLDivElement>
+  MotionStageContainerProps & RefAttributes<HTMLDivElement>
 > = forwardRef<HTMLDivElement, MotionStageContainerProps>(
   MotionStageContainerImpl,
 )
@@ -127,8 +113,11 @@ function MotionStageContainerImpl(
       if (s) {
         scaleX.set(s.x)
         scaleY.set(s.y)
+      } else {
+        scaleX.set(1)
+        scaleY.set(1)
       }
-    } else if (generated === 'none') {
+    } else {
       scaleX.set(1)
       scaleY.set(1)
     }
@@ -178,6 +167,8 @@ function MotionStageContainerImpl(
       isAnimating.set(0)
       animLayoutW.set(layoutW.get())
       animLayoutH.set(layoutH.get())
+      scaleX.set(1)
+      scaleY.set(1)
     }
   }
 

@@ -3,9 +3,14 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@lynx-js/luna-stage#build"],
+      "dependsOn": [
+        "@lynx-js/luna-stage#build",
+        "@lynx-example/lynx-ui-popover#build",
+        "@lynx-example/lynx-ui-switch#build"
+      ],
       "inputs": [
         "src/**",
+        "public/**",
         "rsbuild.config.ts",
         "package.json",
         "tsconfig.json"

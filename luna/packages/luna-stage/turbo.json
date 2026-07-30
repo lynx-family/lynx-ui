@@ -6,6 +6,7 @@
       "dependsOn": ["@lynx-js/luna-core#build"],
       "inputs": [
         "src/**",
+        "tsconfig.build.json",
         "rslib.config.ts"
       ],
       "outputs": ["dist/**"]

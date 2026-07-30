@@ -29,10 +29,10 @@ export interface UseLynxStageOptions {
    * Optional hook for overriding how the final bundle URL is resolved from
    * `bundleRoot` and `entry`.
    *
-   * This callback is treated as non-reactive configuration: changing its
-   * function identity does not trigger a reload by itself. The latest callback
-   * is used the next time the URL is (re)computed due to reactive inputs such as
-   * `entry` or `bundleRoot` changing.
+   * This callback is used to compute the resolved bundle URL during render.
+   * If it changes identity and returns a different URL, the hook treats that as
+   * a bundle change because `src` changed. The resolver always receives a
+   * normalized `bundleRoot` ending with `/`.
    */
   resolveBundleSrc?: ResolveBundleSrc
   /**

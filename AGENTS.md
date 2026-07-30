@@ -98,11 +98,12 @@ Examples should use the in-repo LUNA theme foundation by default instead of ad-h
 
 LUNA foundation packages under `luna/packages/` build from local source with Rslib/Rsbuild.
 
-- Do not reintroduce shim synchronization scripts or depend on installed upstream LUNA distributions during builds.
-- Keep LUNA package outputs under `dist/**`, and keep `package.json` `exports`, `main`, `module`, and `types` aligned with the emitted files.
-- Use `workspace:*` for internal `@lynx-js/luna-*` dependencies.
-- Declare required LUNA build ordering explicitly in package `turbo.json` files when the build DAG must be independent from runtime or development dependency classification.
-- `@lynx-js/luna-styles` generates CSS from local token packages during its Rslib build. Keep its CSS exports and `sideEffects` declaration aligned with the generated `dist/*.css` files.
+- Build LUNA packages from local source without shim synchronization scripts or installed upstream distributions; keep outputs, package exports, internal `workspace:*` dependencies, Turbo ordering, and CSS side-effect declarations aligned with the emitted `dist/**` files.
+
+### 3.3 LUNA Design Foundation Examples
+
+- Keep standalone examples for developing the LUNA design foundation and design language under `luna/examples/`, with explicit Turbo build dependencies for any generated assets they consume.
+- For `luna/examples/luna-stage-*` workflows, keep the `@lynx-js/luna-stage#build` dependency and include every `rsbuild.config.ts` public asset source in Turbo inputs, including populated `@lynx-example/*/dist` trees and `public/**`.
 
 ### 4. Build & Verify
 
@@ -129,6 +130,10 @@ pnpm check:all
 - **`pnpm check:sherif`**: Lints `package.json` files for potential issues using Sherif.
 - **`pnpm check:exports`**: Verifies that `@lynx-js/lynx-ui` re-exports the expected public surface from included sub-packages.
 - **`pnpm spell`**: Runs CSpell to check for spelling errors.
+
+## Publishing
+
+- Use `pnpm bootstrap:package` only for initial npm placeholder publishes needed before Trusted Publishing is configured.
 
 ## Coding Standards
 

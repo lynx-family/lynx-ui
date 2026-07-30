@@ -5,6 +5,7 @@
 import { useMotionValue } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 import { useEffect, useRef } from 'react'
+import type { RefObject } from 'react'
 
 import { useEventCallback } from '../../hooks'
 
@@ -16,7 +17,7 @@ interface SizeMV {
 type ResizeObserverCtor = new(cb: ResizeObserverCallback) => ResizeObserver
 
 export function useContainerResizeMV<T extends HTMLElement = HTMLElement>(
-  ref: React.MutableRefObject<T | null>,
+  ref: RefObject<T | null>,
   opts?: {
     ResizeObserverImpl?: ResizeObserverCtor
     onResize?: (w: number, h: number) => void

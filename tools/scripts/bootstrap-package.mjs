@@ -80,7 +80,13 @@ function parseArguments() {
 }
 
 function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+  const text = fs.readFileSync(filePath, 'utf8')
+  try {
+    return JSON.parse(text)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Failed to parse JSON at ${filePath}: ${message}`)
+  }
 }
 
 function toJson(value) {
@@ -96,6 +102,14 @@ function ensureWritable(dirPath) {
     fs.accessSync(dirPath, fs.constants.W_OK)
   } catch {
     throw new Error(`Directory not writable: ${dirPath}`)
+  }
+}
+
+function validateOutputTarget(outDir, { force }) {
+  if (fs.existsSync(outDir) && !force) {
+    throw new Error(
+      `Output already exists: ${outDir}\nUse --force to overwrite, or delete it manually.`,
+    )
   }
 }
 
@@ -176,13 +190,8 @@ A proper release will replace this package once OIDC is configured.
 }
 
 function writeManifest(outDir, manifest, { force }) {
+  validateOutputTarget(outDir, { force })
   if (fs.existsSync(outDir)) {
-    if (!force) {
-      throw new Error(
-        `Output already exists: ${outDir}\nUse --force to overwrite, or delete it manually.`,
-      )
-    }
-
     fs.rmSync(outDir, { force: true, recursive: true })
   }
 
@@ -286,6 +295,8 @@ function main() {
   const description = String(sourcePackage?.description ?? '').trim()
   const outDir = path.join(out, safeFolderName(name))
   const manifest = buildManifest({ description, name })
+
+  validateOutputTarget(outDir, { force })
 
   printSummary({
     description,
