@@ -6,6 +6,7 @@
   "author": "The Lynx Authors",
   "type": "module",
   "scripts": {
+    "bootstrap:package": "node tools/scripts/bootstrap-package.mjs",
     "build": "turbo build",
     "changeset": "changeset",
     "check": "pnpm run check:luna-vars && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",

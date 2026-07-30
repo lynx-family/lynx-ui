@@ -3,6 +3,7 @@ amannn
 antialiasing
 ARGB
 autoplay
+Avenir
 bindcontentsizechanged
 bindfirstframe
 bindlongpress
@@ -21,6 +22,7 @@ clsx
 coef
 coeff
 commitlintrc
+Crossfade
 dbaeumer
 dprint
 esbenp
@@ -37,6 +39,7 @@ laggy
 layoutchange
 lepusjs
 lepusng
+lerp
 libvpx
 lintignore
 loadmore

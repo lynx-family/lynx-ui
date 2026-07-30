@@ -1,0 +1,82 @@
+{
+  "name": "@lynx-js/luna-stage",
+  "version": "0.0.0",
+  "description": "Stage system and showcase components for the L.U.N.A project",
+  "keywords": [
+    "luna",
+    "stage",
+    "preview",
+    "react",
+    "lynx"
+  ],
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/packages/luna-stage#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "luna/packages/luna-stage"
+  },
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./motion": {
+      "types": "./dist/motion/index.d.ts",
+      "import": "./dist/motion/index.js"
+    },
+    "./lynx": {
+      "types": "./dist/lynx/index.d.ts",
+      "import": "./dist/lynx/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@lynx-js/luna-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@lynx-js/web-core": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@rslib/core": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "jsdom": "catalog:",
+    "motion": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@lynx-js/web-core": ">=0.20.0",
+    "motion": ">=12.23.16",
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@lynx-js/web-core": {
+      "optional": true
+    },
+    "motion": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

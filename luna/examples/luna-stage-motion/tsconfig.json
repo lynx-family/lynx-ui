@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+    },
+    "emitDeclarationOnly": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleDetection": "force",
+    "noUncheckedSideEffectImports": true,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "isolatedDeclarations": false,
+  },
+  "include": ["src", "rsbuild.config.ts"],
+}

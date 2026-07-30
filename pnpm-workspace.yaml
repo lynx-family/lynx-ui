@@ -15,19 +15,29 @@ catalog:
   "@lynx-js/rspeedy": 0.16.1
   "@lynx-js/types": 4.1.0
   "@lynx-js/gesture-runtime": 2.1.1
+  "@lynx-js/lynx-core": 0.1.4
   "@lynx-js/qrcode-rsbuild-plugin": 0.6.0
+  "@lynx-js/web-core": 0.23.0
+  "@rsbuild/core": 2.1.0
   "@rsbuild/plugin-react": 2.1.0
   "@rslib/core": 0.23.2
   "@lynx-js/react-use": 0.2.2
   "@lynx-js/motion": 0.0.3
+  "@testing-library/jest-dom": ^6.6.3
+  "@testing-library/react": ^16.1.0
   "@types/react": "^18.3.8"
+  "@types/react-dom": "^18.3.5"
   "@types/node": "^24"
   clsx: ^2.1.1
+  jsdom: ^25.0.1
+  motion: ^12.23.16
+  react: ^18.3.1
+  react-dom: ^18.3.1
   "typescript": "^5.5.3"
   vitest: 2.1.9
 catalogs:
   tailwind:
-    "@lynx-js/tailwind-preset": 0.4.0
+    "@lynx-js/tailwind-preset": 0.5.0
     rsbuild-plugin-tailwindcss: 0.2.4
     tailwind-merge: 2.6.0
     tailwindcss: 3.4.17

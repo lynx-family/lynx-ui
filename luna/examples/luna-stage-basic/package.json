@@ -1,0 +1,30 @@
+{
+  "name": "@lynx-example/luna-stage-basic",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild --config ./rsbuild.config.ts build",
+    "demo": "turbo run build && rsbuild preview",
+    "dev": "rsbuild dev --open",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@lynx-js/luna-stage": "workspace:*",
+    "@lynx-js/lynx-core": "catalog:",
+    "@lynx-js/web-core": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-example/lynx-ui-popover": "workspace:*",
+    "@lynx-example/lynx-ui-switch": "workspace:*",
+    "@rsbuild/core": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
+  }
+}

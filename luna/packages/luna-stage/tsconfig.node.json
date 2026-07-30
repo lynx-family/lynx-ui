@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+
+    "module": "node16",
+    "moduleResolution": "node16",
+    "erasableSyntaxOnly": true,
+
+    "lib": ["ESNext"],
+    "target": "ES2022",
+
+    "noEmit": false,
+    "isolatedDeclarations": false
+  },
+  "include": ["rslib.config.ts"]
+}

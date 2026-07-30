@@ -1,0 +1,38 @@
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: #0d0d0d;
+  color: #e9e9ef;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 4rem;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: #ff8ab5;
+}
+
+.preview {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -39,5 +39,8 @@
     {
       "path": "./packages/luna-reactlynx/tsconfig.build.json",
     },
+    {
+      "path": "./packages/luna-stage/tsconfig.build.json",
+    },
   ],
 }
