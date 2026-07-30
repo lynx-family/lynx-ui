@@ -103,7 +103,7 @@ LUNA foundation packages under `luna/packages/` build from local source with Rsl
 ### 3.3 LUNA Design Foundation Examples
 
 - Keep standalone examples for developing the LUNA design foundation and design language under `luna/examples/`, with explicit Turbo build dependencies for any generated assets they consume.
-- For `luna/examples/luna-stage-*` workflows, keep the `@lynx-js/luna-stage#build` dependency and include every `rsbuild.config.ts` public asset source in Turbo inputs, including populated `@lynx-example/*/dist` trees and `public/**`.
+- For `luna/examples/luna-stage-*` workflows, keep the `@lynx-js/luna-stage#build` dependency, declare explicit Turbo build dependencies for workspace packages whose generated `dist` assets are copied through `rsbuild.config.ts`, and keep local public asset inputs such as `public/**` aligned.
 
 ### 4. Build & Verify
 

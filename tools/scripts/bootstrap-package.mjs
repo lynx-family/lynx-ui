@@ -191,7 +191,7 @@ A proper release will replace this package once OIDC is configured.
 
 function writeManifest(outDir, manifest, { force }) {
   validateOutputTarget(outDir, { force })
-  if (fs.existsSync(outDir)) {
+  if (force && fs.existsSync(outDir)) {
     fs.rmSync(outDir, { force: true, recursive: true })
   }
 
@@ -199,7 +199,7 @@ function writeManifest(outDir, manifest, { force }) {
   fs.mkdirSync(parentDir, { recursive: true })
   ensureWritable(parentDir)
 
-  fs.mkdirSync(outDir, { recursive: true })
+  fs.mkdirSync(outDir) // exclusive; fails if a target appeared concurrently
 
   for (const { content, relativePath } of manifest) {
     fs.writeFileSync(path.join(outDir, relativePath), content)
