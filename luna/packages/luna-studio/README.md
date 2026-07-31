@@ -2,6 +2,8 @@
 
 `@lynx-js/luna-studio` is a reusable multi-stage choreography layer for Lynx-based previews and comparison canvases.
 
+> **Note:** `luna-studio` is still experimental, and its API is constantly changing.
+
 It packages the rendering, layout, focus, and interaction plumbing needed for:
 
 - compare / focus / lineup stage arrangements
@@ -59,6 +61,7 @@ Current public exports from `@lynx-js/luna-studio` are grouped by components and
   - `InteractionParams`
   - `InteractionTarget`
   - `FocusKeyResolver`
+  - `StageAppearance`
 - Lynx bridge types
   - `LynxRuntimeCall`
 - Helpers

@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { LunaLynxStage } from '@lynx-js/luna-stage/lynx'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { JSX } from 'react'
 
 import type { StudioLynxStageProps } from '../types'
@@ -20,16 +20,18 @@ function StudioLynxStage({
     extraGlobalProps ?? {}
   ), [extraGlobalProps])
 
-  const handleNativeModulesCall = useMemo(() => (
-    (name: string, data: unknown, channel: string) => {
-      return onLynxRuntimeCall?.({
-        entry,
-        channel,
-        name,
-        data,
-      })
-    }
-  ), [entry, onLynxRuntimeCall])
+  const handleNativeModulesCall = useCallback((
+    name: string,
+    data: unknown,
+    channel: string,
+  ) => {
+    return onLynxRuntimeCall?.({
+      entry,
+      channel,
+      name,
+      data,
+    })
+  }, [entry, onLynxRuntimeCall])
 
   return (
     <LunaLynxStage

@@ -35,7 +35,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rslib build"
+    "build": "rslib build",
+    "test": "vitest run"
   },
   "dependencies": {
     "@lynx-js/luna-core": "workspace:*",
@@ -49,7 +50,8 @@
     "motion": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@lynx-js/web-core": ">=0.20.0",

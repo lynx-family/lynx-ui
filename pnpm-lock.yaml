@@ -1024,6 +1024,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.9(@types/node@24.12.4)(jsdom@25.0.1)(terser@5.47.1)
 
   luna/packages/luna-styles:
     devDependencies:

@@ -162,8 +162,13 @@ export function resolveStudioLayout(
   const MODES: StudioViewMode[] = ['compare', 'focus', 'lineup']
 
   for (const mode of MODES) {
+    const slices = (layoutSpec as Partial<StudioLayout>)[mode]
+    if (slices === undefined) {
+      throw new Error(`Missing StudioLayout mode: ${mode}`)
+    }
+
     const seen = new Set<string>()
-    for (const slice of layoutSpec[mode]) {
+    for (const slice of slices) {
       if (seen.has(slice.id)) {
         throw new Error(
           `Duplicate StudioStageSlice.id in mode "${mode}": ${slice.id}. `
