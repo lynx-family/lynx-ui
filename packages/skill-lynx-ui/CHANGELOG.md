@@ -1,5 +1,11 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.6
+
+### Patch Changes
+
+- Align the skill package's development and test dependencies with the workspace catalog. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
 ## 3.133.5
 
 ### Patch Changes

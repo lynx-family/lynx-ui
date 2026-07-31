@@ -1,5 +1,15 @@
 # @lynx-example/lynx-ui-form
 
+## 0.0.15
+
+### Patch Changes
+
+- Rebuild the examples with the upgraded Lynx, Rspeedy, and Rsbuild toolchain. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
+- Updated dependencies [[`f80b5cc`](https://github.com/lynx-family/lynx-ui/commit/f80b5ccecd8444ac06428f30475eb14d764ce8d7), [`753556b`](https://github.com/lynx-family/lynx-ui/commit/753556bc1acb77e05567aba3b8b5ab057b9f670b)]:
+  - @lynx-js/luna-styles@0.2.1
+  - @lynx-js/lynx-ui@3.135.4
+
 ## 0.0.14
 
 ### Patch Changes

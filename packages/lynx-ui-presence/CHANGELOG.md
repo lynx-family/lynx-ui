@@ -1,5 +1,16 @@
 # @lynx-js/lynx-ui-presence
 
+## 3.135.4
+
+### Patch Changes
+
+- Upgrade the Lynx and Rsbuild toolchain dependencies used to build lynx-ui packages. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
+- Adopt the workspace catalog for `@rslib/core` to prevent package-level version drift. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
+- Updated dependencies [[`753556b`](https://github.com/lynx-family/lynx-ui/commit/753556bc1acb77e05567aba3b8b5ab057b9f670b)]:
+  - @lynx-js/lynx-ui-common@3.135.4
+
 ## 3.135.3
 
 ### Patch Changes

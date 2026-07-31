@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-slider",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Example app demonstrating Slider usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Slider#readme",
   "repository": {

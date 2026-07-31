@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.135.4
+
+### Patch Changes
+
+- Upgrade the Lynx and Rsbuild toolchain dependencies used to build lynx-ui packages. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
 ## 3.135.3
 
 ### Patch Changes

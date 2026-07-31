@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-form
 
+## 3.135.4
+
+### Patch Changes
+
+- Upgrade the Lynx and Rsbuild toolchain dependencies used to build lynx-ui packages. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
+- Updated dependencies [[`753556b`](https://github.com/lynx-family/lynx-ui/commit/753556bc1acb77e05567aba3b8b5ab057b9f670b)]:
+  - @lynx-js/lynx-ui-button@3.135.4
+  - @lynx-js/lynx-ui-checkbox@3.135.4
+  - @lynx-js/lynx-ui-common@3.135.4
+  - @lynx-js/lynx-ui-input@3.135.4
+  - @lynx-js/lynx-ui-radio-group@3.135.4
+  - @lynx-js/lynx-ui-switch@3.135.4
+
 ## 3.135.3
 
 ### Patch Changes

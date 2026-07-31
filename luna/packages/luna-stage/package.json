@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/luna-stage",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Stage system and showcase components for the L.U.N.A project",
   "keywords": [
     "luna",

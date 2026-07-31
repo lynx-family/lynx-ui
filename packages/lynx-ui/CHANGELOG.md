@@ -1,5 +1,33 @@
 # @lynx-js/lynx-ui
 
+## 3.135.4
+
+### Patch Changes
+
+- Rebuild the aggregate lynx-ui package with the upgraded Lynx and Rslib toolchain. ([#233](https://github.com/lynx-family/lynx-ui/pull/233))
+
+- Updated dependencies [[`753556b`](https://github.com/lynx-family/lynx-ui/commit/753556bc1acb77e05567aba3b8b5ab057b9f670b), [`753556b`](https://github.com/lynx-family/lynx-ui/commit/753556bc1acb77e05567aba3b8b5ab057b9f670b)]:
+  - @lynx-js/lynx-ui-button@3.135.4
+  - @lynx-js/lynx-ui-checkbox@3.135.4
+  - @lynx-js/lynx-ui-common@3.135.4
+  - @lynx-js/lynx-ui-dialog@3.135.4
+  - @lynx-js/lynx-ui-draggable@3.135.4
+  - @lynx-js/lynx-ui-feed-list@3.135.4
+  - @lynx-js/lynx-ui-form@3.135.4
+  - @lynx-js/lynx-ui-input@3.135.4
+  - @lynx-js/lynx-ui-lazy-component@3.135.4
+  - @lynx-js/lynx-ui-list@3.135.4
+  - @lynx-js/lynx-ui-popover@3.135.4
+  - @lynx-js/lynx-ui-presence@3.135.4
+  - @lynx-js/lynx-ui-radio-group@3.135.4
+  - @lynx-js/lynx-ui-scroll-view@3.135.4
+  - @lynx-js/lynx-ui-sheet@3.135.4
+  - @lynx-js/lynx-ui-slider@3.135.4
+  - @lynx-js/lynx-ui-sortable@3.135.4
+  - @lynx-js/lynx-ui-swipe-action@3.135.4
+  - @lynx-js/lynx-ui-swiper@3.135.4
+  - @lynx-js/lynx-ui-switch@3.135.4
+
 ## 3.135.3
 
 ### Patch Changes
