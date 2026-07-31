@@ -1,0 +1,17 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["@lynx-js/luna-core#build", "@lynx-js/luna-stage#build"],
+      "inputs": [
+        "package.json",
+        "src/**",
+        "rslib.config.ts",
+        "tsconfig.build.json",
+        "../../tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    }
+  }
+}

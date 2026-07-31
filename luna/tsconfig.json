@@ -42,5 +42,8 @@
     {
       "path": "./packages/luna-stage/tsconfig.build.json",
     },
+    {
+      "path": "./packages/luna-studio/tsconfig.build.json",
+    },
   ],
 }
