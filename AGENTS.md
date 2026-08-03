@@ -264,7 +264,9 @@ This project uses **Biome** for linting and formatting, and **dprint** for Markd
 
 - Use **Vitest** for unit testing.
 - Test files should be located alongside source files or in a `__tests__` directory (follow existing pattern).
-- Run tests: `pnpm test`
+- Run tests: `pnpm test`. The root command uses `vitest.workspace.json` to collect package-level Vitest configs.
+- When adding tests for a package, add or update that package's `vitest.config.ts` so root `pnpm test` includes it.
+- Add a package-level `test` script only when that package has tests or intentionally delegates to an external test config.
 
 ## Contribution Rules
 
