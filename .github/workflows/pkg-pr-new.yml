@@ -2,11 +2,8 @@ name: pkg.pr.new
 
 on:
   pull_request:
-  push:
     branches:
-      - "**"
-    tags:
-      - "!**"
+      - main
 
 permissions: {}
 
@@ -40,6 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
@@ -56,10 +54,34 @@ jobs:
           name: package-artifacts-${{ github.sha }}
       - name: Extract Package Artifacts
         run: tar -xzf package-artifacts.tgz
+      - name: Collect Packages with Changesets
+        id: changeset
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
+        run: |
+          pnpm changeset status --since="$BASE_SHA" --output .changeset-status.json
+          PACKAGE_DIRS="$(node .github/scripts/list-changeset-packages.cjs .changeset-status.json | tr '\n' ' ')"
+          if [ -z "$(echo "$PACKAGE_DIRS" | tr -d '[:space:]')" ]; then
+            echo "No publishable packages affected by changesets; skipping pkg.pr.new publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Publishing the following package directories to pkg.pr.new:"
+          printf '  %s\n' $PACKAGE_DIRS
+          {
+            echo "skip=false"
+            echo "package-dirs<<EOF"
+            echo "$PACKAGE_DIRS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
       - name: Publish Preview Packages
+        if: steps.changeset.outputs.skip == 'false'
+        env:
+          PACKAGE_DIRS: ${{ steps.changeset.outputs.package-dirs }}
         run: >
           pnpm exec pkg-pr-new publish
           --pnpm
           --commentWithSha
           --packageManager=pnpm
-          './packages/*'
+          $PACKAGE_DIRS

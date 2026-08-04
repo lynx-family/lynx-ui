@@ -107,7 +107,20 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=32768
       - name: Pack Package Artifacts
         if: inputs.upload-package-artifacts
-        run: tar -czf package-artifacts.tgz packages/*/dist
+        run: |
+          PACKAGE_ARTIFACTS=()
+          for dir in packages/*/dist luna/packages/*/dist; do
+            if [ -d "$dir" ]; then
+              PACKAGE_ARTIFACTS+=("$dir")
+            fi
+          done
+
+          if [ "${#PACKAGE_ARTIFACTS[@]}" -eq 0 ]; then
+            echo "No package dist artifacts found." >&2
+            exit 1
+          fi
+
+          tar -czf package-artifacts.tgz "${PACKAGE_ARTIFACTS[@]}"
       - name: Upload Package Artifacts
         if: inputs.upload-package-artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
