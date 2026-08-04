@@ -57,9 +57,22 @@ jobs:
       - name: Extract Package Artifacts
         run: tar -xzf package-artifacts.tgz
       - name: Publish Preview Packages
-        run: >
-          pnpm exec pkg-pr-new publish
-          --pnpm
-          --commentWithSha
-          --packageManager=pnpm
-          './packages/*'
+        run: |
+          mkdir -p artifacts
+          pnpm exec pkg-pr-new publish \
+            --pnpm \
+            --commentWithSha \
+            --packageManager=pnpm \
+            --json artifacts/pkg-pr-new.json \
+            './packages/*'
+      - name: Open Skills Preview PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.LYNX_COMMUNITY_SKILLS_PAT }}
+          SOURCE_PR: ${{ github.event.pull_request.number }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node tools/skill-lynx-ui/open-skills-preview-pr.mjs \
+            --metadata artifacts/pkg-pr-new.json \
+            --source-pr "$SOURCE_PR" \
+            --source-sha "$SOURCE_SHA"
