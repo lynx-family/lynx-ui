@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "@lynx-js/example-luna-showcase-catalog#build",
+        "@lynx-js/example-luna-showcase-lynx#build",
+        "@lynx-js/luna-core#build",
+        "@lynx-js/luna-stage#build",
+        "@lynx-js/luna-studio#build"
+      ],
+      "inputs": [
+        "package.json",
+        "public/**",
+        "src/**",
+        "rsbuild.config.ts",
+        "tailwind.config.ts",
+        "tsconfig.json",
+        "../../tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    }
+  }
+}

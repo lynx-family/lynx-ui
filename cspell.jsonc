@@ -46,6 +46,8 @@
     // Output
     "dist",
     "lib",
+    "**/*.web.bundle",
+    "**/*.lynx.bundle",
     // Dependencies
     "lynx-stack",
     "node_modules",

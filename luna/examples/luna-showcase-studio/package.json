@@ -1,0 +1,45 @@
+{
+  "name": "@lynx-js/example-luna-showcase-studio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Web showcase for the L.U.N.A Stage and Studio integration",
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/examples/luna-showcase-studio#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "luna/examples/luna-showcase-studio"
+  },
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild --config ./rsbuild.config.ts build",
+    "demo": "turbo run build --filter @lynx-js/example-luna-showcase-studio && rsbuild preview",
+    "dev": "rsbuild dev --open",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@headlessui/react": "catalog:",
+    "@headlessui/tailwindcss": "catalog:",
+    "@lynx-js/example-luna-showcase-catalog": "workspace:*",
+    "@lynx-js/luna-core": "workspace:*",
+    "@lynx-js/luna-stage": "workspace:*",
+    "@lynx-js/luna-studio": "workspace:*",
+    "@lynx-js/web-core": "catalog:",
+    "clsx": "catalog:",
+    "lucide-react": "catalog:",
+    "motion": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwind-merge": "catalog:tailwind"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "rsbuild-plugin-tailwindcss": "catalog:tailwind",
+    "tailwindcss": "catalog:tailwind",
+    "typescript": "catalog:"
+  }
+}
