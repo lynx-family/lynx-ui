@@ -51,6 +51,12 @@ jobs:
         run: pnpm check:changesets
       - name: Changeset Check
         run: pnpm changeset status --since=origin/main || echo "::warning::Changeset check failed, but continuing execution."
+      - name: New Publishable Package Check
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+        run: |
+          pnpm test:new-packages
+          pnpm check:new-packages --base "$BASE_SHA"
 
   check-skills:
     name: Check Skills

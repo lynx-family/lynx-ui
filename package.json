@@ -17,6 +17,7 @@
     "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\" \"luna/examples/**/*.css\"",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
+    "check:new-packages": "node tools/scripts/check-new-publishable-packages.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
     "check:skills-eval-definitions": "pnpm --filter @lynx-js/skill-lynx-ui check:eval-definitions",
     "check:skills-references": "pnpm --filter @lynx-js/skill-lynx-ui check:references",
@@ -37,6 +38,7 @@
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
     "test": "vitest",
+    "test:new-packages": "node --test tools/scripts/check-new-publishable-packages.test.mjs",
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {
