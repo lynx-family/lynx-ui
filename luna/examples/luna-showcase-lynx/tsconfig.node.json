@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Rspeedy uses Node.js's module resolution
+    "module": "node16",
+    "moduleResolution": "node16",
+    "erasableSyntaxOnly": true,
+
+    // Node.js 24
+    "lib": ["ESNext"],
+    "target": "ES2022",
+
+    "noEmit": true
+  },
+  "include": ["lynx.config.ts"]
+}

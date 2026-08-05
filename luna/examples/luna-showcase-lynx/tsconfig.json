@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "*": ["./*"],
+    },
+  },
+  "files": [],
+  "references": [
+    { "path": "./src" },
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.tailwind.json" },
+    { "path": "../luna-showcase-catalog/tsconfig.build.json" },
+    { "path": "../../packages/luna-core/tsconfig.build.json" },
+    { "path": "../../packages/luna-reactlynx/tsconfig.build.json" },
+    { "path": "../../packages/luna-tailwind/tsconfig.build.json" },
+  ],
+}

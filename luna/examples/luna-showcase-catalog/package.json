@@ -1,0 +1,45 @@
+{
+  "name": "@lynx-js/example-luna-showcase-catalog",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared metadata and utilities for the L.U.N.A showcase apps",
+  "keywords": [
+    "luna",
+    "catalog",
+    "components",
+    "metadata",
+    "registry"
+  ],
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/examples/luna-showcase-catalog",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "luna/examples/luna-showcase-catalog"
+  },
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rslib build"
+  },
+  "devDependencies": {
+    "@rslib/core": "catalog:",
+    "typescript": "catalog:"
+  }
+}

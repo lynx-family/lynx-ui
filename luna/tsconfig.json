@@ -25,6 +25,12 @@
   "files": [],
   "references": [
     {
+      "path": "./examples/luna-showcase-catalog/tsconfig.build.json",
+    },
+    {
+      "path": "./examples/luna-showcase-lynx",
+    },
+    {
       "path": "./packages/luna-core/tsconfig.build.json",
     },
     {
