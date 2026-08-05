@@ -5,8 +5,8 @@
 import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 
-import { ActCheckbox } from '@/components/act-checkbox'
-import { LunaTheme } from '@/LunaTheme.js'
+import { ActCheckbox } from '../components/act-checkbox'
+import { LunaTheme } from '../LunaTheme.js'
 
 export function App() {
   return (

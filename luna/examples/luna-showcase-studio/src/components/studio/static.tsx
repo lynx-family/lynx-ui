@@ -5,8 +5,8 @@
 import { Stage, StageContainer } from '@lynx-js/luna-stage'
 import { LynxStage } from '@lynx-js/luna-stage/lynx'
 
-import { Container } from '@/components/container'
-import { StudioFrame } from '@/components/studio-frame'
+import { Container } from '../container'
+import { StudioFrame } from '../studio-frame'
 
 const lightTheme = { lunaTheme: 'luna-light' }
 const darkTheme = { lunaTheme: 'luna-dark' }

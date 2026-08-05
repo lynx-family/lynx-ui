@@ -2,21 +2,19 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import { Choreography } from '@lynx-js/luna-studio'
+import type { InteractionParams } from '@lynx-js/luna-studio'
+import { useState } from 'react'
+
 import type {
   LunaThemeKey,
   LunaThemeMode,
   LunaThemeVariant,
   StudioViewMode,
-} from '@/types'
-
-import { Choreography } from '@lynx-js/luna-studio'
-import type { InteractionParams } from '@lynx-js/luna-studio'
-import { useState } from 'react'
-
-import { MenuBar } from '@/components/menu-bar'
-import { StudioFrame } from '@/components/studio-frame'
-import { cn } from '@/utils'
-
+} from '../../types'
+import { cn } from '../../utils'
+import { MenuBar } from '../menu-bar'
+import { StudioFrame } from '../studio-frame'
 import {
   buildStudioStageGlobalProps,
   DEFAULT_STUDIO_FOCUS_KEY as defaultStudioFocusKey,

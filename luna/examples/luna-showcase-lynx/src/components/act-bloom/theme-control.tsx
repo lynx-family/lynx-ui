@@ -4,11 +4,10 @@
 
 import { useMemo } from '@lynx-js/react'
 
-import type { LunaThemeKey, LunaThemeMode, LunaThemeVariant } from '@/types'
-
 import { parseLunaThemeKey } from '@lynx-js/luna-core'
 
 import { useControllable } from './use-controllable'
+import type { LunaThemeKey, LunaThemeMode, LunaThemeVariant } from '../../types'
 
 type ThemeControlProps =
   | {

@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from '@lynx-js/react'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 
 import './pointer.css'
 

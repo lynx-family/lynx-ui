@@ -3,8 +3,8 @@
 // LICENSE file in the root directory of this source tree.
 
 import './App.css'
-import { Studio } from '@/components/studio'
-import { cn } from '@/utils'
+import { Studio } from './components/studio'
+import { cn } from './utils'
 
 const RECORD_MODE = false
 

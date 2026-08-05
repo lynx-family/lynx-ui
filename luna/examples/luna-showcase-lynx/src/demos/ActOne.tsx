@@ -5,8 +5,8 @@
 import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 
-import { ActOne } from '@/components/act-one'
-import { LunaTheme } from '@/LunaTheme.js'
+import { ActOne } from '../components/act-one'
+import { LunaTheme } from '../LunaTheme.js'
 
 export function App() {
   return (

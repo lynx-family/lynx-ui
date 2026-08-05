@@ -4,8 +4,8 @@
 
 import type { ComponentPropsWithRef } from 'react'
 
-import { Container } from '@/components/container'
-import { cn } from '@/utils'
+import { Container } from './container'
+import { cn } from '../utils'
 
 type StudioFrameProps = ComponentPropsWithRef<'div'>
 

@@ -5,8 +5,8 @@
 import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 
-import { ActDialog } from '@/components/act-dialog'
-import { LunaTheme } from '@/LunaTheme.js'
+import { ActDialog } from '../components/act-dialog'
+import { LunaTheme } from '../LunaTheme.js'
 
 export function App() {
   return (

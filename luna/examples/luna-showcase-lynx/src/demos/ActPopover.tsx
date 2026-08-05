@@ -5,8 +5,8 @@
 import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 
-import { ActPopover } from '@/components/act-popover'
-import { LunaTheme } from '@/LunaTheme.js'
+import { ActPopover } from '../components/act-popover'
+import { LunaTheme } from '../LunaTheme.js'
 
 export function App() {
   return (

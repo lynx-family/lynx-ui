@@ -4,7 +4,7 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 
 function ActButton() {
   return (

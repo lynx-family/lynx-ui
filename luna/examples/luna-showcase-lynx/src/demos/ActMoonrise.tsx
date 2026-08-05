@@ -5,8 +5,8 @@
 import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 
-import { AppTheme } from '@/App.js'
-import { ActMoonrise } from '@/components/act-moonrise'
+import { AppTheme } from '../App.js'
+import { ActMoonrise } from '../components/act-moonrise'
 
 export function App() {
   return (

@@ -11,14 +11,13 @@ import type {
 } from '@lynx-js/luna-studio'
 import { useState } from 'react'
 
-import { useThemeKeyboardControls } from '@/components/studio/use-theme-keyboard-controls'
-
 import {
   createDemoInteractionHandler,
   createDemoResolveFocusKey,
   createDemoStageGlobalPropsBuilder,
 } from './interaction'
 import { lunaStudioDemoLayout, lunaStudioDemoModeGrid } from './layout'
+import { useThemeKeyboardControls } from '../../components/studio/use-theme-keyboard-controls'
 
 const VIEW_MODES: StudioViewMode[] = ['compare', 'focus', 'lineup']
 

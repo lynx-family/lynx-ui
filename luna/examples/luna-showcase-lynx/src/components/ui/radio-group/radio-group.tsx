@@ -5,9 +5,8 @@
 import { useRef, useState } from '@lynx-js/react'
 import type { ReactNode } from '@lynx-js/react'
 
-import { cn } from '@/utils'
-
 import { RadioGroupProvider, useRadioGroup } from './context'
+import { cn } from '../../../utils'
 
 interface RadioItemProps {
   size?: 'sm' | 'md'

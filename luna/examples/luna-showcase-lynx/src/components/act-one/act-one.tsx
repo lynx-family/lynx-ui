@@ -4,7 +4,7 @@
 
 import { useState } from '@lynx-js/react'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 
 function ActOne() {
   const [snapIndex, setSnapIndex] = useState(1)

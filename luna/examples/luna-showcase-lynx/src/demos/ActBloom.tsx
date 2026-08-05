@@ -5,7 +5,7 @@
 import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 
-import { ActBloom } from '@/components/act-bloom'
+import { ActBloom } from '../components/act-bloom'
 
 import '../App.css'
 

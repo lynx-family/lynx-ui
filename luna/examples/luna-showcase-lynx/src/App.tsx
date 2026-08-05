@@ -4,9 +4,9 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import type { LunaThemeKey } from '@/types'
-
 import { clsx } from 'clsx'
+
+import type { LunaThemeKey } from './types'
 
 import './App.css'
 

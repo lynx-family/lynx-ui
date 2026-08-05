@@ -247,28 +247,6 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/examples/**/*.{ts,tsx}'],
-    settings: {
-      'import/resolver': {
-        typescript: {
-          project: 'apps/examples/**/tsconfig.json',
-          noWarnOnMultipleProjects: true,
-        },
-      },
-    },
-  },
-  {
-    files: ['luna/examples/**/*.{ts,tsx}'],
-    settings: {
-      'import/resolver': {
-        typescript: {
-          project: 'luna/examples/**/tsconfig.json',
-          noWarnOnMultipleProjects: true,
-        },
-      },
-    },
-  },
-  {
     languageOptions: {
       globals: {
         ...globals.nodeBuiltin,

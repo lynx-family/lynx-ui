@@ -4,10 +4,9 @@
 
 import { useEffect, useState } from '@lynx-js/react'
 
-import { cn } from '@/utils'
-
 import { EllipsisIcon } from './ellipsis-icon'
 import { OptionsMenu } from './options-menu'
+import { cn } from '../../utils'
 
 import './pointer.css'
 

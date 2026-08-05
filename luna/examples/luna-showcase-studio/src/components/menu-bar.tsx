@@ -8,7 +8,7 @@ import type { LucideIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 import type { ComponentPropsWithoutRef, ForwardedRef } from 'react'
 
-import { cn } from '@/utils'
+import { cn } from '../utils'
 
 const TabIcon = forwardRef<HTMLDivElement, TabIconProps>(
   TabIconImpl,

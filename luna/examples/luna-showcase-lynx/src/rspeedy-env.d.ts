@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 /// <reference types="@lynx-js/rspeedy/client" />
-import type { LunaThemeKey, LynxUIComponentId, StudioViewMode } from '@/types'
+import type { LunaThemeKey, LynxUIComponentId, StudioViewMode } from './types'
 
 declare module '@lynx-js/types' {
   interface GlobalProps {

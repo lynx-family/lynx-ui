@@ -4,7 +4,7 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 
 function Text({ children }: { children: string }) {
   return <text className='text-start text-base text-content'>{children}</text>

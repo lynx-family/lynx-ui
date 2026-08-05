@@ -4,16 +4,11 @@
 
 import { useState } from '@lynx-js/react'
 
-import type {
-  LunaThemeKey,
-  LynxUIComponentDef,
-  LynxUIComponentId,
-  StudioViewMode,
-} from '@/types'
-
 import { demoTitleFromSlug } from '@lynx-js/example-luna-showcase-catalog'
 import { parseLunaThemeKey } from '@lynx-js/luna-core'
 
+import { LyricBlock } from './lyric-block.js'
+import { ThemeControl } from './theme-control.js'
 import {
   ALL_LUNA_THEME_KEYS,
   LUNA_DEFAULT_COMPONENT,
@@ -26,12 +21,15 @@ import {
   LUNA_STUDIO_DEFAULT_THEME,
   LUNA_STUDIO_ONLY_COMPONENTS,
   LynxUIComponentsRegistry,
-} from '@/constants'
-import { explorerRead, explorerSave } from '@/native'
-import { cn } from '@/utils'
-
-import { LyricBlock } from './lyric-block.js'
-import { ThemeControl } from './theme-control.js'
+} from '../../constants'
+import { explorerRead, explorerSave } from '../../native'
+import type {
+  LunaThemeKey,
+  LynxUIComponentDef,
+  LynxUIComponentId,
+  StudioViewMode,
+} from '../../types'
+import { cn } from '../../utils'
 
 const LynxUIComponents = LynxUIComponentsRegistry.list
 

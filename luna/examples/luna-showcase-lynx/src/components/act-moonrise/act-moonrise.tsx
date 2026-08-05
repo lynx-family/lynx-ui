@@ -4,16 +4,15 @@
 
 import { useCallback } from '@lynx-js/react'
 
-import type { LunaThemeKey, StudioViewMode } from '@/types'
-
 import { parseLunaThemeKey } from '@lynx-js/luna-core'
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { RadioGroup, RadioItem } from '@/components/ui/radio-group'
-import { Switch } from '@/components/ui/switch'
-import type { onStudioEvent } from '@/types/event.js'
-import { cn } from '@/utils'
+import type { LunaThemeKey, StudioViewMode } from '../../types'
+import type { onStudioEvent } from '../../types/event.js'
+import { cn } from '../../utils'
+import { Button } from '../ui/button'
+import { Checkbox } from '../ui/checkbox'
+import { RadioGroup, RadioItem } from '../ui/radio-group'
+import { Switch } from '../ui/switch'
 
 interface ActMoonriseProps {
   studioViewMode: StudioViewMode
