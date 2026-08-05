@@ -10,9 +10,10 @@
     "build": "turbo build",
     "changeset": "changeset",
     "check": "pnpm run check:luna-vars && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
-    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:changesets-private && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
     "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
+    "check:changesets-private": "node tools/scripts/check-changeset-private-targets.mjs",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
     "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\" \"luna/examples/**/*.css\"",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
@@ -38,6 +39,7 @@
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
     "test": "vitest",
+    "test:changesets-private": "node --test tools/scripts/check-changeset-private-targets.test.mjs",
     "test:new-packages": "node --test tools/scripts/check-new-publishable-packages.test.mjs",
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
@@ -68,6 +70,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/cli": "2.28.1",
+    "@changesets/parse": "0.4.3",
     "@cspell/eslint-plugin": "^8.17.1",
     "@eslint/js": "^9.17.0",
     "@lynx-js/qrcode-rsbuild-plugin": "catalog:",

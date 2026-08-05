@@ -49,6 +49,10 @@ jobs:
           pnpm dlx sherif@latest
       - name: Changeset Target Check
         run: pnpm check:changesets
+      - name: Changeset Private Target Check
+        run: |
+          pnpm test:changesets-private
+          pnpm check:changesets-private
       - name: Changeset Check
         run: pnpm changeset status --since=origin/main || echo "::warning::Changeset check failed, but continuing execution."
       - name: New Publishable Package Check
