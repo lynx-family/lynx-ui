@@ -1,5 +1,11 @@
 # @lynx-js/luna-studio
 
+## 0.1.1
+
+### Patch Changes
+
+- Keep non-focusable stages in the foreground when rendering focus-mode choreography. ([#249](https://github.com/lynx-family/lynx-ui/pull/249))
+
 ## 0.1.0
 
 ### Minor Changes
