@@ -1,5 +1,5 @@
 ---
-{ "@lynx-example/luna-stage-motion": patch }
+{ "@lynx-js/lynx-ui-button": patch }
 ---
 
-Test-only changeset to validate the CI gate that blocks private workspace packages from being targeted in changesets (multi-file scan).
+Test-only changeset used to keep this PR's changeset set non-empty while moving on to the next CI gate test.
