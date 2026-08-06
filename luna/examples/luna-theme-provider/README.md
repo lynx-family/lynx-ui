@@ -17,11 +17,11 @@ through `globalProps` so the example can switch the active theme variant.
 Run the development server from the repository root:
 
 ```bash
-pnpm --filter @lynx-example/luna-theme-provider dev
+pnpm --filter @lynx-js/example-luna-theme-provider dev
 ```
 
 Build the example:
 
 ```bash
-pnpm --filter @lynx-example/luna-theme-provider build
+pnpm --filter @lynx-js/example-luna-theme-provider build
 ```
