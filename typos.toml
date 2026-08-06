@@ -1,3 +1,6 @@
+[files]
+extend-exclude = ["**/*.lynx.bundle", "**/*.web.bundle"]
+
 [default.extend-words]
 Inferrable = "Inferrable"
 sherif = "sherif"
