@@ -10,7 +10,7 @@ interface LyricBlockProps {
 
 export function LyricBlock({ lines, artist, title }: LyricBlockProps) {
   return (
-    <view className='w-fll flex flex-col gap-[10px]'>
+    <view className='w-full flex flex-col gap-[10px]'>
       <view className='flex flex-col items-start justify-center gap-[2px]'>
         {lines.map((line, i) => (
           <text

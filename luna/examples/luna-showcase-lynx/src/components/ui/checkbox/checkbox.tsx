@@ -24,8 +24,18 @@ const CheckMarkPath = {
   md: `path("${CheckMarkPathData.md}")`,
 }
 
-function Checkbox({ defaultChecked, size = 'sm', disabled }: CheckboxProps) {
+function Checkbox({
+  defaultChecked = false,
+  size = 'sm',
+  disabled = false,
+}: CheckboxProps) {
   const [checked, setChecked] = useState(defaultChecked)
+
+  const handleToggle = () => {
+    if (disabled) return
+    setChecked(prev => !prev)
+  }
+
   return (
     <view
       className={cn(
@@ -35,7 +45,7 @@ function Checkbox({ defaultChecked, size = 'sm', disabled }: CheckboxProps) {
         disabled && 'ui-disabled',
         'ui-checked:active:bg-primary-2',
       )}
-      bindtap={() => setChecked(prev => !prev)}
+      bindtap={handleToggle}
       event-through={false}
       hit-slop={{ top: '8px', left: '8px', right: '8px', bottom: '8px' }}
     >

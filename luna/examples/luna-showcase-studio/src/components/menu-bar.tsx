@@ -10,7 +10,7 @@ import type { ComponentPropsWithoutRef, ForwardedRef } from 'react'
 
 import { cn } from '../utils'
 
-const TabIcon = forwardRef<HTMLDivElement, TabIconProps>(
+const TabIcon = forwardRef<HTMLButtonElement, TabIconProps>(
   TabIconImpl,
 )
 
@@ -42,14 +42,17 @@ function MenuBar(
           <TabIcon
             icon={Columns2}
             color={iconColor}
+            aria-label='Compare view'
           />
           <TabIcon
             icon={GalleryHorizontalEnd}
             color={iconColor}
+            aria-label='Focus view'
           />
           <TabIcon
             icon={Grid3x2}
             color={iconColor}
+            aria-label='Lineup view'
           />
         </TabList>
       </TabGroup>
@@ -62,7 +65,10 @@ type TabIconProps =
   & Omit<ComponentPropsWithoutRef<'div'>, 'children' | 'className' | 'color'>
   & { icon: LucideIcon, className?: string, color?: string }
 
-function TabIconImpl(props: TabIconProps, ref: ForwardedRef<HTMLDivElement>) {
+function TabIconImpl(
+  props: TabIconProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
   const { icon: Icon, className, color, ...restProps } = props
 
   return (

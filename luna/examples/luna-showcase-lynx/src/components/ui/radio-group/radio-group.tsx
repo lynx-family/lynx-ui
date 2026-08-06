@@ -72,13 +72,15 @@ function RadioItem(
     >
       {/* Indicator */}
       <view className={'size-full flex justify-center items-center'}>
-        <view
-          className={cn(
-            'bg-primary-content rounded-full',
-            size === 'sm' ? 'size-[6px]' : 'size-[9px]',
+        {selectedValue === value
+          && (
+            <view
+              className={cn(
+                'bg-primary-content rounded-full',
+                size === 'sm' ? 'size-[6px]' : 'size-[9px]',
+              )}
+            />
           )}
-        >
-        </view>
       </view>
     </view>
   )

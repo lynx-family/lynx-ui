@@ -9,7 +9,7 @@ import { RadioGroupContext } from './radio-group-context.js'
 export function useRadioGroup() {
   const ctx = useContext(RadioGroupContext)
   if (!ctx) {
-    throw new Error('useVisualSize must be used within VisualSizeProvider')
+    throw new Error('useRadioGroup must be used within RadioGroupProvider')
   }
   return ctx
 }
