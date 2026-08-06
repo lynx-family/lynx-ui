@@ -1,7 +1,7 @@
 {
   "name": "@lynx-example/luna-stage-basic",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "license": "Apache-2.0",
   "author": "The Lynx Authors",
   "type": "module",
