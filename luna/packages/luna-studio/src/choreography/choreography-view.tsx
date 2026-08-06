@@ -26,7 +26,7 @@ import type {
   LynxRuntimeCall,
   StudioResolvedStage,
 } from '../types'
-import { getStageWorldState } from '../utils/world'
+import { getStageWorldState, isForegroundStage } from '../utils/world'
 
 type RenderData = StudioResolvedStage & {
   world: { x: number, y: number, z: number }
@@ -186,8 +186,7 @@ function ChoreographyView({
   }, [dispatchInteractionEvent, layout, mode, onLynxRuntimeCallEvent])
 
   const resolvedActiveFocusKey = useMemo(() => {
-    // eslint-disable-next-line unicorn/no-array-callback-reference
-    const focusableStages = layout[mode].filter(hasFocusKey)
+    const focusableStages = layout[mode].filter(stage => hasFocusKey(stage))
 
     if (
       activeFocusKey !== undefined
@@ -201,14 +200,20 @@ function ChoreographyView({
 
   const rendered: RenderData[] = useMemo(() => {
     const stages = layout[mode]
-    // eslint-disable-next-line unicorn/no-array-callback-reference
-    const focusableStages = stages.filter(hasFocusKey)
-    const nonFocusedStages = stages.filter(
+
+    // Only stages with a focus key participate in focus selection and the
+    // surrounding 3D fan. Stages without one remain persistent foreground
+    // content, such as controls shared by every focused stage.
+    const focusableStages = stages.filter(stage => hasFocusKey(stage))
+
+    // The active focus stage escapes the fan, so only the remaining focusable
+    // stages contribute to its ordering and midpoint.
+    const focusableBackgroundStages = focusableStages.filter(
       stage => stage.focusKey !== resolvedActiveFocusKey,
     )
 
-    const mid = (nonFocusedStages.length - 1) / 2
-    const focusedIndex = Math.max(
+    const backgroundMidpoint = (focusableBackgroundStages.length - 1) / 2
+    const activeFocusIndex = Math.max(
       0,
       focusableStages.findIndex(
         stage => stage.focusKey === resolvedActiveFocusKey,
@@ -216,17 +221,23 @@ function ChoreographyView({
     )
 
     return stages.map((stage) => {
-      // `compOrder` tracks render identity; `focusKey` is optional focus semantics.
-      const compOrder = nonFocusedStages.findIndex(
-        bg => bg.id === stage.id,
+      // Foreground stages intentionally resolve to -1 here. Their world state
+      // ignores the background index while `escape` is true.
+      const backgroundIndex = focusableBackgroundStages.findIndex(
+        backgroundStage => backgroundStage.id === stage.id,
       )
-      // Only the active focus stage escapes the surrounding focus layout.
-      const escape = stage.focusKey === resolvedActiveFocusKey
+
+      // Both persistent non-focusable content and the active focus stage stay
+      // centered, elevated, and unmasked.
+      const escape = isForegroundStage(
+        stage.focusKey,
+        resolvedActiveFocusKey,
+      )
       const { world, zIndex, maskOpacity } = getStageWorldState({
         mode,
-        compOrder,
-        mid,
-        focusedIndex,
+        backgroundIndex,
+        backgroundMidpoint,
+        activeFocusIndex,
         escape,
       })
 

@@ -18,6 +18,13 @@ export interface StageWorldState {
 
 const WORLD_ORIGIN: WorldPos = { x: 0, y: 0, z: 0 }
 
+export function isForegroundStage(
+  focusKey: string | undefined,
+  activeFocusKey: string,
+): boolean {
+  return focusKey === undefined || focusKey === activeFocusKey
+}
+
 function getOrderDirection(orderOffset: number): -1 | 0 | 1 {
   // Centered stages should not receive a focus-index angle offset.
   if (orderOffset === 0) return 0
@@ -27,27 +34,27 @@ function getOrderDirection(orderOffset: number): -1 | 0 | 1 {
 /**
  * Resolves the presentation transform for a stage.
  *
- * In focus mode, `escape` marks the active focused stage, which stays centered,
- * elevated, and unmasked. Non-focused stages use `compOrder` to fan out around
- * that active stage, while `focusedIndex` adds a small rotation offset so focus
- * transitions preserve a sense of direction.
+ * In focus mode, `escape` marks foreground stages, which stay centered,
+ * elevated, and unmasked. Focusable background stages use `backgroundIndex`
+ * to fan out around the foreground, while `activeFocusIndex` adds a small
+ * rotation offset so focus transitions preserve a sense of direction.
  */
 export function getStageWorldState({
   mode,
-  compOrder,
-  mid,
-  focusedIndex,
+  backgroundIndex,
+  backgroundMidpoint,
+  activeFocusIndex,
   escape,
 }: {
   mode: StudioViewMode
-  compOrder: number
-  mid: number
-  focusedIndex: number
+  backgroundIndex: number
+  backgroundMidpoint: number
+  activeFocusIndex: number
   escape: boolean
 }): StageWorldState {
-  const orderOffset = compOrder - mid
+  const orderOffset = backgroundIndex - backgroundMidpoint
   const direction = getOrderDirection(orderOffset)
-  const theta = (orderOffset * 20 + direction * focusedIndex * 2)
+  const theta = (orderOffset * 20 + direction * activeFocusIndex * 2)
     / 180 * Math.PI
 
   const world: WorldPos = mode === 'focus'
@@ -59,7 +66,9 @@ export function getStageWorldState({
     : WORLD_ORIGIN
 
   const zIndex = mode === 'focus'
-    ? (escape ? 100 : Math.ceil(Math.abs(compOrder - mid) * 2))
+    ? (escape
+      ? 100
+      : Math.ceil(Math.abs(backgroundIndex - backgroundMidpoint) * 2))
     : 0
 
   const maskOpacity = mode === 'focus'
