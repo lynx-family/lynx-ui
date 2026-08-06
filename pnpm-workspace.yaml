@@ -10,8 +10,6 @@ packages:
   - "!**/output/**"
 
 catalog:
-  "@headlessui/react": 2.2.7
-  "@headlessui/tailwindcss": 0.2.2
   "@lynx-js/react": 0.123.1
   "@lynx-js/react-rsbuild-plugin": 0.18.1
   "@lynx-js/rspeedy": 0.16.1
@@ -32,7 +30,6 @@ catalog:
   "@types/node": "^24"
   clsx: ^2.1.1
   jsdom: ^25.0.1
-  lucide-react: 0.546.0
   motion: 12.42.2
   react: ^18.3.1
   react-dom: ^18.3.1

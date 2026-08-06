@@ -19,21 +19,21 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
-    "@headlessui/react": "catalog:",
-    "@headlessui/tailwindcss": "catalog:",
+    "@headlessui/react": "2.2.7",
     "@lynx-js/example-luna-showcase-catalog": "workspace:*",
     "@lynx-js/luna-core": "workspace:*",
     "@lynx-js/luna-stage": "workspace:*",
     "@lynx-js/luna-studio": "workspace:*",
     "@lynx-js/web-core": "catalog:",
     "clsx": "catalog:",
-    "lucide-react": "catalog:",
+    "lucide-react": "0.546.0",
     "motion": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "tailwind-merge": "catalog:tailwind"
   },
   "devDependencies": {
+    "@headlessui/tailwindcss": "0.2.2",
     "@rsbuild/core": "catalog:",
     "@rsbuild/plugin-react": "catalog:",
     "@types/react": "catalog:",
