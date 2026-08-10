@@ -2,17 +2,18 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   InvokeRejectError,
-  setNativePropsByRef,
-  setNativePropsById,
-  setNativeProps,
-  invokeByRef,
-  invokeById,
-  getRectByRef,
-  getRectById,
   getRect,
+  getRectById,
+  getRectByRef,
+  invokeById,
+  invokeByRef,
+  setNativeProps,
+  setNativePropsById,
+  setNativePropsByRef,
 } from './selector'
 
 // Mock the global lynx object

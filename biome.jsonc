@@ -15,20 +15,21 @@
     "enabled": false,
   },
   "files": {
-    "ignore": [".vscode"],
+    "ignore": [
+      ".vscode",
+      "**/*.lynx.bundle",
+      "**/*.web.bundle",
+    ],
   },
   "linter": {
     "enabled": true,
     "ignore": [
-      "**/__test__/**",
       "tools/**",
       ".codebase/**",
       "coverage/**",
       "dist/**",
       "lib/**",
       "output/**",
-      "apps/**/*.test.ts",
-      "packages/**/*.test.ts",
       "__swc_snapshots__/**",
       "__snapshots__/**",
       "packages/web-platform/web-test/**",
@@ -116,6 +117,7 @@
     {
       "include": [
         "apps/**",
+        "luna/examples/**",
       ],
       "linter": {
         "rules": {

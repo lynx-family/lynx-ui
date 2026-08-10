@@ -31,22 +31,19 @@ export default tseslint.config(
       '**/test/js',
       '**/dist/**',
       '**/lib/**',
+      '**/*.lynx.bundle',
+      '**/*.web.bundle',
       '.changeset/*',
       '**/CHANGELOG.md',
-      '**/*.spec.ts',
-      '**/*.test.ts',
-      '**/__test__/**',
 
       // Configs
       'eslint.config.js',
-      'vitest.config.ts',
       '**/rslib.config.ts',
       'eslint.config.mjs',
       '.commitlintrc.js',
       '**/vitest.config.ts',
 
       // Ignored packages
-      'packages/**/vitest.config.ts',
       'website/**',
       'tools/configs/**',
       'tools/typings/**/*.d.ts',
@@ -262,8 +259,6 @@ export default tseslint.config(
     files: ['**/*.ts', '**/*.tsx'],
     ignores: ['**/*.md/**'],
     extends: [
-      tseslint.configs.eslintRecommended,
-      ...tseslint.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
     ],
@@ -275,15 +270,17 @@ export default tseslint.config(
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        projectService: {
-          allowDefaultProject: ['*.js'],
-          defaultProject: path.resolve(
-            import.meta.dirname,
-            'tsconfig.eslint.json',
-          ),
-        },
+        projectService: true,
       },
     },
+  },
+  {
+    files: [
+      'packages/**/*.{test,spec}.ts',
+      'apps/**/*.{test,spec}.ts',
+      'tools/**/*.{test,spec}.ts',
+    ],
+    extends: [tseslint.configs.disableTypeChecked],
   },
   // JavaScript-related
   {
@@ -311,9 +308,9 @@ export default tseslint.config(
   },
   {
     files: [
-      'e2e/**',
-      'examples/**/*.{js,mjs,cjs,jsx,ts,tsx}',
-      'website/**/*.{js,mjs,cjs,jsx,ts,tsx}',
+      'luna/examples/luna-showcase-studio/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
+      'luna/examples/luna-stage-basic/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
+      'luna/examples/luna-stage-motion/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
     ],
     languageOptions: {
       globals: globals.browser,
@@ -328,17 +325,15 @@ export default tseslint.config(
   },
   // Vitest-related
   {
-    files: ['**/*.test.ts', '**/*.test-d.ts'],
+    files: [
+      '**/*.{test,spec}.ts',
+      '**/*.{test,spec}.tsx',
+    ],
     plugins: {
       vitest,
     },
     rules: {
       ...vitest.configs.recommended.rules,
-    },
-    settings: {
-      vitest: {
-        typecheck: true,
-      },
     },
     languageOptions: {
       globals: {

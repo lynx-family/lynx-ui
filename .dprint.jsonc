@@ -20,8 +20,7 @@
       "nx.json",
       "renovate.json5",
       "tsconfig.json",
-      "tsconfig.build.json",
-      "tsconfig.eslint.json"
+      "tsconfig.build.json"
     ]
   },
   "markdown": {

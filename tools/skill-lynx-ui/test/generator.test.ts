@@ -6,17 +6,17 @@ import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 
+import { describe, expect, it } from 'vitest'
+
 import {
   collectIncludedComponents,
   componentSlugFromPackageName,
   generateReferences,
   getComponentOutputDir,
-  getExampleAppPaths,
   getExampleAppDirname,
+  getExampleAppPaths,
   validateComponentRoutingManifest,
 } from '../generate-references.mjs'
-
-import { describe, expect, it } from 'vitest'
 
 describe('skill-lynx-ui generator helpers', () => {
   it('derives component slugs from package names', () => {
@@ -99,13 +99,15 @@ describe('skill-lynx-ui generated output', () => {
         ),
       ).resolves.toContain('./component-composition.md')
 
+      for (const component of components.filter(item => item.skillPath)) {
+        const componentDir = getComponentOutputDir(tempRoot, component.slug)
+        await expect(
+          fs.stat(path.join(componentDir, 'guide.md')),
+        ).resolves.toBeTruthy()
+      }
+
       for (const component of components) {
         const componentDir = getComponentOutputDir(tempRoot, component.slug)
-        if (component.skillPath) {
-          await expect(
-            fs.stat(path.join(componentDir, 'guide.md')),
-          ).resolves.toBeTruthy()
-        }
         await expect(
           fs.stat(path.join(componentDir, 'api.md')),
         ).resolves.toBeTruthy()
