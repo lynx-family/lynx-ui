@@ -9,5 +9,11 @@
     "sourceMap": true,
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
-  "exclude": ["**/*.test.ts", "**/__tests__/**"],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+  ],
 }

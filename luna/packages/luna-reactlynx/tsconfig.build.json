@@ -16,7 +16,13 @@
     },
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/__tests__/**"],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+  ],
   "references": [
     { "path": "../luna-core/tsconfig.build.json" },
   ],

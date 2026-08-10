@@ -5,4 +5,5 @@
     "noEmit": true,
   },
   "include": ["src/**/*.ts", "examples/**/*.ts", "rslib.config.ts"],
+  "exclude": [],
 }
