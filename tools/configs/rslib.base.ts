@@ -13,6 +13,11 @@ export const baseConfig: RslibConfig = {
       },
     }),
   ],
+  source: {
+    entry: {
+      index: ['src/**', '!src/**/*.test.*', '!src/**/__tests__/**'],
+    },
+  },
   lib: [
     {
       bundle: false,
