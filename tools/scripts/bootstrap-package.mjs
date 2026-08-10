@@ -250,8 +250,11 @@ function printNextSteps(outDir) {
   const outRelPath = path.relative(repoRoot, outDir)
 
   console.log('Next steps:')
+  console.log('  npm login --registry=https://registry.npmjs.org/')
   console.log(`  cd ${outRelPath}`)
-  console.log('  npm publish --access public --tag oidc-bootstrap')
+  console.log(
+    '  npm publish --access public --tag oidc-bootstrap --registry=https://registry.npmjs.org/',
+  )
   console.log()
   console.log('After publish:')
   console.log(

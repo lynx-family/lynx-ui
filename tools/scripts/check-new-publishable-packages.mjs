@@ -262,8 +262,11 @@ async function main() {
     }
     console.error(`  Bootstrap with: pnpm bootstrap:package ${pkg.path}`)
     console.error(`  Then publish placeholder:`)
+    console.error(`    npm login --registry=https://registry.npmjs.org/`)
     console.error(`    cd ${outputDir}`)
-    console.error(`    npm publish --access public --tag oidc-bootstrap`)
+    console.error(
+      `    npm publish --access public --tag oidc-bootstrap --registry=https://registry.npmjs.org/`,
+    )
     console.error(`  Then configure Trusted Publisher (OIDC):`)
     console.error(`    ${getNpmAccessUrl(pkg.name)}`)
   }
