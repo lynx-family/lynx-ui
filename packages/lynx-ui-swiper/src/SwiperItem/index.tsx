@@ -202,7 +202,7 @@ const SwiperItem = (
 
   return (
     <view
-      class='swiper-item'
+      class='lynx-ui-swiper__item'
       style={containerStyle}
       main-thread:ref={setRef}
       overlap={overlap}

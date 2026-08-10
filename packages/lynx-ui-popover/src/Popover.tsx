@@ -375,7 +375,7 @@ export const PopoverBackdrop = (props: PopoverBackdropProps) => {
 
   return (
     <Button
-      className={`popover-backdrop ${presenceClassName}`}
+      className={`lynx-ui-popover__backdrop ${presenceClassName}`}
       style={style}
       onClick={handleTap}
       disabled={busy}

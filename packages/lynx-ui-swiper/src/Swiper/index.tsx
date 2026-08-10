@@ -358,7 +358,7 @@ const Swiper = forwardRef(
     return (
       <SwiperContext.Provider value={contextValue}>
         <view
-          class='swiper-root'
+          class='lynx-ui-swiper__root'
           style={{
             ...style,
             width: `${containerWidth}px`,
@@ -370,7 +370,7 @@ const Swiper = forwardRef(
           block-native-event={blockNativeEvent}
         >
           <view
-            class='swiper-track'
+            class='lynx-ui-swiper__track'
             style={containerStyle}
             ref={setContainerRef}
             main-thread:ref={containerRef}

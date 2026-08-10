@@ -107,7 +107,7 @@ function LazyComponentImpl(
     return (
       <view
         id='component'
-        className='min'
+        className='lynx-ui-lazy-component__min'
         flatten={false}
         exposure-screen-margin-top={top}
         exposure-screen-margin-bottom={bottom}
@@ -131,7 +131,7 @@ function LazyComponentImpl(
     return show ? children : (
       <view
         id='component'
-        className='min'
+        className='lynx-ui-lazy-component__min'
         flatten={false}
         exposure-screen-margin-top={top}
         exposure-screen-margin-bottom={bottom}

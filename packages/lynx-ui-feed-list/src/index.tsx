@@ -117,7 +117,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     refreshHeader = (
       <view
         id={`${listId}-refreshHeaderWrapper`}
-        class='vertical-start-wrapper'
+        class='lynx-ui-feed-list__vertical-start-wrapper'
         main-thread:bindlayoutchange={(e) => {
           'main thread'
           useRefreshAndBounceProps?.onRefreshHeaderLayoutUpdated(e)
@@ -144,9 +144,9 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
           id={`${listId}-upperBounceWrapper`}
           class={horizontal
             ? (enableRTL
-              ? 'horizontal-start-wrapper-rtl'
-              : 'horizontal-start-wrapper')
-            : 'vertical-start-wrapper'}
+              ? 'lynx-ui-feed-list__horizontal-start-wrapper-rtl'
+              : 'lynx-ui-feed-list__horizontal-start-wrapper')
+            : 'lynx-ui-feed-list__vertical-start-wrapper'}
         >
           {bounceableProps.upperBounceItem}
         </view>
@@ -158,9 +158,9 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
           id={`${listId}-lowerBounceWrapper`}
           class={horizontal
             ? (enableRTL
-              ? 'horizontal-end-wrapper-rtl'
-              : 'horizontal-end-wrapper')
-            : 'vertical-end-wrapper'}
+              ? 'lynx-ui-feed-list__horizontal-end-wrapper-rtl'
+              : 'lynx-ui-feed-list__horizontal-end-wrapper')
+            : 'lynx-ui-feed-list__vertical-end-wrapper'}
         >
           {bounceableProps.lowerBounceItem}
         </view>

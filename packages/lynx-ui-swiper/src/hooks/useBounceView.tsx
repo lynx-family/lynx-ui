@@ -27,7 +27,11 @@ function useBounceView({
 }) {
   const bounceStartView = startBounceItem
     ? (
-      <view class={RTL ? 'bounce-start-item-RTL' : 'bounce-start-item'}>
+      <view
+        class={RTL
+          ? 'lynx-ui-swiper__bounce-start-rtl'
+          : 'lynx-ui-swiper__bounce-start'}
+      >
         {startBounceItem}
       </view>
     )
@@ -38,7 +42,11 @@ function useBounceView({
 
   const bounceEndView = endBounceItem && shouldShowEndBounce
     ? (
-      <view class={RTL ? 'bounce-end-item-RTL' : 'bounce-end-item'}>
+      <view
+        class={RTL
+          ? 'lynx-ui-swiper__bounce-end-rtl'
+          : 'lynx-ui-swiper__bounce-end'}
+      >
         {endBounceItem}
       </view>
     )

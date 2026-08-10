@@ -5,6 +5,21 @@ module.exports = {
     '**/dist/**',
     '**/node_modules/**',
   ],
+  overrides: [
+    {
+      files: ['packages/lynx-ui-*/src/**/*.css'],
+      rules: {
+        'selector-class-pattern': [
+          '^lynx-ui-[a-z0-9-]+(?:__(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:--(?:[a-z0-9]+(?:-[a-z0-9]+)*))?)?$',
+          {
+            message:
+              'Component classes must use the `lynx-ui-<package>__<lowercase-kebab-name>` namespace.',
+            resolveNestedSelectors: true,
+          },
+        ],
+      },
+    },
+  ],
   plugins: [
     path.resolve(__dirname, './tools/stylelint/luna-known-css-vars.mjs'),
   ],

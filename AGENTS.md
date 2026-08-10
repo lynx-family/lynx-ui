@@ -226,6 +226,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 
 - Use `clsx` for conditional class names.
 - Follow the existing pattern of separating styles into `.css` files or using Tailwind if configured in the specific package.
+- Component classes must use the `.lynx-ui-<package>__<lowercase-kebab-name>` namespace. Do not add generic global selectors such as `.container` or `.text`.
 - Respect the L.U.N.A design tokens.
 
 ### Main Thread Script (MTS)
