@@ -35,3 +35,15 @@
 .drag-here-text--secondary {
   color: var(--secondary-content);
 }
+
+.sortable-item-subtitle--neutral {
+  color: var(--neutral-content-faded);
+}
+
+.sortable-item-subtitle--primary {
+  color: var(--primary-content-faded);
+}
+
+.sortable-item-subtitle--secondary {
+  color: var(--secondary-content-faded);
+}

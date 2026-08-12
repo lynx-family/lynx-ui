@@ -12,8 +12,10 @@ export interface SortableDemoItem {
 }
 
 export function getToneByIndex(i: number): Tone {
-  if (i > 0 && i < 4) return 'primary'
-  if (i > 3) return 'secondary'
+  const paletteIndex = i % 6
+
+  if (paletteIndex > 0 && paletteIndex < 4) return 'primary'
+  if (paletteIndex > 3) return 'secondary'
   return 'neutral'
 }
 

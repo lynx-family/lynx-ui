@@ -6,7 +6,12 @@ import { root, useCallback, useState } from '@lynx-js/react'
 
 import './index.css'
 
-import { SortableItem, SortableItemArea, SortableRoot } from '@lynx-js/lynx-ui'
+import {
+  Button,
+  SortableItem,
+  SortableItemArea,
+  SortableRoot,
+} from '@lynx-js/lynx-ui'
 import type { SortableData } from '@lynx-js/lynx-ui'
 
 import type { SortableDemoItem } from '../shared/data'
@@ -51,7 +56,9 @@ export function App() {
               <text className={`sortable-item-title drag-here-text--${tone}`}>
                 {`Option ${numericId + 1}`}
               </text>
-              <text className='sortable-item-subtitle'>
+              <text
+                className={`sortable-item-subtitle sortable-item-subtitle--${tone}`}
+              >
                 Drag near the edge
               </text>
             </view>
@@ -68,26 +75,30 @@ export function App() {
   )
 
   return (
-    <view className='demo-container lunaris-dark luna-gradient-berry'>
-      <view className='scroll-by-actions'>
-        <view
-          className='scroll-by-button'
-          main-thread:bindtap={() => {
-            'main thread'
-            scrollBoundaryBy(-160)
+    <view className='demo-container lunaris-dark'>
+      <view className='scroll-controls'>
+        <Button
+          className='scroll-control-button'
+          buttonProps={{
+            'main-thread:bindtap': () => {
+              'main thread'
+              scrollBoundaryBy(-160)
+            },
           }}
         >
-          <text className='scroll-by-button-text'>Scroll Up</text>
-        </view>
-        <view
-          className='scroll-by-button scroll-by-button--primary'
-          main-thread:bindtap={() => {
-            'main thread'
-            scrollBoundaryBy(160)
+          <text className='scroll-control-label'>Scroll Up</text>
+        </Button>
+        <Button
+          className='scroll-control-button scroll-control-button--primary'
+          buttonProps={{
+            'main-thread:bindtap': () => {
+              'main thread'
+              scrollBoundaryBy(160)
+            },
           }}
         >
-          <text className='scroll-by-button-text'>Scroll Down</text>
-        </view>
+          <text className='scroll-control-label'>Scroll Down</text>
+        </Button>
       </view>
       <SortableRoot
         data={data}

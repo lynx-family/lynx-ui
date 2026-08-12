@@ -80,6 +80,9 @@ Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of 
 
 When adding a new example under `apps/examples/<Component>/<UseCase>/`, ALWAYS register it in that component's sibling `lynx.config.mjs`. If the entry is missing, the example will not appear in the example app.
 
+When adding examples for an existing component, follow that component's established example patterns; for a new component, use examples from components with similar behavior and layouts as references.
+
+
 ### 3.1 Example Theming With LUNA
 
 Examples should use the in-repo LUNA theme foundation by default instead of ad-hoc hard-coded colors.
@@ -90,9 +93,9 @@ Examples should use the in-repo LUNA theme foundation by default instead of ad-h
 - Prefer semantic LUNA tokens over literal color values.
 - When you need the exact token names or meanings, look them up in the in-repo `luna/` workspace and the imported LUNA styles source used by the example.
 - Use token semantics rather than visual guesses. Choose surface, content, accent, backdrop, divider, or gradient roles based on purpose, then resolve the exact token from the source of truth in `luna/`.
-- Put styles and local CSS variables shared by multiple examples for one component in `apps/examples/<Component>/shared/base.css`, then import that base stylesheet from each example stylesheet.
+- Put styles and local CSS variables shared by multiple examples under `apps/examples/<Component>/shared/`, using `base.css` for broadly reused foundations and purpose-specific filenames for subsets; each shared stylesheet must import `@lynx-js/luna-styles/index.css` directly.
 - Define repeated literal colors once as semantically named local CSS variables, such as `--negative`, instead of duplicating the literal across example styles. Register shared files that declare non-LUNA variables in `extraTokenFiles` in `stylelint.config.cjs`.
-- Give scrollable example content enough top padding to clear device safe areas such as the iPhone Dynamic Island.
+- Give every example page root enough top padding to keep its first visible content clear of device safe-area overlays such as the iPhone Dynamic Island, whether or not the example itself scrolls.
 - After adding or editing demo CSS, run `pnpm check:luna-vars` from `lynx-ui-open-source` to verify every referenced CSS variable is known.
 - Fix every `check:luna-vars` violation before handing off or submitting the demo change.
 - When an example needs RTL support, set `direction: rtl` on the outer container and let descendants inherit it through CSS instead of duplicating directional styles on every node.

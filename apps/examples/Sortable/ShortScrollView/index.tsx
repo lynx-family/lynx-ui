@@ -6,7 +6,12 @@ import { root, useCallback, useState } from '@lynx-js/react'
 
 import './index.css'
 
-import { SortableItem, SortableItemArea, SortableRoot } from '@lynx-js/lynx-ui'
+import {
+  Button,
+  SortableItem,
+  SortableItemArea,
+  SortableRoot,
+} from '@lynx-js/lynx-ui'
 import type { SortableData } from '@lynx-js/lynx-ui'
 
 import type { SortableDemoItem } from '../shared/data'
@@ -51,13 +56,15 @@ export function App() {
               <text className={`sortable-item-title drag-here-text--${tone}`}>
                 {`Row ${numericId + 1}`}
               </text>
-              <text className='sortable-item-subtitle'>
-                Middle scroll-view boundary
+              <text
+                className={`sortable-item-subtitle sortable-item-subtitle--${tone}`}
+              >
+                Drag within this short scroll area
               </text>
             </view>
             <SortableItemArea className='sortable-item-area'>
               <text className={`drag-here-text drag-here-text--${tone}`}>
-                Drag
+                Drag Here
               </text>
             </SortableItemArea>
           </view>
@@ -78,28 +85,33 @@ export function App() {
   }, [])
 
   return (
-    <view className='demo-container lunaris-dark luna-gradient-berry'>
-      <view className='outside-panel outside-panel--top'>
-        <text className='outside-panel-title'>Content Above</text>
-        <text className='outside-panel-copy'>
-          The sortable scroll-view below is intentionally shorter than the
-          screen.
+    <view className='demo-container lunaris-dark'>
+      <view className='scroll-boundary-info'>
+        <text className='scroll-boundary-info-title'>
+          Above the Scroll Boundary
+        </text>
+        <text className='scroll-boundary-info-description'>
+          This panel sits outside the sortable scroll area below.
         </text>
       </view>
 
-      <view className='scroll-by-actions'>
-        <view
-          className='scroll-by-button'
-          main-thread:bindtap={handleScrollUpTap}
+      <view className='scroll-controls'>
+        <Button
+          className='scroll-control-button'
+          buttonProps={{
+            'main-thread:bindtap': handleScrollUpTap,
+          }}
         >
-          <text className='scroll-by-button-text'>Scroll Up</text>
-        </view>
-        <view
-          className='scroll-by-button scroll-by-button--primary'
-          main-thread:bindtap={handleScrollDownTap}
+          <text className='scroll-control-label'>Scroll Up</text>
+        </Button>
+        <Button
+          className='scroll-control-button scroll-control-button--primary'
+          buttonProps={{
+            'main-thread:bindtap': handleScrollDownTap,
+          }}
         >
-          <text className='scroll-by-button-text'>Scroll Down</text>
-        </view>
+          <text className='scroll-control-label'>Scroll Down</text>
+        </Button>
       </view>
 
       <SortableRoot
@@ -116,10 +128,12 @@ export function App() {
         {renderSortableItem}
       </SortableRoot>
 
-      <view className='outside-panel outside-panel--bottom'>
-        <text className='outside-panel-title'>Content Below</text>
-        <text className='outside-panel-copy'>
-          Dragging near the panel edge should not react to this outside area.
+      <view className='scroll-boundary-info'>
+        <text className='scroll-boundary-info-title'>
+          Below the Scroll Boundary
+        </text>
+        <text className='scroll-boundary-info-description'>
+          Dragging near this panel should not trigger sortable auto-scroll.
         </text>
       </view>
     </view>

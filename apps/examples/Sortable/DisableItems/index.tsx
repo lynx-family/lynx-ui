@@ -6,7 +6,12 @@ import { root, useCallback, useMemo, useState } from '@lynx-js/react'
 
 import './index.css'
 
-import { SortableItem, SortableItemArea, SortableRoot } from '@lynx-js/lynx-ui'
+import {
+  Button,
+  SortableItem,
+  SortableItemArea,
+  SortableRoot,
+} from '@lynx-js/lynx-ui'
 import type { SortableData } from '@lynx-js/lynx-ui'
 
 import type { SortableDemoItem } from '../shared/data'
@@ -61,10 +66,12 @@ export function App() {
               <text className={`sortable-item-title drag-here-text--${tone}`}>
                 {`Row ${numericId + 1}`}
               </text>
-              <text className='sortable-item-subtitle'>
+              <text
+                className={`sortable-item-subtitle sortable-item-subtitle--${tone}`}
+              >
                 {isLocked
-                  ? 'Locked · cannot be dragged or displaced'
-                  : 'Drag handle on the right to reorder'}
+                  ? 'Locked in this position'
+                  : 'Drag to reorder around locked rows'}
               </text>
             </view>
             {isLocked
@@ -78,7 +85,7 @@ export function App() {
               : (
                 <SortableItemArea className='sortable-item-area'>
                   <text className={`drag-here-text drag-here-text--${tone}`}>
-                    Drag
+                    Drag Here
                   </text>
                 </SortableItemArea>
               )}
@@ -100,28 +107,32 @@ export function App() {
   }, [])
 
   return (
-    <view className='demo-container lunaris-dark luna-gradient-berry'>
-      <view className='outside-panel outside-panel--top'>
-        <text className='outside-panel-title'>Locked rows demo</text>
-        <text className='outside-panel-copy'>
-          Rows 1, 6, 8 and 12 are locked. They never move and are never
-          displaced, but other rows can freely cross over them while sorting.
+    <view className='demo-container lunaris-light'>
+      <view className='scroll-boundary-info'>
+        <text className='scroll-boundary-info-title'>Locked Items</text>
+        <text className='scroll-boundary-info-description'>
+          Rows 1, 6, 8, 11, and 12 stay fixed while unlocked rows move around
+          them.
         </text>
       </view>
 
-      <view className='scroll-by-actions'>
-        <view
-          className='scroll-by-button'
-          main-thread:bindtap={handleScrollUpTap}
+      <view className='scroll-controls'>
+        <Button
+          className='scroll-control-button'
+          buttonProps={{
+            'main-thread:bindtap': handleScrollUpTap,
+          }}
         >
-          <text className='scroll-by-button-text'>Scroll Up</text>
-        </view>
-        <view
-          className='scroll-by-button scroll-by-button--primary'
-          main-thread:bindtap={handleScrollDownTap}
+          <text className='scroll-control-label'>Scroll Up</text>
+        </Button>
+        <Button
+          className='scroll-control-button scroll-control-button--primary'
+          buttonProps={{
+            'main-thread:bindtap': handleScrollDownTap,
+          }}
         >
-          <text className='scroll-by-button-text'>Scroll Down</text>
-        </view>
+          <text className='scroll-control-label'>Scroll Down</text>
+        </Button>
       </view>
 
       <SortableRoot
@@ -138,12 +149,11 @@ export function App() {
         {renderSortableItem}
       </SortableRoot>
 
-      <view className='outside-panel outside-panel--bottom'>
-        <text className='outside-panel-title'>Behavior</text>
-        <text className='outside-panel-copy'>
-          Locked rows always keep their absolute positions. Other rows are
-          reordered around them, sliding past at a higher speed so the gap stays
-          in sync with the dragged item.
+      <view className='scroll-boundary-info'>
+        <text className='scroll-boundary-info-title'>Sorting Behavior</text>
+        <text className='scroll-boundary-info-description'>
+          Drag an unlocked row across a locked row. The locked row stays in
+          place while unlocked rows reorder around it.
         </text>
       </view>
     </view>
