@@ -28,7 +28,7 @@ export const lunaLightTokens = {
     'primary-2': '#545454',
     'primary-muted': '#9b9b9b',
     'primary-content': '#fafafa',
-    'primary-content-faded': 'rgba(255, 255, 255, 0.4)',
+    'primary-content-faded': 'rgba(255, 255, 255, 0.5)',
     'secondary': '#c0c0c0',
     'secondary-2': '#d9d9d9',
     'secondary-content': '#3c3c3c',
