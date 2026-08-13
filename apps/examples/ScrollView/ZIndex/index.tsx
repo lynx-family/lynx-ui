@@ -6,37 +6,31 @@ import { root } from '@lynx-js/react'
 
 import { ScrollView } from '@lynx-js/lynx-ui'
 
+import { CARDS } from './data'
 import './index.css'
-
-const CARDS = [
-  { key: 'card-1', title: 'Base Layer', badge: 'z-index: 1' },
-  { key: 'card-2', title: 'Raised Layer', badge: 'z-index: 3' },
-  { key: 'card-3', title: 'Normal Layer', badge: 'z-index: 1' },
-  { key: 'card-4', title: 'Content Layer', badge: 'z-index: 1' },
-]
 
 function App() {
   return (
-    <view className='demo-container lunaris-dark'>
+    <view className='demo-container lunaris-dark luna-gradient-rose'>
       <ScrollView className='scroll-view'>
         <view className='scroll-view-content'>
-          {CARDS.map((card, index) => (
+          {CARDS.map((card) => (
             <view
-              className={`layer-card ${
-                index === 1 ? 'layer-card--raised' : ''
+              className={`layer-card ${card.surfaceClassName} ${
+                card.raised ? 'layer-card--raised' : ''
               }`}
               key={card.key}
             >
               <view
                 className={`layer-card__badge ${
-                  index === 1 ? 'layer-card__badge--raised' : ''
+                  card.raised ? 'layer-card__badge--raised' : ''
                 }`}
               >
                 <text className='layer-card__badge-text'>{card.badge}</text>
               </view>
               <text className='layer-card__title'>{card.title}</text>
               <text className='layer-card__subtitle'>
-                Scroll the list and check the overlapping badge.
+                {card.subtitle}
               </text>
             </view>
           ))}

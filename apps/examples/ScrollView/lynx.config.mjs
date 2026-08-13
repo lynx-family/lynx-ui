@@ -6,8 +6,8 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
 const defaultConfig = exampleConfig({
   ScrollViewBasic: './Basic/index.tsx',
-  ScrollViewHorizontal: './Horizontal/index.tsx',
-  ScrollViewHorizontalRTL: './HorizontalRTL/index.tsx',
+  ScrollViewBounces: './Bounces/index.tsx',
+  ScrollViewBouncesRTL: './BouncesRTL/index.tsx',
   ScrollViewInnerFlex: './InnerFlex/index.tsx',
   ScrollViewScrollBy: './ScrollBy/index.tsx',
   ScrollViewZIndex: './ZIndex/index.tsx',

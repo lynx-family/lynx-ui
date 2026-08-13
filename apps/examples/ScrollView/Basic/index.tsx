@@ -6,7 +6,7 @@ import { root } from '@lynx-js/react'
 
 import { ScrollView } from '@lynx-js/lynx-ui'
 
-import { CircleLetterCard } from './CircleLetterCard'
+import { CircleCard } from '../shared/CircleCard'
 import './index.css'
 
 const LETTERS = ['L', 'Y', 'N', 'X', 'U', 'I', 'L', 'Y', 'N', 'X', 'J', 'S']
@@ -17,7 +17,12 @@ function App() {
       <ScrollView scrollOrientation='horizontal' className='scroll-view'>
         <view className='scroll-view-content'>
           {LETTERS.map((letter, i) => (
-            <CircleLetterCard letter={letter} key={`circle-${i}`} />
+            <CircleCard
+              letter={letter}
+              title='ScrollView'
+              subtitle='@lynx-js/lynx-ui'
+              key={`circle-${i}`}
+            />
           ))}
         </view>
       </ScrollView>

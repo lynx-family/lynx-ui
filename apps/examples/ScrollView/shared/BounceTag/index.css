@@ -1,0 +1,37 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.bounce-tag {
+  padding: 0px 32px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  direction: inherit;
+}
+
+.bounce-tag__surface {
+  min-width: 56px;
+  padding: 16px 16px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.bounce-tag__surface--upper {
+  background-color: var(--gradient-a);
+}
+
+.bounce-tag__surface--lower {
+  background-color: var(--gradient-d);
+}
+
+.bounce-tag__text-line {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  color: var(--gradient-content);
+}

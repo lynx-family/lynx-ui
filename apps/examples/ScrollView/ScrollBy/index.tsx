@@ -4,6 +4,8 @@
 
 import { root } from '@lynx-js/react'
 
+import { Button } from '@lynx-js/lynx-ui'
+
 import './index.css'
 
 const ITEMS = Array.from({ length: 24 }, (_, index) => index + 1)
@@ -19,24 +21,28 @@ function App() {
   return (
     <view className='demo-container lunaris-dark'>
       <view className='toolbar'>
-        <view
+        <Button
           className='button'
-          main-thread:bindtap={() => {
-            'main thread'
-            scrollByOffset(-160)
+          buttonProps={{
+            'main-thread:bindtap': () => {
+              'main thread'
+              scrollByOffset(-160)
+            },
           }}
         >
           <text className='button-text'>Scroll Up</text>
-        </view>
-        <view
+        </Button>
+        <Button
           className='button button--primary'
-          main-thread:bindtap={() => {
-            'main thread'
-            scrollByOffset(160)
+          buttonProps={{
+            'main-thread:bindtap': () => {
+              'main thread'
+              scrollByOffset(160)
+            },
           }}
         >
           <text className='button-text'>Scroll Down</text>
-        </view>
+        </Button>
       </view>
 
       <scroll-view
