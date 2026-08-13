@@ -11,9 +11,12 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
+import { OptionChipRow } from '../shared/OptionChipRow'
+
 import './index.css'
 
-const WIDTHS = [200, 300, 420, 280, 360]
+const WIDTH_RATIOS = [0.56, 0.68, 0.8, 0.92, 1]
+const DEMO_CONTAINER_HORIZONTAL_PADDING = 72
 
 function formatValue(value: number) {
   return `${Math.round(value * 100)}%`
@@ -22,11 +25,20 @@ function formatValue(value: number) {
 function App() {
   const [widthIndex, setWidthIndex] = useState(2)
   const [value, setValue] = useState(0.5)
-  const currentWidth = WIDTHS[widthIndex]
+  const screenWidth = lynx.__globalProps.screenWidth
+    ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio
+  const maxCanvasWidth = Math.min(
+    420,
+    screenWidth - DEMO_CONTAINER_HORIZONTAL_PADDING,
+  )
+  const widths = WIDTH_RATIOS.map((ratio) => {
+    return Math.round((maxCanvasWidth * ratio) / 10) * 10
+  })
+  const currentWidth = widths[widthIndex] ?? widths[widths.length - 1]
 
   return (
     <view className='demo-container lunaris-dark luna-gradient-berry'>
-      <view className='demo-canvas' style={{ maxWidth: `${currentWidth}px` }}>
+      <view className='demo-canvas' style={{ width: `${currentWidth}px` }}>
         <view className='section'>
           <text className='title'>Dynamic Width</text>
           <text className='desc'>
@@ -53,27 +65,15 @@ function App() {
               </SliderTrack>
             </SliderRoot>
 
-            <view className='width-row'>
-              {WIDTHS.map((w, i) => (
-                <view
-                  key={`w-${w}`}
-                  className={`width-chip${
-                    i === widthIndex ? ' width-chip-active' : ''
-                  }`}
-                  bindtap={() => {
-                    setWidthIndex(i)
-                  }}
-                >
-                  <text
-                    className={`width-label${
-                      i === widthIndex ? ' width-label-active' : ''
-                    }`}
-                  >
-                    {w}px
-                  </text>
-                </view>
-              ))}
-            </view>
+            <OptionChipRow
+              options={widths}
+              getKey={(width, index) => `width-${index}-${width}`}
+              getLabel={(width) => `${width}px`}
+              isSelected={(_, index) => index === widthIndex}
+              onSelect={(_, index) => {
+                setWidthIndex(index)
+              }}
+            />
           </view>
         </view>
       </view>

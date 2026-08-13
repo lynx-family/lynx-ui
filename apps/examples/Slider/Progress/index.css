@@ -1,53 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.demo-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding-top: 48px;
-  padding-bottom: 24px;
-  padding-left: 48px;
-  padding-right: 48px;
-}
-
-.demo-canvas {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 64px;
-  padding-left: 48px;
-  padding-right: 48px;
-  border-radius: 16px;
-  overflow: hidden;
-  color: var(--content);
-  background-color: var(--canvas);
-}
-
-.luna-gradient-berry {
-  background: linear-gradient(
-    0deg,
-    var(--gradient-b),
-    var(--gradient-c)
-  );
-}
-
-.section {
-  display: flex;
-  flex-direction: column;
-  row-gap: 16px;
-}
-
-.title {
-  font-size: 16px;
-  color: var(--content-2);
-}
-
-.desc {
-  font-size: 14px;
-  color: var(--content-subtle);
-}
+@import "../shared/base.css";
 
 .progress-row {
   display: flex;
@@ -87,7 +40,7 @@
   width: 100%;
   height: 6px;
   border-radius: 9999px;
-  background-color: var(--neutral-faint);
+  background-color: var(--neutral-ambient);
 }
 
 .progress-indicator {
@@ -97,7 +50,7 @@
 }
 
 .progress-indicator-secondary {
-  background: var(--secondary);
+  background: var(--neutral);
 }
 
 .static-row {

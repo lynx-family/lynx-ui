@@ -52,21 +52,23 @@ function App() {
         scroll-orientation='vertical'
         className='vertical-scroll'
       >
-        {VERTICAL_ITEMS.map((i) => (
-          <view className='horizontal-section' key={`section-${i}`}>
-            <text className='section-title'>Section {i + 1}</text>
-            <scroll-view
-              scroll-orientation='horizontal'
-              className='horizontal-scroll'
-            >
-              <view className='horizontal-content'>
-                <SliderCard index={i * 3} />
-                <SliderCard index={i * 3 + 1} />
-                <SliderCard index={i * 3 + 2} />
-              </view>
-            </scroll-view>
-          </view>
-        ))}
+        <view className='vertical-scroll-content'>
+          {VERTICAL_ITEMS.map((i) => (
+            <view className='horizontal-section' key={`section-${i}`}>
+              <text className='section-title'>Section {i + 1}</text>
+              <scroll-view
+                scroll-orientation='horizontal'
+                className='horizontal-scroll'
+              >
+                <view className='horizontal-content'>
+                  <SliderCard index={i * 3} />
+                  <SliderCard index={i * 3 + 1} />
+                  <SliderCard index={i * 3 + 2} />
+                </view>
+              </scroll-view>
+            </view>
+          ))}
+        </view>
       </scroll-view>
     </view>
   )

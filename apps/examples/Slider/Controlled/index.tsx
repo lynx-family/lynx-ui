@@ -11,6 +11,8 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
+import { OptionChipRow } from '../shared/OptionChipRow'
+
 import './index.css'
 
 const PRESET_VALUES = [0, 0.25, 0.5, 0.75, 1]
@@ -61,21 +63,16 @@ function App() {
               </SliderTrack>
             </SliderRoot>
 
-            <view className='preset-row'>
-              {PRESET_VALUES.map((v) => (
-                <view
-                  key={`preset-${v}`}
-                  className='preset-chip'
-                  bindtap={() => {
-                    setValue(v)
-                  }}
-                >
-                  <text className='preset-label'>
-                    {formatValue(v)}
-                  </text>
-                </view>
-              ))}
-            </view>
+            <OptionChipRow
+              options={PRESET_VALUES}
+              getKey={(preset) => `preset-${preset}`}
+              getLabel={(preset) => formatValue(preset)}
+              isSelected={(preset) => Math.abs(preset - value) < 0.001}
+              onSelect={(preset) => {
+                setPrimitiveDragging(false)
+                setValue(preset)
+              }}
+            />
           </view>
         </view>
 

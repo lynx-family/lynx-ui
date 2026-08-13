@@ -1,0 +1,53 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.slider-root {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.slider-root.ui-disabled {
+  opacity: 0.4;
+}
+
+.slider-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--neutral-ambient);
+}
+
+.slider-indicator {
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  margin-top: 16px;
+  background: var(--primary);
+}
+
+.slider-thumb-wrapper {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.slider-thumb-pill {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: white;
+  border: 3px solid var(--primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 3px 8px rgba(0, 0, 0, 0.12);
+}
