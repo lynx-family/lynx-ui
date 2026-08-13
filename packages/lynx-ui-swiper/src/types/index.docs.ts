@@ -397,7 +397,7 @@ export interface BounceConfig {
   /**
    * Width of bounceItem.
    * When overscroll the bounces, you will have larger and larger resistance, to make overscroll not exceed bounceItemWidth
-   * @defaultValue 100
+   * @defaultValue 50
    * @Android
    * @iOS
    * @Harmony
@@ -407,7 +407,7 @@ export interface BounceConfig {
   /**
    * Width of bounceItem.
    * When overscroll the bounces, you will have larger and larger resistance, to make overscroll not exceed bounceItemWidth
-   * @defaultValue 100
+   * @defaultValue 50
    * @Android
    * @iOS
    * @Harmony

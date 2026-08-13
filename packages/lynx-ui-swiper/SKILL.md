@@ -95,6 +95,8 @@ Examples:
 
 ### Bounces Example
 
+Note: `startBounceItemWidth` / `endBounceItemWidth` default to `50`. This example sets `endBounceItemWidth` to `100` to demonstrate a larger overscroll resistance range.
+
 ```tsx
 <Swiper
   data={colors}
