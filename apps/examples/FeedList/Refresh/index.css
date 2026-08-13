@@ -1,17 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.demo-container {
-  background-color: var(--canvas-ambient);
-  width: 100%;
-  height: 100%;
-  padding-top: 48px;
-  padding-bottom: 24px;
-}
-
-.demo-header {
-  height: 24px;
-  width: 100%;
-}
+@import "../shared/base.css";
 
 .demo-footer {
   height: 100px;
@@ -24,7 +13,7 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   padding: 24px;
   padding-bottom: 48px;
   background-color: var(--paper);
@@ -32,27 +21,22 @@
 }
 
 .action-button {
-  width: 100%;
-  background-color: var(--neutral);
+  width: 80%;
+  background-color: var(--neutral-ambient);
   border-radius: 999px;
   padding: 14px 16px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.1s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .action-button.ui-active {
-  background-color: var(--neutral-2);
+  background-color: var(--neutral-faint);
 }
 
 .action-button__text {
-  color: var(--neutral-content);
+  color: var(--content);
   font-size: 14px;
   font-weight: 600;
-}
-
-.feed-list {
-  width: 100%;
-  height: 100%;
-  background-color: var(--canvas-ambient);
 }

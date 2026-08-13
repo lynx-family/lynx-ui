@@ -9,7 +9,7 @@ import type { FeedListRef } from '@lynx-js/lynx-ui'
 
 import { FEED_INITIAL, FEED_REFRESH } from './data'
 import type { LetterItem } from './data'
-import { RectangleCard } from '../shared/RectangleCard'
+import { FeedCard } from '../shared/FeedCard'
 import { RefreshHeader } from '../shared/RefreshHeader'
 import './index.css'
 
@@ -83,7 +83,7 @@ function App() {
         </list-item>
         {items.map((item: LetterItem) => (
           <list-item key={item.key} item-key={item.key}>
-            <RectangleCard
+            <FeedCard
               letter={item.letter}
               height={500}
             />

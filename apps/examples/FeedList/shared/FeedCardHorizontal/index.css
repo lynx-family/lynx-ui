@@ -1,0 +1,43 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.feed-card-horizontal {
+  width: 232px;
+  height: 448px;
+  border-radius: 24px;
+  border-width: 1px;
+  border-color: var(--line);
+  background-color: var(--canvas);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  direction: inherit;
+}
+
+.feed-card-horizontal__letter {
+  font-size: 180px;
+  font-weight: 600;
+  line-height: 180px;
+  padding-left: 36px;
+  padding-right: 36px;
+  color: var(--canvas);
+  border-radius: 20px;
+  background: linear-gradient(
+    150deg,
+    var(--primary) 8.42%,
+    var(--primary-2) 81.71%
+  );
+}
+
+.feed-card-horizontal__title {
+  margin-top: 32px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--content);
+}
+
+.feed-card-horizontal__subtitle {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--content-subtle);
+}

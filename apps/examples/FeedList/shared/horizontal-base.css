@@ -1,0 +1,38 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  background-color: var(--canvas);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.demo-list-region {
+  width: 100%;
+  height: 520px;
+  display: flex;
+  align-items: center;
+  background-color: var(--canvas-ambient);
+}
+
+.feed-list {
+  width: 100%;
+  height: 100%;
+  direction: inherit;
+}
+
+.card-shell {
+  width: 264px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  direction: inherit;
+}
+
+.edge-gap {
+  width: 24px;
+  height: 100%;
+  direction: inherit;
+}

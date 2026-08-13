@@ -1,6 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.rectangle-card {
+.feed-card {
   background-color: var(--canvas);
   border-color: var(--line);
   border-width: 1px;
@@ -16,7 +16,7 @@
   align-items: center;
 }
 
-.rectangle-card__letter {
+.feed-card__letter {
   font-size: 224px;
   font-weight: 600;
   padding-left: 48px;
@@ -30,14 +30,14 @@
   );
 }
 
-.rectangle-card__title {
+.feed-card__title {
   font-size: 18px;
   font-weight: 600;
   margin-top: auto;
   color: var(--content);
 }
 
-.rectangle-card__subtitle {
+.feed-card__subtitle {
   font-size: 12px;
   color: var(--content-subtle);
 }
