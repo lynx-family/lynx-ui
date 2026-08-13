@@ -87,7 +87,7 @@ When adding examples for an existing component, follow that component's establis
 
 Examples should use the in-repo LUNA theme foundation by default instead of ad-hoc hard-coded colors.
 
-- Import `@lynx-js/luna-styles/index.css` in example styles so CSS variables are available.
+- Every stylesheet that directly references LUNA CSS variables must explicitly import `@lynx-js/luna-styles/index.css`; do not rely on transitive imports through another stylesheet.
 - Apply a theme class at the example root. Available themes are `lunaris-dark`, `lunaris-light`, `luna-dark`, and `luna-light`.
 - Prefer `lunaris-dark` as the default demo theme unless the example is specifically trying to show a neutral product-style surface, in which case `luna-dark` or `luna-light` is a better fit.
 - Prefer semantic LUNA tokens over literal color values.

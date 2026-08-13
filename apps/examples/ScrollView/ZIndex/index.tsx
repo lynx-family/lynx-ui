@@ -5,6 +5,7 @@
 import { root } from '@lynx-js/react'
 
 import { ScrollView } from '@lynx-js/lynx-ui'
+import { clsx } from 'clsx'
 
 import { CARDS } from './data'
 import './index.css'
@@ -16,15 +17,18 @@ function App() {
         <view className='scroll-view-content'>
           {CARDS.map((card) => (
             <view
-              className={`layer-card ${card.surfaceClassName} ${
-                card.raised ? 'layer-card--raised' : ''
-              }`}
+              className={clsx(
+                'layer-card',
+                card.surfaceClassName,
+                card.raised && 'layer-card--raised',
+              )}
               key={card.key}
             >
               <view
-                className={`layer-card__badge ${
-                  card.raised ? 'layer-card__badge--raised' : ''
-                }`}
+                className={clsx(
+                  'layer-card__badge',
+                  card.raised && 'layer-card__badge--raised',
+                )}
               >
                 <text className='layer-card__badge-text'>{card.badge}</text>
               </view>

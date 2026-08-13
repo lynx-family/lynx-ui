@@ -27,9 +27,13 @@ function App() {
   const [value, setValue] = useState(0.5)
   const screenWidth = lynx.__globalProps.screenWidth
     ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio
+  const availableCanvasWidth = Math.max(
+    screenWidth - DEMO_CONTAINER_HORIZONTAL_PADDING,
+    0,
+  )
   const maxCanvasWidth = Math.min(
     420,
-    screenWidth - DEMO_CONTAINER_HORIZONTAL_PADDING,
+    availableCanvasWidth,
   )
   const widths = WIDTH_RATIOS.map((ratio) => {
     return Math.round((maxCanvasWidth * ratio) / 10) * 10

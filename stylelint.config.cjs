@@ -14,6 +14,7 @@ module.exports = {
         './apps/examples/InputOTP/shared/base.css',
         './apps/examples/Popover/shared/base.css',
         './apps/examples/Sheet/shared/base.css',
+        './apps/examples/Slider/shared/base.css',
       ],
       tokensFile: './luna/packages/luna-styles/dist/index.css',
     }],

@@ -619,6 +619,9 @@ importers:
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
     devDependencies:
       '@lynx-js/qrcode-rsbuild-plugin':
         specifier: 'catalog:'
@@ -678,6 +681,9 @@ importers:
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
     devDependencies:
       '@lynx-js/qrcode-rsbuild-plugin':
         specifier: 'catalog:'

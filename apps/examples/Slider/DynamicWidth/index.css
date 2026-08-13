@@ -3,6 +3,8 @@
 
 .demo-container {
   align-items: center;
+  padding-left: 36px;
+  padding-right: 36px;
 }
 
 .demo-canvas {

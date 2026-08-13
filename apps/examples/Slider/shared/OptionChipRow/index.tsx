@@ -2,9 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import './index.css'
-
 import { Button } from '@lynx-js/lynx-ui'
+import { clsx } from 'clsx'
+import './index.css'
 
 interface OptionChipRowProps<T extends number | string> {
   options: readonly T[]
@@ -29,15 +29,16 @@ export function OptionChipRow<T extends number | string>({
         return (
           <Button
             key={getKey?.(option, index) ?? `option-${String(option)}-${index}`}
-            className={`option-chip${selected ? ' option-chip--selected' : ''}`}
+            className={clsx('option-chip', selected && 'option-chip--selected')}
             onClick={() => {
               onSelect(option, index)
             }}
           >
             <text
-              className={`option-chip-label${
-                selected ? ' option-chip-label--selected' : ''
-              }`}
+              className={clsx(
+                'option-chip-label',
+                selected && 'option-chip-label--selected',
+              )}
             >
               {getLabel?.(option, index) ?? String(option)}
             </text>

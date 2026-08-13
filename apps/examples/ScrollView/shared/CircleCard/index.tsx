@@ -4,6 +4,8 @@
 
 import './index.css'
 
+import { clsx } from 'clsx'
+
 interface CircleCardProps {
   letter: string
   title: string
@@ -20,9 +22,10 @@ export function CircleCard(props: CircleCardProps) {
         <text className='letter'>{letter}</text>
         <text className='title'>{title}</text>
         <text
-          className={`subtitle${
-            subtitleDirection === 'ltr' ? ' subtitle--ltr' : ''
-          }`}
+          className={clsx(
+            'subtitle',
+            subtitleDirection === 'ltr' && 'subtitle--ltr',
+          )}
         >
           {subtitle}
         </text>
