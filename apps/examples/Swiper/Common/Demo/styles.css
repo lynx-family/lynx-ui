@@ -96,18 +96,19 @@
 .bounce-item {
   display: flex;
   height: 100%;
-  width: 72px;
+  width: 100px;
   align-items: center;
   justify-content: center;
   border-width: 1px;
   border-color: var(--line);
   border-radius: 8px;
-  background-color: var(--neutral-ambient);
+  background-color: var(--paper);
 }
 
 .bounce-item-text {
-  color: var(--content-muted);
+  color: var(--content-2);
   font-size: 12px;
+  font-weight: 600;
   line-height: 16px;
   text-align: center;
 }
