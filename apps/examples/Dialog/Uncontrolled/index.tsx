@@ -37,10 +37,8 @@ function App() {
         ) => {
           return (
             <>
-              <DialogTrigger>
-                <view className='dialog-trigger'>
-                  <text className='dialog-trigger-text'>open</text>
-                </view>
+              <DialogTrigger className='dialog-trigger'>
+                <text className='dialog-trigger-text'>open</text>
               </DialogTrigger>
               <DialogView
                 className={clsx('dialog-viewport', { 'closed': closed })}

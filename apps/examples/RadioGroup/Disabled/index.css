@@ -140,8 +140,7 @@
   background-color: var(--primary);
 }
 
-/* Keep :active pseudo-class selector for lynx web active-state compatibility. */
-.button.ui-active, .button:active {
+.button.ui-active {
   background-color: var(--primary-2);
 }
 

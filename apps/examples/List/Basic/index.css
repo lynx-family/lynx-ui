@@ -51,7 +51,7 @@
   transition: opacity 0.2s ease-in-out;
 }
 
-.button:active {
+.button.ui-active {
   opacity: 0.5;
 }
 

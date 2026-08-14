@@ -20,8 +20,7 @@
   transition: background-color 100ms ease-out;
 }
 
-.option-chip.ui-active,
-.option-chip:active {
+.option-chip.ui-active {
   background-color: var(--paper);
 }
 
@@ -29,8 +28,7 @@
   background-color: var(--primary);
 }
 
-.option-chip--selected.ui-active,
-.option-chip--selected:active {
+.option-chip--selected.ui-active {
   background-color: var(--primary-2);
 }
 
