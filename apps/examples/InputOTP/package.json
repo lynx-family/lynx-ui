@@ -1,14 +1,27 @@
 {
   "name": "@lynx-example/lynx-ui-input-otp",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.15",
+  "description": "Example app demonstrating InputOTP usage in lynx-ui",
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/InputOTP#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lynx-family/lynx-ui.git",
     "directory": "apps/examples/InputOTP"
   },
   "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
   "type": "module",
+  "files": [
+    "LICENSE",
+    "CHANGELOG.md",
+    "dist/",
+    "**/*.tsx",
+    "**/*.ts",
+    "**/*.css",
+    "lynx.config.mjs"
+  ],
   "scripts": {
     "build": "rspeedy build",
     "build:dev": "rspeedy build --mode=development",
@@ -25,5 +38,8 @@
     "@lynx-js/react-rsbuild-plugin": "catalog:",
     "@lynx-js/rspeedy": "catalog:",
     "@types/react": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
