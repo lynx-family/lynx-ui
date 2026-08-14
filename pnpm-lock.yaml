@@ -974,9 +974,18 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@lynx-example/lynx-ui-button':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Button
       '@lynx-example/lynx-ui-popover':
         specifier: workspace:*
         version: link:../../../apps/examples/Popover
+      '@lynx-example/lynx-ui-radio-group':
+        specifier: workspace:*
+        version: link:../../../apps/examples/RadioGroup
+      '@lynx-example/lynx-ui-slider':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Slider
       '@lynx-example/lynx-ui-switch':
         specifier: workspace:*
         version: link:../../../apps/examples/Switch

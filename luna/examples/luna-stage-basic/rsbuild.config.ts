@@ -43,6 +43,36 @@ const config: RsbuildConfig = defineConfig({
         copyOnBuild: true,
       },
       {
+        name: path.join(
+          __dirname,
+          './node_modules',
+          '@lynx-example/lynx-ui-button',
+          'dist',
+        ),
+        watch: true,
+        copyOnBuild: true,
+      },
+      {
+        name: path.join(
+          __dirname,
+          './node_modules',
+          '@lynx-example/lynx-ui-radio-group',
+          'dist',
+        ),
+        watch: true,
+        copyOnBuild: true,
+      },
+      {
+        name: path.join(
+          __dirname,
+          './node_modules',
+          '@lynx-example/lynx-ui-slider',
+          'dist',
+        ),
+        watch: true,
+        copyOnBuild: true,
+      },
+      {
         name: 'public',
         watch: true,
         copyOnBuild: true,

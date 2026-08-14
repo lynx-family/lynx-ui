@@ -19,7 +19,10 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@lynx-example/lynx-ui-button": "workspace:*",
     "@lynx-example/lynx-ui-popover": "workspace:*",
+    "@lynx-example/lynx-ui-radio-group": "workspace:*",
+    "@lynx-example/lynx-ui-slider": "workspace:*",
     "@lynx-example/lynx-ui-switch": "workspace:*",
     "@rsbuild/core": "catalog:",
     "@rsbuild/plugin-react": "catalog:",

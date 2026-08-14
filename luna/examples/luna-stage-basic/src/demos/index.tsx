@@ -7,7 +7,13 @@ import { LynxStage } from '@lynx-js/luna-stage/lynx'
 
 import './index.css'
 
-const demos = ['PopoverBasic', 'SwitchBasic']
+const demos = [
+  'PopoverBasic',
+  'SwitchBasic',
+  'ButtonBasic',
+  'RadioGroupBasic',
+  'SliderDynamicWidth',
+]
 
 export default function Demo() {
   return (
