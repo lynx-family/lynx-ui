@@ -1,5 +1,19 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.7
+
+### Patch Changes
+
+- Use lynx-ui `ui-active` variants for pressed-state styling across examples. ([#267](https://github.com/lynx-family/lynx-ui/pull/267))
+
+- Refresh generated skill references to reflect updated Swiper, Slider, ([#266](https://github.com/lynx-family/lynx-ui/pull/266))
+  FeedList, and ScrollView example implementations.
+
+- Add the headless InputOTP and InputOTPSlot primitives with four- and six-character ([#241](https://github.com/lynx-family/lynx-ui/pull/241))
+  input, controlled and uncontrolled state, input filtering, completion callbacks,
+  state styling hooks, examples, and skill references. InputOTP requires Lynx SDK
+  4.0 or newer.
+
 ## 3.133.6
 
 ### Patch Changes

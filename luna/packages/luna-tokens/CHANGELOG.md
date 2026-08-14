@@ -1,5 +1,11 @@
 # @lynx-js/luna-tokens
 
+## 0.2.2
+
+### Patch Changes
+
+- Improve faded content contrast in light themes and correct the Lunaris secondary faded color. ([#260](https://github.com/lynx-family/lynx-ui/pull/260))
+
 ## 0.2.1
 
 ### Patch Changes

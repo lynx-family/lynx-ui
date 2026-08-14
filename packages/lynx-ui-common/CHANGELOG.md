@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.136.0
+
+### Patch Changes
+
+- Exclude test modules from compiled package output. ([#255](https://github.com/lynx-family/lynx-ui/pull/255))
+
 ## 3.135.4
 
 ### Patch Changes

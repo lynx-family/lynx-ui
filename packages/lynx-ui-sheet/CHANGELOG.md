@@ -1,5 +1,17 @@
 # @lynx-js/lynx-ui-sheet
 
+## 3.136.0
+
+### Patch Changes
+
+- Exclude test modules from compiled package output. ([#255](https://github.com/lynx-family/lynx-ui/pull/255))
+
+- Updated dependencies [[`0257f8b`](https://github.com/lynx-family/lynx-ui/commit/0257f8bc9fbe6b8a51df00663c7860827ce468b2)]:
+  - @lynx-js/lynx-ui-common@3.136.0
+  - @lynx-js/lynx-ui-dialog@3.136.0
+  - @lynx-js/lynx-ui-overlay@3.136.0
+  - @lynx-js/lynx-ui-presence@3.136.0
+
 ## 3.135.4
 
 ### Patch Changes

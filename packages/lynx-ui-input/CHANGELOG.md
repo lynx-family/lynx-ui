@@ -1,5 +1,15 @@
 # @lynx-js/lynx-ui-input
 
+## 3.136.0
+
+### Patch Changes
+
+- Fix keyboard avoidance in scroll views by preserving the current scroll offset ([#241](https://github.com/lynx-family/lynx-ui/pull/241))
+  and accounting for responders positioned below the top of the screen.
+- Updated dependencies [[`0257f8b`](https://github.com/lynx-family/lynx-ui/commit/0257f8bc9fbe6b8a51df00663c7860827ce468b2)]:
+  - @lynx-js/lynx-ui-common@3.136.0
+  - @lynx-js/lynx-ui-scroll-view@3.136.0
+
 ## 3.135.4
 
 ### Patch Changes

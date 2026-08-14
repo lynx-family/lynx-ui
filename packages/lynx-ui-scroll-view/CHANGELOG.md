@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui-scroll-view
 
+## 3.136.0
+
+### Patch Changes
+
+- Updated dependencies [[`0257f8b`](https://github.com/lynx-family/lynx-ui/commit/0257f8bc9fbe6b8a51df00663c7860827ce468b2), [`64e2795`](https://github.com/lynx-family/lynx-ui/commit/64e2795c6cff3d53fd0f616d67d1f5eecb9956e9)]:
+  - @lynx-js/lynx-ui-common@3.136.0
+  - @lynx-js/lynx-ui-lazy-component@3.136.0
+
 ## 3.135.4
 
 ### Patch Changes

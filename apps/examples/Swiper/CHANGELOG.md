@@ -1,5 +1,15 @@
 # @lynx-example/lynx-ui-swiper
 
+## 0.0.16
+
+### Patch Changes
+
+- Refine the Lazy example bounce item layout and refresh shared bounce ([#266](https://github.com/lynx-family/lynx-ui/pull/266))
+  card tokens for clearer spacing and more appropriate LUNA semantics.
+- Updated dependencies [[`4214d92`](https://github.com/lynx-family/lynx-ui/commit/4214d923421d0a61ecd0b7cbf9a7a44acaff8d2a)]:
+  - @lynx-js/lynx-ui@3.136.0
+  - @lynx-js/luna-styles@0.2.2
+
 ## 0.0.15
 
 ### Patch Changes
