@@ -245,7 +245,7 @@ export interface SwiperProps<T> {
   /**
    * Determines how swiper respond to touch in different angle.
    * By default, swiper will only respond to horizontal touches.
-   * Refer to https://lynxjs.org/en/api/elements/built-in/view.html#consume-slide-event for more
+   * Refer to https://lynxjs.org/api/elements/built-in/view.html#consume-slide-event for more
    * @defaultValue [[-180, -135], [-45, 45], [135, 180]]
    * @Android
    * @iOS

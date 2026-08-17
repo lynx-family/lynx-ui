@@ -51,7 +51,7 @@ export interface SwiperItemProps {
   /**
    * `overlap` attribute passed to SwiperItem's direct child.
    * This property is used only when opacity has issues.
-   * Refer to {@link https://lynxjs.org/en/api/css/properties/opacity#opacity}
+   * Refer to {@link https://lynxjs.org/api/css/properties/opacity#opacity}
    * @Android
    * @iOS
    * @Harmony
