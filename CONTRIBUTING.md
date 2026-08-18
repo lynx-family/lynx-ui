@@ -136,7 +136,7 @@ sharedDocs/introDocs/lynx-ui-<component-name>/Introduction.mdx
 
 Publishing docs for a newly developed component is part of the component's delivery process.
 
-The lynx-ui website is served at [lynxjs.org/lynx-ui](https://lynxjs.org/lynx-ui/), with its source code
+The lynx-ui website is served at [lynxjs.org/ui](https://lynxjs.org/ui/), with its source code
 hosted in the [lynx-website](https://github.com/lynx-family/lynx-website) repository. This repository
 (lynx-ui) only maintains **per-component documentation fragments**; the full website content is
 organized and updated in lynx-website.

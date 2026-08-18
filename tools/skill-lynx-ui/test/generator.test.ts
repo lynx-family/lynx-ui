@@ -94,12 +94,17 @@ describe('skill-lynx-ui generated output', () => {
       await expect(
         fs.stat(path.join(tempRoot, 'references', 'component-overview.md')),
       ).resolves.toBeTruthy()
-      await expect(
-        fs.readFile(
-          path.join(tempRoot, 'references', 'component-overview.md'),
-          'utf8',
-        ),
-      ).resolves.toContain('./component-composition.md')
+      const componentOverview = await fs.readFile(
+        path.join(tempRoot, 'references', 'component-overview.md'),
+        'utf8',
+      )
+      expect(componentOverview).toContain('./component-composition.md')
+      expect(componentOverview).toContain(
+        'https://lynxjs.org/next/ui/components/',
+      )
+      expect(componentOverview).not.toContain(
+        'https://lynxjs.org/next/lynx-ui/',
+      )
 
       for (const component of components.filter(item => item.skillPath)) {
         const componentDir = getComponentOutputDir(tempRoot, component.slug)

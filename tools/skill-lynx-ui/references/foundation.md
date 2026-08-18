@@ -4,8 +4,8 @@ Read this file for setup and for deciding whether an issue belongs to lynx-ui.
 
 ## Official docs
 
-- Index: `https://lynxjs.org/next/lynx-ui/`
-- Introduction: `https://lynxjs.org/next/lynx-ui/introduction`
+- Index: `https://lynxjs.org/next/ui/`
+- Introduction: `https://lynxjs.org/next/ui/introduction`
 
 ## Install and import
 

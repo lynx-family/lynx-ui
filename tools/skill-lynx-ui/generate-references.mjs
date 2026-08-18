@@ -335,7 +335,7 @@ function buildComponentOverviewMarkdown(components) {
 
   for (const component of components) {
     const officialDocsUrl = component.officialDocsUrl
-      ?? `https://lynxjs.org/next/lynx-ui/components/${component.slug}.html`
+      ?? `https://lynxjs.org/next/ui/components/${component.slug}.html`
 
     lines.push(
       `### \`${component.label}\``,

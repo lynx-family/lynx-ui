@@ -4,8 +4,8 @@ Read this file when choosing between motion and motion-mini or combining motion 
 
 ## Official docs
 
-- Motion: `https://lynxjs.org/next/lynx-ui/motion.html`
-- Motion Mini: `https://lynxjs.org/next/lynx-ui/motion-mini.html`
+- Motion: `https://lynxjs.org/next/ui/motion.html`
+- Motion Mini: `https://lynxjs.org/next/ui/motion-mini.html`
 
 ## Comparison
 
