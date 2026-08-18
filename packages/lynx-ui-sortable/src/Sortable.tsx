@@ -420,12 +420,16 @@ function SortableInteractiveItem(props: SortableItemProps) {
     scrollableStickyUpperOffset,
     scrollableStickyLowerOffset,
     updateItemSize,
-    setChildrenRef,
     setChildrenMTSRef,
     handleDragStart,
     handleDragEnd,
     handleDragMove,
   } = useContext(SortableContext)
+
+  const dataKeyOrderSignature = useMemo(
+    () => (data ?? []).map(item => item.getSortingKey()).join('|'),
+    [data],
+  )
 
   const MTSRef = useMainThreadRef<DraggableRef>(null)
   const [itemRect, setItemRect] = useState<boundingClientRectRes>({
@@ -921,9 +925,8 @@ function SortableInteractiveItem(props: SortableItemProps) {
     runOnMainThread(setChildrenMTSRef)(MTSRef, sortingKey)
     delayFrames(1, refreshDraggingRects)
   }, [
-    data,
+    dataKeyOrderSignature,
     refreshDraggingRects,
-    setChildrenRef,
     setChildrenMTSRef,
     sortingKey,
   ])
@@ -1089,11 +1092,6 @@ function SortableInteractiveItem(props: SortableItemProps) {
     }
     // if orderChanged: precommit will run resetLocalDragVisuals in the same frame as setData
   }
-
-  const dataKeyOrderSignature = useMemo(
-    () => (data ?? []).map(item => item.getSortingKey()).join('|'),
-    [data],
-  )
 
   usePreCommit(() => {
     'main thread'
