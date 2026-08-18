@@ -1,0 +1,33 @@
+name: Documentation Links
+
+on:
+  pull_request:
+    branches:
+      - main
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name }}-${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  check-doc-links:
+    name: Check Documentation Links
+    runs-on: lynx-ubuntu-24.04-medium
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Check documentation links
+        run: |
+          node --test tools/scripts/check-doc-site-links.test.mjs
+          node tools/scripts/check-doc-site-links.mjs

@@ -13,9 +13,9 @@ Read this file for Luna themes, semantic tokens, and shared visual values.
 
 ## Official docs
 
-- Luna themes/tokens: `https://lynxjs.org/next/lynx-ui/luna-themes-tokens.html`
-- Styling and theming setup: `https://lynxjs.org/next/lynx-ui/styling-theming.html#setup`
-- Define your own theme: `https://lynxjs.org/next/lynx-ui/luna-themes-tokens.html#define-your-own-theme`
+- Luna themes/tokens: `https://lynxjs.org/next/ui/luna-themes-tokens.html`
+- Styling and theming setup: `https://lynxjs.org/next/ui/styling-theming.html#setup`
+- Define your own theme: `https://lynxjs.org/next/ui/luna-themes-tokens.html#define-your-own-theme`
 
 ## Built-in themes
 
