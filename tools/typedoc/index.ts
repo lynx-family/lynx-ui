@@ -79,6 +79,13 @@ const primitivesConfig: Record<string, string[]> = {
     'InputOTP',
     'InputOTPSlot',
   ],
+  'lynx-ui-tab-group': [
+    'TabsRoot',
+    'TabsBar',
+    'TabsItem',
+    'TabItem',
+    'TabsIndicator',
+  ],
 }
 export async function runTypeDocForPackage(
   entryPoints: string | string[],

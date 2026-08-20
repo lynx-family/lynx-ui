@@ -100,6 +100,11 @@
       "useWhen": "The UI needs an immediate binary on/off setting.",
       "avoidWhen": "The interaction represents form selection or an indeterminate state; use Checkbox."
     },
+    "tab-group": {
+      "label": "TabGroup",
+      "useWhen": "The UI needs coordinated tab navigation with selectable items and an animated indicator.",
+      "avoidWhen": "The UI needs carousel-style content paging; use Swiper."
+    },
     "view-pager": {
       "label": "ViewPager",
       "useWhen": "The UI needs page-snapped horizontal content navigation with optional lazy rendering.",
