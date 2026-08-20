@@ -256,6 +256,26 @@ export type {
   SwitchRenderProps,
 } from '@lynx-js/lynx-ui-switch'
 
+// tab-group
+export {
+  TabsRoot,
+  TabsBar,
+  TabsItem,
+  TabsPanel,
+  TabsIndicator,
+} from '@lynx-js/lynx-ui-tab-group'
+export type {
+  TabItemProps,
+  TabsData,
+  TabsIndicatorAnimation,
+  TabsIndicatorProps,
+  TabsPanelProps,
+  TabsPanelRef,
+  TabsRootProps,
+  TabsBarProps,
+  TabsRootRef,
+} from '@lynx-js/lynx-ui-tab-group'
+
 // view-pager
 export { ViewPager } from '@lynx-js/lynx-ui-view-pager'
 export type {

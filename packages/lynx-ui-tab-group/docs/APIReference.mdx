@@ -1,0 +1,2335 @@
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+
+### TabsRoot
+
+### Properties
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "debugLog",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Display debug logs. Open it when you find a bug."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "显示调试日志。当您发现错误时，请打开此选项。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableRTL",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable RTL layout."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "开启 RTL 布局。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "indicatorAnimation",
+    "type": "TabsIndicatorAnimation",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The animation configuration for the tab indicator when switching tabs."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "切换标签时指示器的动画配置。"
+      }
+    ],
+    "defaultValue": "{ type: 'spring', stiffness: 300, damping: 30, mass: 1 }",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialSelectIndex",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The index of the initial display. Please use "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " for other updates."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "指定初始显示的索引。请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " 进行其他更新。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "selectBehavior",
+    "type": "smooth | instant",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Controls how the tab bar scrolls and how the indicator moves when a tab is\nselected. Use "
+      },
+      {
+        "kind": "code",
+        "text": "`'smooth'`"
+      },
+      {
+        "kind": "text",
+        "text": " to animate the transition, or "
+      },
+      {
+        "kind": "code",
+        "text": "`'instant'`"
+      },
+      {
+        "kind": "text",
+        "text": " to jump\nto the target tab without animation."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "控制选中标签时标签栏的滚动方式与指示器的移动方式。"
+      },
+      {
+        "kind": "code",
+        "text": "`'smooth'`"
+      },
+      {
+        "kind": "text",
+        "text": " 表示动画过渡，"
+      },
+      {
+        "kind": "code",
+        "text": "`'instant'`"
+      },
+      {
+        "kind": "text",
+        "text": " 表示直接跳转。"
+      }
+    ],
+    "defaultValue": "'smooth'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Events
+<UIApiTable source={[
+  {
+    "name": "onClickItem",
+    "type": "(index: number) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Click callback"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "点击回调"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTabChanged",
+    "type": "(index: number) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Tab change callback"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "标签页更改回调"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### TabsBar
+
+### Properties
+<UIApiTable source={[
+  {
+    "name": "androidTouchSlop",
+    "type": "default | paging",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Android touch recognition mode. When inside a component that supports 'paging' mode, 'paging' must be enabled."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Android 触摸识别模式，当处于支持 'paging' 模式的元件中时，需要开启 'paging' 模式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "bounceable",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable bouncing effect"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用弹性效果"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "bounceableOptions",
+    "type": "boolean | {alwaysBouncing?: boolean, enableBounceEventInFling?: boolean, enableBounces: boolean, endBounceTriggerDistance?: number, estimatedHeight?: number, estimatedWidth?: number, lowerBounceItem?: any, onScrollToBounces?: (e: scrollToBouncesInfo) => void, singleSidedBounce?: upper | lower | both | iOSBounces | none, startBounceTriggerDistance?: number, upperBounceItem?: any, validAnimationVersion?: boolean}",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Props for bouncing effect"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "弹性效果的参数"
+      }
+    ],
+    "defaultValue": "{ enableBounces: true, singleSidedBounce: \"iOSBounces\" },",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "data",
+    "type": "TabsData[]",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The data for the Tabs."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Tabs 的数据。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "debugLog",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Display debug logs for bounce interactions."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "显示回弹交互的调试日志。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableNewArch",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable the native "
+      },
+      {
+        "kind": "code",
+        "text": "`<scroll-view>`"
+      },
+      {
+        "kind": "text",
+        "text": " new architecture. When enabled, "
+      },
+      {
+        "kind": "code",
+        "text": "`bounceableOptions`"
+      },
+      {
+        "kind": "text",
+        "text": " uses native bounces on Android, iOS, and Harmony. Defaults to "
+      },
+      {
+        "kind": "code",
+        "text": "`true`"
+      },
+      {
+        "kind": "text",
+        "text": " on Lynx SDK 4.3 and newer, and "
+      },
+      {
+        "kind": "code",
+        "text": "`false`"
+      },
+      {
+        "kind": "text",
+        "text": " on earlier versions."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用原生 "
+      },
+      {
+        "kind": "code",
+        "text": "`<scroll-view>`"
+      },
+      {
+        "kind": "text",
+        "text": " 新架构。启用后，"
+      },
+      {
+        "kind": "code",
+        "text": "`bounceableOptions`"
+      },
+      {
+        "kind": "text",
+        "text": " 会在 Android、iOS 和 Harmony 上使用原生回弹。Lynx SDK 4.3 及以上版本默认为 "
+      },
+      {
+        "kind": "code",
+        "text": "`true`"
+      },
+      {
+        "kind": "text",
+        "text": "，更早版本默认为 "
+      },
+      {
+        "kind": "code",
+        "text": "`false`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "true on Lynx SDK >= 4.3; false otherwise",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableRTL",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Whether horizontal bounce direction should be mirrored in RTL mode."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "是否在 RTL 模式下镜像水平回弹方向。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableScroll",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable scroll interaction."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用滚动。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableScrollMonitor",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable scroll monitor."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用滚动监控。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "estimatedItemStyle",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Estimated height and width of the items need to be set."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "需要设置 items 的预计高度和宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "experimentalNestedScrollBackward",
+    "type": "selfOnly | selfFirst | parentFirst | parallel",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "适配 Harmony 的嵌套滚动行为。'selfOnly' 表示只自身滚动，不与父组件联动。'selfFirst' 表示自身先滚动，自身滚动到边界以后父组件滚动。'parentFirst' 表示父组件先滚动，父组件滚动到边界以后自身滚动。'parallel' 表示自身和父组件同时滚动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "experimentalNestedScrollForward",
+    "type": "selfOnly | selfFirst | parentFirst | parallel",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "适配 Harmony 的嵌套滚动行为。'selfOnly' 表示只自身滚动，不与父组件联动。'selfFirst' 表示自身先滚动，自身滚动到边界以后父组件滚动。'parentFirst' 表示父组件先滚动，父组件滚动到边界以后自身滚动。'parallel' 表示自身和父组件同时滚动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureBottom",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-bottom"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕下方边距"
+      }
+    ],
+    "defaultValue": "'10px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureID",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-id for global exposure"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于全局曝光的 exposure-id"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureLeft",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-left"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕左侧边距"
+      }
+    ],
+    "defaultValue": "'10px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureRight",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-right"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕右侧边距"
+      }
+    ],
+    "defaultValue": "'10px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureScene",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-scene for global exposure"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于全局曝光的 exposure-scene"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureTop",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-top"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕上方边距"
+      }
+    ],
+    "defaultValue": "'10px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "firstScreenItemCount",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Estimated first screen item count for lazy rendering. Remaining children will complete rendering based on exposure. When this estimate is small, it may cause a blank screen phenomenon where some nodes exist on the first screen."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "懒加载时预计的第一页项数。剩余的子元素会基于曝光状态完成渲染。当此预估较小时，可能会导致第一屏出现空白现象。"
+      }
+    ],
+    "defaultValue": "1",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "iOSBounces",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Open the bouncing effect on iOS. If you want to use it on Android, please refer to the bounceableOption. If the bounceableOption is set, the iOSBounces property will be invalid."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "开启iOS上的回弹效果。如果想在安卓上使用，请参考bounceableOption。如果设置了bounceableOption，iOSBounces属性将失效。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "lazy",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "When enabled, only the items that are about to enter the viewport are rendered, reducing initial load time and memory usage; remaining items are rendered as they approach visibility during scroll."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用懒渲染。只有当用户滚动到可见区域时，才会渲染 items，从而减少初始加载时间和内存使用。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "lazyOptions",
+    "type": "LazyOptions",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "When enabled, only the items that are about to enter the viewport are rendered, reducing initial load time and memory usage; remaining items are rendered as they approach visibility during scroll."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用懒渲染。只有当用户滚动到可见区域时，才会渲染 items，从而减少初始加载时间和内存使用。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:gesture",
+    "type": "BaseGesture",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If you want to use gesture, pass it here."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果想使用 gesture API，请传入该属性。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onUIAppear",
+    "type": "(e: CommonEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Exposure event for UI"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "UI 的曝光事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onUIDisappear",
+    "type": "(e: CommonEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Disappear event for UI"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "UI 的消失事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "renderTabItem",
+    "type": "(tabItem: TabsData) => ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The function used to render each tab item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于渲染每一个 Tab 的函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scene",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于标记懒加载的曝光时机。请确保页面中唯一。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scrollMonitorTag",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The tag for scroll monitor."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动监控的标签。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scrollPropagationBehavior",
+    "type": "ScrollPropagationBehaviorOption",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Controls whether scroll events propagate to parent containers. For now, 'preventPropagate' needs to be used together with temporaryBlockScrollClass and temporaryBlockScrollTag on iOS."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "控制滚动事件是否向父级容器传递。'preventPropagate' 在 iOS 上暂时需与 temporaryBlockScrollClass 和 temporaryBlockScrollTag 配合使用。\n Currently, this property has limitations because its full functionality depends on a higher native SDK version: on iOS, "
+      },
+      {
+        "kind": "code",
+        "text": "`propagate`"
+      },
+      {
+        "kind": "text",
+        "text": " only works if both the parent and this component are set to"
+      },
+      {
+        "kind": "code",
+        "text": "` propagate`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`useRefactorList={true}`"
+      },
+      {
+        "kind": "text",
+        "text": " does not support 'propagate'. On Android, "
+      },
+      {
+        "kind": "code",
+        "text": "`preventPropagate`"
+      },
+      {
+        "kind": "text",
+        "text": " only functions when the parent is "
+      },
+      {
+        "kind": "code",
+        "text": "`x-swiper`"
+      },
+      {
+        "kind": "text",
+        "text": " or "
+      },
+      {
+        "kind": "code",
+        "text": "`x-viewpager-ng`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "defaultValue": "'native'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scrollviewId",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The id of the scrollview."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动视图的id。"
+      }
+    ],
+    "defaultValue": "\"scrollview\"",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "sticky",
+    "type": "ReactElement",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Sticky item, designed for "
+      },
+      {
+        "kind": "code",
+        "text": "`Tabs`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "粘性元素，设计用于 "
+      },
+      {
+        "kind": "code",
+        "text": "`Tabs`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "tabsItemWrapperClass",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The class apply to the internal container of child view inside scroll-view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "应用于 scroll-view 内子视图的内部容器的类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "temporaryBlockScrollClass",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The specific class name of the container that is blocked when 'scrollPropagationBehavior' is set to be 'preventPropagate', must be informed by the container provider. For now, 'preventPropagate' needs to be used together with temporaryBlockScrollClass and temporaryBlockScrollTag on iOS."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当 scrollPropagationBehavior 设为 'preventPropagate' 时，被阻止滚动的容器的具体类名。'preventPropagate' 需与 temporaryBlockScrollClass 和 temporaryBlockScrollTag 配合使用。\nThis is a temporary props and will be deprecated on new Lynx SDK version."
+      }
+    ],
+    "defaultValue": "'BDXLynxViewPager'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "temporaryBlockScrollTag",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Used to specify the native container tag that is blocked when 'scrollPropagationBehavior' is set to be 'preventPropagate', corresponding to the Tag attribute of UIView. Needs to be specified by the native container provider. For now, 'preventPropagate' needs to be used together with temporaryBlockScrollClass and temporaryBlockScrollTag on iOS."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于指定当 scrollPropagationBehavior 设为 'preventPropagate' 时被阻止滚动的原生容器标签（对应 UIView 的 Tag 属性）。该值需由原生容器提供方指定，且 'preventPropagate' 必须与 temporaryBlockScrollClass 和 temporaryBlockScrollTag 配合使用。\nThis is a temporary props and will be deprecated on new Lynx SDK version."
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "temporaryNestedScroll",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Android-only temporary flag to control nested scroll; maps to native 'enable-nested-scroll'. Android default value is true."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "仅 Android 生效的临时开关，用于控制嵌套滚动冲突；映射到原生属性 'enable-nested-scroll'。Android上默认开启。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "testing",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Testing Mode."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "测试模式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Events
+<UIApiTable source={[
+  {
+    "name": "catchLongPress",
+    "type": "(e: EventHandler | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Same as onLongPress, but stops the event from propagating to parent elements."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "与 onLongPress 相同，但会阻止事件冒泡。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "catchTouchCancel",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Same as onTouchCancel, but stops the event from propagating to parent elements."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "与 onTouchCancel 相同，但会阻止事件冒泡。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "catchTouchEnd",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Same as onTouchEnd, but stops the event from propagating to parent elements."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "与 onTouchEnd 相同，但会阻止事件冒泡。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "catchTouchMove",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Same as onTouchMove, but stops the event from propagating to parent elements."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "与 onTouchMove 相同，但会阻止事件冒泡。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "catchTouchStart",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Same as onTouchStart, but stops the event from propagating to parent elements."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "与 onTouchStart 相同，但会阻止事件冒泡。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onContentSizeChange",
+    "type": "(res: {detail: {scrollHeight: number, scrollWidth: number}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Being triggered when scrolling content changes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动内容变化时触发。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onLayoutChange",
+    "type": "(e: EventHandler | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when UI has changed viewport size."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当 UI 视口大小改变时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onLongPress",
+    "type": "(e: EventHandler | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a touch-point is held on the UI for a period of time."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当触摸点在 UI 上按住一段时间后发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onScroll",
+    "type": "(e: ScrollEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Being triggered when scrolling occurs."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动时触发。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onScrollEnd",
+    "type": "(e: (e: ScrollEndEvent) => void | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Being triggered when scrolling stops."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动停止时触发。"
+      }
+    ],
+    "defaultValue": "undefined",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onScrollToLower",
+    "type": "(e: (e: ScrollToLowerEvent) => void | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Being triggered when scrolling to lower."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动到底部时触发。"
+      }
+    ],
+    "defaultValue": "undefined",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onScrollToUpper",
+    "type": "(e: (e: ScrollToUpperEvent) => void | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Being triggered when scrolling to upper."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动到顶部时触发。"
+      }
+    ],
+    "defaultValue": "undefined",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTap",
+    "type": "(e: EventHandler | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a touch-point is tapped on the UI."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当触摸点在 UI 上轻触时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTouchCancel",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a touch event is interrupted or cancelled before it is completed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当触摸事件在完成前被中断或取消时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTouchEnd",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a touch-point is removed from the UI."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当触摸点从 UI 上移除时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTouchMove",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a touch-point is moving on the UI."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当触摸点在 UI 上移动时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTouchStart",
+    "type": "(e: TouchEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a touch-point is placed on the UI."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当触摸点放置在 UI 上时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onWheel",
+    "type": "(e: CommonEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a wheel event is triggered on the scroll-view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当 scroll-view 触发滚轮事件时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### TabItem
+
+<UIApiTable source={[
+  {
+    "name": "tabKey",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The unique key of the tab item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Tab 项的唯一键。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### TabsPanel
+
+### Properties
+<UIApiTable source={[
+  {
+    "name": "bounces",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable iOS bounces spring effect"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用 iOS 弹性效果"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactElement[]",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Children, which is ViewPagerItems."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素, 即 ViewPagerItems。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableScroll",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable horizontal scroll."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用水平滚动。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureLeft",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-left"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕左边距"
+      }
+    ],
+    "defaultValue": "'50px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureRight",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-right"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕右边距"
+      }
+    ],
+    "defaultValue": "'50px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialSelectIndex",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Specify the index of the initial display. Please use "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " for other updates."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "指定初始显示的索引。请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " 进行其他更新。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "lazyOptions",
+    "type": "LazyOptions",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable lazy rendering for off-screen pages."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用屏外页面的懒加载渲染。"
+      }
+    ],
+    "defaultValue": "{ enableLazy: true, scene: 'viewpager', exposureLeft: '50px', exposureRight: '50px' }",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ref",
+    "type": "ForwardedRef",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scene",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于标记懒加载的曝光时间。请确保在整个页面中唯一。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "selectIndexAfterDataSourceChanged",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Specify the index after datasource changed. Please use "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " for other updates."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "数据源改变后指定的索引。请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " 进行其他更新。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Style for "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": ". Changing its layout with style is unrecommended."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " 的样式。不建议通过样式改变其布局。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerId",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The id of the "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": ". It is used to select the element. When omitted, ViewPager generates a unique id for the instance."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " 的 ID，用于选择该元素。省略时，ViewPager 会为当前实例生成唯一 ID。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerItemStyle",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Style for "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager-item`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`viewpager-item`"
+      },
+      {
+        "kind": "text",
+        "text": " 的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerProps",
+    "type": "Partial",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional props that will be passed through to the underlying "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将被直接传递到底层 "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " 元素的额外属性。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Events
+<UIApiTable source={[
+  {
+    "name": "MTOnOffsetChange",
+    "type": "(e: {detail: {offset: number}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ViewPager scrolled. The handler should be a main thread event."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ViewPager 滚动。该事件处理函数应在主线程中执行。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page did changed. The handler should be a main thread event."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面已改变。该事件处理函数应在主线程中执行。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageWillChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page will be changed. The handler should be a main thread event."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面将要改变。该事件处理函数应在主线程中执行。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onOffsetChange",
+    "type": "(e: {detail: {offset: number}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ViewPager scrolled."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ViewPager 滚动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page did changed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面已改变。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageWillChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page will be changed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面将要改变。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### TabsIndicator
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "indicatorProps",
+    "type": "StandardProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Raw props passed to the indicator."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "TabsIndicator 的原始属性。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+## TabsRootRef
+<UIApiTable source={[
+  {
+    "name": "selectTab",
+    "type": "(index: number, smooth: boolean) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+## TabsPanelRef
+<UIApiTable source={[
+  {
+    "name": "selectTab",
+    "type": "(index: number, smooth: boolean, success?: (res: unknown) => void, fail?: (res: unknown) => void) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Slide to the specified page."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滑动到指定页面。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
