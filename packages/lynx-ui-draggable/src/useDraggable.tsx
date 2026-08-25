@@ -2,10 +2,16 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
+import {
+  runOnBackground,
+  useCallback,
+  useMainThreadRef,
+  useMemo,
+} from '@lynx-js/react'
 import type { RefObject } from '@lynx-js/react'
 
 import type { Point } from '@lynx-js/lynx-ui-common'
+import { useLatest } from '@lynx-js/lynx-ui-common'
 import type { MainThread } from '@lynx-js/types'
 
 import type {
@@ -65,6 +71,26 @@ export interface UseDraggableReturnType {
   }
 }
 
+function getPagePoint(event: MainThread.TouchEvent | MainThread.MouseEvent) {
+  'main thread'
+  if ('touches' in event) {
+    return { x: event.touches[0].pageX, y: event.touches[0].pageY }
+  }
+  if ('button' in event) {
+    return { x: event.pageX, y: event.pageY }
+  }
+  return { x: 0, y: 0 }
+}
+
+function clamp(value: number, min: number, max: number): number {
+  'main thread'
+  return Math.min(Math.max(value, min), max)
+}
+
+function noopOnMainThread() {
+  'main thread'
+}
+
 export const useDraggable = (
   options: useDragOptions & useDragInternalOptions,
 ): UseDraggableReturnType => {
@@ -85,6 +111,10 @@ export const useDraggable = (
     resetOnEnd = false,
     trigger = 'longpress',
   } = options
+  const callbacks = useLatest({ onDragStart, onDragging, onDragEnd })
+  const hasDragStart = !!onDragStart
+  const hasDragging = !!onDragging
+  const hasDragEnd = !!onDragEnd
   const currentTranslate = useMainThreadRef<Point>({ x: 0, y: 0 })
   const transitionAtTouchStart = useMainThreadRef<Point>({ x: 0, y: 0 })
   const touchStartPoint = useMainThreadRef<
@@ -124,22 +154,9 @@ export const useDraggable = (
       : 0)
   const translateYUpperBound = allowedDirection === 'none' ? 0 : maxY
 
-  const getPagePoint = (
-    event: MainThread.TouchEvent | MainThread.MouseEvent,
-  ) => {
-    'main thread'
-    if ('touches' in event && 'touches') {
-      return { x: event.touches[0].pageX, y: event.touches[0].pageY }
-    }
-    if ('button' in event) {
-      return { x: event.pageX, y: event.pageY }
-    }
-    return { x: 0, y: 0 }
-  }
-
   const getCurrentDelta: (
     event: MainThread.TouchEvent | MainThread.MouseEvent,
-  ) => Point = (
+  ) => Point = useCallback((
     event,
   ) => {
     'main thread'
@@ -158,50 +175,54 @@ export const useDraggable = (
       }
     }
     return { x: 0, y: 0 }
-  }
+  }, [touchStartPoint])
 
-  const clamp = (value: number, min: number, max: number): number => {
-    'main thread'
-    return Math.min(Math.max(value, min), max)
-  }
-
-  const resetInternalValues = () => {
+  const resetInternalValues = useCallback(() => {
     'main thread'
     touchStartPoint.current = null
     currentTranslate.current = { x: 0, y: 0 }
-  }
+  }, [touchStartPoint, currentTranslate])
 
-  const setTransform = (x: number, y: number) => {
+  const setTransform = useCallback((x: number, y: number) => {
     'main thread'
     currentTranslate.current = { x, y }
     draggableNodeRef.current?.setStyleProperty(
       'transform',
       `translate(${x}px, ${y}px)`,
     )
-  }
+  }, [currentTranslate, draggableNodeRef])
 
-  const setStyleProperties = (styles: Record<string, string>) => {
+  const setStyleProperties = useCallback((styles: Record<string, string>) => {
     'main thread'
     draggableNodeRef.current?.setStyleProperties(styles)
-  }
+  }, [draggableNodeRef])
 
-  const onDragStartJS = (pagePoint: Point) => {
-    onDragStart?.(pagePoint)
-  }
-  const handleDragStart = (
+  const onDragStartJS = useCallback((pagePoint: Point) => {
+    callbacks.current.onDragStart?.(pagePoint)
+  }, [callbacks])
+  const handleDragStart = useCallback((
     event: MainThread.TouchEvent | MainThread.MouseEvent,
   ) => {
     'main thread'
     touchStartPoint.current = event
     transitionAtTouchStart.current = currentTranslate.current
     onMTSDragStart?.(getPagePoint(event), event)
-    runOnBackground(onDragStartJS)(getPagePoint(event))
-  }
+    if (hasDragStart) {
+      runOnBackground(onDragStartJS)(getPagePoint(event))
+    }
+  }, [
+    touchStartPoint,
+    transitionAtTouchStart,
+    currentTranslate,
+    onMTSDragStart,
+    hasDragStart,
+    onDragStartJS,
+  ])
 
-  const onDraggingJS = (translate: Point) => {
-    onDragging?.(translate)
-  }
-  const handleDragMove = (
+  const onDraggingJS = useCallback((translate: Point) => {
+    callbacks.current.onDragging?.(translate)
+  }, [callbacks])
+  const handleDragMove = useCallback((
     event: MainThread.TouchEvent | MainThread.MouseEvent,
   ) => {
     'main thread'
@@ -221,13 +242,27 @@ export const useDraggable = (
     const targetY = transitionAtTouchStart.current?.y + deltaY
     setTransform(targetX, targetY)
     onMTSDragging?.(currentTranslate.current, event)
-    runOnBackground(onDraggingJS)(currentTranslate.current)
-  }
+    if (hasDragging) {
+      runOnBackground(onDraggingJS)(currentTranslate.current)
+    }
+  }, [
+    getCurrentDelta,
+    translateXLowerBound,
+    translateXUpperBound,
+    translateYLowerBound,
+    translateYUpperBound,
+    transitionAtTouchStart,
+    setTransform,
+    onMTSDragging,
+    currentTranslate,
+    hasDragging,
+    onDraggingJS,
+  ])
 
-  const onDragEndJS = (translate: Point) => {
-    onDragEnd?.(translate)
-  }
-  const handleDragEnd = (
+  const onDragEndJS = useCallback((translate: Point) => {
+    callbacks.current.onDragEnd?.(translate)
+  }, [callbacks])
+  const handleDragEnd = useCallback((
     event: MainThread.TouchEvent | MainThread.MouseEvent,
   ) => {
     'main thread'
@@ -235,60 +270,62 @@ export const useDraggable = (
       setTransform(0, 0)
     }
     onMTSDragEnd?.(currentTranslate.current, event)
-    runOnBackground(onDragEndJS)(currentTranslate.current)
-  }
-
-  if (!enableDragging) {
-    return {
-      eventHandlers: {},
-      utils: {
-        setTransform: () => {
-          'main thread'
-        },
-        setStyleProperties: () => {
-          'main thread'
-        },
-        resetInternalValues: () => {
-          'main thread'
-        },
-      },
+    if (hasDragEnd) {
+      runOnBackground(onDragEndJS)(currentTranslate.current)
     }
-  }
+  }, [
+    resetOnEnd,
+    setTransform,
+    onMTSDragEnd,
+    currentTranslate,
+    hasDragEnd,
+    onDragEndJS,
+  ])
 
-  const commonHandlers = {
-    'main-thread:bindtouchmove': handleDragMove,
-    'main-thread:bindtouchend': handleDragEnd,
+  const eventHandlers = useMemo<UseDraggableReturnType['eventHandlers']>(() => {
+    if (!enableDragging) {
+      return {}
+    }
+    const commonHandlers = {
+      'main-thread:bindtouchmove': handleDragMove,
+      'main-thread:bindtouchend': handleDragEnd,
 
-    'main-thread:bindmousemove': handleDragMove,
-    'main-thread:bindmouseup': handleDragEnd,
-    'main-thread:bindmouseleave': handleDragEnd,
-  }
+      'main-thread:bindmousemove': handleDragMove,
+      'main-thread:bindmouseup': handleDragEnd,
+      'main-thread:bindmouseleave': handleDragEnd,
+    }
 
-  if (trigger === 'longpress') {
-    return {
-      eventHandlers: {
+    if (trigger === 'longpress') {
+      return {
         'main-thread:bindlongpress': handleDragStart,
         'main-thread:bindmouselongpress': handleDragStart,
         ...commonHandlers,
-      },
-      utils: {
-        setTransform,
-        setStyleProperties,
-        resetInternalValues,
-      },
+      }
     }
-  }
-
-  return {
-    eventHandlers: {
+    return {
       'main-thread:bindtouchstart': handleDragStart,
       'main-thread:bindmousedown': handleDragStart,
       ...commonHandlers,
-    },
-    utils: {
-      setTransform,
-      setStyleProperties,
-      resetInternalValues,
-    },
-  }
+    }
+  }, [enableDragging, trigger, handleDragStart, handleDragMove, handleDragEnd])
+
+  const utils = useMemo(() =>
+    enableDragging
+      ? {
+        setTransform,
+        setStyleProperties,
+        resetInternalValues,
+      }
+      : {
+        setTransform: noopOnMainThread,
+        setStyleProperties: noopOnMainThread,
+        resetInternalValues: noopOnMainThread,
+      }, [
+    enableDragging,
+    setTransform,
+    setStyleProperties,
+    resetInternalValues,
+  ])
+
+  return { eventHandlers, utils }
 }
