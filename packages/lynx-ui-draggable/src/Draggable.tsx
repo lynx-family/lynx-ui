@@ -41,7 +41,12 @@ export const Draggable = forwardRef<NodesRef, DraggableProps>(
       useMainThreadRef<
         MainThread.Element
       >(null)
-    const { eventHandlers, utils } = useDraggable({
+    const {
+      eventHandlers,
+      setTransform,
+      setStyleProperties,
+      resetInternalValues,
+    } = useDraggable({
       ...dragOptions,
       draggableNodeRef: viewRef,
     })
@@ -51,12 +56,12 @@ export const Draggable = forwardRef<NodesRef, DraggableProps>(
       () => {
         'main thread'
         return {
-          MTSResetInternalTranslateValues: utils.resetInternalValues,
-          MTSSetTransform: utils.setTransform,
-          MTSSetOtherStyles: utils.setStyleProperties,
+          MTSResetInternalTranslateValues: resetInternalValues,
+          MTSSetTransform: setTransform,
+          MTSSetOtherStyles: setStyleProperties,
         }
       },
-      [],
+      [resetInternalValues, setTransform, setStyleProperties],
     )
 
     return (
@@ -103,7 +108,12 @@ export const DraggableRoot = forwardRef<NodesRef, DraggableProps>(
       useMainThreadRef<
         MainThread.Element
       >(null)
-    const { eventHandlers: handlers, utils } = useDraggable({
+    const {
+      eventHandlers: handlers,
+      setTransform,
+      setStyleProperties,
+      resetInternalValues,
+    } = useDraggable({
       ...dragOptions,
       draggableNodeRef: viewRef,
     })
@@ -113,12 +123,12 @@ export const DraggableRoot = forwardRef<NodesRef, DraggableProps>(
       () => {
         'main thread'
         return {
-          MTSResetInternalTranslateValues: utils.resetInternalValues,
-          MTSSetTransform: utils.setTransform,
-          MTSSetOtherStyles: utils.setStyleProperties,
+          MTSResetInternalTranslateValues: resetInternalValues,
+          MTSSetTransform: setTransform,
+          MTSSetOtherStyles: setStyleProperties,
         }
       },
-      [],
+      [resetInternalValues, setTransform, setStyleProperties],
     )
 
     const draggableContextValue = useMemo(() => ({

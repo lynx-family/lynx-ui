@@ -2,15 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import {
-  runOnBackground,
-  useCallback,
-  useMainThreadRef,
-  useMemo,
-} from '@lynx-js/react'
+import { runOnBackground, useCallback, useMainThreadRef } from '@lynx-js/react'
 import type { MainThreadRef, RefObject } from '@lynx-js/react'
 
-import { mtsLog } from '@lynx-js/lynx-ui-common'
+import { mtsLog, useLatest } from '@lynx-js/lynx-ui-common'
 import type { Point } from '@lynx-js/lynx-ui-common'
 import type { DraggableRef } from '@lynx-js/lynx-ui-draggable'
 import type { MainThread } from '@lynx-js/types'
@@ -19,13 +14,14 @@ import type { SortableData } from './types'
 
 interface SortableOptionsType<T> {
   data: SortableData<T>[] // sorting key array
+  orderRef: MainThreadRef<string[]>
   sizeMap: MainThreadRef<Record<string, number>> // sorting key -> size
   itemRefMap: RefObject<Record<string, DraggableRef | null>>
   itemMTSRefMap: MainThreadRef<Record<string, DraggableRef | null>> // sortingKey -> element Ref
   dirtyKeysRef: MainThreadRef<Record<string, boolean>>
   disabledKeysRef: MainThreadRef<Record<string, boolean>>
   onDragEnd?: (sortedKeyArray: SortableData<T>[]) => void
-  onDragStart?: () => void
+  onDragStart?: (sortingKey: string) => void
   debugLog?: boolean
 }
 
@@ -34,6 +30,7 @@ export function useSortable<T>(
 ) {
   const {
     data,
+    orderRef,
     sizeMap,
     itemMTSRefMap,
     dirtyKeysRef,
@@ -43,10 +40,8 @@ export function useSortable<T>(
     debugLog = false,
   } = useSortableOptions
 
-  const safeData = Array.isArray(data) ? data : []
-  const keyArray = useMemo(() => safeData.map(item => item.getSortingKey()), [
-    safeData,
-  ])
+  // Business data and callbacks stay on BTS; MTS only captures stable refs.
+  const latest = useLatest({ data, onDragEnd, onDragStart })
   const swapConfirmedPercentage = useMainThreadRef<number>(0.5)
   const touchStartPoint = useMainThreadRef<Point>({ x: 0, y: 0 })
   const lastSwappingKey = useMainThreadRef<string>('')
@@ -65,9 +60,9 @@ export function useSortable<T>(
     dirtyKeysRef.current[sortingKey] = true
   }, [itemMTSRefMap, dirtyKeysRef])
 
-  const handleDragStartJS = useCallback(() => {
-    onDragStart?.()
-  }, [onDragStart])
+  const handleDragStartJS = useCallback((sortingKey: string) => {
+    latest.current.onDragStart?.(sortingKey)
+  }, [latest])
 
   const handleDragStart = useCallback(
     (
@@ -76,13 +71,19 @@ export function useSortable<T>(
       event: MainThread.MouseEvent | MainThread.TouchEvent,
     ) => {
       'main thread'
-      runOnBackground(handleDragStartJS)()
+      runOnBackground(handleDragStartJS)(sortingKey)
       touchStartPoint.current = pagePoint
       changedKey.current.push(sortingKey)
       changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag start]', event)
     },
-    [handleDragStartJS, touchStartPoint, changedKey, changeItemZIndex],
+    [
+      handleDragStartJS,
+      touchStartPoint,
+      changedKey,
+      changeItemZIndex,
+      debugLog,
+    ],
   )
 
   const swappingIndexAndDistance: (
@@ -92,6 +93,7 @@ export function useSortable<T>(
     useCallback(
       (movingDistance, sortingKey) => {
         'main thread'
+        const keyArray = orderRef.current
         const index = keyArray.indexOf(sortingKey)
         if (keyArray.length === 0 || index < 0 || index >= keyArray.length) {
           mtsLog(debugLog, '[swappingIndexAndDistance] invalid index', index)
@@ -195,7 +197,7 @@ export function useSortable<T>(
           currentIndex += direction
         }
       },
-      [keyArray, sizeMap, disabledKeysRef],
+      [orderRef, sizeMap, disabledKeysRef, debugLog],
     )
 
   const setTransform = useCallback(
@@ -212,7 +214,10 @@ export function useSortable<T>(
   )
 
   // Clamp the previous interacting item to the grid
-  const clampPreviousItem = (movingDistance: number, sortingKey: string) => {
+  const clampPreviousItem = useCallback((
+    movingDistance: number,
+    sortingKey: string,
+  ) => {
     'main thread'
     mtsLog(
       debugLog,
@@ -238,9 +243,17 @@ export function useSortable<T>(
         setTransform(lastSwappingItemKey, 0)
       }
     }
-  }
+  }, [
+    debugLog,
+    lastCrossedDisabledSize,
+    lastSwappingKey,
+    setTransform,
+    sizeMap,
+    swapConfirmedPercentage,
+    swappingItemTranslation,
+  ])
 
-  const updateLastSwappingItem = (
+  const updateLastSwappingItem = useCallback((
     movingDistance: number,
     sortingKey: string,
     swappingKey: string,
@@ -252,14 +265,15 @@ export function useSortable<T>(
     )
     clampPreviousItem(movingDistance, sortingKey)
     lastSwappingKey.current = swappingKey
-  }
+  }, [clampPreviousItem, debugLog, lastSwappingKey])
 
   // Update the confirmed interacting ID if the condition is met
-  const updateConfirmedInteractedID = (
+  const updateConfirmedInteractedID = useCallback((
     unconsumedDistance: number,
     sortingKey: string,
   ) => {
     'main thread'
+    const keyArray = orderRef.current
     mtsLog(
       debugLog,
       `swapping with ${lastSwappingKey.current} at ${unconsumedDistance}`,
@@ -308,11 +322,20 @@ export function useSortable<T>(
       )
     }
     swappingItemTranslation.current = unconsumedDistance
-  }
+  }, [
+    debugLog,
+    orderRef,
+    lastSwappedKey,
+    lastSwappingKey,
+    sizeMap,
+    swapConfirmedPercentage,
+    swappingItemTranslation,
+  ])
 
   const switchHandler = useCallback(
     (movingDistance: number, sortingKey: string) => {
       'main thread'
+      const keyArray = orderRef.current
       const {
         index: swappingIndex,
         distance: consumedDistance,
@@ -354,7 +377,10 @@ export function useSortable<T>(
     [
       changedKey,
       itemMTSRefMap,
-      keyArray,
+      orderRef,
+      debugLog,
+      sizeMap,
+      lastCrossedDisabledSize,
       lastSwappingKey,
       setTransform,
       swappingIndexAndDistance,
@@ -374,11 +400,12 @@ export function useSortable<T>(
       changeItemZIndex(10000, sortingKey)
       mtsLog(debugLog, '[event drag move]', event)
     },
-    [switchHandler, changeItemZIndex],
+    [switchHandler, changeItemZIndex, debugLog],
   )
 
   const sortArray = useCallback((sortingKey: string) => {
     'main thread'
+    const keyArray = orderRef.current
     const draggingIndex = keyArray.indexOf(sortingKey)
     const swappedIndex = keyArray.indexOf(lastSwappedKey.current)
 
@@ -422,7 +449,7 @@ export function useSortable<T>(
       }
     }
     return result
-  }, [keyArray, lastSwappedKey, disabledKeysRef])
+  }, [orderRef, lastSwappedKey, disabledKeysRef, debugLog])
 
   const resetSwapTrackingRefs = useCallback(() => {
     'main thread'
@@ -460,14 +487,13 @@ export function useSortable<T>(
   }, [changedKey, itemMTSRefMap, resetSwapTrackingRefs])
 
   const rootDragEnd = useCallback((sortedKey: string[]) => {
-    const keyToItemMap = new Map(data.map((item, index) => {
-      return [keyArray[index], item]
-    }))
+    const { data, onDragEnd } = latest.current
+    const keyToItemMap = new Map(data.map(item => [item.getSortingKey(), item]))
     const sortedData = sortedKey
       .map(key => keyToItemMap.get(key))
       .filter((item): item is NonNullable<typeof item> => !!item)
     onDragEnd?.(sortedData)
-  }, [data, keyArray, onDragEnd])
+  }, [latest])
 
   const handleDragEnd = useCallback(
     (
@@ -475,6 +501,7 @@ export function useSortable<T>(
       event: MainThread.MouseEvent | MainThread.TouchEvent,
     ): boolean => {
       'main thread'
+      const keyArray = orderRef.current
       mtsLog(debugLog, '[event drag end]', event)
       const sortedKey = sortArray(sortingKey)
       let orderChanged = sortedKey.length !== keyArray.length
@@ -499,7 +526,14 @@ export function useSortable<T>(
       }
       return orderChanged
     },
-    [keyArray, resetStatus, resetSwapTrackingRefs, rootDragEnd, sortArray],
+    [
+      orderRef,
+      resetStatus,
+      resetSwapTrackingRefs,
+      rootDragEnd,
+      sortArray,
+      debugLog,
+    ],
   )
 
   return {
