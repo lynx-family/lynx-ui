@@ -256,6 +256,15 @@ export type {
   SwitchRenderProps,
 } from '@lynx-js/lynx-ui-switch'
 
+// view-pager
+export { ViewPager } from '@lynx-js/lynx-ui-view-pager'
+export type {
+  ViewPagerChangeEvent,
+  ViewPagerOffsetChangeEvent,
+  ViewPagerProps,
+  ViewPagerRef,
+} from '@lynx-js/lynx-ui-view-pager'
+
 export {
   SheetRoot,
   SheetContent,

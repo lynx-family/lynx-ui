@@ -99,6 +99,11 @@
       "label": "Switch",
       "useWhen": "The UI needs an immediate binary on/off setting.",
       "avoidWhen": "The interaction represents form selection or an indeterminate state; use Checkbox."
+    },
+    "view-pager": {
+      "label": "ViewPager",
+      "useWhen": "The UI needs page-snapped horizontal content navigation with optional lazy rendering.",
+      "avoidWhen": "The UI needs a looping carousel with custom transition behavior; use Swiper."
     }
   },
   "excludedComponents": {

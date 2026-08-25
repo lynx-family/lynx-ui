@@ -692,6 +692,13 @@ const doGenTplWithData = async (
     )
   }
 
+  content = `${
+    content
+      .replace(/^\s+$/gmu, '')
+      .replace(/\n{3,}/gu, '\n\n')
+      .trimEnd()
+  }\n`
+
   fs.writeFileSync(savePath, content)
 }
 
