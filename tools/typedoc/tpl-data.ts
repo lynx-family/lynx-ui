@@ -335,7 +335,10 @@ const doCalcSingleParam = (
   isZhContext: boolean,
   currentPkgName?: string,
 ) => {
-  return `${p.name}: ${doTypeCalc(p.type, isZhContext, currentPkgName)}`
+  const optionalMarker = p?.flags?.isOptional ? '?' : ''
+  return `${p.name}${optionalMarker}: ${
+    doTypeCalc(p.type, isZhContext, currentPkgName)
+  }`
 }
 
 const doCalcParams = (
