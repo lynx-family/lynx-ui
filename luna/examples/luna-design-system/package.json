@@ -1,0 +1,39 @@
+{
+  "name": "@lynx-js/example-luna-design-system",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Web playground for L.U.N.A design system interoperability",
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/luna/examples/luna-design-system#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "luna/examples/luna-design-system"
+  },
+  "license": "Apache-2.0",
+  "author": "The Lynx Authors",
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild --config ./rsbuild.config.ts build",
+    "dev": "rsbuild --config ./rsbuild.config.ts dev --open",
+    "preview": "rsbuild --config ./rsbuild.config.ts preview"
+  },
+  "dependencies": {
+    "@lynx-js/luna-core": "workspace:*",
+    "@lynx-js/luna-styles": "workspace:*",
+    "@lynx-js/luna-tokens": "workspace:*",
+    "lucide-react": "0.546.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@lynx-js/luna-tailwind": "workspace:*",
+    "@rsbuild/core": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "rsbuild-plugin-tailwindcss": "catalog:tailwind",
+    "tailwindcss": "catalog:tailwind",
+    "typescript": "catalog:"
+  }
+}

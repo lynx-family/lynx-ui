@@ -308,6 +308,7 @@ export default tseslint.config(
   },
   {
     files: [
+      'luna/examples/luna-design-system/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
       'luna/examples/luna-showcase-studio/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
       'luna/examples/luna-stage-basic/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
       'luna/examples/luna-stage-motion/src/**/*.{js,mjs,cjs,jsx,ts,tsx}',
@@ -321,6 +322,9 @@ export default tseslint.config(
         },
         jsxPragma: null,
       },
+    },
+    rules: {
+      'n/no-unsupported-features/node-builtins': 'off',
     },
   },
   // Vitest-related

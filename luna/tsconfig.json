@@ -25,6 +25,9 @@
   "files": [],
   "references": [
     {
+      "path": "./examples/luna-design-system",
+    },
+    {
       "path": "./examples/luna-showcase-catalog/tsconfig.build.json",
     },
     {

@@ -1,0 +1,46 @@
+@import "@lynx-js/luna-styles/index.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  html,
+  body {
+    background-color: var(--canvas);
+    color: var(--content);
+  }
+}
+
+@layer utilities {
+  .scrollbar-subtle {
+    scrollbar-color: var(--content-faint) transparent;
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-subtle::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  .scrollbar-subtle::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-subtle::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    background-color: var(--content-faint);
+    border: 2px solid transparent;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-subtle:hover::-webkit-scrollbar-thumb {
+    background-color: var(--content-subtle);
+  }
+}
