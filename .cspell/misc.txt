@@ -18,6 +18,7 @@ Bounceable
 bradlc
 casename
 checkmark
+Chakra
 clsx
 coef
 coeff
@@ -51,12 +52,15 @@ MAGICK
 manypkg
 maxlines
 mktemp
+minmax
 n'BDX
 nokey
 noprint
 npmjs
+oklch
 otpui
 overscroll
+prefersdark
 pressable
 Promisable
 qrcode
@@ -76,6 +80,7 @@ subcomponent
 svitejs
 swipeable
 taiki
+Tamagui
 Threadify
 tsgo
 ufra
