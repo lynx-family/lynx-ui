@@ -34,6 +34,11 @@ export const baseConfig: RslibConfig = {
         emitCss: true,
       },
       dts: true,
+      redirect: {
+        dts: {
+          extension: true,
+        },
+      },
     },
   ],
 }

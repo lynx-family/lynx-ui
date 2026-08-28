@@ -19,6 +19,7 @@
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:new-packages": "node tools/scripts/check-new-publishable-packages.mjs",
+    "check:package-types": "node tools/scripts/check-package-types.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
     "check:skills-eval-definitions": "pnpm --filter @lynx-js/skill-lynx-ui check:eval-definitions",
     "check:skills-references": "pnpm --filter @lynx-js/skill-lynx-ui check:references",

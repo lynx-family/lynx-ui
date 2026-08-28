@@ -109,6 +109,14 @@ jobs:
       runs-on: lynx-ubuntu-24.04-medium
       run: pnpm check:exports
 
+  check-package-types:
+    name: Check Package Types
+    needs: build
+    uses: ./.github/workflows/common-test.yml
+    with:
+      runs-on: lynx-ubuntu-24.04-medium
+      run: pnpm check:package-types
+
   test-publish:
     name: Test Publish
     needs: build
@@ -190,6 +198,7 @@ jobs:
       - code-style-check
       - luna-vars
       - check-exports
+      - check-package-types
       - eslint
       - test-publish
       - test-typos
