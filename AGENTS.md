@@ -116,6 +116,10 @@ LUNA foundation packages under `luna/packages/` build from local source with Rsl
 Before submitting changes, ensure the project builds and passes checks.
 **CRITICAL**: You MUST run `pnpm turbo build` to perform a full workspace build and ensure no compilation errors are introduced.
 
+The required `Done` check from the `Test` workflow must be reported for every pull request targeting
+`main`, including documentation-only and changeset-only pull requests. Do not add pull request path
+filters that can skip the entire workflow.
+
 ```bash
 # Build all packages
 pnpm run build
