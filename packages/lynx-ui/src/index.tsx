@@ -292,6 +292,28 @@ export type {
   SliderValueChangeSource,
 } from '@lynx-js/lynx-ui-slider'
 
+// toast
+export {
+  ToastContext,
+  useSlideAnimation,
+  calculateTargetPoint,
+  performAnimation,
+  ToastPositioner,
+  ToastRoot,
+  ToastContent,
+  toast,
+  ToastMountPoint,
+  ToastDraggableContent,
+} from '@lynx-js/lynx-ui-toast'
+export type {
+  StaticToastConfig,
+  ToastContextType,
+  ToastRootProps,
+  ToastPositionerProps,
+  ToastContentProps,
+  ToastDraggableContentProps,
+} from '@lynx-js/lynx-ui-toast'
+
 // only presence types are exported
 export type {
   PresenceAnimationStatus,

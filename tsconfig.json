@@ -75,6 +75,9 @@
       "path": "./packages/lynx-ui-switch"
     },
     {
+      "path": "./packages/lynx-ui-toast"
+    },
+    {
       "path": "./tsconfig.node.json"
     }
   ]

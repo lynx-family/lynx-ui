@@ -1,0 +1,852 @@
+import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui/index";
+
+
+### ToastRoot
+    The root component of the Toast, containing all of its child components.
+
+<UIApiTable source={[
+  {
+    "name": "debugLog",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Display debug logs. Open it when you find a bug."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "显示调试日志，发现问题时开启。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "forceMount",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Mount the toast and render the content even when it's not shown. At this time, the internal state is \"initial\"."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "即使弹窗未显示，也会挂载弹窗并渲染内容。此时内部状态处于 closed"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onClose",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Triggers when the toast dismissed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当 Toast 关闭时触发"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onOpen",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Triggers when the toast showed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当 Toast 显示时触发"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "show",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If the toast is visible on screen. Controlled"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Toast 是否在屏幕上可见，可受控"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | (status: {animating?: boolean, closed?: boolean, entering?: boolean, leaving?: boolean, open?: boolean}) => ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Children in content."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内容中的子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean}) => ReactNode"
+        }
+      ]
+    }
+  }
+]}/>
+<ClassRenderPropPreamble />
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-open",
+    "Render Prop": "open",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is opened.\nApplied when `status.open` is true.",
+      "description_zh": "弹层处于打开状态。\n当 status.open 为 true 时生效，可用于 `.ui-open { ... }`。"
+    }
+  },
+  {
+    "className": "ui-closed",
+    "Render Prop": "closed",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is closed.\nIf it's force mounted, the initial status will be closed.\nApplied when `status.closed` is true.",
+      "description_zh": "弹层处于关闭状态。如果开启了 forceMount，初始状态会是 ui-closed。\n当 status.closed 为 true 时生效，可用于 `.ui-closed { ... }`。"
+    }
+  },
+  {
+    "className": "ui-leaving",
+    "Render Prop": "leaving",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is performing the leaving animation. Takes effect when transition:true.\nApplied when `status.leaving` is true.",
+      "description_zh": "弹层正在执行离开动画。仅在 transition:true 时生效。\n当 status.leaving 为 true 时生效，可用于 `.ui-leaving { ... }`。"
+    }
+  },
+  {
+    "className": "ui-entering",
+    "Render Prop": "entering",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is performing the entering animation. Takes effect when transition:true.\nApplied when `status.entering` is true.",
+      "description_zh": "弹层正在执行进入动画。仅在 transition:true 时生效。\n当 status.entering 为 true 时生效，可用于 `.ui-entering { ... }`。"
+    }
+  },
+  {
+    "className": "ui-animating",
+    "Render Prop": "animating",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is doing the animations. Takes effect when transition:true.\nApplied when `status.animating` is true.",
+      "description_zh": "弹层正在执行动画。仅在 transition:true 时生效。\n当 status.animating 为 true 时生效，可用于 `.ui-animating { ... }`。"
+    }
+  }
+]}/>
+
+
+### ToastPositioner
+    Controls the final display position of the toast content and also the view container of Toast. Can be x-overlay-ng or view. Controls the z-index of the toast.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "container",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "It is recommended to use a full-screen transparent container for the popup, as it offers better performance. Alternatively, you can also choose to use the popup through an overlay"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "建议使用全屏透明容器来实现弹窗，这样性能更好。或者，你也可以选择通过覆盖层来使用弹窗。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "debugLog",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Display debug logs. Open it when you find a bug."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "显示调试日志。发现 bug 时开启。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "id",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "id"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "标识符"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "overlayLevel",
+    "type": "1 | 2 | 3 | 4",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Only works when the container is set to a native container name. Adjust the display level of nearby elements. Manual changes to overlayLevel are not supported after rendering."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "仅在容器设置为原生容器名称时生效。调整附近元素的显示层级。一旦渲染后，不支持手动更改 overlayLevel。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "toastPositionerProps",
+    "type": "ViewProps | OverlayProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ToastPositioner supports original view props to be directly spread in this prop."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ToastPositioner 支持将原始 view 属性直接展开到这个属性中。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+
+### ToastContent
+    Controls the fly-in and fly-out animation of Toast.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Children in content."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内容中的子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "debugLog",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Display debug logs. Open it when you find a bug."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "显示调试日志，发现问题时开启。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "duration",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The duration of the animation. In ms."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "动画的持续时间，单位为毫秒。"
+      }
+    ],
+    "defaultValue": "100",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "easing",
+    "type": "[object Object] | linear | ease | ease-in | ease-out | ease-in-out",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The easing curve of animation"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "动画的缓动曲线"
+      }
+    ],
+    "defaultValue": "'linear'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | '<timing-function>'"
+        }
+      ]
+    }
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "swipeDirection",
+    "type": "bottom | left | right | top | none",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The direction of swipe gesture"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滑动手势的方向"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "toastContentProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ToastContent supports original view props to be directly spread in this prop."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ToastContent 支持将原始 view 属性直接展开到这个属性中。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "useDefaultAnimation",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable the default transform animation. The swipe animation will still work."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用默认的变换动画，滑动动画仍然可用。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+
+### ToastDraggableContent
+
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Children in content."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内容中的子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "debugLog",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Display debug logs. Open it when you find a bug."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "显示调试日志，发现问题时开启。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "draggableToastContentProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ToastDraggableContent supports original view props to be directly spread in this prop."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ToastDraggableContent 支持将原始 view 属性直接展开到这个属性中。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "duration",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The duration of the animation. In ms."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "动画的持续时间，单位为毫秒。"
+      }
+    ],
+    "defaultValue": "100",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "easing",
+    "type": "[object Object] | linear | ease | ease-in | ease-out | ease-in-out",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The easing curve of animation"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "动画的缓动曲线"
+      }
+    ],
+    "defaultValue": "'linear'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | '<timing-function>'"
+        }
+      ]
+    }
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "swipeDirection",
+    "type": "bottom | left | right | top | none",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The direction of swipe gesture"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滑动手势的方向"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>

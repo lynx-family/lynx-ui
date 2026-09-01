@@ -99,6 +99,11 @@
       "label": "Switch",
       "useWhen": "The UI needs an immediate binary on/off setting.",
       "avoidWhen": "The interaction represents form selection or an indeterminate state; use Checkbox."
+    },
+    "toast": {
+      "label": "Toast",
+      "useWhen": "The UI needs lightweight, transient, non-blocking feedback after an action or state change.",
+      "avoidWhen": "The message requires a blocking decision, persistent interaction, or anchored context; use Dialog or Popover."
     }
   },
   "excludedComponents": {
