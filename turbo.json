@@ -4,6 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": ["RSPEEDY_BUNDLE_ANALYSIS"],
       "outputs": ["dist/**"]
     },
     "dev": {

@@ -1,6 +1,8 @@
 import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin'
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin'
 
+import { pluginLynxBundleAnalysisStats } from './bundleAnalysisStatsPlugin.mjs'
+
 export const exampleConfig = (entry, options = {}) => {
   const needWeb = typeof options === 'boolean'
     ? options
@@ -33,6 +35,7 @@ export const exampleConfig = (entry, options = {}) => {
     },
 
     plugins: [
+      pluginLynxBundleAnalysisStats(),
       pluginQRCode({
         schema(url) {
           return `${url}?fullscreen=true&luna_theme=lunaris-dark&bar_color=0d0d0d&bg_color=0d0d0d`

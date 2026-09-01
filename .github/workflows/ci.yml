@@ -21,6 +21,10 @@ jobs:
   build:
     name: Build
     uses: ./.github/workflows/build.yml
+  bundle-analysis:
+    name: Bundle Analysis
+    needs: build
+    uses: ./.github/workflows/workflow-bundle-analysis.yml
   code-style-check:
     name: Code Style Check
     runs-on: lynx-ubuntu-24.04-medium

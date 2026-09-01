@@ -37,10 +37,12 @@
     "install:all": "pnpm install",
     "knip": "knip",
     "make-new-component": "tsx tools/make-new-component/index.ts",
+    "merge:example-bundle-stats": "node tools/scripts/merge-example-bundle-stats.mjs",
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
     "test": "vitest",
     "test:changesets-private": "node --test tools/scripts/check-changeset-private-targets.test.mjs",
+    "test:example-bundle-stats": "node --test tools/scripts/merge-example-bundle-stats.test.mjs",
     "test:new-packages": "node --test tools/scripts/check-new-publishable-packages.test.mjs",
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },

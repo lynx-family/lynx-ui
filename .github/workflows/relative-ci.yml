@@ -1,0 +1,28 @@
+name: RelativeCI
+
+on:
+  # zizmor: ignore[dangerous-triggers] This workflow only uploads artifacts
+  # produced by the completed repository workflow.
+  workflow_run:
+    workflows: ["Bundle Analysis", "Test"]
+    types:
+      - completed
+
+permissions:
+  actions: read
+
+jobs:
+  upload:
+    name: Upload example bundles
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: lynx-ubuntu-24.04-medium
+    timeout-minutes: 10
+    env:
+      RELATIVE_CI_PROJECT_EXAMPLES_KEY: ${{ secrets.RELATIVE_CI_PROJECT_EXAMPLES_KEY }}
+    steps:
+      - name: Send bundle statistics to RelativeCI
+        uses: relative-ci/agent-action@fcf45416581928e8dd62eded78ce98c78e5149f8 # v3
+        with:
+          artifactName: examples-relative-ci-artifacts
+          key: ${{ env.RELATIVE_CI_PROJECT_EXAMPLES_KEY }}
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,50 @@
+name: Bundle Analysis
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+env:
+  CI: 1
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  build:
+    name: Build example bundles
+    if: github.event_name != 'merge_group'
+    runs-on: lynx-ubuntu-24.04-medium
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Turbo Cache
+        uses: lynx-infra/cache@5c6160a6a4c7fca80a2f3057bb9dfc9513fcb732
+        with:
+          path: .turbo
+          key: turbo-v4-${{ runner.os }}-${{ github.sha }}
+      - name: Install
+        run: |
+          npm install -g corepack@latest
+          corepack enable
+          pnpm install --frozen-lockfile
+      - name: Build examples with bundle statistics
+        run: pnpm examples:build
+        env:
+          NODE_OPTIONS: --max-old-space-size=16384
+          RSPEEDY_BUNDLE_ANALYSIS: 1
+      - name: Merge bundle statistics
+        run: pnpm merge:example-bundle-stats
+      - name: Upload bundle statistics
+        uses: relative-ci/agent-upload-artifact-action@a2b5741b4f7e6a989c84ec1a3059696b23c152e5 # v2
+        with:
+          artifactName: examples-relative-ci-artifacts
+          webpackStatsFile: artifacts/example-bundle-stats.json
