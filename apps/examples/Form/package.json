@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-form",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Example app demonstrating Form usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Form#readme",
   "repository": {

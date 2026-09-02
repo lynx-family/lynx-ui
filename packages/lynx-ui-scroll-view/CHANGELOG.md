@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-scroll-view
 
+## 3.137.0
+
+### Minor Changes
+
+- Add an `enableNewArch` option that defaults to `true` on Lynx SDK 4.3 and newer, and uses native scroll-view bounces across Android, iOS, and Harmony while preserving custom bounce items, threshold callbacks, stable overscroll alignment, and radius-aware clipping. ([#261](https://github.com/lynx-family/lynx-ui/pull/261))
+
+### Patch Changes
+
+- Emit declaration imports with explicit ESM-compatible paths. ([#280](https://github.com/lynx-family/lynx-ui/pull/280))
+
+- Updated dependencies [[`064ea4e`](https://github.com/lynx-family/lynx-ui/commit/064ea4e49cd3d0ac5754519cbee43d8ab3040024)]:
+  - @lynx-js/lynx-ui-common@3.137.0
+  - @lynx-js/lynx-ui-lazy-component@3.137.0
+
 ## 3.136.0
 
 ### Patch Changes

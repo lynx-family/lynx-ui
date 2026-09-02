@@ -1,5 +1,15 @@
 # @lynx-js/lynx-ui-input
 
+## 3.137.0
+
+### Patch Changes
+
+- Emit declaration imports with explicit ESM-compatible paths. ([#280](https://github.com/lynx-family/lynx-ui/pull/280))
+
+- Updated dependencies [[`0305a4d`](https://github.com/lynx-family/lynx-ui/commit/0305a4dbe00a9bd09d47755f647941cf9cf4e216), [`064ea4e`](https://github.com/lynx-family/lynx-ui/commit/064ea4e49cd3d0ac5754519cbee43d8ab3040024)]:
+  - @lynx-js/lynx-ui-scroll-view@3.137.0
+  - @lynx-js/lynx-ui-common@3.137.0
+
 ## 3.136.0
 
 ### Patch Changes
