@@ -1,0 +1,34 @@
+A notification primitive that appears near a screen edge, supports custom content and animation, and can optionally be dismissed with a swipe gesture.
+
+## Controlled usage
+
+```tsx
+<ToastRoot show={show} onClose={() => setShow(false)}>
+  <ToastPositioner className='toast-viewport'>
+    <ToastContent className='toast-item'>Saved</ToastContent>
+  </ToastPositioner>
+</ToastRoot>
+```
+
+Use `ToastDraggableContent` instead of `ToastContent` when swipe dismissal is required. Set `useDefaultAnimation={false}` to take full control of animation through presence classes such as `ui-entering`, `ui-open`, and `ui-leaving`.
+
+## Imperative usage
+
+Mount a single `ToastMountPoint`, then call `toast.open` with a root configuration and optional auto-close duration.
+
+```tsx
+toast.open({
+  root: {
+    children: (
+      <ToastPositioner>
+        <ToastContent>Saved</ToastContent>
+      </ToastPositioner>
+    ),
+  },
+  duration: 3000,
+})
+
+<ToastMountPoint />
+```
+
+See the [complete examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Toast) for controlled, custom-animation, draggable, and imperative variants.
