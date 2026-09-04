@@ -280,7 +280,10 @@ const doCalcSingleParam = (
   isZhContext: boolean,
   currentPkgName?: string,
 ) => {
-  return `${p.name}: ${doTypeCalc(p.type, isZhContext, currentPkgName)}`
+  const optionalMarker = p?.flags?.isOptional ? '?' : ''
+  return `${p.name}${optionalMarker}: ${
+    doTypeCalc(p.type, isZhContext, currentPkgName)
+  }`
 }
 
 const doCalcParams = (
@@ -320,6 +323,14 @@ const doCalcReflectionType = (
       return `(${doCalcParams(parameters, isZhContext, currentPkgName)}) => ${
         doSingleTypeCalc(type, isZhContext, currentPkgName)
       }`
+    }
+
+    if (declaration.children) {
+      return doCalcObjectLiteralType(
+        declaration.children,
+        isZhContext,
+        currentPkgName,
+      )
     }
 
     return 'Record<string, unknown>'

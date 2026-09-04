@@ -1,0 +1,649 @@
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+
+## ViewPagerProps
+
+### Properties
+<UIApiTable source={[
+  {
+    "name": "bounces",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable iOS bounces spring effect"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用 iOS 弹性效果"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactElement[]",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Children, which is ViewPagerItems."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素, 即 ViewPagerItems。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableScroll",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable horizontal scroll."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用水平滚动。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureLeft",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-left"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕左边距"
+      }
+    ],
+    "defaultValue": "'50px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exposureRight",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "exposure-screen-margin-right"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "曝光屏幕右边距"
+      }
+    ],
+    "defaultValue": "'50px'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialSelectIndex",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Specify the index of the initial display. Please use "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " for other updates."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "指定初始显示的索引。请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " 进行其他更新。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "lazyOptions",
+    "type": "LazyOptions",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable lazy rendering for off-screen pages."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用屏外页面的懒加载渲染。"
+      }
+    ],
+    "defaultValue": "{ enableLazy: true, scene: 'viewpager', exposureLeft: '50px', exposureRight: '50px' }",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ref",
+    "type": "ForwardedRef",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scene",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "用于标记懒加载的曝光时间。请确保在整个页面中唯一。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "selectIndexAfterDataSourceChanged",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Specify the index after datasource changed. Please use "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " for other updates."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "数据源改变后指定的索引。请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`selectTab`"
+      },
+      {
+        "kind": "text",
+        "text": " 进行其他更新。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Style for "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": ". Changing its layout with style is unrecommended."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " 的样式。不建议通过样式改变其布局。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerId",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The id of the "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": ". It is used to select the element. When omitted, ViewPager generates a unique id for the instance."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " 的 ID，用于选择该元素。省略时，ViewPager 会为当前实例生成唯一 ID。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerItemStyle",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Style for "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager-item`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`viewpager-item`"
+      },
+      {
+        "kind": "text",
+        "text": " 的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerProps",
+    "type": "Partial",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional props that will be passed through to the underlying "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将被直接传递到底层 "
+      },
+      {
+        "kind": "code",
+        "text": "`viewpager`"
+      },
+      {
+        "kind": "text",
+        "text": " 元素的额外属性。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Events
+<UIApiTable source={[
+  {
+    "name": "MTOnOffsetChange",
+    "type": "(e: {detail: {offset: number}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ViewPager scrolled. The handler should be a main thread event."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ViewPager 滚动。该事件处理函数应在主线程中执行。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page did changed. The handler should be a main thread event."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面已改变。该事件处理函数应在主线程中执行。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageWillChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page will be changed. The handler should be a main thread event."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面将要改变。该事件处理函数应在主线程中执行。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onOffsetChange",
+    "type": "(e: {detail: {offset: number}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "ViewPager scrolled."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "ViewPager 滚动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page did changed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面已改变。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageWillChange",
+    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Viewpager page will be changed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Viewpager 页面将要改变。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### ViewPagerChangeEvent
+
+<UIApiTable source={[
+  {
+    "name": "index",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Current index"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当前索引"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "isDragged",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If being dragged"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "是否被拖动"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### ViewPagerOffsetChangeEvent
+
+<UIApiTable source={[
+  {
+    "name": "offset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The scrolling offset, in px"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滚动偏移量，以像素为单位"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+## ViewPagerRef
+<UIApiTable source={[
+  {
+    "name": "selectTab",
+    "type": "(index: number, smooth: boolean, success?: (res: unknown) => void, fail?: (res: unknown) => void) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Slide to the specified page."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "滑动到指定页面。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
