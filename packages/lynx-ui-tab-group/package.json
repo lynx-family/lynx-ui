@@ -1,0 +1,57 @@
+{
+  "name": "@lynx-js/lynx-ui-tab-group",
+  "version": "3.136.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "packages/lynx-ui-tab-group"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "type": "module",
+  "main": "./dist/index.jsx",
+  "module": "./dist/index.jsx",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "src/**",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "tsconfig.docs.json",
+    "tsconfig.json",
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "build:watch": "rslib build --watch",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/lynx-ui-scroll-view": "workspace:*",
+    "@lynx-js/lynx-ui-view-pager": "workspace:*",
+    "@lynx-js/motion": "catalog:",
+    "clsx": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-js/react": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@rslib/core": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@lynx-js/react": ">=0.100.0",
+    "@lynx-js/types": "*",
+    "@types/react": "^18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jsnext:source": "./src/index.tsx"
+}

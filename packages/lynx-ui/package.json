@@ -51,6 +51,7 @@
     "@lynx-js/lynx-ui-swipe-action": "workspace:*",
     "@lynx-js/lynx-ui-swiper": "workspace:*",
     "@lynx-js/lynx-ui-switch": "workspace:*",
+    "@lynx-js/lynx-ui-tab-group": "workspace:*",
     "@lynx-js/lynx-ui-view-pager": "workspace:*"
   },
   "devDependencies": {
