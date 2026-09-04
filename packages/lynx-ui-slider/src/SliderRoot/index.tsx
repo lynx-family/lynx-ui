@@ -10,24 +10,93 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type {
+  ForwardRefExoticComponent,
+  ForwardedRef,
+  MemoExoticComponent,
+  ReactElement,
+  RefAttributes,
+} from '@lynx-js/react'
 
 import { getRectByRef } from '@lynx-js/lynx-ui-common'
 import type { NodesRef } from '@lynx-js/types'
+import { clsx } from 'clsx'
 
 import { SliderContext } from '../context'
 import type {
   SliderRef,
   SliderRootProps,
+  SliderThumbIndex,
   SliderUpdateValueOptions,
+  SliderValue,
   SliderValueChangeSource,
 } from '../types'
-import { clamp01, getTouchX, getVisualRatio, snapToStep } from '../utils'
+import {
+  areSliderValuesEqual,
+  clamp01,
+  cloneSliderValue,
+  getInitialSliderThumbIndex,
+  getSliderIndicatorGeometry,
+  getSliderThumbValue,
+  getTouchX,
+  getVisualRatio,
+  isSliderValueCollapsed,
+  normalizeSliderValue,
+  resolveSliderDrag,
+} from '../utils'
 
-export const SliderRoot = memo(forwardRef(SliderRootImpl))
+type InternalSliderRootProps = SliderRootProps<SliderValue>
+type InternalSliderRef = SliderRef<SliderValue>
 
-function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
+type SliderRootCallProps<Value extends SliderValue> =
+  & SliderRootProps<Value>
+  & {
+    ref?: ForwardedRef<SliderRef<Value>>
+  }
+
+type SliderRootComponent = <Value extends SliderValue = number>(
+  props: SliderRootCallProps<Value>,
+) => ReactElement
+
+interface SliderInteractionState {
+  pointerActive: boolean
+  dragging: boolean
+  pendingThumbIndex: SliderThumbIndex | null
+  activeThumbIndex: SliderThumbIndex | null
+  lastActiveThumbIndex: SliderThumbIndex | null
+  startedCollapsed: boolean
+}
+
+interface RenderedSliderInteractionState {
+  active: boolean
+  activeThumbIndex: SliderThumbIndex | null
+}
+
+type SliderRootRuntimeComponent = MemoExoticComponent<
+  ForwardRefExoticComponent<
+    InternalSliderRootProps & RefAttributes<InternalSliderRef>
+  >
+>
+
+const MemoizedSliderRoot: SliderRootRuntimeComponent = memo(
+  forwardRef(SliderRootImpl),
+)
+
+type SliderRootStatics = Pick<
+  typeof MemoizedSliderRoot,
+  keyof typeof MemoizedSliderRoot
+>
+
+export const SliderRoot = MemoizedSliderRoot as
+  & SliderRootComponent
+  & SliderRootStatics
+
+function SliderRootImpl(
+  props: InternalSliderRootProps,
+  ref: ForwardedRef<InternalSliderRef>,
+) {
   const {
     value: controlledValue,
     defaultValue = 0,
@@ -46,103 +115,205 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   const isWebPlatform = useRef<boolean>(SystemInfo.platform === 'web')
 
   const isWebMouseDown = useRef<boolean>(false)
-
   const isControlled = controlledValue !== undefined
+  const previousEnableRTL = useRef(enableRTL)
+  const [renderedInteraction, setRenderedInteraction] = useState<
+    RenderedSliderInteractionState
+  >({ active: false, activeThumbIndex: null })
+  const active = renderedInteraction.active && !disabled
 
   const trackRef = useRef<NodesRef>(null)
   const indicatorRef = useRef<NodesRef>(null)
-  const thumbRef = useRef<NodesRef>(null)
+  const thumbRefs = [
+    useRef<NodesRef>(null),
+    useRef<NodesRef>(null),
+  ] as const
 
   const bgWidth = useRef<number>(0)
   const bgLeft = useRef<number>(0)
   const leftMeasured = useRef<boolean>(false)
   const isMeasuringBounds = useRef<boolean>(false)
   const pendingMoveX = useRef<number | null>(null)
-
-  const isDragging = useRef<boolean>(false)
-  const currentValue = useRef<number>(
-    snapToStep(clamp01(isControlled ? controlledValue : defaultValue), step),
+  const pendingEnd = useRef<boolean>(false)
+  const interaction = useRef<SliderInteractionState>({
+    pointerActive: false,
+    dragging: false,
+    pendingThumbIndex: null,
+    activeThumbIndex: null,
+    lastActiveThumbIndex: null,
+    startedCollapsed: false,
+  })
+  const currentValue = useRef<SliderValue>(
+    normalizeSliderValue(
+      isControlled ? controlledValue : defaultValue,
+      step,
+    ),
   )
 
-  const applyNativeValue = (next: number): void => {
+  const applyNativeValue = (next: SliderValue): void => {
+    const { offset, size } = getSliderIndicatorGeometry(next)
+    const indicatorOffset = `${offset * 100}%`
+
     indicatorRef.current
       ?.setNativeProps?.({
-        width: `${next * 100}%`,
+        width: `${size * 100}%`,
+        ...(enableRTL
+          ? { right: indicatorOffset }
+          : { left: indicatorOffset }),
       })
       ?.exec?.()
 
-    thumbRef.current
+    const lowerValue = getSliderThumbValue(next, 0)
+    thumbRefs[0].current
       ?.setNativeProps?.({
-        left: `${getVisualRatio(next, enableRTL) * 100}%`,
+        left: `${getVisualRatio(lowerValue, enableRTL) * 100}%`,
+      })
+      ?.exec?.()
+
+    const upperValue = getSliderThumbValue(next, 1)
+    thumbRefs[1].current
+      ?.setNativeProps?.({
+        left: `${getVisualRatio(upperValue, enableRTL) * 100}%`,
       })
       ?.exec?.()
   }
 
-  const syncCurrentValue = (next: number): boolean => {
-    if (currentValue.current === next) return false
+  const syncCurrentValue = (next: SliderValue): boolean => {
+    if (areSliderValuesEqual(currentValue.current, next)) return false
     currentValue.current = next
     applyNativeValue(next)
     return true
   }
 
   const updateValue = (
-    value: number,
+    value: SliderValue,
     options: SliderUpdateValueOptions = {},
   ): void => {
-    const next = snapToStep(clamp01(value), step)
+    const next = normalizeSliderValue(value, step)
     const source: SliderValueChangeSource = options.source ?? 'external'
 
-    if (isDragging.current && !options.force && source === 'external') {
+    if (
+      interaction.current.dragging && !options.force && source === 'external'
+    ) {
       return
     }
 
     if (!syncCurrentValue(next)) return
 
-    onValueChange?.(next, source)
+    onValueChange?.(cloneSliderValue(next), source)
   }
 
   useEffect(() => {
-    if (!isControlled) return
-    const next = snapToStep(clamp01(controlledValue), step)
-    syncCurrentValue(next)
-  }, [controlledValue, isControlled, step])
+    const directionChanged = previousEnableRTL.current !== enableRTL
+    previousEnableRTL.current = enableRTL
 
-  const getValue = (): number => currentValue.current
+    if (!isControlled) {
+      if (directionChanged) applyNativeValue(currentValue.current)
+      return
+    }
+
+    if (controlledValue === undefined) return
+
+    const next = normalizeSliderValue(controlledValue, step)
+    if (!syncCurrentValue(next) && directionChanged) {
+      applyNativeValue(next)
+    }
+  }, [controlledValue, enableRTL, isControlled, step])
+
+  const getValue = (): SliderValue => cloneSliderValue(currentValue.current)
+
+  const resolveNextDrag = (value: number) => {
+    const interactionState = interaction.current
+    const resolution = resolveSliderDrag(
+      currentValue.current,
+      value,
+      {
+        activeThumbIndex: interactionState.activeThumbIndex ?? undefined,
+        preferredThumbIndex: interactionState.lastActiveThumbIndex ?? undefined,
+        startedCollapsed: interactionState.startedCollapsed,
+        step,
+      },
+    )
+
+    const previousIndex = interactionState.activeThumbIndex
+    interactionState.activeThumbIndex = resolution.activeThumbIndex
+    interactionState.lastActiveThumbIndex = resolution.activeThumbIndex
+    interactionState.startedCollapsed = resolution.startedCollapsed
+    if (previousIndex !== resolution.activeThumbIndex) {
+      setRenderedInteraction({
+        active: true,
+        activeThumbIndex: resolution.activeThumbIndex,
+      })
+    }
+
+    return resolution
+  }
 
   const applyMeasuredMoveX = (x: number): void => {
     const value = valueFromX(x)
     if (value === null) return
 
-    setDragging(true, value)
-    updateValue(value, { source: 'drag', force: true })
+    const resolution = resolveNextDrag(value)
+    const next = resolution.value
+    setDragging(true, resolution.dragStartValue)
+    updateValue(next, { source: 'drag', force: true })
   }
 
   const updateBounds = (res: unknown): boolean => {
-    const left = Number(
-      (res as { left?: unknown } | null | undefined)?.left,
-    )
-    const width = Number(
-      (res as { width?: unknown } | null | undefined)?.width,
-    )
+    const rect = res as
+      | {
+        left?: unknown
+        width?: unknown
+      }
+      | null
+      | undefined
+    const left = typeof rect?.left === 'number' ? rect.left : Number.NaN
+    const width = typeof rect?.width === 'number' ? rect.width : Number.NaN
 
-    if (Number.isFinite(left)) {
-      bgLeft.current = left
+    if (!Number.isFinite(left) || !Number.isFinite(width) || width <= 0) {
+      bgWidth.current = 0
+      leftMeasured.current = false
+      return false
     }
 
-    if (Number.isFinite(width) && width > 0) {
-      bgWidth.current = width
-    }
+    bgLeft.current = left
+    bgWidth.current = width
+    leftMeasured.current = true
+    return true
+  }
 
-    const ready = Number.isFinite(bgLeft.current) && bgWidth.current > 0
-    leftMeasured.current = ready
-    return ready
+  const resetInteraction = (): void => {
+    const interactionState = interaction.current
+    interactionState.pointerActive = false
+    interactionState.pendingThumbIndex = null
+    interactionState.activeThumbIndex = null
+    interactionState.startedCollapsed = false
+    pendingEnd.current = false
+    pendingMoveX.current = null
+    setRenderedInteraction((previous) =>
+      previous.active || previous.activeThumbIndex !== null
+        ? { active: false, activeThumbIndex: null }
+        : previous
+    )
+  }
+
+  const finishInteraction = (): void => {
+    resetInteraction()
+
+    if (!interaction.current.dragging) return
+
+    const value = currentValue.current
+    setDragging(false, value)
+    onValueCommit?.(cloneSliderValue(value))
   }
 
   const flushPendingMoveX = (): void => {
     if (pendingMoveX.current === null || !leftMeasured.current) return
     const x = pendingMoveX.current
+    const shouldFinish = pendingEnd.current
     pendingMoveX.current = null
     applyMeasuredMoveX(x)
+    if (shouldFinish) finishInteraction()
   }
 
   const measureBounds = (): void => {
@@ -155,18 +326,25 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
     getRectByRef(trackRef)
       .then((res) => {
         isMeasuringBounds.current = false
-        updateBounds(res)
-        flushPendingMoveX()
+        if (updateBounds(res)) {
+          flushPendingMoveX()
+        } else if (pendingEnd.current) {
+          finishInteraction()
+        }
       })
       .catch(() => {
         isMeasuringBounds.current = false
+        if (pendingEnd.current) finishInteraction()
       })
   }
 
-  const setDragging = (nextDragging: boolean, value: number): void => {
-    if (isDragging.current === nextDragging) return
-    isDragging.current = nextDragging
-    onDragging?.(value)
+  const setDragging = (
+    nextDragging: boolean,
+    value: SliderValue,
+  ): void => {
+    if (interaction.current.dragging === nextDragging) return
+    interaction.current.dragging = nextDragging
+    onDragging?.(cloneSliderValue(value))
   }
 
   const valueFromX = (x: number): number | null => {
@@ -177,7 +355,7 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   }
 
   const handleMoveX = (x: number): void => {
-    if (disabled) return
+    if (disabled || !interaction.current.pointerActive) return
     if (!Number.isFinite(x)) return
 
     if (!leftMeasured.current || bgWidth.current <= 0) {
@@ -190,20 +368,46 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   }
 
   const handleInteractionStart = (x: number): void => {
-    if (disabled) return
-    if (!Number.isFinite(x)) return
+    const interactionState = interaction.current
+    const requestedThumbIndex = interactionState.pendingThumbIndex
+    interactionState.pendingThumbIndex = null
 
+    if (disabled || !Number.isFinite(x)) {
+      resetInteraction()
+      return
+    }
+
+    const initialThumbIndex = getInitialSliderThumbIndex(
+      currentValue.current,
+      requestedThumbIndex,
+    )
+    interactionState.pointerActive = true
+    interactionState.activeThumbIndex = initialThumbIndex
+    interactionState.startedCollapsed = isSliderValueCollapsed(
+      currentValue.current,
+    )
+    pendingEnd.current = false
+    setRenderedInteraction({
+      active: true,
+      activeThumbIndex: initialThumbIndex,
+    })
     pendingMoveX.current = x
     leftMeasured.current = false
     measureBounds()
   }
 
   const handleEnd = (): void => {
-    if (!isDragging.current) return
+    interaction.current.pointerActive = false
+    if (
+      pendingMoveX.current !== null
+      && !leftMeasured.current
+      && isMeasuringBounds.current
+    ) {
+      pendingEnd.current = true
+      return
+    }
 
-    const value = currentValue.current
-    setDragging(false, value)
-    onValueCommit?.(value)
+    finishInteraction()
   }
 
   const handleTrackLayoutChange = (event: {
@@ -223,18 +427,20 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   }
 
   const getMouseX = (event: unknown): number => {
-    const xInTouches = (
-      event as
-        | { touches?: Array<{ clientX?: unknown }> }
-        | null
-        | undefined
-    )?.touches?.[0]?.clientX
+    const xInTouches = Number(
+      (
+        event as
+          | { touches?: Array<{ clientX?: unknown }> }
+          | null
+          | undefined
+      )?.touches?.[0]?.clientX,
+    )
 
     const x = Number(
       (event as { clientX?: unknown } | null | undefined)?.clientX,
     )
 
-    return xInTouches ? Number(xInTouches) : x
+    return Number.isFinite(xInTouches) ? xInTouches : x
   }
 
   const handleMouseX = (event: unknown): void => {
@@ -254,10 +460,17 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
     handleInteractionStart(getTouchX(event))
   }
 
+  const handleThumbInteractionStart = (index: SliderThumbIndex): void => {
+    interaction.current.pendingThumbIndex = index
+  }
+
   useImperativeHandle(
     ref,
     () => ({
-      updateValue: (value: number, options?: SliderUpdateValueOptions) => {
+      updateValue: (
+        value: SliderValue,
+        options?: SliderUpdateValueOptions,
+      ) => {
         if (isControlled) {
           throw new Error(
             'SliderRoot: updateValue() must not be called in controlled mode. Update the `value` prop instead.',
@@ -280,16 +493,23 @@ function SliderRootImpl(props: SliderRootProps, ref: ForwardedRef<SliderRef>) {
   const contextValue = {
     trackRef,
     indicatorRef,
-    thumbRef,
+    thumbRefs,
     currentValue,
+    active,
+    activeThumbIndex: renderedInteraction.activeThumbIndex,
+    disabled,
     enableRTL,
+    onThumbInteractionStart: handleThumbInteractionStart,
     onTrackLayoutChange: handleTrackLayoutChange,
   }
 
   return (
     <SliderContext.Provider value={contextValue}>
       <view
-        className={className}
+        className={clsx(className, {
+          'ui-active': active,
+          'ui-disabled': disabled,
+        })}
         flatten={false}
         style={style}
         // block-native-event={true}

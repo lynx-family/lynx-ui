@@ -284,11 +284,15 @@ export {
 } from '@lynx-js/lynx-ui-slider'
 export type {
   SliderIndicatorProps,
+  SliderRangeValue,
   SliderRef,
   SliderRootProps,
+  SliderThumbIndex,
   SliderThumbProps,
   SliderTrackProps,
+  SliderUIVariants,
   SliderUpdateValueOptions,
+  SliderValue,
   SliderValueChangeSource,
 } from '@lynx-js/lynx-ui-slider'
 

@@ -6,12 +6,22 @@ import { createContext, useContext } from '@lynx-js/react'
 
 import type { NodesRef } from '@lynx-js/types'
 
+import type { SliderThumbIndex, SliderValue } from '../types'
+
+interface SliderNodeRef {
+  current: NodesRef | null
+}
+
 export interface SliderContextValue {
-  trackRef: { current: NodesRef | null }
-  indicatorRef: { current: NodesRef | null }
-  thumbRef: { current: NodesRef | null }
-  currentValue: { current: number }
+  trackRef: SliderNodeRef
+  indicatorRef: SliderNodeRef
+  thumbRefs: readonly [SliderNodeRef, SliderNodeRef]
+  currentValue: { current: SliderValue }
+  active: boolean
+  activeThumbIndex: SliderThumbIndex | null
+  disabled: boolean
   enableRTL: boolean
+  onThumbInteractionStart: (index: SliderThumbIndex) => void
   onTrackLayoutChange: (event: {
     params: { width: number, height: number }
     detail?: { width: number, height: number }

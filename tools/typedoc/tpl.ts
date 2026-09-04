@@ -444,15 +444,16 @@ function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
 
   let context = ''
 
-  if (!children) return ''
+  if (!children?.length) return ''
 
   context = `
 ${
     hasMultipleProps
-      ? `### ${title.replace(/props$/i, '').trim()} `
+      ? `### ${title.replace(/props$/i, '').trim()}`
       : `## ${title}`
   }
-    ${comments ? comments : ''}
+
+${comments ?? ''}
   `
   children.map((d: any) => {
     const rawItems = Array.isArray(d.children) ? d.children : []
@@ -503,19 +504,34 @@ ${classRenderPropPreamble}
   return context
 }
 
-function genRef(data: any) {
+function genRef(data: any, isZh?: boolean) {
   const title = data.title
   const children = data.children
+  const comments = getCommentText(data.comment, isZh)
 
-  if (!children) return ''
+  if (!children?.length) return ''
 
-  return children.map((d: any) => {
+  return children.map((d: any, index: number) => {
     const sourceString = JSON.stringify(d.children, null, 2)
     return `
 ## ${title}
+
+${index === 0 ? comments ?? '' : ''}
+
 <UIApiTable source={${sourceString}}/>
   `
   }).join('\n')
+}
+
+function genTypeAlias(data: any) {
+  if (!data.typeAlias) return ''
+
+  const sourceString = JSON.stringify([data.typeAlias], null, 2)
+  return `
+### ${data.title}
+
+<UIApiTable source={${sourceString}}/>
+  `
 }
 
 const doGenMdx = (data: any, isZh?: boolean) => {
@@ -569,6 +585,10 @@ const doGenTplWithData = async (
     if (b.title.includes('Ref')) return -1
 
     const getOrderIndex = (name: string) => {
+      const normalizedName = name.replace(/(?:Props|Ref)$/, '')
+      const exactIndex = titleOrder.indexOf(normalizedName)
+      if (exactIndex !== -1) return exactIndex
+
       const index = titleOrder.findIndex(item => name.includes(item))
       return index === -1 ? titleOrder.length : index
     }
@@ -647,14 +667,21 @@ const doGenTplWithData = async (
   ${
       sortedData.map((item: any) => {
         if (renderPropsTitlesToSkip.has(item.title)) return ''
-        if (!titleOrder.includes(item.title.replace(/(Props|Ref)$/, ''))) {
+        if (!titleOrder.includes(item.title.replace(/(?:Props|Ref)$/, ''))) {
           return
         }
-        if (item.title.includes('Props')) {
-          return genProps(item, multipleProps, isZh)
-        }
         if (item.title.includes('Ref')) {
-          return genRef(item)
+          return genRef(item, isZh)
+        }
+        if (item.typeAlias) {
+          return genTypeAlias(item)
+        }
+        if (
+          item.title.includes('Props')
+          || item.title.endsWith('UIVariants')
+          || item.children?.length
+        ) {
+          return genProps(item, multipleProps, isZh)
         }
         return
       }).join('\n')
@@ -674,7 +701,10 @@ const doGenTplWithData = async (
           return doGenMdx([item], isZh)
         }
         if (item.title.includes('Ref')) {
-          return genRef(item)
+          return genRef(item, isZh)
+        }
+        if (item.typeAlias) {
+          return genTypeAlias(item)
         }
         return doGenMdx([item], isZh)
       }).join('\n')
@@ -692,7 +722,8 @@ const doGenTplWithData = async (
     )
   }
 
-  fs.writeFileSync(savePath, content)
+  const normalizedContent = content.replace(/[ \t]+$/gm, '').trimEnd()
+  fs.writeFileSync(savePath, `${normalizedContent}\n`)
 }
 
 export { doGenTplWithData }

@@ -1,6 +1,7 @@
 # @lynx-js/lynx-ui-slider
 
-A primitives-first slider component package for lynx-ui.
+A primitives-first slider component package for lynx-ui. It supports both
+single-value sliders and two-thumb range sliders.
 
 ## Installation
 
@@ -51,6 +52,36 @@ export function SliderPrimitiveDemo() {
 }
 ```
 
+### Range Composition
+
+Pass an ordered tuple to `value` or `defaultValue` to select an interval. A
+range slider uses two `SliderThumb` primitives: `index={0}` represents the
+lower value and `index={1}` represents the upper value.
+
+```tsx
+<SliderRoot defaultValue={[0.2, 0.8]}>
+  <SliderTrack className='slider-track'>
+    <SliderIndicator className='slider-indicator' />
+    <SliderThumb index={0} className='slider-thumb-wrapper'>
+      <view className='slider-thumb-dot' />
+    </SliderThumb>
+    <SliderThumb index={1} className='slider-thumb-wrapper'>
+      <view className='slider-thumb-dot' />
+    </SliderThumb>
+  </SliderTrack>
+</SliderRoot>
+```
+
+Range values are normalized into ascending order, clamped to `[0, 1]`, and
+snapped to `step` when provided. Range-thumb collision behavior is intentionally
+non-crossing: the thumbs may meet, but the active thumb stops at the other
+value without swapping identities or pushing the other thumb. This is the
+stable default behavior.
+
+Both value shapes use the generic `SliderRootProps<Value>` and
+`SliderRef<Value>` contracts. Their generic defaults to `number`; use
+`SliderRangeValue` when an explicit range annotation is needed.
+
 ## Component Structure
 
 ```tsx
@@ -64,14 +95,16 @@ export function SliderPrimitiveDemo() {
 </SliderRoot>
 ```
 
-- **`SliderRoot`**: owns interaction logic and exposes `SliderRef` imperative methods in uncontrolled mode.
+- **`SliderRoot`**: owns interaction logic and supports a number or a two-value tuple.
 - **`SliderTrack`**: establishes the measurement/layout coordinate space and renders the base rail.
-- **`SliderIndicator`**: renders the active progress indicator, with width driven by the current ratio.
-- **`SliderThumb`**: is positioned inside `SliderTrack` by the current ratio and renders custom thumb content.
+- **`SliderIndicator`**: renders progress from the origin for a single value or the selected interval for a range.
+- **`SliderThumb`**: renders custom thumb content; range mode identifies its lower and upper thumbs with `index`.
 
 Styling for track/thumb size and colors is expected to be done through `className` or inline `style`, instead of dedicated style props.
 
-`SliderIndicator` and `SliderThumb` are siblings inside `SliderTrack`, so the filled region stays purely visual while the thumb position is driven directly by value.
+`SliderIndicator` and `SliderThumb` are siblings inside `SliderTrack`, so the
+filled region stays purely visual while each thumb position is driven directly
+by value.
 
 ## About @lynx-js/lynx-ui
 

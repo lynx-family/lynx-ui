@@ -30,7 +30,8 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@lynx-js/lynx-ui-common": "workspace:*"
+    "@lynx-js/lynx-ui-common": "workspace:*",
+    "clsx": "catalog:"
   },
   "devDependencies": {
     "@lynx-js/react": "catalog:",

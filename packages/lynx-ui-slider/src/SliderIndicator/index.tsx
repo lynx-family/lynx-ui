@@ -4,14 +4,19 @@
 
 import { memo } from '@lynx-js/react'
 
+import { clsx } from 'clsx'
+
 import { useSliderContext } from '../context'
 import type { SliderIndicatorProps } from '../types'
+import { getSliderIndicatorGeometry } from '../utils'
 
 export const SliderIndicator = memo(function SliderIndicator(
   props: SliderIndicatorProps,
 ) {
-  const { indicatorRef, currentValue, enableRTL } = useSliderContext()
+  const { active, currentValue, disabled, enableRTL, indicatorRef } =
+    useSliderContext()
   const { className, style } = props
+  const { offset, size } = getSliderIndicatorGeometry(currentValue.current)
 
   return (
     <view
@@ -21,11 +26,19 @@ export const SliderIndicator = memo(function SliderIndicator(
         top: '0px',
         bottom: '0px',
         overflow: 'visible',
-        ...(enableRTL ? { right: '0px' } : { left: '0px' }),
-        width: `${currentValue.current * 100}%`,
+        ...(enableRTL
+          ? { right: `${offset * 100}%` }
+          : { left: `${offset * 100}%` }),
+        width: `${size * 100}%`,
       }}
     >
-      <view className={className} style={style} />
+      <view
+        className={clsx(className, {
+          'ui-active': active,
+          'ui-disabled': disabled,
+        })}
+        style={style}
+      />
     </view>
   )
 })

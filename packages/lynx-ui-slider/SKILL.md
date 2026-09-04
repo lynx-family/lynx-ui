@@ -1,17 +1,19 @@
 # lynx-ui-slider SKILL
 
-`lynx-ui-slider` is a primitives-first slider package for ReactLynx. It provides composable building blocks (`SliderRoot`, `SliderTrack`, `SliderIndicator`, `SliderThumb`).
+`lynx-ui-slider` is a primitives-first slider package for ReactLynx. It provides composable building blocks (`SliderRoot`, `SliderTrack`, `SliderIndicator`, `SliderThumb`) for single-value and two-thumb range selection.
 
 ## 1. Core Capabilities
 
 - **Primitives Composition**: Build slider UI with `SliderRoot` + `SliderTrack` + `SliderIndicator` + `SliderThumb`.
+- **Range Selection**: Pass a `[lower, upper]` tuple and render thumbs with `index={0}` and `index={1}`.
 - **Shared Base Props**: All primitives inherit `className` and `style` from `ComponentBasicProps`.
-- **Controlled & Uncontrolled Modes**: Use `value` + `onValueChange` for controlled mode, or `defaultValue` for uncontrolled mode.
-- **Imperative API** (uncontrolled only): Access `updateValue` and `getValue` through `SliderRef`. Throws in controlled mode.
+- **Controlled & Uncontrolled Modes**: Use `value` + `onValueChange` for controlled mode, or `defaultValue` for uncontrolled mode, with either a number or range tuple.
+- **Imperative API** (uncontrolled only): Access `updateValue` and `getValue` through `SliderRef<Value>`. Use its default `number` shape for a single value or `SliderRef<SliderRangeValue>` for a range. Throws in controlled mode.
 - **RTL Support**: Set `enableRTL` to make the indicator and thumb resolve right-to-left.
 - **Stepping**: Set `step` to snap values to discrete increments.
 - **Disabled Mode**: Set `disabled` to prevent dragging while still displaying the current value.
 - **Interaction Callbacks**: `onDragging(value)` when dragging state changes, `onValueChange(value, source)` for slider-driven updates, `onValueCommit(value)` at drag end.
+- **Ordered Range Dragging**: Lower and upper thumbs may meet but cannot cross during a drag.
 - **Headless Styling**: Supports styling via `className` and `style` props on every primitive.
 
 ## 2. AI Coding Guide
@@ -73,6 +75,42 @@ function ControlledSlider() {
 }
 ```
 
+### Controlled Range Example
+
+```tsx
+import { useState } from '@lynx-js/react'
+import {
+  SliderIndicator,
+  SliderRoot,
+  SliderThumb,
+  SliderTrack,
+} from '@lynx-js/lynx-ui'
+import type { SliderRangeValue } from '@lynx-js/lynx-ui'
+
+function ControlledRangeSlider() {
+  const [range, setRange] = useState<SliderRangeValue>([0.2, 0.8])
+
+  return (
+    <SliderRoot value={range} onValueChange={setRange}>
+      <SliderTrack className='track'>
+        <SliderIndicator className='indicator' />
+        <SliderThumb index={0} className='thumb'>
+          <view />
+        </SliderThumb>
+        <SliderThumb index={1} className='thumb'>
+          <view />
+        </SliderThumb>
+      </SliderTrack>
+    </SliderRoot>
+  )
+}
+```
+
+Use `index={0}` only for the lower thumb and `index={1}` only for the upper
+thumb. `SliderIndicator` automatically spans between the two values. Input
+tuples are sorted, clamped to `[0, 1]`, and snapped to `step`; an active thumb
+is constrained by the other thumb and cannot cross it.
+
 ### RTL Example
 
 ```tsx
@@ -93,32 +131,49 @@ function ControlledSlider() {
 **Example Prompts:**
 
 - "Create a controlled slider with custom thumb UI and `onValueCommit` callback."
+- "Build a controlled price-range slider with indexed lower and upper thumbs."
 - "Build a headless slider with `step={0.1}` and custom class names for each primitive."
 - "Add an RTL slider with `enableRTL` and optional RTL container styling."
 
 ## 3. Props Reference
 
-### SliderRootProps
+### SliderRootProps<Value>
 
 `SliderRootProps`, `SliderTrackProps`, `SliderIndicatorProps`, and `SliderThumbProps` all inherit `className` and `style` from `ComponentBasicProps`.
 
-| Prop            | Type                              | Default | Description                                                                         |
-| --------------- | --------------------------------- | ------- | ----------------------------------------------------------------------------------- |
-| `value`         | `number`                          | —       | Controlled value `[0, 1]`. Do not use with `defaultValue`.                          |
-| `defaultValue`  | `number`                          | `0`     | Initial value for uncontrolled mode.                                                |
-| `step`          | `number`                          | —       | Snap interval in `[0, 1]`.                                                          |
-| `disabled`      | `boolean`                         | `false` | Prevent interaction while keeping the slider value visible.                         |
-| `enableRTL`     | `boolean`                         | `false` | Reverse range direction (right-to-left).                                            |
-| `onDragging`    | `(value: number) => void`         | —       | Fires when dragging starts and when dragging ends.                                  |
-| `onValueChange` | `(value: number, source) => void` | —       | Fires after drag updates and `updateValue` calls. Source is `'drag'` or `'external'`. |
-| `onValueCommit` | `(value: number) => void`         | —       | Fires at drag end with final value.                                                 |
+`Value` is either `number` or `SliderRangeValue`. It defaults to `number` for existing single-value usage and is inferred automatically from `value` or `defaultValue`.
 
-### SliderRef (uncontrolled only)
+| Prop            | Type                             | Default | Description                                                                           |
+| --------------- | -------------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `value`         | `Value`                          | —       | Controlled value. Do not use with `defaultValue`.                                     |
+| `defaultValue`  | `Value`                          | `0`     | Initial uncontrolled value. Range usage must provide a tuple here or through `value`. |
+| `step`          | `number`                         | —       | Snap interval in `[0, 1]`.                                                            |
+| `disabled`      | `boolean`                        | `false` | Prevent interaction while keeping the slider value visible.                           |
+| `enableRTL`     | `boolean`                        | `false` | Reverse slider direction (right-to-left).                                              |
+| `onDragging`    | `(value: Value) => void`         | —       | Fires when dragging starts and when dragging ends.                                    |
+| `onValueChange` | `(value: Value, source) => void` | —       | Fires after slider-driven updates. Source is `'drag'` or `'external'`.                 |
+| `onValueCommit` | `(value: Value) => void`         | —       | Fires at drag end with the final value.                                               |
 
-| Method        | Signature                           | Description                                        |
-| ------------- | ----------------------------------- | -------------------------------------------------- |
-| `updateValue` | `(value: number, options?) => void` | Set value imperatively. Throws in controlled mode. |
-| `getValue`    | `() => number`                      | Read current value. Throws in controlled mode.     |
+For explicit annotations, use `SliderRootProps` for a single value and `SliderRootProps<SliderRangeValue>` for a range. Both shapes use the same component and callbacks.
+
+### SliderRef<Value> (uncontrolled only)
+
+| Method        | Signature                          | Description                                        |
+| ------------- | ---------------------------------- | -------------------------------------------------- |
+| `updateValue` | `(value: Value, options?) => void` | Set value imperatively. Throws in controlled mode. |
+| `getValue`    | `() => Value`                      | Read current value. Throws in controlled mode.     |
+
+Use `SliderRef` for a single value and `SliderRef<SliderRangeValue>` for a range.
+
+### SliderThumbProps in range mode
+
+Single-value sliders use the default `index={0}`. For a range, set `index={0}` on the lower thumb and `index={1}` on the upper thumb.
+
+### SliderUIVariants
+
+Slider primitives receive `ui-disabled` when disabled. During interaction,
+the root, track, and indicator receive `ui-active`; only the thumb being moved
+receives `ui-active` in range mode.
 
 ## 4. FAQ
 
@@ -142,6 +197,16 @@ A: They will throw an error. In controlled mode, update external state through `
 
 A: Input values are clamped to `[0, 1]` internally.
 
+**Q: How do I create a two-thumb range slider?**
+
+A: Pass a `[lower, upper]` tuple to `value` or `defaultValue`, then render two `SliderThumb` primitives with `index={0}` and `index={1}`. The indicator fills the selected interval.
+
+**Q: Can the lower and upper thumbs cross?**
+
+A: No. A dragged thumb is clamped to the other value. The two thumbs may meet,
+but their lower/upper identities remain stable: the active thumb does not swap
+with or push the other thumb. This non-crossing policy is the stable default.
+
 **Q: How do I enable RTL?**
 
 A: Pass `enableRTL` to `SliderRoot`. Add `direction: rtl` only if you also want the surrounding container layout or text flow to follow RTL.
@@ -154,5 +219,5 @@ A: `SliderIndicator` is the pure visual fill layer. Keep `SliderThumb` as a sibl
 
 - **`SliderRoot`**: Owns measurement, drag behavior, value management, and context provider.
 - **`SliderTrack`**: Base rail plus the measurement/layout coordinate space for its children.
-- **`SliderIndicator`**: Foreground visual indicator with width bound to value. Supports RTL via `right: 0` positioning.
-- **`SliderThumb`**: Visual thumb node positioned inside `SliderTrack` by the current ratio.
+- **`SliderIndicator`**: Foreground visual indicator from the origin to a single value, or between both range values. Supports RTL.
+- **`SliderThumb`**: Visual thumb node positioned inside `SliderTrack`; use `index` to identify both range endpoints.

@@ -20,7 +20,9 @@
 import * as fs from 'node:fs'
 import path from 'node:path'
 
-const doGetTagContent = tagObject => {
+import { ReflectionKind } from 'typedoc'
+
+const doGetTagContent = (tagObject: any): any[] => {
   return Array.isArray(tagObject?.content) ? tagObject.content : []
 }
 interface TypeDocJson {
@@ -328,7 +330,11 @@ const doCalcReflectionType = (
   }
 }
 
-const doTypeCalc = (t: any, isZhContext: boolean, currentPkgName?: string) => {
+const doTypeCalc = (
+  t: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+): any => {
   try {
     const { type, name, types, declaration } = t
 
@@ -340,6 +346,16 @@ const doTypeCalc = (t: any, isZhContext: boolean, currentPkgName?: string) => {
       }
       case 'array':
         return `${t.elementType.name}[]`
+      case 'tuple':
+        return `[${
+          t.elements.map((element: any) =>
+            doTypeCalc(element, isZhContext, currentPkgName)
+          ).join(', ')
+        }]`
+      case 'typeOperator':
+        return `${t.operator} ${
+          doTypeCalc(t.target, isZhContext, currentPkgName)
+        }`
       case 'templateLiteral':
         return t.head + t.tail?.map((ti: any) => ti?.[1]).join(',')
       case 'union':
@@ -430,10 +446,14 @@ const doMoreForItem = (item: any, currentPkgName?: string) => {
     'tag',
     '@docTypeFallback',
   )
+  const fallbackType = doGetTagContent(docTypeFallback)
+    .map((content: any) => content?.text ?? '')
+    .join('')
+    .trim()
 
   return {
     name,
-    type: doTypeCalc(type, false, currentPkgName),
+    type: fallbackType || doTypeCalc(type, false, currentPkgName),
     summary,
     summary_zh,
     defaultValue: doDefaultValueCalc(defaultValue),
@@ -531,6 +551,9 @@ const doGenDocData = async (
               title: ra.name,
               flag: rootFlag + '##',
               comment: ra.comment,
+              typeAlias: ra.kind === ReflectionKind.TypeAlias
+                ? doMoreForItem(ra, currentPkgName)
+                : undefined,
               children: doGetChildren(
                 ra.groups as {
                   title: string

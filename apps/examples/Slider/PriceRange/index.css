@@ -1,0 +1,238 @@
+@import "@lynx-js/luna-styles/index.css";
+@import "../shared/base.css";
+
+.price-range-page {
+  align-items: center;
+  box-sizing: border-box;
+  padding-top: 64px;
+  padding-right: 32px;
+  padding-bottom: 32px;
+  padding-left: 32px;
+}
+
+.price-range-card {
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  gap: 0;
+  padding: 32px 28px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background-color: var(--canvas);
+  box-shadow: var(--shadow);
+}
+
+.price-range-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  column-gap: 12px;
+}
+
+.price-range-heading-group {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+.price-range-heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--content-2);
+}
+
+.price-range-drag-status {
+  font-size: 13px;
+  color: var(--content-muted);
+}
+
+.price-range-all-vehicles {
+  height: 28px;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-radius: 9999px;
+  font-size: 13px;
+  line-height: 28px;
+  color: var(--content-2);
+  background-color: var(--neutral-faint);
+}
+
+.price-range-selection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background-color: var(--paper);
+}
+
+.price-range-selection-label {
+  font-size: 14px;
+  color: var(--content-muted);
+}
+
+.price-range-selection-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.price-range-slider-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+}
+
+.price-range-slider {
+  position: relative;
+  width: auto;
+  height: 64px;
+  margin-right: 30px;
+  margin-left: 30px;
+}
+
+.price-range-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--neutral-ambient);
+}
+
+.price-range-indicator {
+  width: 100%;
+  height: 6px;
+  margin-top: 29px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.price-range-thumb {
+  position: relative;
+  width: 58px;
+  height: 64px;
+}
+
+.price-range-thumb-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 58px;
+  height: 26px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: center;
+  color: var(--content-2);
+  background-color: var(--paper-clear);
+}
+
+.price-range-thumb-dot {
+  position: absolute;
+  top: 22px;
+  left: 19px;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 5px solid var(--canvas);
+  border-radius: 9999px;
+  background-color: var(--primary);
+  box-shadow: var(--shadow);
+  transition: transform 100ms ease-out;
+}
+
+.price-range-thumb.ui-active .price-range-thumb-dot {
+  transform: scale(1.15);
+}
+
+.price-range-endpoints {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: -4px;
+  margin-right: 24px;
+  margin-left: 24px;
+}
+
+.price-range-endpoint {
+  font-size: 12px;
+  color: var(--content-subtle);
+}
+
+.price-range-response-hint {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 6px;
+  height: 36px;
+  margin-top: 18px;
+  border-radius: 12px;
+  background-color: var(--secondary-2);
+}
+
+.price-range-response-icon {
+  font-size: 16px;
+  color: var(--secondary-content);
+}
+
+.price-range-response-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--secondary-content);
+}
+
+.price-range-options {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  margin-top: 14px;
+}
+
+.price-range-option-row {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+  width: 100%;
+}
+
+.price-range-option {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  background-color: var(--paper);
+  transition: background-color 100ms ease-out, border-color 100ms ease-out;
+}
+
+.price-range-option.ui-active {
+  background-color: var(--paper-clear);
+}
+
+.price-range-option--selected {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.price-range-option--selected.ui-active {
+  background-color: var(--primary-2);
+}
+
+.price-range-option-text {
+  font-size: 13px;
+  color: var(--content-2);
+}
+
+.price-range-option-text--selected {
+  font-weight: 600;
+  color: var(--primary-content);
+}

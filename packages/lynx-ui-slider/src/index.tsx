@@ -9,10 +9,14 @@ export { SliderThumb } from './SliderThumb'
 
 export type {
   SliderIndicatorProps,
+  SliderRangeValue,
   SliderRef,
   SliderRootProps,
+  SliderThumbIndex,
   SliderThumbProps,
   SliderTrackProps,
+  SliderUIVariants,
   SliderUpdateValueOptions,
+  SliderValue,
   SliderValueChangeSource,
 } from './types'

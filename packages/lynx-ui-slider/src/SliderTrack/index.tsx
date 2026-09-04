@@ -4,11 +4,13 @@
 
 import { memo } from '@lynx-js/react'
 
+import { clsx } from 'clsx'
+
 import { useSliderContext } from '../context'
 import type { SliderTrackProps } from '../types'
 
 export const SliderTrack = memo(function SliderTrack(props: SliderTrackProps) {
-  const { trackRef, onTrackLayoutChange } = useSliderContext()
+  const { active, disabled, trackRef, onTrackLayoutChange } = useSliderContext()
   const { children, className, style } = props
 
   return (
@@ -25,7 +27,13 @@ export const SliderTrack = memo(function SliderTrack(props: SliderTrackProps) {
       }}
       bindlayoutchange={onTrackLayoutChange}
     >
-      <view className={className} style={style} />
+      <view
+        className={clsx(className, {
+          'ui-active': active,
+          'ui-disabled': disabled,
+        })}
+        style={style}
+      />
       {children}
     </view>
   )

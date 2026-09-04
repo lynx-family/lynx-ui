@@ -4,26 +4,49 @@
 
 import { memo } from '@lynx-js/react'
 
+import { clsx } from 'clsx'
+
 import { useSliderContext } from '../context'
 import type { SliderThumbProps } from '../types'
-import { getVisualRatio } from '../utils'
+import { getSliderThumbValue, getVisualRatio } from '../utils'
 
 export const SliderThumb = memo(function SliderThumb(props: SliderThumbProps) {
-  const { thumbRef, currentValue, enableRTL } = useSliderContext()
-  const { children, className, style } = props
+  const {
+    thumbRefs,
+    active,
+    activeThumbIndex,
+    currentValue,
+    disabled,
+    enableRTL,
+    onThumbInteractionStart,
+  } = useSliderContext()
+  const { children, className, index = 0, style } = props
+  const value = getSliderThumbValue(currentValue.current, index)
 
   return (
     <view
-      ref={thumbRef}
+      ref={thumbRefs[index]}
       style={{
         position: 'absolute',
         top: '50%',
-        left: `${getVisualRatio(currentValue.current, enableRTL) * 100}%`,
+        left: `${getVisualRatio(value, enableRTL) * 100}%`,
         transform: 'translate(-50%, -50%)',
         zIndex: 1,
       }}
+      bindmousedown={() => {
+        onThumbInteractionStart(index)
+      }}
+      bindtouchstart={() => {
+        onThumbInteractionStart(index)
+      }}
     >
-      <view className={className} style={style}>
+      <view
+        className={clsx(className, {
+          'ui-active': active && activeThumbIndex === index,
+          'ui-disabled': disabled,
+        })}
+        style={style}
+      >
         {children}
       </view>
     </view>

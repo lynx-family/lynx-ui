@@ -70,6 +70,13 @@ const primitivesConfig: Record<string, string[]> = {
   ],
   'lynx-ui-slider': [
     'SliderRoot',
+    'Slider',
+    'SliderRangeValue',
+    'SliderValue',
+    'SliderThumbIndex',
+    'SliderValueChangeSource',
+    'SliderUpdateValueOptions',
+    'SliderUIVariants',
     'SliderTrack',
     'SliderIndicator',
     'SliderThumb',

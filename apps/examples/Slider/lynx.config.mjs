@@ -7,6 +7,7 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig({
   SliderBasic: './Basic/index.tsx',
   SliderControlled: './Controlled/index.tsx',
+  SliderPriceRange: './PriceRange/index.tsx',
   SliderShapes: './Shapes/index.tsx',
   SliderFacade: './Facade/index.tsx',
   SliderDynamicWidth: './DynamicWidth/index.tsx',

@@ -1863,6 +1863,9 @@ importers:
       '@lynx-js/lynx-ui-common':
         specifier: workspace:*
         version: link:../lynx-ui-common
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
     devDependencies:
       '@lynx-js/react':
         specifier: 'catalog:'
