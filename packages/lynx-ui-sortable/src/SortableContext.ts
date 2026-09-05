@@ -23,6 +23,9 @@ interface SortableContextType<T = unknown> {
   dragOverlayRefMap?: MutableRefObject<
     Record<string, MainThread.Element | null>
   >
+  dragOverlayActivatorRefMap?: MutableRefObject<
+    Record<string, (() => void) | null>
+  >
   dirtyKeysRef: MutableRefObject<Record<string, boolean>>
   disabledKeysRef: MutableRefObject<Record<string, boolean>>
   scrollableStickyUpperOffset: number
@@ -39,6 +42,7 @@ interface SortableContextType<T = unknown> {
     refI: RefObject<MainThread.Element | null>,
     key: string,
   ) => void
+  clearDragOverlayRef: (key: string) => void
   handleDragStart: (
     pagePoint: Point,
     sortingKey: string,
@@ -68,6 +72,7 @@ export const SortableContext = createContext<SortableContextType>({
   setChildrenRef: noop,
   setChildrenMTSRef: noop,
   setDragOverlayRef: noop,
+  clearDragOverlayRef: noop,
   handleDragStart: noop,
   handleDragMove: noop,
   handleDragEnd: noop,
