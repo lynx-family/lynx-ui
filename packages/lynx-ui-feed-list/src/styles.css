@@ -1,3 +1,15 @@
+.lynx-ui-feed-list__refresh-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.lynx-ui-feed-list__refresh-header {
+  position: absolute;
+  overflow: visible;
+}
+
 .lynx-ui-feed-list__horizontal-start-wrapper {
   position: absolute;
   right: 100%;

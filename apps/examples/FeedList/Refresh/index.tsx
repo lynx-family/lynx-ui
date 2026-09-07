@@ -72,6 +72,7 @@ function App() {
         scrollOrientation='vertical'
         refreshOptions={{
           enableRefresh: true,
+          mode: 'native',
           headerContent: refreshHeader,
           onStartRefresh: handleStartRefresh,
         }}

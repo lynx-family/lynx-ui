@@ -38,11 +38,11 @@ export interface FeedListRef extends ListRef {
 export interface FeedListProps extends Omit<ListProps, 'ref'> {
   ref?: ForwardedRef<FeedListRef>
   /**
-   * Accept true for default options. If you need to customize the refresh effect, you can pass in the RefreshProps.
+   * Accept true for default options. Pass `RefreshProps` to customize the refresh effect or select the native implementation with `mode: 'native'`.
    * @defaultValue false
    * @Android
    * @iOS
-   * @zh 接受true为默认选项。如果需要自定义刷新效果，可以传入RefreshProps。
+   * @zh 接受 true 使用默认选项。传入 `RefreshProps` 可以自定义刷新效果，或通过 `mode: 'native'` 选择原生刷新实现。
    */
   refreshOptions?: boolean | RefreshProps
   /**

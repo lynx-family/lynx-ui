@@ -1,6 +1,7 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
+// cspell:ignore bindheaderoffset bindheaderreleased bindrefreshstatechange bindstartrefresh scrollchild
 
 import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 import {
@@ -14,6 +15,12 @@ import {
 
 import { List } from '@lynx-js/lynx-ui-list'
 import type { ListRef } from '@lynx-js/lynx-ui-list'
+import type {
+  LayoutChangeEvent,
+  RefreshHeaderOffsetEvent,
+  RefreshStartRefreshEvent,
+  RefreshStateChangeEvent,
+} from '@lynx-js/types'
 
 import { useRefreshAndBounce as useRefreshAndBounceInternal } from './hooks/useRefresh'
 import type {
@@ -63,6 +70,8 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
   } = props
   const [hasMoreData, setHasMoreData] = useState(true)
   const baseListRef = useRef<ListRef>(null)
+  const nativeRefreshHeaderSizeRef = useRef(0)
+  const nativeRefreshOffsetRef = useRef(0)
   let refreshProps: RefreshProps = {
     enableRefresh: false,
     headerContent: null,
@@ -83,6 +92,8 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     ;({ enableRefresh } = refreshOptions)
     refreshProps = refreshOptions
   }
+  const enableNativeRefresh = enableRefresh && refreshProps.mode === 'native'
+  const enableHookRefresh = enableRefresh && refreshProps.mode !== 'native'
 
   // Initialize bounceableProps
   let enableBounce = false
@@ -100,20 +111,22 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
   }
 
   const useRefreshAndBounceProps: useRefreshAndBounceReturnInternal | null =
-    enableBounce || enableRefresh
+    enableBounce || enableHookRefresh
       // biome-ignore lint/correctness/useHookAtTopLevel: expected
       ? useRefreshAndBounceInternal({
         bounceableOptions: bounceableProps,
         debugLog,
         enableRTL,
-        refreshOptions: refreshProps,
+        refreshOptions: enableNativeRefresh
+          ? { ...refreshProps, enableRefresh: false }
+          : refreshProps,
         id: listId,
         scrollOrientation: scrollOrientation,
       })
       : null
   // @ts-expect-error error
   let refreshHeader: ReactElement = null
-  if (enableRefresh) {
+  if (enableHookRefresh) {
     refreshHeader = (
       <view
         id={`${listId}-refreshHeaderWrapper`}
@@ -171,7 +184,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     (enableBounce
       && (bounceableProps.singleSidedBounce === 'upper'
         || bounceableProps.singleSidedBounce === 'both'))
-    || enableRefresh
+    || enableHookRefresh
   ) {
     upperExposureView = (
       <list-item item-key='upperExposureView' key='upperExposureView' full-span>
@@ -208,9 +221,24 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
       </list-item>
     )
   }
+  const invokeNativeRefreshMethod = (
+    method: 'autoStartRefresh' | 'finishRefresh',
+  ) => {
+    'background only'
+    lynx
+      .createSelectorQuery()
+      .select(`#${listId}-refreshView`)
+      .invoke({ method })
+      .exec()
+  }
   const finishRefresh = () => {
+    'background only'
+    if (enableNativeRefresh) {
+      invokeNativeRefreshMethod('finishRefresh')
+      return
+    }
     if (
-      enableRefresh
+      enableHookRefresh
       && useRefreshAndBounceProps
       && useRefreshAndBounceProps.finishRefresh
     ) {
@@ -220,7 +248,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
   const startRefreshMainThreadMethod = () => {
     'main thread'
     if (
-      enableRefresh
+      enableHookRefresh
       && useRefreshAndBounceProps
       && useRefreshAndBounceProps.startRefreshMethod
     ) {
@@ -229,7 +257,58 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
   }
 
   const startRefresh = () => {
+    'background only'
+    if (enableNativeRefresh) {
+      invokeNativeRefreshMethod('autoStartRefresh')
+      return
+    }
     void runOnMainThread(startRefreshMainThreadMethod)()
+  }
+
+  const handleNativeRefreshHeaderLayout = (event: LayoutChangeEvent) => {
+    'background only'
+    nativeRefreshHeaderSizeRef.current = event.detail.height
+  }
+
+  const handleNativeRefreshOffset = (event: RefreshHeaderOffsetEvent) => {
+    'background only'
+    const headerSize = nativeRefreshHeaderSizeRef.current
+    const offset = event.detail.offsetPercent * headerSize
+    nativeRefreshOffsetRef.current = offset
+    refreshProps.onRefreshOffsetChange?.({
+      offset,
+      headerSize,
+      isDragging: event.detail.isDragging,
+    })
+  }
+
+  const handleNativeRefreshStateChange = (
+    event: RefreshStateChangeEvent,
+  ) => {
+    'background only'
+    refreshProps.onRefreshStateChange?.({ state: event.detail.state })
+  }
+
+  const handleNativeRefreshHeaderReleased = () => {
+    'background only'
+    refreshProps.onHeaderReleased?.({
+      offset: nativeRefreshOffsetRef.current,
+      headerSize: nativeRefreshHeaderSizeRef.current,
+    })
+  }
+
+  const handleNativeStartRefresh = (event: RefreshStartRefreshEvent) => {
+    'background only'
+    const triggeredBy = event.detail.isManual ? 'drag' : 'startRefresh'
+    refreshProps.onStartRefresh?.({ triggeredBy })
+  }
+
+  // These attributes are supported by the native refresh implementation, but
+  // are not yet included in the public `<refresh>` element types.
+  const nativeRefreshViewProps = {
+    'enable-loadmore': false,
+    'detect-scrollchild': true,
+    bindheaderreleased: handleNativeRefreshHeaderReleased,
   }
 
   const scrollTo = (
@@ -386,6 +465,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
       </List>
     )
   }
+  const list = innerList()
   return (
     <view
       id='bounceLayout'
@@ -394,8 +474,28 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
         horizontal ? '100%' : (style?.height ?? '100%')
       }; width: ${horizontal ? (style?.width ?? '100%') : '100%'};`}
     >
-      {innerList()}
-      {enableRefresh ? refreshHeader : startBounceView}
+      {enableNativeRefresh
+        ? (
+          <refresh
+            {...nativeRefreshViewProps}
+            id={`${listId}-refreshView`}
+            className='lynx-ui-feed-list__refresh-view'
+            enable-refresh={true}
+            bindstartrefresh={handleNativeStartRefresh}
+            bindheaderoffset={handleNativeRefreshOffset}
+            bindrefreshstatechange={handleNativeRefreshStateChange}
+          >
+            <refresh-header
+              className='lynx-ui-feed-list__refresh-header'
+              bindlayoutchange={handleNativeRefreshHeaderLayout}
+            >
+              {refreshProps.headerContent}
+            </refresh-header>
+            {list}
+          </refresh>
+        )
+        : list}
+      {enableHookRefresh ? refreshHeader : startBounceView}
       {endBounceView}
     </view>
   )

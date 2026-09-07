@@ -8,6 +8,7 @@ Note: Use `FeedList` only when you need pull-to-refresh and load-more behaviors.
 
 - **High-Performance Virtual List**: Inherits all the performance features of `List`, including virtual scrolling and multi-layout support (`single`, `flow`, `waterfall`).
 - **Pull-to-Refresh**: Enable via `refreshOptions`, supports custom refresh headers.
+- **Native Pull-to-Refresh**: Set `refreshOptions.mode` to `'native'` to use the native `<refresh>` element while keeping the same callbacks and ref methods.
 - **Load More**: Use `onScrollToLower`, `loadMoreFooter`, and `noMoreDataFooter` to implement pagination states.
 - **Gesture Coordination**: Coordinate gestures with parent containers (like `Popup`) via `main-thread:gesture`.
 
@@ -42,7 +43,12 @@ function BasicFeedList() {
       ref={feedListRef}
       listId='my-feed-list'
       listType='single'
-      refreshOptions={{ onRefresh: handleRefresh }}
+      refreshOptions={{
+        enableRefresh: true,
+        mode: 'native',
+        headerContent: <text>Refreshing…</text>,
+        onStartRefresh: handleRefresh,
+      }}
       onScrollToLower={handleLoadMore}
       style={{ width: '100%', height: '500px' }}
     >
@@ -183,6 +189,29 @@ function FooterStateExample() {
   )
 }
 ```
+
+### Selecting the Refresh Implementation
+
+`FeedList` uses `useRefreshAndBounce` by default. Set `refreshOptions.mode` to `'native'` when a vertical list should use the platform-native `<refresh>` element instead. The `startRefresh()` and `finishRefresh()` ref methods and the callbacks in `refreshOptions` work in both modes.
+
+```tsx
+<FeedList
+  ref={listRef}
+  listId='native-refresh-feed'
+  listType='single'
+  scrollOrientation='vertical'
+  refreshOptions={{
+    enableRefresh: true,
+    mode: 'native',
+    headerContent: <RefreshHeader />,
+    onStartRefresh,
+  }}
+>
+  {/* ... list-items ... */}
+</FeedList>
+```
+
+Do not set `mode: 'native'` for horizontal lists. Keep the default hook-based mode when custom `bounceableOptions` must coordinate upper-edge bouncing with refresh gestures.
 
 ### 4. FAQ
 
