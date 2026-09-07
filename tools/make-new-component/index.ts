@@ -113,6 +113,19 @@ function makeNewComponent(componentName: string, _sourceFiles?: any[]) {
   // Copy template files
   copyAndMergeRecursive(TEMPLATE_DIR, newPackagePath)
 
+  // Update package.json name with component name
+  const packageJsonPath = path.join(newPackagePath, 'package.json')
+  if (fs.existsSync(packageJsonPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    packageJson.name = `@lynx-js/lynx-ui-${realComponentName}`
+    fs.writeFileSync(
+      packageJsonPath,
+      JSON.stringify(packageJson, null, 2) + '\n',
+    )
+  }
+
   updateTSConfigRefs().catch(console.error)
 
   console.log(`Successfully created component: lynx-ui-${realComponentName}`)
