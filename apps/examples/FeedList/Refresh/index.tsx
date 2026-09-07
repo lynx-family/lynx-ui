@@ -72,11 +72,12 @@ function App() {
         scrollOrientation='vertical'
         refreshOptions={{
           enableRefresh: true,
+          mode: 'native',
           headerContent: refreshHeader,
           onStartRefresh: handleStartRefresh,
         }}
         useRefactorList={true}
-        bounces={false}
+        bounces={true}
       >
         <list-item item-key='demo-header'>
           <view className='demo-header' />

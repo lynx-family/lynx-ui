@@ -51,6 +51,13 @@ export interface BounceableBasicProps {
 
 export interface RefreshProps {
   enableRefresh: boolean
+  /**
+   * Select the pull-to-refresh implementation. `hook` uses
+   * `useRefreshAndBounce`; `native` uses the platform `<refresh>` element.
+   * Native mode only supports vertical lists.
+   * @defaultValue 'hook'
+   */
+  mode?: 'hook' | 'native'
   // biome-ignore lint/suspicious/noExplicitAny: expected
   headerContent: any
   validAnimationVersion?: boolean
