@@ -160,8 +160,10 @@ export function useSnapTouches({
     const min = validOffsets.length > 0 ? Math.min(...validOffsets) : 0
     const closed = 0
     const dismissLine = Math.max(min - dismissThreshold * viewportSize, closed)
+    const isOpeningFling = flingEnabled && velocity >= flingMinVelocity
 
-    if (enableDragToClose && current <= dismissLine) {
+    // An opening fling can recover the sheet even inside the dismiss zone.
+    if (enableDragToClose && current <= dismissLine && !isOpeningFling) {
       onDragEndCloseMT()
       return
     }
@@ -182,7 +184,7 @@ export function useSnapTouches({
       if (projected < min2) projected = min2
       if (projected > max2) projected = max2
 
-      const candidates = enableDragToClose
+      const candidates = enableDragToClose && !isOpeningFling
         ? [...offsets, closed]
         : offsets
 

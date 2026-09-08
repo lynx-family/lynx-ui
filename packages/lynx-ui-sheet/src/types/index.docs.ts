@@ -240,6 +240,7 @@ export interface SheetRootProps extends ComponentBasicProps {
    * Whether to enable dragging to close the Sheet.
    * If true, dragging from the lowest snap point toward the closed edge will move the sheet linearly and allow dismissal.
    * If false, dragging toward the closed edge will trigger rubber band effect and snap back.
+   * A fling toward the open edge returns to an open snap point, even from the dismiss zone.
    * @zh 是否允许拖拽关闭 Sheet。
    * 如果为 true，从最低吸附点向关闭边缘拖动将线性移动并允许关闭。
    * 如果为 false，向关闭边缘拖动将触发橡皮筋效果并回弹。
