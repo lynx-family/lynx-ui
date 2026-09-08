@@ -42,7 +42,7 @@ jobs:
         run: |
           npm install -g corepack@latest
           corepack enable
-          pnpm install --frozen-lockfile
+          pnpm install
       - name: Code Style Check
         run: |
           pnpm check:mdx
@@ -167,6 +167,40 @@ jobs:
       - uses: crate-ci/typos@2d0ce569feab1f8752f1dde43cc2f2aa53236e06 # v1.40.0
         with:
           files: .
+  test-make-new-component:
+    needs: build
+    runs-on: lynx-ubuntu-24.04-medium
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        run: |
+          npm install -g corepack@latest
+          corepack enable
+          pnpm install --frozen-lockfile
+      - name: Test Make New Component
+        run: |
+          pnpm make-new-component --create test-component
+          if [ ! -d "packages/lynx-ui-test-component" ]; then
+            echo "Component directory not created"
+            exit 1
+          fi
+          if [ ! -f "packages/lynx-ui-test-component/package.json" ]; then
+            echo "package.json not created"
+            exit 1
+          fi
+          PKG_NAME=$(node -p "require('./packages/lynx-ui-test-component/package.json').name")
+          if [ "$PKG_NAME" != "@lynx-js/lynx-ui-test-component" ]; then
+             echo "Package name incorrect: $PKG_NAME"
+             exit 1
+          fi
+
+          echo "Verifying pnpm install and build..."
+          pnpm install --no-frozen-lockfile
+          pnpm build
+
   test-vitest:
     name: Vitest (${{ matrix.runs-on.name }})
     needs: build
@@ -205,6 +239,7 @@ jobs:
       - test-publish
       - test-typos
       - test-vitest
+      - test-make-new-component
     if: always()
     runs-on: ubuntu-latest
     name: Done
