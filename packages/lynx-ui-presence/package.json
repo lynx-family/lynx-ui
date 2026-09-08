@@ -17,6 +17,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "src/**",
+    "docs/**",
     "CHANGELOG.md",
     "LICENSE",
     "tsconfig.docs.json",
