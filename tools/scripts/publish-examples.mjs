@@ -3,18 +3,21 @@
 // LICENSE file in the root directory of this source tree.
 
 /**
- * Publishes each lynx-ui example variant as an npm package in the
+ * Publishes each lynx-ui example component as an npm package in the
  * `@lynx-example` scope so it can be consumed by the go-web `<Go>` component.
  *
- * Each variant (e.g. apps/examples/Button/Basic/) becomes its own package,
- * for example `@lynx-example/lynx-ui-button-basic`.
+ * Each component (e.g. apps/examples/Sheet/) becomes one package,
+ * for example `@lynx-example/lynx-ui-sheet`, containing all its variants.
  *
  * Published package layout:
- *   Basic/          ← variant source files
- *   shared/         ← shared dirs (if any) from the component root
+ *   Basic/              ← variant source files
+ *   AutoHeight/         ← another variant
+ *   shared/             ← shared dirs (if any) from the component root
  *   dist/
- *     main.lynx.bundle
- *     main.web.bundle (if web build exists)
+ *     Basic.lynx.bundle
+ *     Basic.web.bundle  (if web build exists)
+ *     AutoHeight.lynx.bundle
+ *     ...
  *   package.json
  *
  * Prerequisites:
@@ -144,6 +147,20 @@ for (const component of componentDirs) {
     )
   })
 
+  const pkgName = `@lynx-example/lynx-ui-${toKebab(component)}`
+  const tmpDir = path.join(
+    os.tmpdir(),
+    'lynx-ui-publish-examples',
+    pkgName.replace('@lynx-example/', ''),
+  )
+
+  // Clean and prepare tmp dir
+  if (fs.existsSync(tmpDir)) {
+    fs.rmSync(tmpDir, { recursive: true, force: true })
+  }
+  fs.mkdirSync(path.join(tmpDir, 'dist'), { recursive: true })
+
+  let hasBundle = false
   for (const [entryName, variantDir] of Object.entries(entries)) {
     const lynxBundle = path.join(distDir, `${entryName}.lynx.bundle`)
 
@@ -152,95 +169,87 @@ for (const component of componentDirs) {
         `  ⚠ ${entryName}: ${entryName}.lynx.bundle not found`
           + ` — run \`pnpm examples:build\` first`,
       )
-      skipped++
       continue
     }
 
-    const pkgName = `@lynx-example/lynx-ui-${toKebab(component)}-${
-      toKebab(variantDir)
-    }`
-    const tmpDir = path.join(
-      os.tmpdir(),
-      'lynx-ui-publish-examples',
-      pkgName.replace('@lynx-example/', ''),
-    )
-
-    // Clean and prepare tmp dir
-    if (fs.existsSync(tmpDir)) {
-      fs.rmSync(tmpDir, { recursive: true, force: true })
-    }
-    fs.mkdirSync(path.join(tmpDir, 'dist'), { recursive: true })
+    hasBundle = true
 
     // Copy variant source files
     copyDir(path.join(componentDir, variantDir), path.join(tmpDir, variantDir))
 
-    // Copy shared/common dirs (e.g. shared/, Common/)
-    for (const shared of sharedDirs) {
-      copyDir(
-        path.join(componentDir, shared),
-        path.join(tmpDir, shared),
-      )
-    }
-
-    // Copy bundles, renaming to main.lynx.bundle / main.web.bundle
-    fs.copyFileSync(lynxBundle, path.join(tmpDir, 'dist', 'main.lynx.bundle'))
+    // Copy bundles, keeping entry name (e.g. Basic.lynx.bundle)
+    fs.copyFileSync(
+      lynxBundle,
+      path.join(tmpDir, 'dist', `${entryName}.lynx.bundle`),
+    )
     const webBundle = path.join(distDir, `${entryName}.web.bundle`)
     if (fs.existsSync(webBundle)) {
-      fs.copyFileSync(webBundle, path.join(tmpDir, 'dist', 'main.web.bundle'))
+      fs.copyFileSync(
+        webBundle,
+        path.join(tmpDir, 'dist', `${entryName}.web.bundle`),
+      )
     }
+  }
 
-    // Generate package.json
-    fs.writeFileSync(
-      path.join(tmpDir, 'package.json'),
-      JSON.stringify(
-        {
-          name: pkgName,
-          version,
-          license: 'Apache-2.0',
-          repository: {
-            type: 'git',
-            url: 'git+https://github.com/lynx-family/lynx-ui.git',
-            directory: `apps/examples/${component}/${variantDir}`,
-          },
-        },
-        null,
-        2,
-      ),
+  if (!hasBundle) {
+    console.warn(`[${component}] No bundles found — skipping`)
+    skipped++
+    continue
+  }
+
+  // Copy shared/common dirs (e.g. shared/, Common/)
+  for (const shared of sharedDirs) {
+    copyDir(
+      path.join(componentDir, shared),
+      path.join(tmpDir, shared),
     )
+  }
 
-    if (dryRun) {
-      console.log(`[dry-run] ${pkgName}@${version}`)
-      published++
-    } else {
-      console.log(`Publishing ${pkgName}@${version} ...`)
-      try {
-        const result = spawnSync('npm', [
-          'publish',
-          '--access',
-          'public',
-          '--tag',
-          tag,
-        ], {
-          cwd: tmpDir,
-          stdio: 'inherit',
-        })
-        if (result.error) throw result.error
-        if (result.status !== 0) {
-          throw new Error(`npm publish failed with code ${result.status}`)
-        }
-        published++
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
-        console.error(`  ✖ ${pkgName}: ${message}`)
-        failures.push({
-          component,
-          entryName,
-          variantDir,
-          pkgName,
-          message,
-        })
-        if (failFast) throw error
+  // Generate package.json
+  fs.writeFileSync(
+    path.join(tmpDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: pkgName,
+        version,
+        license: 'Apache-2.0',
+        repository: {
+          type: 'git',
+          url: 'git+https://github.com/lynx-family/lynx-ui.git',
+          directory: `apps/examples/${component}`,
+        },
+      },
+      null,
+      2,
+    ),
+  )
+
+  if (dryRun) {
+    console.log(`[dry-run] ${pkgName}@${version}`)
+    published++
+  } else {
+    console.log(`Publishing ${pkgName}@${version} ...`)
+    try {
+      const result = spawnSync('npm', [
+        'publish',
+        '--access',
+        'public',
+        '--tag',
+        tag,
+      ], {
+        cwd: tmpDir,
+        stdio: 'inherit',
+      })
+      if (result.error) throw result.error
+      if (result.status !== 0) {
+        throw new Error(`npm publish failed with code ${result.status}`)
       }
+      published++
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      console.error(`  ✖ ${pkgName}: ${message}`)
+      failures.push({ component, pkgName, message })
+      if (failFast) throw error
     }
   }
 }
@@ -248,9 +257,7 @@ for (const component of componentDirs) {
 if (failures.length > 0) {
   console.error('\nFailed package(s):')
   for (const f of failures) {
-    console.error(
-      `- ${f.pkgName} (${f.component}/${f.variantDir}): ${f.message}`,
-    )
+    console.error(`- ${f.pkgName} (${f.component}): ${f.message}`)
   }
   process.exitCode = 1
 }
