@@ -77,7 +77,7 @@ function App() {
           onStartRefresh: handleStartRefresh,
         }}
         useRefactorList={true}
-        bounces={false}
+        bounces={true}
       >
         <list-item item-key='demo-header'>
           <view className='demo-header' />

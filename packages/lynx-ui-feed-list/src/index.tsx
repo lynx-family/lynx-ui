@@ -456,7 +456,9 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
         // worklet will trigger FiberFlushElementTree and cause layout. After react 0.22.0, the element in arg0 will be empty, thus marking layout dirty from the root.
         // If the transform is not initialized, attaching it afterward will change the IsStackingContextNode() status and mark the layout as dirty for the List. This will trigger an extra layoutComplete. To avoid this, we need to initialize the transform.
         style={{ ...style, transform: 'translateY(0px)' }}
-        bounces={!enableBounce && !enableRefresh && bounces}
+        // Hook refresh owns the upper-edge bounce. Native refresh relies on
+        // the List bounce behavior, so keep honoring the public bounces prop.
+        bounces={!enableBounce && !enableHookRefresh && bounces}
       >
         {upperExposureView}
         {children}
