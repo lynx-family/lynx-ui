@@ -77,6 +77,47 @@ export type {
 export { Button, ButtonContext } from '@lynx-js/lynx-ui-button'
 export type { ButtonProps } from '@lynx-js/lynx-ui-button'
 
+// calendar
+export {
+  Calendar,
+  CalendarCaption,
+  CalendarHeader,
+  CalendarMonth,
+  CalendarMonths,
+  CalendarNavButton,
+  CalendarWeekdays,
+  addCalendarMonths,
+  buildCalendarMonthPage,
+  formatCalendarDateKey,
+  formatCalendarMonthKey,
+  getCalendarMonthIndex,
+  getCalendarWeekdays,
+  normalizeCalendarDate,
+  normalizeCalendarWindowSize,
+  startOfCalendarMonth,
+} from '@lynx-js/lynx-ui-calendar'
+export type {
+  CalendarCaptionProps,
+  CalendarClassNames,
+  CalendarDateLike,
+  CalendarDayInfo,
+  CalendarDayStyle,
+  CalendarHeaderProps,
+  CalendarMonthChangeSource,
+  CalendarMonthPage,
+  CalendarMonthProps,
+  CalendarMonthsProps,
+  CalendarNavButtonProps,
+  CalendarProps,
+  CalendarRenderProps,
+  CalendarViewPagerChangeEvent,
+  CalendarViewPagerItemProps,
+  CalendarViewPagerProps,
+  CalendarWeekdayIndex,
+  CalendarWeekdayInfo,
+  CalendarWeekdaysProps,
+} from '@lynx-js/lynx-ui-calendar'
+
 // checkbox
 export { Checkbox, CheckboxIndicator } from '@lynx-js/lynx-ui-checkbox'
 export type {
