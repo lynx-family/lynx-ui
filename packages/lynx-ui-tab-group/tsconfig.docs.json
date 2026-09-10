@@ -1,0 +1,7 @@
+{
+  "extends": "../../tools/configs/tsconfig.docs.json",
+  "include": [
+    "src",
+    "dist/types/index.docs.d.ts"
+  ]
+}
