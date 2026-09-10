@@ -53,3 +53,19 @@
   font-size: 40px;
   font-weight: 600;
 }
+
+.view-pager-demo__controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.view-pager-demo__control {
+  color: var(--content);
+  font-size: 16px;
+}
+
+.view-pager-demo__page.ui-selected .view-pager-demo__label {
+  font-weight: 700;
+}

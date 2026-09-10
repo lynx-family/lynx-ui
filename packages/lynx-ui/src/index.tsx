@@ -257,9 +257,12 @@ export type {
 } from '@lynx-js/lynx-ui-switch'
 
 // view-pager
-export { ViewPager } from '@lynx-js/lynx-ui-view-pager'
+export { ViewPager, ViewPagerItem } from '@lynx-js/lynx-ui-view-pager'
 export type {
   ViewPagerChangeEvent,
+  ViewPagerItemProps,
+  ViewPagerItemRenderProps,
+  ViewPagerItemUIVariants,
   ViewPagerOffsetChangeEvent,
   ViewPagerProps,
   ViewPagerRef,

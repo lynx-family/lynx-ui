@@ -276,9 +276,9 @@ export default tseslint.config(
   },
   {
     files: [
-      'packages/**/*.{test,spec}.ts',
-      'apps/**/*.{test,spec}.ts',
-      'tools/**/*.{test,spec}.ts',
+      'packages/**/*.{test,spec}.{ts,tsx}',
+      'apps/**/*.{test,spec}.{ts,tsx}',
+      'tools/**/*.{test,spec}.{ts,tsx}',
     ],
     extends: [tseslint.configs.disableTypeChecked],
   },

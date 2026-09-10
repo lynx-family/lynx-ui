@@ -2,4 +2,4 @@
 '@lynx-js/lynx-ui': patch
 ---
 
-Export ViewPager from the aggregate Lynx UI package.
+Export ViewPager and ViewPagerItem from the aggregate lynx-ui package.

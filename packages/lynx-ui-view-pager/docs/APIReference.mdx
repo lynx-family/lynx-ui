@@ -1,8 +1,7 @@
-import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui/index";
 
-## ViewPagerProps
+### ViewPager
 
-### Properties
 <UIApiTable source={[
   {
     "name": "bounces",
@@ -10,35 +9,35 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "summary": [
       {
         "kind": "text",
-        "text": "Enable iOS bounces spring effect"
+        "text": "Enable the native spring effect where supported."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "启用 iOS 弹性效果"
+        "text": "在支持的平台启用原生回弹效果。"
       }
     ],
     "defaultValue": "true",
     "isOption": true,
     "isSupportIOS": true,
-    "isSupportAndroid": false,
+    "isSupportAndroid": true,
     "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
     "name": "children",
-    "type": "ReactElement[]",
+    "type": "ReactNode",
     "summary": [
       {
         "kind": "text",
-        "text": "Children, which is ViewPagerItems."
+        "text": "Direct ViewPagerItem elements. Arrays and conditional items are supported;\nfragments and wrapper components are not. Use stable keys for dynamic pages.\nSelection follows the numeric position after reordering; removed selections\nclamp to the last page. An empty pager has index 0 and sends no requests."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "子元素, 即 ViewPagerItems。"
+        "text": "直接使用 ViewPagerItem，支持数组和条件条目，不支持 Fragment 或包装组件。动态页面使用稳定 key。重排后按索引选择，删除后限制到最后一页，空列表索引为 0 且不发出请求。"
       }
     ],
     "defaultValue": "",
@@ -76,13 +75,13 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "summary": [
       {
         "kind": "text",
-        "text": "Enable horizontal scroll."
+        "text": "Enable horizontal swipe gestures."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "启用水平滚动。"
+        "text": "启用水平滑动手势。"
       }
     ],
     "defaultValue": "true",
@@ -93,103 +92,43 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
-    "name": "exposureLeft",
-    "type": "string",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "exposure-screen-margin-left"
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "曝光屏幕左边距"
-      }
-    ],
-    "defaultValue": "'50px'",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "exposureRight",
-    "type": "string",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "exposure-screen-margin-right"
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "曝光屏幕右边距"
-      }
-    ],
-    "defaultValue": "'50px'",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
     "name": "initialSelectIndex",
     "type": "number",
     "summary": [
       {
         "kind": "text",
-        "text": "Specify the index of the initial display. Please use "
-      },
-      {
-        "kind": "code",
-        "text": "`selectTab`"
-      },
-      {
-        "kind": "text",
-        "text": " for other updates."
+        "text": "Initial page index. Later changes are ignored; use ref.selectTab to navigate."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "指定初始显示的索引。请使用 "
-      },
-      {
-        "kind": "code",
-        "text": "`selectTab`"
-      },
-      {
-        "kind": "text",
-        "text": " 进行其他更新。"
+        "text": "初始页面索引，后续修改不生效。使用 ref.selectTab 切换页面。"
       }
     ],
     "defaultValue": "0",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
-    "name": "lazyOptions",
-    "type": "LazyOptions",
+    "name": "lazy",
+    "type": "boolean",
     "summary": [
       {
         "kind": "text",
-        "text": "Enable lazy rendering for off-screen pages."
+        "text": "Defer off-screen content until selected, preloaded, or about to appear.\nMounted content stays mounted until its keyed item is removed."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "启用屏外页面的懒加载渲染。"
+        "text": "延迟挂载屏外内容；选中、预加载或即将显示时挂载。已挂载内容保留到对应条目被移除。"
       }
     ],
-    "defaultValue": "{ enableLazy: true, scene: 'viewpager', exposureLeft: '50px', exposureRight: '50px' }",
+    "defaultValue": "true",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
@@ -197,30 +136,18 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
-    "name": "ref",
-    "type": "ForwardedRef",
-    "summary": [],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "scene",
-    "type": "string",
+    "name": "MTOnOffsetChange",
+    "type": "(event: ViewPagerOffsetChangeEvent) => void",
     "summary": [
       {
         "kind": "text",
-        "text": "Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page."
+        "text": "Main-thread scroll progress handler, in page units. Use a main thread function."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "用于标记懒加载的曝光时间。请确保在整个页面中唯一。"
+        "text": "主线程滚动进度回调，以页面为单位，需使用主线程函数。"
       }
     ],
     "defaultValue": "",
@@ -231,37 +158,131 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
-    "name": "selectIndexAfterDataSourceChanged",
+    "name": "MTOnPageChange",
+    "type": "(event: ViewPagerChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread page completion handler. Use a main thread function."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主线程页面切换完成回调，需使用主线程函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageWillChange",
+    "type": "(event: ViewPagerWillChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread page transition handler. Use a main thread function."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主线程页面即将切换回调，需使用主线程函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onOffsetChange",
+    "type": "(event: ViewPagerOffsetChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native scroll progress in page units: 0 to 1 between the first two pages,\nnot a pixel distance."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生滚动进度，以页面为单位。前两页之间为 0 到 1，并非像素距离。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageChange",
+    "type": "(event: ViewPagerChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native page completion event, including programmatic transitions."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生页面切换完成事件，包括命令式切换。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageWillChange",
+    "type": "(event: ViewPagerWillChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native event before a page transition completes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生页面切换完成前事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "preloadCount",
     "type": "number",
     "summary": [
       {
         "kind": "text",
-        "text": "Specify the index after datasource changed. Please use "
-      },
-      {
-        "kind": "code",
-        "text": "`selectTab`"
-      },
-      {
-        "kind": "text",
-        "text": " for other updates."
+        "text": "Number of neighboring pages to mount on each side of the selected page.\nNonnegative integer; ignored when lazy is false."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "数据源改变后指定的索引。请使用 "
-      },
-      {
-        "kind": "code",
-        "text": "`selectTab`"
-      },
-      {
-        "kind": "text",
-        "text": " 进行其他更新。"
+        "text": "选中页面两侧预加载的页面数，为非负整数。lazy 为 false 时忽略。"
       }
     ],
-    "defaultValue": "0",
+    "defaultValue": "1",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
@@ -274,131 +295,35 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "summary": [
       {
         "kind": "text",
-        "text": "Style for "
-      },
-      {
-        "kind": "code",
-        "text": "`viewpager`"
-      },
-      {
-        "kind": "text",
-        "text": ". Changing its layout with style is unrecommended."
+        "text": "style"
       }
     ],
     "summary_zh": [
       {
-        "kind": "code",
-        "text": "`viewpager`"
-      },
-      {
         "kind": "text",
-        "text": " 的样式。不建议通过样式改变其布局。"
+        "text": "样式"
       }
     ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "viewpagerId",
-    "type": "string",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "The id of the "
-      },
-      {
-        "kind": "code",
-        "text": "`viewpager`"
-      },
-      {
-        "kind": "text",
-        "text": ". It is used to select the element. When omitted, ViewPager generates a unique id for the instance."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "code",
-        "text": "`viewpager`"
-      },
-      {
-        "kind": "text",
-        "text": " 的 ID，用于选择该元素。省略时，ViewPager 会为当前实例生成唯一 ID。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "viewpagerItemStyle",
-    "type": "CSSProperties",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Style for "
-      },
-      {
-        "kind": "code",
-        "text": "`viewpager-item`"
-      },
-      {
-        "kind": "text",
-        "text": "."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "code",
-        "text": "`viewpager-item`"
-      },
-      {
-        "kind": "text",
-        "text": " 的样式。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   },
   {
     "name": "viewpagerProps",
-    "type": "Partial",
+    "type": "Omit",
     "summary": [
       {
         "kind": "text",
-        "text": "Additional props that will be passed through to the underlying "
-      },
-      {
-        "kind": "code",
-        "text": "`viewpager`"
-      },
-      {
-        "kind": "text",
-        "text": " element."
+        "text": "Native pager attributes not managed by the component, including id and\naccessibility attributes. Use the dedicated props for styles and events."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "将被直接传递到底层 "
-      },
-      {
-        "kind": "code",
-        "text": "`viewpager`"
-      },
-      {
-        "kind": "text",
-        "text": " 元素的额外属性。"
+        "text": "组件未管理的原生属性，包括 id 和无障碍属性。样式和事件使用专用属性。"
       }
     ],
     "defaultValue": "",
@@ -410,21 +335,44 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
-### Events
+### ViewPagerItem
+
 <UIApiTable source={[
   {
-    "name": "MTOnOffsetChange",
-    "type": "(e: {detail: {offset: number}}) => void",
+    "name": "className",
+    "type": "string",
     "summary": [
       {
         "kind": "text",
-        "text": "ViewPager scrolled. The handler should be a main thread event."
+        "text": "className"
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "ViewPager 滚动。该事件处理函数应在主线程中执行。"
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "itemProps",
+    "type": "Omit",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native item attributes, including accessibility properties."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生页面容器属性，包括无障碍属性。"
       }
     ],
     "defaultValue": "",
@@ -435,106 +383,18 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
-    "name": "MTOnPageChange",
-    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
+    "name": "style",
+    "type": "CSSProperties",
     "summary": [
       {
         "kind": "text",
-        "text": "Viewpager page did changed. The handler should be a main thread event."
+        "text": "style"
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "Viewpager 页面已改变。该事件处理函数应在主线程中执行。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "MTOnPageWillChange",
-    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Viewpager page will be changed. The handler should be a main thread event."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "Viewpager 页面将要改变。该事件处理函数应在主线程中执行。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "onOffsetChange",
-    "type": "(e: {detail: {offset: number}}) => void",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "ViewPager scrolled."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "ViewPager 滚动。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "onPageChange",
-    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Viewpager page did changed."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "Viewpager 页面已改变。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "onPageWillChange",
-    "type": "(e: {detail: {index: number, isDragged: boolean}}) => void",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Viewpager page will be changed."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "Viewpager 页面将要改变。"
+        "text": "样式"
       }
     ],
     "defaultValue": "",
@@ -546,79 +406,48 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
-### ViewPagerChangeEvent
-
 <UIApiTable source={[
   {
-    "name": "index",
-    "type": "number",
+    "name": "children",
+    "type": "ReactNode | [object Object]",
     "summary": [
       {
         "kind": "text",
-        "text": "Current index"
+        "text": "Page content or a function receiving selection state."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "当前索引"
+        "text": "页面内容或接收选择状态的渲染函数。"
       }
     ],
     "defaultValue": "",
-    "isOption": false,
+    "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "isDragged",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "If being dragged"
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "是否被拖动"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "ReactNode | ((status: ViewPagerItemRenderProps) => ReactNode)"
+        }
+      ]
+    }
   }
 ]}/>
-
-### ViewPagerOffsetChangeEvent
-
-<UIApiTable source={[
+<ClassRenderPropPreamble />
+<ClassRenderPropTable source={[
   {
-    "name": "offset",
-    "type": "number",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "The scrolling offset, in px"
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "滚动偏移量，以像素为单位"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
+    "className": "ui-selected",
+    "Render Prop": "selected",
+    "item": {
+      "type": "boolean",
+      "description": "Whether this is the selected page.\nApplied to the selected page container.",
+      "description_zh": "是否为选中页面。\n应用于选中页面容器。"
+    }
   }
 ]}/>
 
@@ -626,17 +455,17 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 <UIApiTable source={[
   {
     "name": "selectTab",
-    "type": "(index: number, smooth: boolean, success?: (res: unknown) => void, fail?: (res: unknown) => void) => void",
+    "type": "(index: number, smooth?: boolean, success?: (result: unknown) => void, fail?: (result: unknown) => void) => void",
     "summary": [
       {
         "kind": "text",
-        "text": "Slide to the specified page."
+        "text": "Slide to a page through the native node ref. Animation defaults to true.\nIndexes are clamped to available pages. Empty pagers ignore requests.\nCompletion is reported through onPageChange; success confirms invocation."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "滑动到指定页面。"
+        "text": "通过原生节点引用切换页面，默认使用动画。索引限制在有效范围内，空列表忽略请求。onPageChange 表示切换完成，success 表示调用成功。"
       }
     ],
     "defaultValue": "",

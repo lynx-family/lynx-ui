@@ -449,7 +449,7 @@ function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
   context = `
 ${
     hasMultipleProps
-      ? `### ${title.replace(/props$/i, '').trim()} `
+      ? `### ${title.replace(/props$/i, '').trim()}`
       : `## ${title}`
   }
     ${comments ? comments : ''}
