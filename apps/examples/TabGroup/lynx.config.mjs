@@ -12,6 +12,7 @@ const defaultConfig = exampleConfig(
     TabGroupInstantSelect: './InstantSelect/index.tsx',
     TabGroupMotion: './Motion/index.tsx',
     TabGroupOneTab: './OneTab/index.tsx',
+    TabGroupPanel: './Panel/index.tsx',
     TabGroupSelectTab: './SelectTab/index.tsx',
   },
   { needWeb: false },

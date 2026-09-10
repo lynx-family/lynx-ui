@@ -5,6 +5,7 @@ import type { ReactNode } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { ScrollViewProps } from '@lynx-js/lynx-ui-scroll-view'
+import type { ViewPagerProps, ViewPagerRef } from '@lynx-js/lynx-ui-view-pager'
 import type { StandardProps } from '@lynx-js/types'
 
 export interface TabsIndicatorAnimationSpring {
@@ -205,6 +206,17 @@ export interface TabItemProps extends
    * @Harmony
    */
   tabKey: string
+}
+
+export type TabsPanelRef = ViewPagerRef
+
+export interface TabsPanelProps<T = unknown> extends ViewPagerProps<T> {
+  /**
+   * Configure the initial index on TabsRoot so the tab bar and panel share the
+   * same initial selection.
+   * @zh 请在 TabsRoot 上配置初始索引，确保标签栏和面板使用相同的初始选中项。
+   */
+  initialSelectIndex?: never
 }
 
 export interface TabsIndicatorProps extends ComponentBasicProps {

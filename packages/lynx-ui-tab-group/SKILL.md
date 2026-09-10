@@ -2,7 +2,7 @@
 
 ## Core Capabilities
 
-`@lynx-js/lynx-ui-tab-group` provides composable tab-navigation primitives: `TabsRoot`, `TabsBar`, `TabsItem`, and `TabsIndicator`.
+`@lynx-js/lynx-ui-tab-group` provides composable tab-navigation primitives: `TabsRoot`, `TabsBar`, `TabsItem`, `TabsIndicator`, and the optional swipeable `TabsPanel`.
 
 ## Minimal Usable Example
 
@@ -21,14 +21,31 @@ import type { TabsData } from '@lynx-js/lynx-ui'
 </TabsRoot>
 ```
 
+Add `TabsPanel` under the same `TabsRoot` when tab selection and swipeable content should stay synchronized.
+
+```tsx
+<TabsRoot>
+  <TabsBar data={tabs} renderTabItem={renderTabItem}>
+    <TabsIndicator />
+  </TabsBar>
+  <TabsPanel data={pages} getItemKey={page => page.id}>
+    {page => <Page page={page} />}
+  </TabsPanel>
+</TabsRoot>
+```
+
+`TabsPanel` uses the same data-driven rendering contract as `ViewPager` and
+creates the required direct native page-item children internally.
+
 ## Recommended Prompt Formula
 
 Describe the tab-navigation scenario, the tab data and stable keys, the desired
-layout and visual treatment, and how content should be coordinated through callbacks.
+layout and visual treatment, and whether content should use the synchronized
+`TabsPanel` or be coordinated through callbacks.
 
 ## Best Practices
 
 - Give every item a stable, unique value from `getTabKey`.
 - Render `TabsIndicator` as a child of `TabsBar`.
-- Use `onTabChanged` to coordinate content rendered elsewhere.
+- Use `TabsPanel` for synchronized swipeable content, or `onTabChanged` to coordinate content rendered elsewhere.
 - Configure `indicatorAnimation` on `TabsRoot` for custom indicator motion.
