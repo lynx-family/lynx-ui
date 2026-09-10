@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@lynx-js/lynx-ui-common": "workspace:*",
-    "@lynx-js/lynx-ui-lazy-component": "workspace:*",
     "clsx": "catalog:"
   },
   "devDependencies": {
@@ -41,6 +40,7 @@
     "@lynx-js/types": "catalog:",
     "@rslib/core": "catalog:",
     "@types/react": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

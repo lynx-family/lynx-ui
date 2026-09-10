@@ -2,225 +2,202 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ForwardedRef, ReactElement } from '@lynx-js/react'
+import type { ReactNode } from '@lynx-js/react'
 
-import type { ComponentBasicProps, LazyOptions } from '@lynx-js/lynx-ui-common'
+import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type {
-  CSSProperties,
+  ViewPagerItemProps as NativeViewPagerItemProps,
   ViewPagerProps as NativeViewPagerProps,
+  ViewPagerChangeEvent,
+  ViewPagerOffsetChangeEvent,
+  ViewPagerWillChangeEvent,
 } from '@lynx-js/types'
 
-export type ViewPager = (props: ViewPagerProps) => ReactElement
+export type { ViewPagerChangeEvent, ViewPagerOffsetChangeEvent }
 
 export interface ViewPagerRef {
   /**
-   * Slide to the specified page.
-   * @zh 滑动到指定页面。
+   * Slide to a page through the native node ref. Animation defaults to true.
+   * Indexes are clamped to available pages. Empty pagers ignore requests.
+   * Completion is reported through onPageChange; success confirms invocation.
+   * @zh 通过原生节点引用切换页面，默认使用动画。索引限制在有效范围内，空列表忽略请求。onPageChange 表示切换完成，success 表示调用成功。
    * @Android
    * @iOS
    */
   selectTab: (
-    /**
-     * The index to be scrolled to.
-     * @zh 要滚动到的索引。
-     * @Android
-     * @iOS
-     */
     index: number,
-    /**
-     * If a animation effect needed.
-     * @zh 是否需要动画效果。
-     * @Android
-     * @iOS
-     */
-    smooth: boolean,
-    success?: (res: unknown) => void,
-    fail?: (res: unknown) => void,
+    smooth?: boolean,
+    success?: (result: unknown) => void,
+    fail?: (result: unknown) => void,
   ) => void
 }
 
 export interface ViewPagerProps extends ComponentBasicProps {
-  ref?: ForwardedRef<ViewPagerRef>
   /**
-   * Enable lazy rendering for off-screen pages.
-   * @zh 启用屏外页面的懒加载渲染。
-   * @defaultValue `{ enableLazy: true, scene: 'viewpager', exposureLeft: '50px', exposureRight: '50px' }`
-   * @Android
-   * @iOS
-   */
-  lazyOptions?: LazyOptions
-  /**
-   * Be used to mark the exposure timing of lazy loading. Please ensure that it is unique throughout the page.
-   * @zh 用于标记懒加载的曝光时间。请确保在整个页面中唯一。
-   * @Android
-   * @iOS
-   * @deprecated Please use `lazyOptions` instead.
-   */
-  scene?: string
-  /**
-   * The id of the `viewpager`. It is used to select the element. When omitted, ViewPager generates a unique id for the instance.
-   * @zh `viewpager` 的 ID，用于选择该元素。省略时，ViewPager 会为当前实例生成唯一 ID。
-   * @Android
-   * @iOS
-   */
-  viewpagerId?: string
-  /**
-   * Style for `viewpager`. Changing its layout with style is unrecommended.
-   * @zh `viewpager` 的样式。不建议通过样式改变其布局。
-   * @Android
-   * @iOS
-   */
-  style?: CSSProperties
-  /**
-   * Style for `viewpager-item`.
-   * @zh `viewpager-item` 的样式。
-   * @Android
-   * @iOS
-   */
-  viewpagerItemStyle?: CSSProperties
-  /**
-   * Specify the index after datasource changed. Please use `selectTab` for other updates.
-   * @zh 数据源改变后指定的索引。请使用 `selectTab` 进行其他更新。
+   * Initial page index. Later changes are ignored; use ref.selectTab to navigate.
    * @defaultValue 0
+   * @zh 初始页面索引，后续修改不生效。使用 ref.selectTab 切换页面。
    * @Android
    * @iOS
-   * @deprecated Please use `initialSelectIndex` instead
-   */
-  selectIndexAfterDataSourceChanged?: number
-  /**
-   * Specify the index of the initial display. Please use `selectTab` for other updates.
-   * @zh 指定初始显示的索引。请使用 `selectTab` 进行其他更新。
-   * @defaultValue 0
-   * @Android
-   * @iOS
-   * @Harmony
-   * @since 2.17
    */
   initialSelectIndex?: number
   /**
-   * Enable iOS bounces spring effect
-   * @zh 启用 iOS 弹性效果
+   * Defer off-screen content until selected, preloaded, or about to appear.
+   * Mounted content stays mounted until its keyed item is removed.
    * @defaultValue true
-   * @iOS
-   */
-  bounces?: boolean
-  /**
-   * Additional props that will be passed through to the underlying `viewpager` element.
-   * @zh 将被直接传递到底层 `viewpager` 元素的额外属性。
-   * @iOS
-   * @Android
-   */
-  viewpagerProps?: Partial<NativeViewPagerProps>
-  /**
-   * exposure-screen-margin-left
-   * @zh 曝光屏幕左边距
-   * @defaultValue '50px'
-   * @Android
-   * @iOS
-   * @Harmony
-   * @deprecated Please use 'lazyOptions' instead.
-   */
-  exposureLeft?: string
-  /**
-   * exposure-screen-margin-right
-   * @zh 曝光屏幕右边距
-   * @defaultValue '50px'
-   * @Android
-   * @iOS
-   * @Harmony
-   * @deprecated Please use 'lazyOptions' instead.
-   */
-  exposureRight?: string
-  /**
-   * ViewPager scrolled.
-   * @zh ViewPager 滚动。
-   * @eventProperty
+   * @zh 延迟挂载屏外内容；选中、预加载或即将显示时挂载。已挂载内容保留到对应条目被移除。
    * @Android
    * @iOS
    */
-  onOffsetChange?: (e: { detail: ViewPagerOffsetChangeEvent }) => void
+  lazy?: boolean
   /**
-   * ViewPager scrolled. The handler should be a main thread event.
-   * @zh ViewPager 滚动。该事件处理函数应在主线程中执行。
-   * @eventProperty
+   * Number of neighboring pages to mount on each side of the selected page.
+   * Nonnegative integer; ignored when lazy is false.
+   * @defaultValue 1
+   * @zh 选中页面两侧预加载的页面数，为非负整数。lazy 为 false 时忽略。
    * @Android
    * @iOS
    */
-  MTOnOffsetChange?: (e: { detail: ViewPagerOffsetChangeEvent }) => void
+  preloadCount?: number
   /**
-   * Viewpager page will be changed.
-   * @zh Viewpager 页面将要改变。
-   * @eventProperty
-   * @Android
-   * @iOS
-   * @Harmony
-   * @since 2.17
-   */
-  onPageWillChange?: (e: { detail: ViewPagerChangeEvent }) => void
-  /**
-   * Viewpager page will be changed. The handler should be a main thread event.
-   * @zh Viewpager 页面将要改变。该事件处理函数应在主线程中执行。
-   * @eventProperty
-   * @Android
-   * @iOS
-   */
-  MTOnPageWillChange?: (e: { detail: ViewPagerChangeEvent }) => void
-  /**
-   * Viewpager page did changed.
-   * @zh Viewpager 页面已改变。
-   * @eventProperty
-   * @Android
-   * @iOS
-   */
-  onPageChange?: (e: { detail: ViewPagerChangeEvent }) => void
-  /**
-   * Viewpager page did changed. The handler should be a main thread event.
-   * @zh Viewpager 页面已改变。该事件处理函数应在主线程中执行。
-   * @eventProperty
-   * @Android
-   * @iOS
-   */
-  MTOnPageChange?: (e: { detail: ViewPagerChangeEvent }) => void
-  /**
-   * Enable horizontal scroll.
-   * @zh 启用水平滚动。
+   * Enable horizontal swipe gestures.
    * @defaultValue true
+   * @zh 启用水平滑动手势。
    * @Android
    * @iOS
    */
   enableScroll?: boolean
   /**
-   * Children, which is ViewPagerItems.
-   * @zh 子元素, 即 ViewPagerItems。
+   * Enable the native spring effect where supported.
+   * @defaultValue true
+   * @zh 在支持的平台启用原生回弹效果。
    * @Android
    * @iOS
    */
-  children?: ReactElement[]
+  bounces?: boolean
+  /**
+   * Native pager attributes not managed by the component, including id and
+   * accessibility attributes. Use the dedicated props for styles and events.
+   * @zh 组件未管理的原生属性，包括 id 和无障碍属性。样式和事件使用专用属性。
+   * @Android
+   * @iOS
+   */
+  viewpagerProps?: Omit<
+    NativeViewPagerProps,
+    | 'children'
+    | 'ref'
+    | 'className'
+    | 'style'
+    | 'initial-select-index'
+    | 'select-index'
+    | 'align-width'
+    | 'enable-scroll'
+    | 'allow-horizontal-gesture'
+    | 'bounces'
+    | 'keep-item-view'
+    | 'bindchange'
+    | 'bindwillchange'
+    | 'bindoffsetchange'
+    | 'main-thread:bindchange'
+    | 'main-thread:bindwillchange'
+    | 'main-thread:bindoffsetchange'
+  >
+  /**
+   * Native page completion event, including programmatic transitions.
+   * @zh 原生页面切换完成事件，包括命令式切换。
+   * @Android
+   * @iOS
+   */
+  onPageChange?: (event: ViewPagerChangeEvent) => void
+  /**
+   * Native event before a page transition completes.
+   * @zh 原生页面切换完成前事件。
+   * @Android
+   * @iOS
+   */
+  onPageWillChange?: (event: ViewPagerWillChangeEvent) => void
+  /**
+   * Native scroll progress in page units: 0 to 1 between the first two pages,
+   * not a pixel distance.
+   * @zh 原生滚动进度，以页面为单位。前两页之间为 0 到 1，并非像素距离。
+   * @Android
+   * @iOS
+   */
+  onOffsetChange?: (event: ViewPagerOffsetChangeEvent) => void
+  /**
+   * Main-thread page completion handler. Use a main thread function.
+   * @zh 主线程页面切换完成回调，需使用主线程函数。
+   * @Android
+   * @iOS
+   */
+  MTOnPageChange?: (event: ViewPagerChangeEvent) => void
+  /**
+   * Main-thread page transition handler. Use a main thread function.
+   * @zh 主线程页面即将切换回调，需使用主线程函数。
+   * @Android
+   * @iOS
+   */
+  MTOnPageWillChange?: (event: ViewPagerWillChangeEvent) => void
+  /**
+   * Main-thread scroll progress handler, in page units. Use a main thread function.
+   * @zh 主线程滚动进度回调，以页面为单位，需使用主线程函数。
+   * @Android
+   * @iOS
+   */
+  MTOnOffsetChange?: (event: ViewPagerOffsetChangeEvent) => void
+  /**
+   * Direct ViewPagerItem elements. Arrays and conditional items are supported;
+   * fragments and wrapper components are not. Use stable keys for dynamic pages.
+   * Selection follows the numeric position after reordering; removed selections
+   * clamp to the last page. An empty pager has index 0 and sends no requests.
+   * @zh 直接使用 ViewPagerItem，支持数组和条件条目，不支持 Fragment 或包装组件。动态页面使用稳定 key。重排后按索引选择，删除后限制到最后一页，空列表索引为 0 且不发出请求。
+   * @Android
+   * @iOS
+   */
+  children?: ReactNode
 }
 
-export interface ViewPagerChangeEvent {
+export interface ViewPagerItemRenderProps {
   /**
-   * Current index
-   * @zh 当前索引
+   * Zero-based position in the pager.
+   * @zh 页面从零开始的索引。
    * @Android
    * @iOS
    */
   index: number
   /**
-   * If being dragged
-   * @zh 是否被拖动
+   * Whether this is the selected page.
+   * @zh 是否为选中页面。
    * @Android
    * @iOS
    */
-  isDragged: boolean
+  selected: boolean
 }
 
-export interface ViewPagerOffsetChangeEvent {
+export interface ViewPagerItemProps extends ComponentBasicProps {
   /**
-   * The scrolling offset, in px
-   * @zh 滚动偏移量，以像素为单位
+   * Native item attributes, including accessibility properties.
+   * @zh 原生页面容器属性，包括无障碍属性。
    * @Android
    * @iOS
    */
-  offset: number
+  itemProps?: Omit<NativeViewPagerItemProps, 'children' | 'className' | 'style'>
+  /**
+   * Page content or a function receiving selection state.
+   * @zh 页面内容或接收选择状态的渲染函数。
+   * @docTypeFallback ReactNode | ((status: ViewPagerItemRenderProps) => ReactNode)
+   * @Android
+   * @iOS
+   */
+  children?: ReactNode | ((status: ViewPagerItemRenderProps) => ReactNode)
+}
+
+export interface ViewPagerItemUIVariants {
+  /**
+   * Applied to the selected page container.
+   * @zh 应用于选中页面容器。
+   * @Android
+   * @iOS
+   */
+  'ui-selected'?: boolean
 }

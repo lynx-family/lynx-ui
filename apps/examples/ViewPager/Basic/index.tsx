@@ -2,9 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root } from '@lynx-js/react'
+import { root, useRef, useState } from '@lynx-js/react'
 
-import { ViewPager } from '@lynx-js/lynx-ui'
+import { Button, ViewPager, ViewPagerItem } from '@lynx-js/lynx-ui'
+import type { ViewPagerRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
 
@@ -15,22 +16,45 @@ const pages = [
 ]
 
 export function App() {
+  const pagerRef = useRef<ViewPagerRef>(null)
+  const [index, setIndex] = useState(0)
   return (
-    <view className='view-pager-demo lunaris-light'>
+    <view className='view-pager-demo lunaris-dark'>
       <text className='view-pager-demo__title'>Swipe between pages</text>
+      <view className='view-pager-demo__controls'>
+        {pages.map((page, pageIndex) => (
+          <Button
+            key={page.label}
+            onClick={() => pagerRef.current?.selectTab(pageIndex)}
+          >
+            <text className='view-pager-demo__control'>{page.label}</text>
+          </Button>
+        ))}
+      </view>
       <ViewPager
+        ref={pagerRef}
+        onPageChange={event => setIndex(event.detail.index)}
         className='view-pager-demo__pager'
-        style={{ width: '100%', height: '400px' }}
+        style={{ height: '400px' }}
       >
         {pages.map(page => (
-          <view
+          <ViewPagerItem
             key={page.label}
             className={`view-pager-demo__page ${page.className}`}
+            itemProps={{ 'accessibility-label': page.label }}
           >
-            <text className='view-pager-demo__label'>{page.label}</text>
-          </view>
+            {({ selected }) => (
+              <text className='view-pager-demo__label'>
+                {page.label}
+                {selected ? ' •' : ''}
+              </text>
+            )}
+          </ViewPagerItem>
         ))}
       </ViewPager>
+      <text className='view-pager-demo__control'>
+        Page {index + 1} of {pages.length}
+      </text>
     </view>
   )
 }

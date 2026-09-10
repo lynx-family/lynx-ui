@@ -4,42 +4,17 @@
 
 import { describe, expect, it } from 'vitest'
 
-import { createViewPagerId, resolveLazyOptions } from '../src/utils'
+import { normalizeIndex } from '../src/utils'
 
-describe('ViewPager utilities', () => {
-  it('creates a distinct fallback id for each instance', () => {
-    expect(createViewPagerId()).not.toBe(createViewPagerId())
-  })
-
-  it('resolves partial lazy options per field', () => {
-    expect(resolveLazyOptions({
-      enableLazy: true,
-      scene: 'feed',
-      estimatedItemStyle: {},
-    }, {})).toEqual({
-      enableLazy: true,
-      scene: 'feed',
-      exposureLeft: '50px',
-      exposureRight: '50px',
-    })
-  })
-
-  it('uses deprecated props only when lazy options omit a field', () => {
-    expect(resolveLazyOptions(undefined, {
-      scene: 'legacy',
-      exposureLeft: '20px',
-      exposureRight: '30px',
-    })).toEqual({
-      enableLazy: true,
-      scene: 'legacy',
-      exposureLeft: '20px',
-      exposureRight: '30px',
-    })
-  })
-
-  it('keeps lazy rendering disabled', () => {
-    expect(resolveLazyOptions({ enableLazy: false }, {})).toMatchObject({
-      enableLazy: false,
-    })
+describe('page selection bounds', () => {
+  it.each([
+    [-1, 3, 0],
+    [100, 3, 2],
+    [1.9, 3, 1],
+    [Number.NaN, 3, 0],
+    [Number.POSITIVE_INFINITY, 3, 0],
+    [2, 0, 0],
+  ])('normalizes %s for %s pages to %s', (index, count, expected) => {
+    expect(normalizeIndex(index, count)).toBe(expected)
   })
 })
