@@ -33,11 +33,13 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   } = indicatorProps ?? {}
   const { tabKeyArray } = useTabsContext()
   const {
+    panelOffset,
     tabSelectIndex,
     tabsWidthMapMT,
     indicatorOffsetMT,
     indicatorElementMT,
     hasRenderedIndicatorMT,
+    hasPanel,
     selectBehavior,
     indicatorAnimation,
     selectTarget,
@@ -113,6 +115,15 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     )
   }
 
+  useMotionValueRefEvent(panelOffset, 'change', (offset) => {
+    'main thread'
+    mtsLog(debugLog, '[lynx-ui tabs] panelOffset', offset, tabKeyArray.length)
+    if (offset < 0 || offset > tabKeyArray.length - 1) {
+      return
+    }
+    syncIndicatorOffset(offset)
+  })
+
   useMotionValueRefEvent(tabsWidthMapMT, 'change', () => {
     'main thread'
     updateIndicatorAtOffset(offsetMotionRef.current.get())
@@ -130,13 +141,15 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
         return
       }
       const { index, smooth } = target
-      if (hasRenderedIndicatorMT.current && smooth) {
-        animateToTab(index)
-      } else {
-        syncIndicatorOffset(index)
+      if (!hasPanel.current.get()) {
+        if (hasRenderedIndicatorMT.current && smooth) {
+          animateToTab(index)
+        } else {
+          syncIndicatorOffset(index)
+        }
+        runOnBackground(onTabChangedJS)(index)
+        tabChangeHandledBySelectTargetMT.current = index
       }
-      runOnBackground(onTabChangedJS)(index)
-      tabChangeHandledBySelectTargetMT.current = index
     },
   )
 
@@ -146,18 +159,20 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     if (index < 0 || index > tabKeyArray.length - 1) {
       return
     }
-    if (
-      hasRenderedIndicatorMT.current
-      && shouldAnimateIndicator(selectBehavior)
-    ) {
-      animateToTab(index)
-    } else {
-      syncIndicatorOffset(index)
-    }
-    if (tabChangeHandledBySelectTargetMT.current === index) {
-      tabChangeHandledBySelectTargetMT.current = -1
-    } else {
-      runOnBackground(onTabChangedJS)(index)
+    if (!hasPanel.current.get()) {
+      if (
+        hasRenderedIndicatorMT.current
+        && shouldAnimateIndicator(selectBehavior)
+      ) {
+        animateToTab(index)
+      } else {
+        syncIndicatorOffset(index)
+      }
+      if (tabChangeHandledBySelectTargetMT.current === index) {
+        tabChangeHandledBySelectTargetMT.current = -1
+      } else {
+        runOnBackground(onTabChangedJS)(index)
+      }
     }
   })
 

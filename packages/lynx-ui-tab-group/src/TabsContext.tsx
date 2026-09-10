@@ -19,6 +19,9 @@ interface TabsRootContextValue {
   indicatorAnimation?: TabsIndicatorAnimation
   initialSelectIndex?: number
 
+  hasPanel: MotionValueRef<boolean>
+  panelIndex: MotionValueRef<number>
+  panelOffset: MotionValueRef<number>
   tabSelectIndex: MotionValueRef<number>
   tabsWidthMapMT: MotionValueRef<Record<string, number>>
   tabRegistrationMapMT: MainThreadRef<Record<string, number>>

@@ -1,9 +1,6 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
-
 ### TabsRoot
-
-
 
 ### Properties
 <UIApiTable source={[
@@ -237,10 +234,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
-
 ### TabsBar
-
-
 
 ### Properties
 <UIApiTable source={[
@@ -1346,7 +1340,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onContentSizeChange",
-    "type": "(res: Record<string, unknown>) => void",
+    "type": "(res: {detail: {scrollHeight: number, scrollWidth: number}}) => void",
     "summary": [
       {
         "kind": "text",
@@ -1632,10 +1626,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
-
 ### TabItem
-
-
 
 <UIApiTable source={[
   {
@@ -1662,10 +1653,354 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
+### TabsPanel
+
+<UIApiTable source={[
+  {
+    "name": "bounces",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable the native spring effect where supported."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "在支持的平台启用原生回弹效果。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Direct ViewPagerItem elements. Arrays and conditional items are supported;\nfragments and wrapper components are not. Use stable keys for dynamic pages.\nSelection follows the numeric position after reordering; removed selections\nclamp to the last page. An empty pager has index 0 and sends no requests."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "直接使用 ViewPagerItem，支持数组和条件条目，不支持 Fragment 或包装组件。动态页面使用稳定 key。重排后按索引选择，删除后限制到最后一页，空列表索引为 0 且不发出请求。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enableScroll",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Enable horizontal swipe gestures."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "启用水平滑动手势。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialSelectIndex",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Initial page index. Later changes are ignored; use ref.selectTab to navigate."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "初始页面索引，后续修改不生效。使用 ref.selectTab 切换页面。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "lazy",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Defer off-screen content until selected, preloaded, or about to appear.\nMounted content stays mounted until its keyed item is removed."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "延迟挂载屏外内容；选中、预加载或即将显示时挂载。已挂载内容保留到对应条目被移除。"
+      }
+    ],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnOffsetChange",
+    "type": "(event: ViewPagerOffsetChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread scroll progress handler, in page units. Use a main thread function."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主线程滚动进度回调，以页面为单位，需使用主线程函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageChange",
+    "type": "(event: ViewPagerChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread page completion handler. Use a main thread function."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主线程页面切换完成回调，需使用主线程函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "MTOnPageWillChange",
+    "type": "(event: ViewPagerWillChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread page transition handler. Use a main thread function."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主线程页面即将切换回调，需使用主线程函数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onOffsetChange",
+    "type": "(event: ViewPagerOffsetChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native scroll progress in page units: 0 to 1 between the first two pages,\nnot a pixel distance."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生滚动进度，以页面为单位。前两页之间为 0 到 1，并非像素距离。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageChange",
+    "type": "(event: ViewPagerChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native page completion event, including programmatic transitions."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生页面切换完成事件，包括命令式切换。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPageWillChange",
+    "type": "(event: ViewPagerWillChangeEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native event before a page transition completes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生页面切换完成前事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "preloadCount",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Number of neighboring pages to mount on each side of the selected page.\nNonnegative integer; ignored when lazy is false."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "选中页面两侧预加载的页面数，为非负整数。lazy 为 false 时忽略。"
+      }
+    ],
+    "defaultValue": "1",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ref",
+    "type": "ForwardedRef",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewpagerProps",
+    "type": "Omit",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native pager attributes not managed by the component, including id and\naccessibility attributes. Use the dedicated props for styles and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "组件未管理的原生属性，包括 id 和无障碍属性。样式和事件使用专用属性。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
 
 ### TabsIndicator
-
-
 
 <UIApiTable source={[
   {
@@ -1758,13 +2093,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
-
-
-
 ## TabsRootRef
-
-
-
 <UIApiTable source={[
   {
     "name": "selectTab",
@@ -1775,6 +2104,32 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isOption": false,
     "isSupportIOS": false,
     "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+## TabsPanelRef
+<UIApiTable source={[
+  {
+    "name": "selectTab",
+    "type": "(index: number, smooth?: boolean, success?: (result: unknown) => void, fail?: (result: unknown) => void) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Slide to a page through the native node ref. Animation defaults to true.\nIndexes are clamped to available pages. Empty pagers ignore requests.\nCompletion is reported through onPageChange; success confirms invocation."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "通过原生节点引用切换页面，默认使用动画。索引限制在有效范围内，空列表忽略请求。onPageChange 表示切换完成，success 表示调用成功。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
     "isSupportHarmony": false,
     "docTypeFallback": null
   }

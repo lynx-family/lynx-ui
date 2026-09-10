@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-tab-group
 
-Composable primitives for building tab navigation with lynx-ui. The package provides `TabsRoot`, `TabsBar`, `TabsItem`, and `TabsIndicator`.
+Composable primitives for building tab navigation with lynx-ui. The package provides `TabsRoot`, `TabsBar`, `TabsItem`, `TabsIndicator`, and an optional swipeable `TabsPanel`.
 
 ## Installation
 

@@ -22,6 +22,7 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
   } = props
 
   const {
+    hasPanel,
     tabSelectIndex,
     debugLog,
   } = useTabsRootContext()
@@ -32,7 +33,7 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
 
   const selectTab = useMemoizedFn((tabsKey: string) => {
     const index = tabKeys.indexOf(tabsKey)
-    log(debugLog, '[lynx-ui tabs] selectTab', tabsKey, index)
+    log(debugLog, '[lynx-ui tabs] selectTab', tabsKey, index, hasPanel)
     runOnMainThread(() => {
       'main thread'
       tabSelectIndex.current.set(index)

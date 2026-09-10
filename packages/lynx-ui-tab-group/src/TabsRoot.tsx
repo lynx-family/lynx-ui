@@ -17,6 +17,9 @@ import { TabsRootContext } from './TabsContext'
 import type { TabsRootProps, TabsRootRef } from './types'
 
 function useDataSubscript(initValue: number) {
+  const hasPanel = useMotionValueRef<boolean>(false)
+  const panelOffset = useMotionValueRef<number>(initValue)
+  const panelIndex = useMotionValueRef<number>(initValue)
   const tabSelectIndex = useMotionValueRef<number>(initValue)
   const tabsWidthMapMT = useMotionValueRef<Record<string, number>>({})
   const tabRegistrationMapMT = useMainThreadRef<Record<string, number>>({})
@@ -30,6 +33,9 @@ function useDataSubscript(initValue: number) {
   })
 
   return {
+    hasPanel,
+    panelIndex,
+    panelOffset,
     tabSelectIndex,
     tabsWidthMapMT,
     tabRegistrationMapMT,
@@ -53,6 +59,8 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     enableRTL = false,
   } = props
   const {
+    panelIndex,
+    panelOffset,
     tabSelectIndex,
     tabsWidthMapMT,
     tabRegistrationMapMT,
@@ -60,6 +68,7 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     indicatorElementMT,
     hasRenderedIndicatorMT,
     isFirstScreenSyncMT,
+    hasPanel,
     selectTarget,
   } = useDataSubscript(initialSelectIndex)
 
@@ -79,6 +88,9 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       selectBehavior,
       indicatorAnimation,
       initialSelectIndex,
+      hasPanel,
+      panelIndex,
+      panelOffset,
       tabSelectIndex,
       tabsWidthMapMT,
       tabRegistrationMapMT,
@@ -96,8 +108,11 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       selectBehavior,
       indicatorAnimation,
       initialSelectIndex,
+      hasPanel,
       onClickItem,
       onTabChanged,
+      panelIndex,
+      panelOffset,
       tabSelectIndex,
       tabsWidthMapMT,
       tabRegistrationMapMT,

@@ -8,6 +8,7 @@ const defaultConfig = exampleConfig(
   {
     PrimitivesTabsBasic: './Basic/index.tsx',
     PrimitivesTabsMotion: './Motion/index.tsx',
+    PrimitivesTabsPanel: './Panel/index.tsx',
   },
   { needWeb: false },
 )

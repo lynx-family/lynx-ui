@@ -33,6 +33,7 @@ export const TabsItem = (props: TabItemProps) => {
     hasRenderedIndicatorMT,
     isFirstScreenSyncMT,
     onClickItem,
+    panelIndex,
     selectTarget,
     debugLog,
     enableRTL,
@@ -63,6 +64,14 @@ export const TabsItem = (props: TabItemProps) => {
     selectTab(tabKey)
     onClickItem?.(tabKeyArray.indexOf(tabKey))
   }
+
+  useMotionValueRefEvent(panelIndex, 'change', (index) => {
+    'main thread'
+    const panelSelectKey = tabKeyArray[index]
+    if (tabKey === panelSelectKey) {
+      scrollToCenterAfterInitialAlignmentMT(true)
+    }
+  })
 
   useMotionValueRefEvent(
     selectTarget,

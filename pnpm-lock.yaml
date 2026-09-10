@@ -2053,6 +2053,9 @@ importers:
       '@lynx-js/lynx-ui-scroll-view':
         specifier: workspace:*
         version: link:../lynx-ui-scroll-view
+      '@lynx-js/lynx-ui-view-pager':
+        specifier: workspace:*
+        version: link:../lynx-ui-view-pager
       '@lynx-js/motion':
         specifier: 'catalog:'
         version: 0.0.3(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)

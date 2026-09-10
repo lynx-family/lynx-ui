@@ -1,10 +1,11 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
-import type { ReactNode } from '@lynx-js/react'
+import type { ForwardedRef, ReactNode } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { ScrollViewProps } from '@lynx-js/lynx-ui-scroll-view'
+import type { ViewPagerProps, ViewPagerRef } from '@lynx-js/lynx-ui-view-pager'
 import type { StandardProps } from '@lynx-js/types'
 
 export interface TabsIndicatorAnimationSpring {
@@ -200,6 +201,12 @@ export interface TabItemProps extends StandardProps {
    * @Harmony
    */
   tabKey: string
+}
+
+export interface TabsPanelRef extends ViewPagerRef {}
+
+export interface TabsPanelProps extends Omit<ViewPagerProps, 'ref'> {
+  ref?: ForwardedRef<TabsPanelRef>
 }
 
 export interface TabsIndicatorProps extends ComponentBasicProps {
