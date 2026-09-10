@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-tab-group",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Example app demonstrating TabGroup usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/TabGroup#readme",
   "repository": {

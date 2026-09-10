@@ -4,7 +4,6 @@
 import { createContext, useContext } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
-import { noop } from '@lynx-js/lynx-ui-common'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
@@ -47,15 +46,12 @@ interface TabsContextValue {
   tabKeyArray: string[]
 }
 
-export const TabsContext = createContext<TabsContextValue>({
-  selectTab: noop,
-  tabKeyArray: [],
-})
+export const TabsContext = createContext<TabsContextValue | null>(null)
 
 export function useTabsContext() {
   const context = useContext(TabsContext)
   if (!context) {
-    throw new Error('useTabsContext must be used within a Tabs')
+    throw new Error('useTabsContext must be used within a TabsBar')
   }
   return context
 }

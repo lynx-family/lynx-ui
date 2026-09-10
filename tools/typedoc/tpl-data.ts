@@ -209,6 +209,22 @@ function tryInlineReferenceType(
   return null
 }
 
+function doTypeArgumentsCalc(
+  t: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+): string {
+  if (!Array.isArray(t?.typeArguments) || t.typeArguments.length === 0) {
+    return ''
+  }
+
+  return `<${
+    t.typeArguments.map((typeArgument: any) =>
+      doTypeCalc(typeArgument, isZhContext, currentPkgName)
+    ).join(', ')
+  }>`
+}
+
 const doFindObjectWithTagValue = (obj: any, tagName: any, tagValue: any) => {
   function recursiveSearch(currentObj: any): any {
     for (let key in currentObj) {
@@ -263,7 +279,13 @@ const doSingleTypeCalc = (
       case 'intrinsic':
       case 'reference': {
         const inlined = tryInlineReferenceType(t, isZhContext, currentPkgName)
-        return inlined ?? name
+        return inlined ?? `${name}${
+          doTypeArgumentsCalc(
+            t,
+            isZhContext,
+            currentPkgName,
+          )
+        }`
       }
       case 'array':
         return `${doTypeCalc(t.elementType, isZhContext, currentPkgName)}[]`
@@ -358,7 +380,13 @@ const doTypeCalc = (
       case 'intrinsic':
       case 'reference': {
         const inlined = tryInlineReferenceType(t, isZhContext, currentPkgName)
-        return inlined ?? name
+        return inlined ?? `${name}${
+          doTypeArgumentsCalc(
+            t,
+            isZhContext,
+            currentPkgName,
+          )
+        }`
       }
       case 'array':
         return `${doTypeCalc(t.elementType, isZhContext, currentPkgName)}[]`
@@ -437,6 +465,9 @@ const doDefaultValueCalc = (defaultValue: any) => {
 
 const doMoreForItem = (item: any, currentPkgName?: string) => {
   const { name, type } = item
+  const typeParameters = Array.isArray(item?.typeParameters)
+    ? item.typeParameters.map((parameter: any) => parameter.name).join(', ')
+    : ''
   // 是否可选
   const isOption = !!doFindObjectWithTagValue(item, 'isOptional', true)
     ? true
@@ -474,7 +505,7 @@ const doMoreForItem = (item: any, currentPkgName?: string) => {
     .trim()
 
   return {
-    name,
+    name: typeParameters ? `${name}<${typeParameters}>` : name,
     type: fallbackType || doTypeCalc(type, false, currentPkgName),
     summary,
     summary_zh,
@@ -587,7 +618,6 @@ const doGenDocData = async (
                 ra.children as Record<string, unknown>[],
                 rootFlag + '##',
                 currentPkgName,
-                ra.name === 'TabItemProps',
               ),
             }
           }),

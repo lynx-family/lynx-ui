@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 import {
   runOnMainThread,
-  useContext,
   useEffect,
   useMainThreadRef,
   useMemo,
@@ -13,7 +12,7 @@ import { mtsLog } from '@lynx-js/lynx-ui-common'
 import { useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { LayoutChangeDetailEvent, MainThread } from '@lynx-js/types'
 
-import { TabsContext, useTabsRootContext } from './TabsContext'
+import { useTabsContext, useTabsRootContext } from './TabsContext'
 import type { TabItemProps } from './types'
 import { getIndicatorStyleProperties } from './utils/tabsIndicatorAnimation'
 import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
@@ -21,10 +20,8 @@ import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
 let nextTabRegistrationId = 0
 
 export const TabsItem = (props: TabItemProps) => {
-  const { style, className, tabKey, children } = props
-  const { selectTab, tabKeyArray } = useContext(
-    TabsContext,
-  )
+  const { style, className, tabKey, children, ...viewProps } = props
+  const { selectTab, tabKeyArray } = useTabsContext()
   const {
     tabsWidthMapMT,
     tabRegistrationMapMT,
@@ -134,6 +131,7 @@ export const TabsItem = (props: TabItemProps) => {
 
   return (
     <view
+      {...viewProps}
       main-thread:ref={MTSViewRef}
       bindtap={onClick}
       className={className}
