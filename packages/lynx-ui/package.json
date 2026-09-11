@@ -50,7 +50,8 @@
     "@lynx-js/lynx-ui-sortable": "workspace:*",
     "@lynx-js/lynx-ui-swipe-action": "workspace:*",
     "@lynx-js/lynx-ui-swiper": "workspace:*",
-    "@lynx-js/lynx-ui-switch": "workspace:*"
+    "@lynx-js/lynx-ui-switch": "workspace:*",
+    "@lynx-js/lynx-ui-toast": "workspace:*"
   },
   "devDependencies": {
     "@lynx-js/react": "catalog:",

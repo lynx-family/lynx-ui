@@ -1,0 +1,34 @@
+Toast 是从屏幕边缘显示的轻提示基础组件，支持自定义内容和动画，也可以通过滑动手势关闭。
+
+## 受控用法
+
+```tsx
+<ToastRoot show={show} onClose={() => setShow(false)}>
+  <ToastPositioner className='toast-viewport'>
+    <ToastContent className='toast-item'>已保存</ToastContent>
+  </ToastPositioner>
+</ToastRoot>
+```
+
+需要滑动关闭时，用 `ToastDraggableContent` 替换 `ToastContent`。设置 `useDefaultAnimation={false}` 后，可以通过 `ui-entering`、`ui-open` 和 `ui-leaving` 等状态类名完全控制动画。
+
+## 命令式用法
+
+在应用中挂载一个 `ToastMountPoint`，然后调用 `toast.open`，传入根节点配置和可选的自动关闭时长。
+
+```tsx
+toast.open({
+  root: {
+    children: (
+      <ToastPositioner>
+        <ToastContent>已保存</ToastContent>
+      </ToastPositioner>
+    ),
+  },
+  duration: 3000,
+})
+
+<ToastMountPoint />
+```
+
+受控、自定义动画、可拖拽和命令式用法可参考[完整示例](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Toast)。
