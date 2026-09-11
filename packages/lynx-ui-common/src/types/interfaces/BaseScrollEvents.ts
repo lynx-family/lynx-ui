@@ -3,8 +3,10 @@
 // LICENSE file in the root directory of this source tree.
 
 import type {
-  ScrollViewProps as OriginalScrollViewProps,
+  ScrollEndEvent,
   ScrollEvent,
+  ScrollToLowerEvent,
+  ScrollToUpperEvent,
 } from '@lynx-js/types'
 
 export interface BaseScrollEvents {
@@ -24,7 +26,7 @@ export interface BaseScrollEvents {
    * @Android
    * @iOS
    */
-  onScrollEnd?: (e: OriginalScrollViewProps['bindscrollend']) => void
+  onScrollEnd?: (e: ScrollEndEvent) => void
   /**
    * Being triggered when scrolling to upper.
    * @zh 滚动到顶部时触发。
@@ -33,7 +35,7 @@ export interface BaseScrollEvents {
    * @Android
    * @iOS
    */
-  onScrollToUpper?: (e: OriginalScrollViewProps['bindscrolltoupper']) => void
+  onScrollToUpper?: (e: ScrollToUpperEvent) => void
   /**
    * Being triggered when scrolling to lower.
    * @zh 滚动到底部时触发。
@@ -42,5 +44,5 @@ export interface BaseScrollEvents {
    * @Android
    * @iOS
    */
-  onScrollToLower?: (e: OriginalScrollViewProps['bindscrolltolower']) => void
+  onScrollToLower?: (e: ScrollToLowerEvent) => void
 }

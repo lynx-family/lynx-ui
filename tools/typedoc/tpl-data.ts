@@ -171,12 +171,14 @@ function tryInlineReferenceType(
 
   const pkgName = typeof targetPackage === 'string'
     ? targetPackage
-    : currentPkgName
+    : (typeof t?.package === 'string'
+      ? t.package
+      : currentPkgName)
 
   const isExternalPackage = typeof pkgName === 'string'
     && pkgName.startsWith('@lynx-js/lynx-ui-')
     && pkgName !== '@lynx-js/lynx-ui-common'
-  if (!isExternalPackage) return null
+  if (!isExternalPackage || pkgName === currentPkgName) return null
 
   const ctx = getExternalTypeContext(pkgName, isZhContext)
   if (!ctx) return null
@@ -205,6 +207,22 @@ function tryInlineReferenceType(
   }
 
   return null
+}
+
+function doTypeArgumentsCalc(
+  t: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+): string {
+  if (!Array.isArray(t?.typeArguments) || t.typeArguments.length === 0) {
+    return ''
+  }
+
+  return `<${
+    t.typeArguments.map((typeArgument: any) =>
+      doTypeCalc(typeArgument, isZhContext, currentPkgName)
+    ).join(', ')
+  }>`
 }
 
 const doFindObjectWithTagValue = (obj: any, tagName: any, tagValue: any) => {
@@ -261,16 +279,36 @@ const doSingleTypeCalc = (
       case 'intrinsic':
       case 'reference': {
         const inlined = tryInlineReferenceType(t, isZhContext, currentPkgName)
-        return inlined ?? name
+        return inlined ?? `${name}${
+          doTypeArgumentsCalc(
+            t,
+            isZhContext,
+            currentPkgName,
+          )
+        }`
       }
       case 'array':
-        return `${t.elementType.name}[]`
+        return `${doTypeCalc(t.elementType, isZhContext, currentPkgName)}[]`
       case 'literal':
         return t.value
       case 'templateLiteral':
         return t.head + t.tail?.map((ti: any) => ti?.[1]).join(',')
+      case 'union':
+        return doCalcUnionType(t.types, isZhContext, currentPkgName)
+      case 'intersection':
+        return t.types
+          .map((type: any) =>
+            doSingleTypeCalc(type, isZhContext, currentPkgName)
+          )
+          .join(' & ')
+      case 'reflection':
+        return doCalcReflectionType(
+          t.declaration,
+          isZhContext,
+          currentPkgName,
+        )
       default:
-        return t
+        return name ?? 'unknown'
     }
   } catch (e) {
     throw e
@@ -342,10 +380,16 @@ const doTypeCalc = (
       case 'intrinsic':
       case 'reference': {
         const inlined = tryInlineReferenceType(t, isZhContext, currentPkgName)
-        return inlined ?? name
+        return inlined ?? `${name}${
+          doTypeArgumentsCalc(
+            t,
+            isZhContext,
+            currentPkgName,
+          )
+        }`
       }
       case 'array':
-        return `${t.elementType.name}[]`
+        return `${doTypeCalc(t.elementType, isZhContext, currentPkgName)}[]`
       case 'tuple':
         return `[${
           t.elements.map((element: any) =>
@@ -360,10 +404,16 @@ const doTypeCalc = (
         return t.head + t.tail?.map((ti: any) => ti?.[1]).join(',')
       case 'union':
         return doCalcUnionType(types, isZhContext, currentPkgName)
+      case 'intersection':
+        return types
+          .map((type: any) =>
+            doSingleTypeCalc(type, isZhContext, currentPkgName)
+          )
+          .join(' & ')
       case 'reflection':
         return doCalcReflectionType(declaration, isZhContext, currentPkgName)
       default:
-        return t
+        return name ?? 'unknown'
     }
   } catch (e) {
     console.log(e)
@@ -415,6 +465,9 @@ const doDefaultValueCalc = (defaultValue: any) => {
 
 const doMoreForItem = (item: any, currentPkgName?: string) => {
   const { name, type } = item
+  const typeParameters = Array.isArray(item?.typeParameters)
+    ? item.typeParameters.map((parameter: any) => parameter.name).join(', ')
+    : ''
   // 是否可选
   const isOption = !!doFindObjectWithTagValue(item, 'isOptional', true)
     ? true
@@ -452,7 +505,7 @@ const doMoreForItem = (item: any, currentPkgName?: string) => {
     .trim()
 
   return {
-    name,
+    name: typeParameters ? `${name}<${typeParameters}>` : name,
     type: fallbackType || doTypeCalc(type, false, currentPkgName),
     summary,
     summary_zh,
@@ -470,12 +523,13 @@ const doGetChildren = (
   childrenRoot: Record<string, unknown>[],
   flag: string,
   currentPkgName?: string,
+  excludeInherited = false,
 ): any[] => {
   return groupsRoot?.map((g: any) => {
     const { title, children } = g
-    const targetChildren = childrenRoot.filter((c: any) =>
-      children.includes(c.id)
-    )
+    const targetChildren = childrenRoot
+      .filter((c: any) => children.includes(c.id))
+      .filter((c: any) => !excludeInherited || !c.flags?.isInherited)
 
     const formatChildren = targetChildren.map((f: any) => {
       if (f.groups && f.children) {
@@ -484,6 +538,7 @@ const doGetChildren = (
           f.children as Record<string, unknown>[],
           flag + '#',
           currentPkgName,
+          excludeInherited,
         )
       }
 

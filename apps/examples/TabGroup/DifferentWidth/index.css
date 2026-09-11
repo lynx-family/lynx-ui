@@ -1,0 +1,15 @@
+.tab-group-different-width__item:nth-child(2) {
+  width: 112px;
+}
+
+.tab-group-different-width__item:nth-child(3) {
+  width: 184px;
+}
+
+.tab-group-different-width__item:nth-child(4) {
+  width: 120px;
+}
+
+.tab-group-different-width__item:nth-child(5) {
+  width: 88px;
+}

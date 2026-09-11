@@ -1,0 +1,48 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.tab-group-demo-motion {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 64px;
+  gap: 24px;
+  background-color: var(--canvas);
+}
+
+.tab-group-demo-motion__title {
+  padding-left: 24px;
+  font-size: 32px;
+  color: var(--content);
+}
+
+.tab-group-demo-motion__tabs {
+  width: 100vw;
+  height: 72px;
+}
+
+.tab-group-demo-motion__tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  padding-left: 40px;
+  padding-right: 40px;
+  color: var(--content);
+}
+
+.tab-group-demo-motion__indicator {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.tab-group-demo-motion__indicator-line {
+  width: 80%;
+  height: 10px;
+  background-color: var(--primary);
+  border-radius: 999px;
+}
