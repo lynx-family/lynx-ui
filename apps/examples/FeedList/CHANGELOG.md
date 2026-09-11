@@ -1,5 +1,16 @@
 # @lynx-example/lynx-ui-feed-list
 
+## 0.0.18
+
+### Patch Changes
+
+- Preserve the List `bounces` prop when FeedList uses native pull-to-refresh, and enable it in the native refresh example. ([#289](https://github.com/lynx-family/lynx-ui/pull/289))
+
+- Add a `refreshOptions.mode: 'native'` option that implements FeedList pull-to-refresh with the native `<refresh>` element while preserving refresh callbacks and imperative methods. ([#288](https://github.com/lynx-family/lynx-ui/pull/288))
+
+- Updated dependencies [[`d294b97`](https://github.com/lynx-family/lynx-ui/commit/d294b976e0bb814c05a5c655ad37b059d7ebdb1f)]:
+  - @lynx-js/lynx-ui@3.138.0
+
 ## 0.0.17
 
 ### Patch Changes

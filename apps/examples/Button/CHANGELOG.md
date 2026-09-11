@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-button
 
+## 0.0.18
+
+### Patch Changes
+
+- Updated dependencies [[`d294b97`](https://github.com/lynx-family/lynx-ui/commit/d294b976e0bb814c05a5c655ad37b059d7ebdb1f)]:
+  - @lynx-js/lynx-ui@3.138.0
+
 ## 0.0.17
 
 ### Patch Changes

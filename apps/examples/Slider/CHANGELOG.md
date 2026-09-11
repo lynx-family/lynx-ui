@@ -1,5 +1,14 @@
 # @lynx-example/lynx-ui-slider
 
+## 0.0.18
+
+### Patch Changes
+
+- Add ordered two-thumb range selection to `SliderRoot`, including controlled and uncontrolled tuples, indexed thumbs, step snapping, non-crossing drag behavior, and a price-range example. Single and range values share `SliderRootProps<Value>` and `SliderRef<Value>`; React-extracted props and refs use the neutral `SliderValue` shape, while the generic defaults to `number` for existing explicit annotations. ([#285](https://github.com/lynx-family/lynx-ui/pull/285))
+
+- Updated dependencies [[`d294b97`](https://github.com/lynx-family/lynx-ui/commit/d294b976e0bb814c05a5c655ad37b059d7ebdb1f)]:
+  - @lynx-js/lynx-ui@3.138.0
+
 ## 0.0.17
 
 ### Patch Changes

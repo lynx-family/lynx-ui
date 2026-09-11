@@ -1,5 +1,17 @@
 # @lynx-js/lynx-ui
 
+## 3.138.0
+
+### Minor Changes
+
+- Export the generic slider value model and thumb index types from the aggregate package. ([#285](https://github.com/lynx-family/lynx-ui/pull/285))
+
+### Patch Changes
+
+- Updated dependencies [[`d294b97`](https://github.com/lynx-family/lynx-ui/commit/d294b976e0bb814c05a5c655ad37b059d7ebdb1f), [`3532186`](https://github.com/lynx-family/lynx-ui/commit/35321867b6464319924756b7174d5c5a9a6a0652), [`0d2f7b8`](https://github.com/lynx-family/lynx-ui/commit/0d2f7b83f0283f0a816ea3ab46bbe85bd8cc135c)]:
+  - @lynx-js/lynx-ui-slider@3.138.0
+  - @lynx-js/lynx-ui-feed-list@3.138.0
+
 ## 3.137.0
 
 ### Patch Changes

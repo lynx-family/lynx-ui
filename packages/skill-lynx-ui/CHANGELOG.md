@@ -1,5 +1,15 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.8
+
+### Patch Changes
+
+- Add ordered two-thumb range selection to `SliderRoot`, including controlled and uncontrolled tuples, indexed thumbs, step snapping, non-crossing drag behavior, and a price-range example. Single and range values share `SliderRootProps<Value>` and `SliderRef<Value>`; React-extracted props and refs use the neutral `SliderValue` shape, while the generic defaults to `number` for existing explicit annotations. ([#285](https://github.com/lynx-family/lynx-ui/pull/285))
+
+- Add Input and TextArea skill guidance covering value synchronization, native ([#293](https://github.com/lynx-family/lynx-ui/pull/293))
+  editing behavior, selection, and keyboard-aware layouts, including the Android
+  Activity soft input mode prerequisite for keyboard avoidance.
+
 ## 3.133.7
 
 ### Patch Changes
