@@ -1,11 +1,1 @@
-.lynx-ui-tab-group__items {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  z-index: 0;
-}
-
-.lynx-ui-tab-group__indicator {
-  bottom: 0px;
-  position: absolute;
-}
+/* Required structural styles are applied inline so this package remains side-effect free. */

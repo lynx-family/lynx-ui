@@ -19,7 +19,7 @@ export function App() {
   )
 
   return (
-    <view className='tab-group-demo-basic'>
+    <view className='tab-group-demo-basic lunaris-dark'>
       <text className='tab-group-demo-basic__title'>TabGroup</text>
       <TabsRoot
         onClickItem={index => console.info('tabs click', index)}

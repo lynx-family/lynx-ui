@@ -19,7 +19,7 @@ export function App() {
   )
 
   return (
-    <view className='tab-group-demo-motion'>
+    <view className='tab-group-demo-motion lunaris-dark'>
       <text className='tab-group-demo-motion__title'>
         Custom indicator spring animation
       </text>

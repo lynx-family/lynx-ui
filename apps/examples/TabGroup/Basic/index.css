@@ -5,8 +5,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: calc(48px + env(safe-area-inset-top));
+  padding-top: 64px;
   gap: 24px;
+  background-color: var(--canvas);
 }
 
 .tab-group-demo-basic__title {
@@ -28,6 +29,7 @@
   width: max-content;
   padding-left: 40px;
   padding-right: 40px;
+  color: var(--content);
 }
 
 .tab-group-demo-basic__indicator {

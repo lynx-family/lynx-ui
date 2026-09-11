@@ -37,5 +37,9 @@ reviews:
         3. **Naming Conventions**:
            Ensure the project name is always referred to as **lynx-ui** (lowercase).
            - If you find "Lynx UI" or "Lynx-UI", provide a replacement suggestion immediately.
+
+        4. **Component Package Side Effects**:
+           Ensure every component package under `packages/lynx-ui-*` declares `"sideEffects": false` in `package.json`, including packages that import component styles.
+           - Flag CSS glob allowlists or any other truthy `sideEffects` declaration and provide a suggestion that replaces it with `false`.
 chat:
   auto_reply: true

@@ -116,7 +116,9 @@ export const TabsItem = (props: TabItemProps) => {
 
   const onLayoutChange = (e: LayoutChangeDetailEvent<MainThread.Element>) => {
     'main thread'
-    const width = e.detail?.width
+    // Android reports main-thread layout data through `params`, while iOS
+    // reports it through `detail`.
+    const width = e.detail?.width ?? e.params?.width
     if (typeof width !== 'number') {
       return
     }

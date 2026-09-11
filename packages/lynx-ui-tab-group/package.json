@@ -10,9 +10,7 @@
   "author": {
     "name": "The Lynx Authors"
   },
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.jsx",
   "module": "./dist/index.jsx",

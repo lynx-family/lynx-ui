@@ -161,6 +161,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 ### General
 
 - **TypeScript**: Use strict typing. Avoid `any`.
+- **Side Effects**: Component packages must declare `"sideEffects": false` in `package.json`, including packages that import component styles. Do not add CSS glob allowlists to `sideEffects`.
 - **Comments**: All code comments **MUST** be written in English.
 - **Functional Components**: Use React Functional Components with Hooks.
 - **Controlled & Uncontrolled Modes**: We encourage all interactive components to support both **controlled** and **uncontrolled** modes. This provides flexibility for users who want to manage state externally (controlled) or let the component manage its own internal state (uncontrolled). Typically, you should provide a `value` (or `show`, etc.) prop for the controlled mode, and a `defaultValue` (or `defaultShow`, etc.) prop for the uncontrolled mode.
