@@ -61,9 +61,7 @@ function ProfileFields() {
 
 Give fields a usable width and a deliberate height or content-sizing policy.
 Compose labels, borders, icons, clear buttons, and validation messages in
-surrounding views. For themed examples, import
-`@lynx-js/luna-styles/index.css` in the stylesheet, apply a theme such as
-`lunaris-dark` at the page root, and use semantic LUNA tokens.
+surrounding views.
 
 ### Public API Boundary
 
@@ -98,7 +96,7 @@ either. Do not add these props to generated consumer code.
 > and [validation timing].
 > **Keyboard behavior**: [confirmation action], [focus or selection action], and
 > [no avoidance / translated region / scrollable form].
-> **Appearance**: [LUNA theme], [dimensions], [labels and surrounding controls].
+> **Appearance**: [dimensions], [labels and surrounding controls].
 
 **Example Prompts:**
 
@@ -106,7 +104,7 @@ either. Do not add these props to generated consumer code.
   immediately and debounce search requests while respecting IME composition."
 - "Build an uncontrolled numeric Input with a six-character limit and a clear
   button using `InputRef.setValue('')`."
-- "Build a LUNA-themed profile form with Input and TextArea inside a vertical
+- "Build a profile form with Input and TextArea inside a vertical
   KeyboardAwareResponder. Keep each focused field above the keyboard."
 
 ## 3. Use Cases & Best Practices
