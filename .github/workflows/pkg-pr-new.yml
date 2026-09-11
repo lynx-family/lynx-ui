@@ -18,7 +18,10 @@ concurrency:
 jobs:
   build:
     name: Build
-    if: github.repository == 'lynx-family/lynx-ui'
+    if: >-
+      github.repository == 'lynx-family/lynx-ui' &&
+      !startsWith(github.head_ref, 'changeset-release/') &&
+      !startsWith(github.head_ref, 'release/')
     permissions:
       contents: read
     uses: ./.github/workflows/build.yml
@@ -30,7 +33,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.repository == 'lynx-family/lynx-ui'
+    if: >-
+      github.repository == 'lynx-family/lynx-ui' &&
+      !startsWith(github.head_ref, 'changeset-release/') &&
+      !startsWith(github.head_ref, 'release/')
     permissions:
       actions: read
       contents: read
@@ -60,7 +66,11 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         shell: bash
         run: |
-          pnpm changeset status --since="$BASE_SHA" --output .changeset-status.json
+          if ! pnpm changeset status --since="$BASE_SHA" --output .changeset-status.json; then
+            echo "No active changesets found for changed packages; skipping pkg.pr.new publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           PACKAGE_DIRS="$(node .github/scripts/list-changeset-packages.cjs .changeset-status.json | tr '\n' ' ')"
           if [ -z "$(echo "$PACKAGE_DIRS" | tr -d '[:space:]')" ]; then
             echo "No publishable packages affected by changesets; skipping pkg.pr.new publish."
