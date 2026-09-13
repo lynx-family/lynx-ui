@@ -169,7 +169,16 @@ jobs:
 
         printf '\n//localhost:4873/:_authToken="this-is-a-fake-token"\n' >> ~/.npmrc
         pnpm ensure:skills-changeset
-        pnpm changeset version --snapshot regression
+        # Check file presence before versioning; Changesets validates content.
+        changeset_files="$(
+          find .changeset -maxdepth 1 -type f -name '*.md' \
+            ! -name '.*' ! -iname 'README.md' -print
+        )"
+        if [ -n "$changeset_files" ]; then
+          pnpm changeset version --snapshot regression
+        else
+          echo "No active changesets found; skipping snapshot versioning."
+        fi
         node tools/canary-release/snapshot.js
         pnpm --recursive publish --no-git-checks --access public --registry=http://localhost:4873
         PKG_NAME=$(node -p "require('./packages/lynx-ui-button/package.json').name")
