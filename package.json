@@ -72,8 +72,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@changesets/cli": "2.28.1",
-    "@changesets/parse": "0.4.3",
+    "@changesets/cli": "3.0.2",
+    "@changesets/parse": "1.0.0",
     "@cspell/eslint-plugin": "^8.17.1",
     "@eslint/js": "^9.17.0",
     "@lynx-js/qrcode-rsbuild-plugin": "catalog:",
