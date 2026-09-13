@@ -9,14 +9,21 @@ on:
 # Set default minimum permissions to prevent unnecessary access
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   CI: 1
+  # The pnpm pin and frozen lockfile do not pin Corepack itself.
+  COREPACK_VERSION: "0.36.0"
   TURBO_TELEMETRY_DISABLED: 1
   GITHUB_BASE_REF: ${{ github.base_ref }}
   GITHUB_HEAD_REF: ${{ github.head_ref }}
   GITHUB_REF: ${{ github.ref }}
   NPM_CONFIG_PROVENANCE: true
 jobs:
+  # Validate the workspace and upload the local Turbo cache for the pack job.
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -36,7 +43,7 @@ jobs:
           package-manager-cache: false
       - name: Install
         run: |
-          npm install -g corepack@latest
+          npm install -g "corepack@${COREPACK_VERSION}"
           corepack enable && corepack prepare
           corepack pnpm install --frozen-lockfile
       - name: Build
@@ -52,25 +59,54 @@ jobs:
           retention-days: 1
           overwrite: true
           include-hidden-files: true
-  # We make a build here to make sure cache works for pull requests
-  # See: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
-  release:
-    name: Release
+
+  select-mode:
+    name: Select Mode
     timeout-minutes: 30
     needs: build
     runs-on: ubuntu-latest
     if: github.repository == 'lynx-family/lynx-ui'
-    concurrency:
-      group: ${{ github.workflow }}-publish-${{ github.ref }}
-      cancel-in-progress: false
-    environment: npm
+    outputs:
+      mode: ${{ steps.changesets.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.changesets.outputs.publish-plan-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - name: Check Release Run Is Current
+        id: current-main
+        shell: bash
+        run: |
+          set -eu
+          read -r latest_main_sha _ < <(git ls-remote --exit-code origin refs/heads/main)
+          echo "sha=${latest_main_sha}" >> "${GITHUB_OUTPUT}"
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        if: github.sha == steps.current-main.outputs.sha
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Install
+        if: github.sha == steps.current-main.outputs.sha
+        run: |
+          npm install -g "corepack@${COREPACK_VERSION}"
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile
+      - name: Select Changesets Mode
+        id: changesets
+        if: github.sha == steps.current-main.outputs.sha
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  version:
+    name: Version Packages
+    timeout-minutes: 30
+    needs: select-mode
+    runs-on: ubuntu-latest
+    if: needs.select-mode.outputs.mode == 'version'
     permissions:
       contents: write
       pull-requests: write
-      statuses: read
-      # `id-token: write` is required for npm provenance
-      # See: https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions
-      id-token: write
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
@@ -79,11 +115,56 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       - name: Install
         run: |
-          npm install -g corepack@latest
+          npm install -g "corepack@${COREPACK_VERSION}"
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile
+      - name: Get Current Date
+        id: date
+        run: echo "date=$(date -u +'%Y-%m-%d %H:%M:%S')" >> "${GITHUB_OUTPUT}"
+      # main may advance after mode selection while this job is starting.
+      - name: Check Release Run Is Current
+        id: current-main
+        shell: bash
+        run: |
+          set -eu
+          read -r latest_main_sha _ < <(git ls-remote --exit-code origin refs/heads/main)
+          echo "sha=${latest_main_sha}" >> "${GITHUB_OUTPUT}"
+      - name: Version Packages
+        if: github.sha == steps.current-main.outputs.sha
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKILL_LYNX_UI_BASE_REF: ${{ github.event.before }}
+        with:
+          script: pnpm version:packages
+          pr-title: "chore: Release ${{ steps.date.outputs.date }}"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  pack:
+    name: Pack Packages
+    timeout-minutes: 30
+    needs: select-mode
+    runs-on: ubuntu-latest
+    if: needs.select-mode.outputs.mode == 'publish'
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Install
+        run: |
+          npm install -g "corepack@${COREPACK_VERSION}"
           corepack enable && corepack prepare
           corepack pnpm install --frozen-lockfile
       - name: Download Turbo Cache
@@ -100,9 +181,46 @@ jobs:
         run: |
           corepack pnpm turbo build --summarize
           corepack pnpm check:package-types
-      - name: Get Current Date
-        id: date
-        run: echo "date=$(date -u +'%Y-%m-%d %H:%M:%S')" >> "${GITHUB_OUTPUT}"
+      - name: Pack Packages
+        id: pack
+        uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+  publish:
+    name: Publish Packages
+    timeout-minutes: 30
+    needs: pack
+    runs-on: ubuntu-latest
+    if: github.repository == 'lynx-family/lynx-ui'
+    environment: npm
+    permissions:
+      actions: read
+      # Required to create Git tags and GitHub Releases after publishing.
+      contents: write
+      # `id-token: write` is required for npm provenance
+      # See: https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions
+      id-token: write
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      # Do not run install lifecycle scripts in the OIDC-enabled publish job.
+      - name: Install
+        run: |
+          npm install -g "corepack@${COREPACK_VERSION}" --ignore-scripts
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile --ignore-scripts
+      - name: Print Package Manager Versions
+        run: |
+          npm --version
+          corepack pnpm --version
+      # main may advance during packing or while waiting for the npm environment.
       - name: Check Release Run Is Current
         id: current-main
         shell: bash
@@ -110,14 +228,9 @@ jobs:
           set -eu
           read -r latest_main_sha _ < <(git ls-remote --exit-code origin refs/heads/main)
           echo "sha=${latest_main_sha}" >> "${GITHUB_OUTPUT}"
-      - name: Create Version PR Or Publish
+      - name: Publish Packages
         if: github.sha == steps.current-main.outputs.sha
-        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SKILL_LYNX_UI_BASE_REF: ${{ github.event.before }}
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          version-script: pnpm version:packages
-          publish-script: pnpm changeset publish
-          pr-title: "chore: Release ${{ steps.date.outputs.date }}"
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
