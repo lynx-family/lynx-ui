@@ -10,6 +10,11 @@
       "useWhen": "The user needs boolean selection or an indeterminate partial-selection state.",
       "avoidWhen": "The interaction represents an immediate on/off setting; use Switch."
     },
+    "deferred-component": {
+      "label": "DeferredComponent",
+      "useWhen": "An expensive subtree should mount after its first layout or a configured number of frames.",
+      "avoidWhen": "Mounting should depend on viewport visibility; use LazyComponent."
+    },
     "dialog": {
       "label": "Dialog",
       "useWhen": "The UI needs a blocking centered modal for confirmation, alerts, or focused content.",

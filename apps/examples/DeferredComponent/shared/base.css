@@ -1,0 +1,107 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.deferred-demo-page {
+  width: 100%;
+  height: 100%;
+  padding: 64px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: var(--canvas);
+}
+
+.deferred-demo-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--content);
+}
+
+.deferred-demo-description {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--content-muted);
+}
+
+.deferred-demo-label {
+  font-size: 16px;
+  color: var(--content);
+}
+
+.deferred-demo-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: var(--paper);
+}
+
+.deferred-demo-preview {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  background-color: var(--paper-clear);
+  overflow: hidden;
+}
+
+.deferred-demo-content {
+  width: 100%;
+  height: 160px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 12px;
+  background-color: var(--secondary-2);
+}
+
+.deferred-demo-content-expanded {
+  height: 240px;
+}
+
+.deferred-demo-cells {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.deferred-demo-cell {
+  width: 6px;
+  height: 6px;
+  margin: 2px;
+  background-color: var(--primary-muted);
+}
+
+.deferred-demo-placeholder {
+  width: 100%;
+  height: 120px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: var(--paper-clear);
+}
+
+.deferred-demo-button {
+  min-height: 44px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: var(--primary);
+}
+
+.deferred-demo-button.ui-active {
+  background-color: var(--primary-2);
+}
+
+.deferred-demo-button-label {
+  font-size: 14px;
+  color: var(--primary-content);
+}

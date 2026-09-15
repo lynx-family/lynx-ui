@@ -84,6 +84,13 @@ export type {
   CheckboxIndicatorProps,
 } from '@lynx-js/lynx-ui-checkbox'
 
+// deferred-component
+export { DeferredComponent } from '@lynx-js/lynx-ui-deferred-component'
+export type {
+  DeferredComponentProps,
+  DeferredComponentRef,
+} from '@lynx-js/lynx-ui-deferred-component'
+
 // dialog
 export {
   DialogView,

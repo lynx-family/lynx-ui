@@ -18,6 +18,9 @@
       "path": "./packages/lynx-ui-common"
     },
     {
+      "path": "./packages/lynx-ui-deferred-component"
+    },
+    {
       "path": "./packages/lynx-ui-dialog"
     },
     {

@@ -33,6 +33,7 @@
     "@lynx-js/lynx-ui-button": "workspace:*",
     "@lynx-js/lynx-ui-checkbox": "workspace:*",
     "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/lynx-ui-deferred-component": "workspace:*",
     "@lynx-js/lynx-ui-dialog": "workspace:*",
     "@lynx-js/lynx-ui-draggable": "workspace:*",
     "@lynx-js/lynx-ui-feed-list": "workspace:*",

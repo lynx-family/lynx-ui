@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "jsxImportSource": "@lynx-js/react",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "rootDir": "..",
+    "types": [
+      "@lynx-js/types",
+      "@testing-library/jest-dom",
+      "vitest/globals",
+    ],
+  },
+  "include": [
+    "*.test.tsx",
+  ],
+  "exclude": [],
+}
