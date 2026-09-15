@@ -9,7 +9,7 @@
     "bootstrap:package": "node tools/scripts/bootstrap-package.mjs",
     "build": "turbo build",
     "changeset": "changeset",
-    "check": "pnpm run check:luna-vars && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
+    "check": "pnpm run check:luna-vars && rslint -c rslint.config.mjs --fix && dprint check",
     "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:changesets-private && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "sh tools/checkChanged/checkChanged.sh",
     "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
@@ -36,6 +36,8 @@
     "genDoc": "pnpm tsx tools/typedoc/index.ts",
     "install:all": "pnpm install",
     "knip": "knip",
+    "lint": "rslint -c rslint.config.mjs",
+    "lint:fix": "rslint -c rslint.config.mjs --fix",
     "lint:rslint": "rslint -c rslint.config.mjs",
     "lint:rslint:fix": "rslint -c rslint.config.mjs --fix",
     "make-new-component": "tsx tools/make-new-component/index.ts",
@@ -51,8 +53,7 @@
   },
   "nano-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
-      "eslint --cache --fix --no-warn-ignored",
-      "biome lint --write --no-errors-on-unmatched --files-ignore-unknown=true",
+      "rslint -c rslint.config.mjs --fix",
       "dprint fmt --allow-no-files --"
     ],
     "**/*.mdx": [
@@ -74,7 +75,6 @@
     ]
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
     "@changesets/cli": "2.28.1",
     "@changesets/parse": "0.4.3",
     "@cspell/eslint-plugin": "^8.17.1",
