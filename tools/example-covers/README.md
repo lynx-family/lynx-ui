@@ -88,6 +88,7 @@ Use `--device` to automatically set `-t` and `-b` for a specific device's status
 | `iphone-13`         | 44   | 20   | iPhone 13 / 13 Pro (1170x2532)      |
 | `iphone-16`         | 60   | 20   | iPhone 16 (1179x2556)               |
 | `iphone-16-pro`     | 61   | 16   | iPhone 16 Pro / Pro Max (1206x2622) |
+| `iphone-17`         | 61   | 16   | iPhone 17 (1206x2622)               |
 
 ```bash
 # Use iPhone 16 Pro preset
@@ -118,7 +119,7 @@ The table below lists the options with built-in default values:
 
 | Parameter   | Default            | Description                                         |
 | ----------- | ------------------ | --------------------------------------------------- |
-| `-p`        | `lynx-ui-cover-`   | Output filename prefix                              |
+| `-p`        | `lynx-ui-cover-`   | Output filename prefix; use `-p ""` for no prefix   |
 | `-w`        | 480                | Output width                                        |
 | `-h`        | 960                | Output height                                       |
 | `-t`        | 44                 | Top crop — removes status bar + recording indicator |
@@ -147,6 +148,9 @@ If the crop values are too aggressive for the source (not enough height left), t
 ```bash
 # Custom output directory
 ./process_covers.sh -i ./raw -o ./covers
+
+# Disable the output filename prefix
+./process_covers.sh -i ./raw -p ""
 
 # iPhone 16 Pro preset
 ./process_covers.sh -i ./raw --device iphone-16-pro

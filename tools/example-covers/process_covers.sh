@@ -21,7 +21,7 @@ set -euo pipefail
 # ── Device presets (bash 3 compatible) ───────────────────────
 # Each entry: "top bottom description"
 # Looked up by device_preset_lookup(); avoids declare -A.
-DEVICE_PRESET_KEYS="iphone-11-pro iphone-12-pro-max iphone-13 iphone-16 iphone-16-pro"
+DEVICE_PRESET_KEYS="iphone-11-pro iphone-12-pro-max iphone-13 iphone-16 iphone-16-pro iphone-17"
 
 device_preset_lookup() {
   case "$1" in
@@ -30,6 +30,7 @@ device_preset_lookup() {
     iphone-13)         echo "44 20 iPhone 13 / 13 Pro (1170x2532)" ;;
     iphone-16)         echo "60 20 iPhone 16 (1179x2556)" ;;
     iphone-16-pro)     echo "61 16 iPhone 16 Pro / Pro Max (1206x2622)" ;;
+    iphone-17)         echo "61 16 iPhone 17 (1206x2622)" ;;
     *) return 1 ;;
   esac
 }
@@ -90,7 +91,7 @@ Options:
   -h NUM    Target height  (default: 960)
   -q NUM    JPEG quality 1-100 (default: 85)
   -c NUM    Video CRF 0-63, lower=better (default: 30)
-  -p STR    Filename prefix (default: "lynx-ui-cover-")
+  -p STR    Filename prefix (default: "lynx-ui-cover-"; use "" for none)
   -t NUM    Top crop in output-space pixels (default: 44)
   -b NUM    Bottom crop in output-space pixels (default: 20)
   --device  Device preset for -t/-b values (overrides -t/-b if set before)
@@ -105,6 +106,7 @@ Device presets:
   --device iphone-13         -t 44 -b 20  (default)
   --device iphone-16         -t 60 -b 20
   --device iphone-16-pro     -t 61 -b 16
+  --device iphone-17         -t 61 -b 16
 
   Explicit -t/-b after --device overrides the preset values.
 
@@ -125,6 +127,7 @@ Examples:
   ./process_covers.sh -i ./screenshots -w 1280 -h 720
   ./process_covers.sh -i ./raw --device iphone-16-pro
   ./process_covers.sh -i ./raw --device iphone-16 -t 50
+  ./process_covers.sh -i ./raw -p ""
   ./process_covers.sh -i ./raw -w 480 -h 920 -t 40 -b 20
   ./process_covers.sh -i ./raw -o ./covers -p "lynx-" -w 960 -h 540
   ./process_covers.sh -i ./raw -d
