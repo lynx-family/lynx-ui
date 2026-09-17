@@ -62,6 +62,8 @@ jobs:
           name: package-artifacts-${{ github.sha }}
       - name: Extract Package Artifacts
         run: tar -xzf package-artifacts.tgz
+      # Select releases from the PR head, but publish from the merge-ref
+      # workspace so package manifests and extracted artifacts stay aligned.
       - name: Collect Packages with Changesets
         id: changeset
         env:
@@ -88,27 +90,40 @@ jobs:
               --since="$MERGE_BASE" \
               --output .changeset-status.json
           )
-          PACKAGE_DIRS="$(node .github/scripts/list-changeset-packages.cjs "$PR_HEAD_DIR/.changeset-status.json" | tr '\n' ' ')"
-          if [ -z "$(echo "$PACKAGE_DIRS" | tr -d '[:space:]')" ]; then
+          # Resolve package names in the merge-ref workspace. These absolute
+          # paths remain valid after the temporary PR-head worktree is removed.
+          package_dirs=()
+          while IFS= read -r package_dir; do
+            package_dirs+=("$package_dir")
+          done < <(
+            node .github/scripts/list-changeset-packages.cjs \
+              "$PR_HEAD_DIR/.changeset-status.json"
+          )
+          if [ "${#package_dirs[@]}" -eq 0 ]; then
             echo "No publishable packages affected by changesets; skipping pkg.pr.new publish."
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "Publishing the following package directories to pkg.pr.new:"
-          printf '  %s\n' $PACKAGE_DIRS
+          printf '  %s\n' "${package_dirs[@]}"
           {
             echo "skip=false"
             echo "package-dirs<<EOF"
-            echo "$PACKAGE_DIRS"
+            printf '%s\n' "${package_dirs[@]}"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
       - name: Publish Preview Packages
         if: steps.changeset.outputs.skip == 'false'
         env:
           PACKAGE_DIRS: ${{ steps.changeset.outputs.package-dirs }}
-        run: >
-          pnpm exec pkg-pr-new publish
-          --pnpm
-          --commentWithSha
-          --packageManager=pnpm
-          $PACKAGE_DIRS
+        shell: bash
+        run: |
+          package_dirs=()
+          while IFS= read -r package_dir; do
+            package_dirs+=("$package_dir")
+          done <<< "$PACKAGE_DIRS"
+          pnpm exec pkg-pr-new publish \
+            --pnpm \
+            --commentWithSha \
+            --packageManager=pnpm \
+            "${package_dirs[@]}"

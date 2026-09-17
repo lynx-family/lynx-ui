@@ -11,6 +11,8 @@ function listChangesetFilesSince(mergeBase, cwd = process.cwd()) {
     throw new TypeError('A merge-base Git ref is required')
   }
 
+  // Deleted files are no longer active changesets. NUL delimiters preserve
+  // file names containing whitespace.
   const changedFiles = execFileSync(
     'git',
     ['diff', '--name-only', '--diff-filter=d', '-z', mergeBase, 'HEAD'],
@@ -20,6 +22,8 @@ function listChangesetFilesSince(mergeBase, cwd = process.cwd()) {
     },
   )
 
+  // This preflight checks file presence only. Changesets validates content and
+  // decides whether an empty changeset produces any releases.
   return changedFiles
     .split('\0')
     .filter(
@@ -29,6 +33,7 @@ function listChangesetFilesSince(mergeBase, cwd = process.cwd()) {
     )
 }
 
+// Print paths for the workflow while keeping the function importable by tests.
 if (require.main === module) {
   for (const file of listChangesetFilesSince(process.argv[2])) {
     process.stdout.write(`${file}\n`)
