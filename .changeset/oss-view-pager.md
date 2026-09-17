@@ -4,4 +4,4 @@
 '@lynx-js/skill-lynx-ui': patch
 ---
 
-Add ViewPager and ViewPagerItem with native-ref imperative selection, state styling, and page-based lazy rendering.
+Add a data-driven ViewPager with generated native page items, exposure-driven lazy rendering, native-ref imperative selection, and shared or per-item styling.

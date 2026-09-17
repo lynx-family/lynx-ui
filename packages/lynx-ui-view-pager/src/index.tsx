@@ -2,27 +2,18 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import {
-  createContext,
-  forwardRef,
-  isValidElement,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from '@lynx-js/react'
+import { forwardRef, memo, useImperativeHandle, useRef } from '@lynx-js/react'
 import type { ForwardedRef, ReactElement, ReactNode } from '@lynx-js/react'
 
+import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
 import type { NodesRef } from '@lynx-js/types'
 import { clsx } from 'clsx'
 
 import './styles.css'
 
 import type {
-  ViewPagerItemProps,
-  ViewPagerItemRenderProps,
-  ViewPagerItemUIVariants,
+  ViewPagerItemOptions,
+  ViewPagerLazyOptions,
   ViewPagerProps,
   ViewPagerRef,
 } from './types'
@@ -30,35 +21,92 @@ import { normalizeIndex } from './utils'
 
 export type * from './types'
 
-const ItemContext = createContext<
-  (ViewPagerItemRenderProps & { shouldMount: boolean }) | null
->(null)
+type ViewPagerComponent = <T>(
+  props: ViewPagerProps<T> & { ref?: ForwardedRef<ViewPagerRef> },
+) => ReactElement
 
-// Providers preserve keyed page identity without adding native wrapper nodes.
-function collectPages(children: ReactNode): ReactElement[] {
-  if (Array.isArray(children)) {
-    return children.flatMap((child: ReactNode) => collectPages(child))
-  }
-  if (children == null || typeof children === 'boolean') return []
-  if (!isValidElement(children) || children.type !== ViewPagerItem) {
-    throw new Error('ViewPager children must be ViewPagerItem elements.')
-  }
-  return [children]
+interface PageContentProps {
+  item: unknown
+  index: number
+  renderItem: (item: unknown, index: number) => ReactNode
 }
 
-export const ViewPager = forwardRef(ViewPagerImpl)
+const PageContent = memo(function PageContent(props: PageContentProps) {
+  return props.renderItem(props.item, props.index)
+})
 
-function ViewPagerImpl(props: ViewPagerProps, ref: ForwardedRef<ViewPagerRef>) {
+interface PageItemProps extends PageContentProps {
+  itemKey: string | number
+  initial: boolean
+  className?: string
+  style?: ViewPagerItemOptions['style']
+  options?: ViewPagerItemOptions
+  lazyOptions?: ViewPagerLazyOptions
+}
+
+function PageItem(props: PageItemProps) {
   const {
+    item,
+    index,
+    itemKey,
+    initial,
+    renderItem,
+    className,
+    style,
+    options,
+    lazyOptions,
+  } = props
+  const content = (
+    <PageContent item={item} index={index} renderItem={renderItem} />
+  )
+
+  return (
+    <viewpager-item
+      {...options?.itemProps}
+      className={clsx(
+        'lynx-ui-view-pager__item',
+        className,
+        options?.className,
+      )}
+      style={{ ...style, ...options?.style }}
+    >
+      {lazyOptions?.enableLazy && !initial
+        ? (
+          <LazyComponent
+            pid={`lynx-ui-view-pager-${String(itemKey)}`}
+            scene={lazyOptions.scene}
+            estimatedStyle={{ width: '100%', height: '100%' }}
+            left={lazyOptions.exposureLeft}
+            right={lazyOptions.exposureRight}
+          >
+            {content}
+          </LazyComponent>
+        )
+        : content}
+    </viewpager-item>
+  )
+}
+
+export const ViewPager = memo(forwardRef(ViewPagerImpl)) as ViewPagerComponent
+
+function ViewPagerImpl<T>(
+  props: ViewPagerProps<T>,
+  ref: ForwardedRef<ViewPagerRef>,
+) {
+  const {
+    data,
+    getItemKey,
     children,
     initialSelectIndex = 0,
     className,
     style,
+    itemClassName,
+    itemStyle,
+    getItemProps,
     viewpagerProps,
     enableScroll = true,
     bounces = true,
-    lazy = true,
-    preloadCount = 1,
+    lazyOptions,
     onPageChange,
     onPageWillChange,
     onOffsetChange,
@@ -66,36 +114,32 @@ function ViewPagerImpl(props: ViewPagerProps, ref: ForwardedRef<ViewPagerRef>) {
     MTOnPageWillChange,
     MTOnOffsetChange,
   } = props
-  const pages = collectPages(children)
   const initialIndex = useRef(initialSelectIndex)
-  const [activeIndex, setActiveIndex] = useState(initialIndex.current)
-  const selectedIndex = normalizeIndex(activeIndex, pages.length)
   const nativeRef = useRef<NodesRef>(null)
-  const [destination, setDestination] = useState<number | null>(null)
+  const countRef = useRef(data.length)
+  countRef.current = data.length
+  const normalizedInitialIndex = normalizeIndex(
+    initialIndex.current,
+    data.length,
+  )
 
   useImperativeHandle(ref, () => ({
     selectTab(next, smooth, success, fail) {
-      if (pages.length === 0) return
-      const target = normalizeIndex(next, pages.length)
-      setDestination(target)
+      if (countRef.current === 0) return
       nativeRef.current?.invoke({
         method: 'selectTab',
-        params: { index: target, smooth: smooth ?? true },
+        params: {
+          index: normalizeIndex(next, countRef.current),
+          smooth: smooth ?? true,
+        },
         success,
         fail,
       }).exec()
     },
   }))
 
-  useEffect(() => {
-    if (pages.length > 0 && activeIndex !== selectedIndex) {
-      setActiveIndex(selectedIndex)
-    }
-  }, [activeIndex, selectedIndex, pages.length])
-
-  const preload = Number.isFinite(preloadCount)
-    ? Math.max(0, Math.trunc(preloadCount))
-    : 1
+  const renderItem = children as (item: unknown, index: number) => ReactNode
+  const keepItemView = lazyOptions?.enableLazy === true
 
   return (
     <viewpager
@@ -103,69 +147,36 @@ function ViewPagerImpl(props: ViewPagerProps, ref: ForwardedRef<ViewPagerRef>) {
       ref={nativeRef}
       className={clsx('lynx-ui-view-pager__root', className)}
       style={style}
-      initial-select-index={normalizeIndex(initialIndex.current, pages.length)}
-      select-index={selectedIndex}
+      initial-select-index={normalizedInitialIndex}
       align-width={true}
       enable-scroll={enableScroll}
       allow-horizontal-gesture={enableScroll}
       bounces={bounces}
-      bindchange={(event) => {
-        setActiveIndex(normalizeIndex(event.detail.index, pages.length))
-        setDestination(null)
-        onPageChange?.(event)
-      }}
-      bindwillchange={(event) => {
-        setDestination(normalizeIndex(event.detail.index, pages.length))
-        onPageWillChange?.(event)
-      }}
+      keep-item-view={keepItemView}
+      bindchange={onPageChange}
+      bindwillchange={onPageWillChange}
       bindoffsetchange={onOffsetChange}
       main-thread:bindchange={MTOnPageChange}
       main-thread:bindwillchange={MTOnPageWillChange}
       main-thread:bindoffsetchange={MTOnOffsetChange}
     >
-      {pages.map((page, pageIndex) => (
-        <ItemContext.Provider
-          key={page.key ?? pageIndex}
-          value={{
-            index: pageIndex,
-            selected: pageIndex === selectedIndex,
-            shouldMount: !lazy
-              || Math.abs(pageIndex - selectedIndex) <= preload
-              || pageIndex === destination,
-          }}
-        >
-          {page}
-        </ItemContext.Provider>
-      ))}
+      {data.map((item, index) => {
+        const itemKey = getItemKey(item, index)
+        return (
+          <PageItem
+            key={itemKey}
+            item={item}
+            index={index}
+            itemKey={itemKey}
+            initial={index === normalizedInitialIndex}
+            renderItem={renderItem}
+            className={itemClassName}
+            style={itemStyle}
+            options={getItemProps?.(item, index)}
+            lazyOptions={lazyOptions}
+          />
+        )
+      })}
     </viewpager>
-  )
-}
-
-export function ViewPagerItem(props: ViewPagerItemProps): ReactElement {
-  const context = useContext(ItemContext)
-  if (!context) throw new Error('ViewPagerItem must be inside ViewPager.')
-  const { index, selected, shouldMount } = context
-  const [mounted, setMounted] = useState(shouldMount)
-  useEffect(() => {
-    if (shouldMount) setMounted(true)
-  }, [shouldMount])
-  const variants: ViewPagerItemUIVariants = { 'ui-selected': selected }
-  const { children, className, style, itemProps } = props
-
-  let content: ReactNode = null
-  if (mounted || shouldMount) {
-    content = typeof children === 'function'
-      ? children({ index, selected })
-      : children
-  }
-
-  return (
-    <viewpager-item
-      {...itemProps}
-      className={clsx('lynx-ui-view-pager__item', variants, className)}
-      style={style}
-    >
-      {content}
-    </viewpager-item>
   )
 }

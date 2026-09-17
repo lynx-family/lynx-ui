@@ -32,7 +32,61 @@ export interface ViewPagerRef {
   ) => void
 }
 
-export interface ViewPagerProps extends ComponentBasicProps {
+export type ViewPagerExposureMargin = `${number}px` | `${number}rpx`
+
+export type ViewPagerLazyOptions =
+  | {
+    /** Disable lazy rendering. @zh 禁用懒渲染。 */
+    enableLazy: false
+  }
+  | {
+    /** Enable exposure-driven lazy rendering for pages other than the initial page. @zh 为初始页面以外的页面启用基于曝光的懒渲染。 */
+    enableLazy: true
+    /** Exposure scene shared by this pager's lazy placeholders. It must be unique on the page. @zh 此分页器的懒加载占位节点共用的曝光场景，在页面内必须唯一。 */
+    scene: string
+    /** Extend or shrink the placeholder's left exposure boundary. @defaultValue 10px @zh 扩展或缩小占位节点的左侧曝光边界。 */
+    exposureLeft?: ViewPagerExposureMargin
+    /** Extend or shrink the placeholder's right exposure boundary. @defaultValue 10px @zh 扩展或缩小占位节点的右侧曝光边界。 */
+    exposureRight?: ViewPagerExposureMargin
+  }
+
+export interface ViewPagerItemOptions extends ComponentBasicProps {
+  /**
+   * Native attributes applied to the generated viewpager-item, including
+   * accessibility properties.
+   * @zh 应用于自动生成的 viewpager-item 的原生属性，包括无障碍属性。
+   * @Android
+   * @iOS
+   */
+  itemProps?: Omit<NativeViewPagerItemProps, 'children' | 'className' | 'style'>
+}
+
+export interface ViewPagerProps<T> extends ComponentBasicProps {
+  /**
+   * Data rendered as pages. ViewPager creates one direct native
+   * viewpager-item child for every entry.
+   * @zh 页面数据。ViewPager 为每条数据创建一个直接的原生 viewpager-item 子节点。
+   * @Android
+   * @iOS
+   */
+  data: readonly T[]
+  /**
+   * Return a stable, unique key for an entry.
+   * @zh 返回条目的稳定唯一键。
+   * @docTypeFallback (item: T, index: number) => string | number
+   * @Android
+   * @iOS
+   */
+  getItemKey: (item: T, index: number) => string | number
+  /**
+   * Render page content. Selection state is intentionally not passed, so a
+   * native swipe does not require React to rerender page content.
+   * @zh 渲染页面内容。此函数有意不传入选中状态，因此原生滑动无需让 React 重新渲染页面内容。
+   * @docTypeFallback (item: T, index: number) => ReactNode
+   * @Android
+   * @iOS
+   */
+  children: (item: T, index: number) => ReactNode
   /**
    * Initial page index. Later changes are ignored; use ref.selectTab to navigate.
    * @defaultValue 0
@@ -42,23 +96,37 @@ export interface ViewPagerProps extends ComponentBasicProps {
    */
   initialSelectIndex?: number
   /**
-   * Defer off-screen content until selected, preloaded, or about to appear.
-   * Mounted content stays mounted until its keyed item is removed.
-   * @defaultValue true
-   * @zh 延迟挂载屏外内容；选中、预加载或即将显示时挂载。已挂载内容保留到对应条目被移除。
+   * Exposure-driven lazy rendering. The initial page renders immediately;
+   * other pages render when their placeholders enter the configured exposure
+   * area. Rendered pages stay mounted. Omit this prop to render every page.
+   * @zh 基于曝光的懒渲染。初始页面立即渲染，其他页面在占位节点进入配置的曝光区域时渲染；已渲染页面保持挂载。不传时渲染全部页面。
    * @Android
    * @iOS
    */
-  lazy?: boolean
+  lazyOptions?: ViewPagerLazyOptions
   /**
-   * Number of neighboring pages to mount on each side of the selected page.
-   * Nonnegative integer; ignored when lazy is false.
-   * @defaultValue 1
-   * @zh 选中页面两侧预加载的页面数，为非负整数。lazy 为 false 时忽略。
+   * Class name applied to every generated viewpager-item.
+   * @zh 应用于每个自动生成的 viewpager-item 的类名。
    * @Android
    * @iOS
    */
-  preloadCount?: number
+  itemClassName?: string
+  /**
+   * Style applied to every generated viewpager-item.
+   * @zh 应用于每个自动生成的 viewpager-item 的样式。
+   * @Android
+   * @iOS
+   */
+  itemStyle?: ComponentBasicProps['style']
+  /**
+   * Return class names, styles, or native attributes for one generated
+   * viewpager-item. Per-item class names and styles are merged with shared values.
+   * @zh 为单个自动生成的 viewpager-item 返回类名、样式或原生属性。每项的类名和样式会与共享值合并。
+   * @docTypeFallback (item: T, index: number) => ViewPagerItemOptions
+   * @Android
+   * @iOS
+   */
+  getItemProps?: (item: T, index: number) => ViewPagerItemOptions
   /**
    * Enable horizontal swipe gestures.
    * @defaultValue true
@@ -76,9 +144,8 @@ export interface ViewPagerProps extends ComponentBasicProps {
    */
   bounces?: boolean
   /**
-   * Native pager attributes not managed by the component, including id and
-   * accessibility attributes. Use the dedicated props for styles and events.
-   * @zh 组件未管理的原生属性，包括 id 和无障碍属性。样式和事件使用专用属性。
+   * Native pager attributes not managed by the component.
+   * @zh 组件未管理的原生分页器属性。
    * @Android
    * @iOS
    */
@@ -103,23 +170,22 @@ export interface ViewPagerProps extends ComponentBasicProps {
     | 'main-thread:bindoffsetchange'
   >
   /**
-   * Native page completion event, including programmatic transitions.
-   * @zh 原生页面切换完成事件，包括命令式切换。
+   * Native page completion event. Read the selected index from event.detail.index.
+   * @zh 原生页面切换完成事件，从 event.detail.index 读取选中索引。
    * @Android
    * @iOS
    */
   onPageChange?: (event: ViewPagerChangeEvent) => void
   /**
-   * Native event before a page transition completes.
-   * @zh 原生页面切换完成前事件。
+   * Native event before a page transition completes. Read its data from event.detail.
+   * @zh 原生页面切换完成前事件，从 event.detail 读取数据。
    * @Android
    * @iOS
    */
   onPageWillChange?: (event: ViewPagerWillChangeEvent) => void
   /**
-   * Native scroll progress in page units: 0 to 1 between the first two pages,
-   * not a pixel distance.
-   * @zh 原生滚动进度，以页面为单位。前两页之间为 0 到 1，并非像素距离。
+   * Native scroll progress event. Read its data from event.detail.
+   * @zh 原生滚动进度事件，从 event.detail 读取数据。
    * @Android
    * @iOS
    */
@@ -139,65 +205,10 @@ export interface ViewPagerProps extends ComponentBasicProps {
    */
   MTOnPageWillChange?: (event: ViewPagerWillChangeEvent) => void
   /**
-   * Main-thread scroll progress handler, in page units. Use a main thread function.
-   * @zh 主线程滚动进度回调，以页面为单位，需使用主线程函数。
+   * Main-thread scroll progress handler. Use a main thread function.
+   * @zh 主线程滚动进度回调，需使用主线程函数。
    * @Android
    * @iOS
    */
   MTOnOffsetChange?: (event: ViewPagerOffsetChangeEvent) => void
-  /**
-   * Direct ViewPagerItem elements. Arrays and conditional items are supported;
-   * fragments and wrapper components are not. Use stable keys for dynamic pages.
-   * Selection follows the numeric position after reordering; removed selections
-   * clamp to the last page. An empty pager has index 0 and sends no requests.
-   * @zh 直接使用 ViewPagerItem，支持数组和条件条目，不支持 Fragment 或包装组件。动态页面使用稳定 key。重排后按索引选择，删除后限制到最后一页，空列表索引为 0 且不发出请求。
-   * @Android
-   * @iOS
-   */
-  children?: ReactNode
-}
-
-export interface ViewPagerItemRenderProps {
-  /**
-   * Zero-based position in the pager.
-   * @zh 页面从零开始的索引。
-   * @Android
-   * @iOS
-   */
-  index: number
-  /**
-   * Whether this is the selected page.
-   * @zh 是否为选中页面。
-   * @Android
-   * @iOS
-   */
-  selected: boolean
-}
-
-export interface ViewPagerItemProps extends ComponentBasicProps {
-  /**
-   * Native item attributes, including accessibility properties.
-   * @zh 原生页面容器属性，包括无障碍属性。
-   * @Android
-   * @iOS
-   */
-  itemProps?: Omit<NativeViewPagerItemProps, 'children' | 'className' | 'style'>
-  /**
-   * Page content or a function receiving selection state.
-   * @zh 页面内容或接收选择状态的渲染函数。
-   * @docTypeFallback ReactNode | ((status: ViewPagerItemRenderProps) => ReactNode)
-   * @Android
-   * @iOS
-   */
-  children?: ReactNode | ((status: ViewPagerItemRenderProps) => ReactNode)
-}
-
-export interface ViewPagerItemUIVariants {
-  /**
-   * Applied to the selected page container.
-   * @zh 应用于选中页面容器。
-   * @Android
-   * @iOS
-   */
-  'ui-selected'?: boolean
 }

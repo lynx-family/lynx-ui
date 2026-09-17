@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@lynx-js/lynx-ui-common": "workspace:*",
+    "@lynx-js/lynx-ui-lazy-component": "workspace:*",
     "clsx": "catalog:"
   },
   "devDependencies": {

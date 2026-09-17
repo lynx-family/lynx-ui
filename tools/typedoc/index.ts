@@ -25,7 +25,7 @@ const excludedPath = [
 ]
 
 const primitivesConfig: Record<string, string[]> = {
-  'lynx-ui-view-pager': ['ViewPager', 'ViewPagerItem'],
+  'lynx-ui-view-pager': ['ViewPager'],
   'lynx-ui-button': ['Button'],
   'lynx-ui-switch': [
     'Switch',
