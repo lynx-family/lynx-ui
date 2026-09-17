@@ -78,7 +78,7 @@ describe('listChangesetFilesSince', () => {
     assert.deepEqual(listChangesetFilesSince(baseRef, cwd), [])
   })
 
-  it('propagates an invalid base ref', (t) => {
+  it('propagates an invalid merge-base ref', (t) => {
     const { cwd } = createRepository(t)
 
     assert.throws(() => listChangesetFilesSince('invalid-base-ref', cwd))

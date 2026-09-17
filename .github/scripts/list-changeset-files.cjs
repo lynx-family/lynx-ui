@@ -6,15 +6,11 @@
 
 const { execFileSync } = require('node:child_process')
 
-function listChangesetFilesSince(baseRef, cwd = process.cwd()) {
-  if (!baseRef) {
-    throw new TypeError('A base Git ref is required')
+function listChangesetFilesSince(mergeBase, cwd = process.cwd()) {
+  if (!mergeBase) {
+    throw new TypeError('A merge-base Git ref is required')
   }
 
-  const mergeBase = execFileSync('git', ['merge-base', baseRef, 'HEAD'], {
-    cwd,
-    encoding: 'utf8',
-  }).trim()
   const changedFiles = execFileSync(
     'git',
     ['diff', '--name-only', '--diff-filter=d', '-z', mergeBase, 'HEAD'],
