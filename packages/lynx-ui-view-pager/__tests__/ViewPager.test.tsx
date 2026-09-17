@@ -45,6 +45,17 @@ beforeEach(() => {
 })
 
 describe('ViewPager', () => {
+  it('uses the item index when getItemKey is omitted', () => {
+    const { getByText } = render(
+      <ViewPager data={pages}>
+        {(page, index) => <text>{`${index}:${page.label}`}</text>}
+      </ViewPager>,
+    )
+    expect(getByText('0:A')).toBeDefined()
+    expect(getByText('1:B')).toBeDefined()
+    expect(getByText('2:C')).toBeDefined()
+  })
+
   it('generates direct native items and merges shared and per-item props', () => {
     const { container } = render(
       <ViewPager

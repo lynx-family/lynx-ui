@@ -161,7 +161,7 @@ function ViewPagerImpl<T>(
       main-thread:bindoffsetchange={MTOnOffsetChange}
     >
       {data.map((item, index) => {
-        const itemKey = getItemKey(item, index)
+        const itemKey = getItemKey?.(item, index) ?? index
         return (
           <PageItem
             key={itemKey}

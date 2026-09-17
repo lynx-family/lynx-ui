@@ -71,13 +71,14 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
    */
   data: readonly T[]
   /**
-   * Return a stable, unique key for an entry.
-   * @zh 返回条目的稳定唯一键。
+   * Return a stable, unique key for an entry. When omitted, the item index is
+   * used. Provide this function when items can be inserted, removed, or reordered.
+   * @zh 返回条目的稳定唯一键。不传时使用条目索引；当条目可能插入、删除或重排时请提供此函数。
    * @docTypeFallback (item: T, index: number) => string | number
    * @Android
    * @iOS
    */
-  getItemKey: (item: T, index: number) => string | number
+  getItemKey?: (item: T, index: number) => string | number
   /**
    * Render page content. Selection state is intentionally not passed, so a
    * native swipe does not require React to rerender page content.
