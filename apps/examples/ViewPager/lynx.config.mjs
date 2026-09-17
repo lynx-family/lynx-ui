@@ -7,6 +7,11 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig(
   {
     ViewPagerBasic: './Basic/index.tsx',
+    ViewPagerGallery: './Gallery/index.tsx',
+    ViewPagerAutoHeight: './AutoHeight/index.tsx',
+    ViewPagerDynamicHeight: './DynamicHeight/index.tsx',
+    ViewPagerNestedList: './NestedList/index.tsx',
+    ViewPagerPresentation: './Presentation/index.tsx',
   },
   { needWeb: false },
 )
