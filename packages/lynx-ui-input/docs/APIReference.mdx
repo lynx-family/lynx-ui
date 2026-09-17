@@ -1745,7 +1745,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onContentSizeChange",
-    "type": "(res: Record<string, unknown>) => void",
+    "type": "(res: {detail: {scrollHeight: number, scrollWidth: number}}) => void",
     "summary": [
       {
         "kind": "text",
@@ -2478,7 +2478,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "getValue",
-    "type": "() => Promise<Record<string, unknown>>",
+    "type": "() => Promise<{selectionEnd: number, selectionStart: number, value: string}>",
     "summary": [
       {
         "kind": "text",
@@ -2616,7 +2616,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "getValue",
-    "type": "() => Promise<Record<string, unknown>>",
+    "type": "() => Promise<{selectionEnd: number, selectionStart: number, value: string}>",
     "summary": [
       {
         "kind": "text",

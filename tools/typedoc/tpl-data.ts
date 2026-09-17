@@ -377,13 +377,23 @@ const doCalcReflectionType = (
       }`
     }
 
+    if (
+      Array.isArray(declaration.children) && declaration.children.length > 0
+    ) {
+      return doCalcObjectLiteralType(
+        declaration.children,
+        isZhContext,
+        currentPkgName,
+      )
+    }
+
     return 'Record<string, unknown>'
   } catch (e) {
     throw e
   }
 }
 
-const doTypeCalc = (
+export const doTypeCalc = (
   t: any,
   isZhContext: boolean,
   currentPkgName?: string,

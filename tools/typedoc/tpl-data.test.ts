@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 import { describe, expect, it } from 'vitest'
 
-import { renderArrayType } from './tpl-data'
+import { doTypeCalc, renderArrayType } from './tpl-data'
 
 describe('renderArrayType', () => {
   it('parenthesizes union elements', () => {
@@ -31,5 +31,42 @@ describe('renderArrayType', () => {
       type: 'array',
       elementType: { type: 'intrinsic', name: 'string' },
     }, false)).toBe('string[][]')
+  })
+})
+
+describe('doTypeCalc', () => {
+  it('preserves fields in object return types nested inside Promise', () => {
+    expect(doTypeCalc({
+      type: 'reflection',
+      declaration: {
+        signatures: [{
+          type: {
+            type: 'reference',
+            name: 'Promise',
+            typeArguments: [{
+              type: 'reflection',
+              declaration: {
+                children: [
+                  {
+                    name: 'value',
+                    type: { type: 'intrinsic', name: 'string' },
+                  },
+                  {
+                    name: 'selectionStart',
+                    type: { type: 'intrinsic', name: 'number' },
+                  },
+                  {
+                    name: 'selectionEnd',
+                    type: { type: 'intrinsic', name: 'number' },
+                  },
+                ],
+              },
+            }],
+          },
+        }],
+      },
+    }, false)).toBe(
+      '() => Promise<{value: string, selectionStart: number, selectionEnd: number}>',
+    )
   })
 })
