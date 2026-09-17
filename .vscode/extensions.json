@@ -1,6 +1,5 @@
 {
   "recommendations": [
-    "biomejs.biome",
     "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
     "dprint.dprint",

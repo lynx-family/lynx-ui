@@ -36,23 +36,10 @@ echo "Running in local mode: attempting auto-fix..."
 # Temporarily disable exit on error for linting commands
 set +e
 
-# Run ESLint with auto-fix and capture its exit code
-if [ $UNSAFE_FIX -eq 1 ]; then
-    echo "Running ESLint with unsafe fixes..."
-    npx eslint --cache --fix --fix-type problem,suggestion,layout,directive --no-warn-ignored $FILES
-else
-    npx eslint --cache --fix --no-warn-ignored $FILES
-fi
-ESLINT_RESULT=$?
-
-# Run Biome with auto-fix and capture its exit code
-if [ $UNSAFE_FIX -eq 1 ]; then
-    echo "Running Biome with unsafe fixes..."
-    npx biome check --changed --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true
-else
-    npx biome check --changed --write --no-errors-on-unmatched --files-ignore-unknown=true
-fi
-BIOME_RESULT=$?
+# Run Rslint with auto-fix and capture its exit code
+echo "Running Rslint with auto-fix..."
+npx rslint -c rslint.config.mjs --fix $FILES
+RSLINT_RESULT=$?
 
 # Run dprint formatter and capture its exit code
 echo "Running dprint formatter..."
@@ -64,7 +51,7 @@ set -e
 
 # Set error flag if any linter had issues
 HAS_ERRORS=0
-if [ $ESLINT_RESULT -ne 0 ] || [ $BIOME_RESULT -ne 0 ] || [ $DPRINT_RESULT -ne 0 ]; then
+if [ $RSLINT_RESULT -ne 0 ] || [ $DPRINT_RESULT -ne 0 ]; then
     HAS_ERRORS=1
 fi
 

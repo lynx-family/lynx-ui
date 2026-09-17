@@ -102,7 +102,9 @@ function checkSubmodule(path) {
 function main() {
   try {
     execSync(`git fetch origin main`, { stdio: 'ignore' })
-  } catch {}
+  } catch {
+    // ignore
+  }
 
   const submodules = getSubmodules()
   if (submodules.length === 0) {

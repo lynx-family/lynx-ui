@@ -264,9 +264,10 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
 
 ### Linting & Formatting
 
-This project uses **Biome** for linting and formatting, and **dprint** for Markdown formatting.
+This project uses **Rslint** (`pnpm lint:rslint`) for linting and **dprint** for Markdown and code formatting.
 
 - Run checks: `pnpm check`
+- Run Rslint: `pnpm lint:rslint`
 - Fix issues: `pnpm fix:all`
 
 ### Documentation & Markdown
