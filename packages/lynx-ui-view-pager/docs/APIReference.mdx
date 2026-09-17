@@ -141,17 +141,17 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "summary": [
       {
         "kind": "text",
-        "text": "Return a stable, unique key for an entry."
+        "text": "Return a stable, unique key for an entry. When omitted, the item index is\nused. Provide this function when items can be inserted, removed, or reordered."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "返回条目的稳定唯一键。"
+        "text": "返回条目的稳定唯一键。不传时使用条目索引；当条目可能插入、删除或重排时请提供此函数。"
       }
     ],
     "defaultValue": "",
-    "isOption": false,
+    "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": false,
