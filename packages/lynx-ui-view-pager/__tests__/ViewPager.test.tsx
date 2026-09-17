@@ -2,8 +2,6 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-// cspell:ignore willchange
-
 import { createRef, useState } from '@lynx-js/react'
 
 import {
@@ -14,37 +12,32 @@ import {
 } from '@lynx-js/react/testing-library'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ViewPager, ViewPagerItem } from '../src'
+import { ViewPager } from '../src'
 import type { ViewPagerRef } from '../src'
 
-function pages(prefix = '') {
-  return ['A', 'B', 'C'].map(label => (
-    <ViewPagerItem key={label}>
-      <text>{`${prefix}${label}`}</text>
-    </ViewPagerItem>
-  ))
-}
+// cspell:ignore willchange
 
-function pageEvent(
-  element: Element,
-  name: string,
-  index: number,
-  isDragged: boolean,
-) {
+const pages = [
+  { id: 'a', label: 'A' },
+  { id: 'b', label: 'B' },
+  { id: 'c', label: 'C' },
+]
+
+function pageEvent(element: Element, name: string, index: number) {
   const event = createEvent(`bindEvent:${name}`, element)
   Object.assign(event, {
     eventType: 'bindEvent',
     eventName: name,
-    detail: { index, isDragged },
+    detail: { index, isDragged: true },
   })
   fireEvent(element, event)
+  return event
 }
 
 const invoke = vi.fn(() => ({ exec: vi.fn() }))
 
 beforeEach(() => {
   invoke.mockClear()
-  // ReactLynx renders real components; only the unimplemented native method is mocked.
   const prototype = Object.getPrototypeOf(
     lynx.createSelectorQuery().selectUniqueID(0),
   )
@@ -52,147 +45,181 @@ beforeEach(() => {
 })
 
 describe('ViewPager', () => {
-  it('renders native item children and forwards item accessibility and styling', () => {
+  it('generates direct native items and merges shared and per-item props', () => {
     const { container } = render(
-      <ViewPager lazy={false}>
-        <ViewPagerItem
-          className='custom'
-          itemProps={{ 'accessibility-label': 'Page A' }}
-        >
-          {({ index, selected }) => <text>{`${index}:${selected}`}</text>}
-        </ViewPagerItem>
+      <ViewPager
+        data={pages}
+        getItemKey={page => page.id}
+        itemClassName='shared'
+        itemStyle={{ width: '90%' }}
+        getItemProps={(page, index) => ({
+          className: index === 0 ? 'first' : undefined,
+          style: { height: `${index + 1}px` },
+          itemProps: { 'accessibility-label': `Page ${page.label}` },
+        })}
+      >
+        {page => <text>{page.label}</text>}
       </ViewPager>,
     )
     const pager = container.querySelector('viewpager')!
-    expect(pager.hasAttribute('id')).toBe(false)
-    expect(pager.children).toHaveLength(1)
-    expect(pager.firstElementChild?.tagName.toLowerCase()).toBe(
-      'viewpager-item',
-    )
-    expect(pager.firstElementChild?.className).toContain('ui-selected')
-    expect(pager.firstElementChild?.className).toContain('custom')
-    expect(pager.firstElementChild?.getAttribute('accessibility-label')).toBe(
+    expect(pager.children).toHaveLength(3)
+    expect(
+      Array.from(pager.children).every(
+        child => child.tagName.toLowerCase() === 'viewpager-item',
+      ),
+    ).toBe(true)
+    expect(pager.children[0]?.className).toContain('shared')
+    expect(pager.children[0]?.className).toContain('first')
+    expect(pager.children[0]?.getAttribute('accessibility-label')).toBe(
       'Page A',
     )
+    expect(pager.children[0]?.getAttribute('style')).toContain('width: 90%')
+    expect(pager.children[0]?.getAttribute('style')).toContain('height: 1px')
   })
 
-  it('keeps two lazy pagers independent and honors initialSelectIndex only on mount', () => {
-    const ref = createRef<ViewPagerRef>()
-    function Pair({ initial }: { initial: number }) {
+  it('uses exposure placeholders without eagerly calling the page renderer', () => {
+    const renderPage = vi.fn((page: (typeof pages)[number]) => (
+      <text>{page.label}</text>
+    ))
+    const { container, queryByText } = render(
+      <ViewPager
+        data={pages}
+        getItemKey={page => page.id}
+        initialSelectIndex={1}
+        lazyOptions={{
+          enableLazy: true,
+          scene: 'view-pager-test',
+          exposureLeft: '40px',
+          exposureRight: '50px',
+        }}
+      >
+        {renderPage}
+      </ViewPager>,
+    )
+
+    expect(renderPage).toHaveBeenCalledTimes(1)
+    expect(renderPage).toHaveBeenCalledWith(pages[1], 1)
+    expect(queryByText('B')).not.toBeNull()
+    expect(queryByText('A')).toBeNull()
+    expect(queryByText('C')).toBeNull()
+    const placeholders = container.querySelectorAll(
+      '[exposure-scene="view-pager-test"]',
+    )
+    expect(placeholders).toHaveLength(2)
+    expect(placeholders[0]?.getAttribute('exposure-screen-margin-left')).toBe(
+      '40px',
+    )
+    expect(placeholders[0]?.getAttribute('exposure-screen-margin-right')).toBe(
+      '50px',
+    )
+    expect(container.querySelector('viewpager')?.getAttribute('keep-item-view'))
+      .toBe('true')
+  })
+
+  it('does not rerender page content when native swipe events fire', () => {
+    const renderPage = vi.fn((page: (typeof pages)[number]) => (
+      <text>{page.label}</text>
+    ))
+    const onPageWillChange = vi.fn()
+    const onPageChange = vi.fn()
+    const { container } = render(
+      <ViewPager
+        data={pages}
+        getItemKey={page => page.id}
+        onPageWillChange={onPageWillChange}
+        onPageChange={onPageChange}
+      >
+        {renderPage}
+      </ViewPager>,
+    )
+    const pager = container.querySelector('viewpager')!
+    expect(renderPage).toHaveBeenCalledTimes(3)
+    const willChangeEvent = pageEvent(pager, 'willchange', 1)
+    const changeEvent = pageEvent(pager, 'change', 1)
+    expect(renderPage).toHaveBeenCalledTimes(3)
+    expect(onPageWillChange).toHaveBeenCalledWith(willChangeEvent)
+    expect(onPageChange).toHaveBeenCalledWith(changeEvent)
+    expect(onPageChange.mock.calls[0]?.[0].detail.index).toBe(1)
+  })
+
+  it('uses the initial index only on mount', () => {
+    const renderPager = (initialSelectIndex: number) => (
+      <ViewPager
+        data={pages}
+        getItemKey={page => page.id}
+        initialSelectIndex={initialSelectIndex}
+      >
+        {page => <text>{page.label}</text>}
+      </ViewPager>
+    )
+    const { container, rerender } = render(renderPager(2))
+    expect(
+      container.querySelector('viewpager')?.getAttribute(
+        'initial-select-index',
+      ),
+    )
+      .toBe('2')
+    rerender(renderPager(0))
+    expect(
+      container.querySelector('viewpager')?.getAttribute(
+        'initial-select-index',
+      ),
+    )
+      .toBe('2')
+  })
+
+  it('preserves page state through keyed reordering', () => {
+    function Counter({ label }: { label: string }) {
+      const [count, setCount] = useState(0)
       return (
-        <view>
-          <ViewPager ref={ref} initialSelectIndex={initial} preloadCount={0}>
-            {pages('first-')}
-          </ViewPager>
-          <ViewPager preloadCount={0}>{pages('second-')}</ViewPager>
-        </view>
+        <text bindtap={() => setCount(value => value + 1)}>
+          {`${label} ${count}`}
+        </text>
       )
     }
-    const { queryByText, rerender } = render(<Pair initial={1} />)
-    expect(queryByText('first-B')).not.toBeNull()
-    expect(queryByText('first-A')).toBeNull()
-    expect(queryByText('second-B')).toBeNull()
-    act(() => ref.current?.selectTab(2, false))
-    expect(queryByText('first-C')).not.toBeNull()
-    expect(queryByText('first-B')).not.toBeNull()
-    expect(queryByText('second-C')).toBeNull()
-    rerender(<Pair initial={0} />)
-    expect(queryByText('first-A')).toBeNull()
+    const renderPage = (page: (typeof pages)[number]) => (
+      <Counter label={page.label} />
+    )
+    const { getByText, rerender } = render(
+      <ViewPager data={pages} getItemKey={page => page.id}>
+        {renderPage}
+      </ViewPager>,
+    )
+    fireEvent.tap(getByText('A 0'))
+    rerender(
+      <ViewPager
+        data={[pages[1], pages[0], pages[2]]}
+        getItemKey={page => page.id}
+      >
+        {renderPage}
+      </ViewPager>,
+    )
+    expect(getByText('A 1')).toBeDefined()
   })
 
-  it('invokes the native ref and updates selected state only on completion', () => {
+  it('clamps native selection requests using the latest data length', () => {
     const ref = createRef<ViewPagerRef>()
-    const onPageChange = vi.fn()
     const success = vi.fn()
     const fail = vi.fn()
-    const { container } = render(
-      <ViewPager ref={ref} onPageChange={onPageChange}>{pages()}</ViewPager>,
+    const { rerender } = render(
+      <ViewPager ref={ref} data={pages} getItemKey={page => page.id}>
+        {page => <text>{page.label}</text>}
+      </ViewPager>,
     )
-    act(() => ref.current?.selectTab(2, false, success, fail))
+    act(() => ref.current?.selectTab(10, false, success, fail))
     expect(invoke).toHaveBeenCalledWith({
       method: 'selectTab',
       params: { index: 2, smooth: false },
       success,
       fail,
     })
-    const pager = container.querySelector('viewpager')!
-    expect(pager.children[0]?.className).toContain('ui-selected')
-    pageEvent(pager, 'change', 2, false)
-    expect(onPageChange).toHaveBeenCalledTimes(1)
-    expect(pager.children[2]?.className).toContain('ui-selected')
-  })
 
-  it('loads a swipe destination before completion and reports swipe events', () => {
-    const onPageWillChange = vi.fn()
-    const onPageChange = vi.fn()
-    const { container, queryByText } = render(
-      <ViewPager
-        preloadCount={0}
-        onPageWillChange={onPageWillChange}
-        onPageChange={onPageChange}
-      >
-        {pages()}
-      </ViewPager>,
-    )
-    const pager = container.querySelector('viewpager')!
-    expect(queryByText('B')).toBeNull()
-    pageEvent(pager, 'willchange', 1, true)
-    expect(queryByText('B')).not.toBeNull()
-    expect(onPageWillChange).toHaveBeenCalledTimes(1)
-    pageEvent(pager, 'change', 1, true)
-    expect(onPageChange).toHaveBeenCalledTimes(1)
-    expect(pager.children[1]?.className).toContain('ui-selected')
-    expect(invoke).not.toHaveBeenCalled()
-  })
-
-  it('preserves mounted page state through navigation and keyed reordering', () => {
-    function Counter() {
-      const [count, setCount] = useState(0)
-      return (
-        <text bindtap={() => setCount(value => value + 1)}>
-          {`Count ${count}`}
-        </text>
-      )
-    }
-    const ref = createRef<ViewPagerRef>()
-    const a = (
-      <ViewPagerItem key='a'>
-        <Counter />
-      </ViewPagerItem>
-    )
-    const b = (
-      <ViewPagerItem key='b'>
-        <text>Other</text>
-      </ViewPagerItem>
-    )
-    const { getByText, rerender } = render(
-      <ViewPager ref={ref} preloadCount={0}>{[a, b]}</ViewPager>,
-    )
-    fireEvent.tap(getByText('Count 0'))
-    act(() => ref.current?.selectTab(1, false))
-    expect(getByText('Count 1')).toBeDefined()
-    rerender(<ViewPager ref={ref} preloadCount={0}>{[b, a]}</ViewPager>)
-    expect(getByText('Count 1')).toBeDefined()
-  })
-
-  it('clamps selection after removal and ignores empty-pager requests', () => {
-    const ref = createRef<ViewPagerRef>()
-    const onPageChange = vi.fn()
-    const { container, rerender } = render(
-      <ViewPager ref={ref} initialSelectIndex={2} onPageChange={onPageChange}>
-        {pages()}
-      </ViewPager>,
-    )
     rerender(
-      <ViewPager ref={ref} onPageChange={onPageChange}>
-        {pages().slice(0, 1)}
+      <ViewPager ref={ref} data={[]} getItemKey={page => page.id}>
+        {page => <text>{page.label}</text>}
       </ViewPager>,
     )
-    expect(container.querySelector('viewpager-item')?.className).toContain(
-      'ui-selected',
-    )
-    rerender(<ViewPager ref={ref} onPageChange={onPageChange} />)
-    act(() => ref.current?.selectTab(10))
-    expect(onPageChange).not.toHaveBeenCalled()
+    act(() => ref.current?.selectTab(1))
+    expect(invoke).toHaveBeenCalledTimes(1)
   })
 })

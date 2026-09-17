@@ -4,7 +4,7 @@
 
 import { root, useRef, useState } from '@lynx-js/react'
 
-import { Button, ViewPager, ViewPagerItem } from '@lynx-js/lynx-ui'
+import { Button, ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerRef } from '@lynx-js/lynx-ui'
 
 import './index.css'
@@ -33,24 +33,18 @@ export function App() {
       </view>
       <ViewPager
         ref={pagerRef}
+        data={pages}
+        getItemKey={page => page.label}
         onPageChange={event => setIndex(event.detail.index)}
         className='view-pager-demo__pager'
         style={{ height: '400px' }}
+        itemClassName='view-pager-demo__page'
+        getItemProps={page => ({
+          className: page.className,
+          itemProps: { 'accessibility-label': page.label },
+        })}
       >
-        {pages.map(page => (
-          <ViewPagerItem
-            key={page.label}
-            className={`view-pager-demo__page ${page.className}`}
-            itemProps={{ 'accessibility-label': page.label }}
-          >
-            {({ selected }) => (
-              <text className='view-pager-demo__label'>
-                {page.label}
-                {selected ? ' •' : ''}
-              </text>
-            )}
-          </ViewPagerItem>
-        ))}
+        {page => <text className='view-pager-demo__label'>{page.label}</text>}
       </ViewPager>
       <text className='view-pager-demo__control'>
         Page {index + 1} of {pages.length}

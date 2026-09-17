@@ -1,43 +1,42 @@
 ---
 name: view-pager
-description: Build horizontally swipeable, page-snapped content with composable pages, lazy mounting, and imperative navigation.
+description: Build data-driven, horizontally swipeable page navigation with stable page identity, generated native page containers, optional exposure-based lazy rendering, and imperative navigation.
 ---
 
-# lynx-ui-view-pager SKILL
+# lynx-ui-view-pager
 
-Use `ViewPager` for horizontal paging and `ViewPagerItem` for each native page container.
-
-## Minimal usable example
+Use `ViewPager` when a collection of data should render as horizontally swipeable pages. The component generates the required direct native `viewpager-item` children.
 
 ```tsx
 import { useRef } from '@lynx-js/react'
-import { ViewPager, ViewPagerItem } from '@lynx-js/lynx-ui'
+import { ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerRef } from '@lynx-js/lynx-ui'
+
+const pages = [
+  { id: 'first', title: 'First page' },
+  { id: 'second', title: 'Second page' },
+]
 
 export function Pages() {
   const pager = useRef<ViewPagerRef>(null)
   return (
-    <ViewPager ref={pager} style={{ height: '400px' }}>
-      <ViewPagerItem key='first'><text>First page</text></ViewPagerItem>
-      <ViewPagerItem key='second'><text>Second page</text></ViewPagerItem>
+    <ViewPager
+      ref={pager}
+      data={pages}
+      getItemKey={page => page.id}
+      itemStyle={{ width: '100%', height: '100%' }}
+      style={{ height: '400px' }}
+    >
+      {page => <text>{page.title}</text>}
     </ViewPager>
   )
 }
 ```
 
-## Usage guidance
+Use stable, unique values from `getItemKey`; they preserve page state when data is reordered. Use `itemClassName` and `itemStyle` for every generated native item, and `getItemProps` for per-item class names, styles, accessibility attributes, or other native item attributes.
 
-- Give the pager an explicit height. The structural CSS supplies full-width horizontal paging.
-- Use direct `ViewPagerItem` children. Arrays and conditional items are supported; fragments and wrapper components are not.
-- Give dynamic items stable keys. Keys preserve mounted content; selection follows the numeric position after reordering. Removing the selected last page clamps selection to the new last page.
-- Set `initialSelectIndex` for initial selection. Later changes to it are ignored. Navigate with `ref.current?.selectTab(index, smooth)`; animation defaults to true.
-- Use `onPageChange(event)` to observe completion, including native swipes. The imperative success callback confirms invocation, not animation completion.
-- No IDs or exposure scenes are needed. Optional external IDs belong in `viewpagerProps`.
-- Lazy mounting defaults to the selected page and one neighbor on either side. Use `preloadCount={0}` to mount only the selected page and transition destination, or `lazy={false}` to mount all pages. Mounted content remains mounted until its keyed item is removed.
-- Style each item through `className` and `style`; use `.ui-selected` for selection styling. Render-prop children receive `{ index, selected }`.
-- Put native accessibility attributes in `viewpagerProps` or `itemProps`. Use the dedicated component props for root styles and events.
-- Offset events contain page progress, not pixels: the first transition runs from 0 to 1. Main-thread event handlers must be main thread functions.
+`initialSelectIndex` applies only at mount. Navigate later with `ref.current?.selectTab(index, smooth)`. `onPageChange`, `onPageWillChange`, and `onOffsetChange` receive native events; read payload fields such as the selected index from `event.detail`.
 
-## Recommended Prompt Formula
+Pages render eagerly unless `lazyOptions.enableLazy` is true. Lazy mode renders the initial page immediately and uses Lynx exposure placeholders for the rest. Give each pager a page-unique `scene`; use `exposureLeft` and `exposureRight` to control how early neighboring pages render. Once rendered, a page stays mounted while its keyed data item remains.
 
-Specify the pager dimensions, page content and stable keys, initial selection, navigation controls, and whether all content or only nearby pages should mount initially. Describe per-page styling and accessibility labels separately from navigation behavior.
+The page renderer receives only `(item, index)`, not selection state. Keep selection-dependent UI outside page content or update it explicitly from `onPageChange`; native swipes do not otherwise require React to rerender the pager's page content.

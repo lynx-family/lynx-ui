@@ -65,7 +65,3 @@
   color: var(--content);
   font-size: 16px;
 }
-
-.view-pager-demo__page.ui-selected .view-pager-demo__label {
-  font-weight: 700;
-}

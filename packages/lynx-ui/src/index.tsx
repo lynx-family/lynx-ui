@@ -281,12 +281,12 @@ export type {
 } from '@lynx-js/lynx-ui-tab-group'
 
 // view-pager
-export { ViewPager, ViewPagerItem } from '@lynx-js/lynx-ui-view-pager'
+export { ViewPager } from '@lynx-js/lynx-ui-view-pager'
 export type {
   ViewPagerChangeEvent,
-  ViewPagerItemProps,
-  ViewPagerItemRenderProps,
-  ViewPagerItemUIVariants,
+  ViewPagerExposureMargin,
+  ViewPagerItemOptions,
+  ViewPagerLazyOptions,
   ViewPagerOffsetChangeEvent,
   ViewPagerProps,
   ViewPagerRef,
