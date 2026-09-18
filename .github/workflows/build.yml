@@ -7,10 +7,6 @@ on:
         default: false
         required: false
         type: boolean
-    outputs:
-      merge-base:
-        description: Merge base between the target branch and the PR head
-        value: ${{ jobs.get-merge-base.outputs.merge-base }}
 env:
   CI: 1
   TURBO_TELEMETRY_DISABLED: 1

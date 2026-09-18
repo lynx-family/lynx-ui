@@ -65,10 +65,13 @@ jobs:
       - name: Collect Packages with Changesets
         id: changeset
         env:
-          MERGE_BASE: ${{ needs.build.outputs.merge-base }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         shell: bash
         run: |
+          # Branch refs can move between the original event and a rerun. Use
+          # the immutable event commits to keep M and H from the same snapshot.
+          MERGE_BASE="$(git merge-base "$BASE_SHA" "$PR_HEAD_SHA")"
           PR_HEAD_DIR="$RUNNER_TEMP/pkg-pr-new-head-$PR_HEAD_SHA"
           git worktree add --detach "$PR_HEAD_DIR" "$PR_HEAD_SHA"
           trap 'git worktree remove --force "$PR_HEAD_DIR"' EXIT

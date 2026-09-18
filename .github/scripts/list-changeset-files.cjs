@@ -26,11 +26,15 @@ function listChangesetFilesSince(mergeBase, cwd = process.cwd()) {
   // decides whether an empty changeset produces any releases.
   return changedFiles
     .split('\0')
-    .filter(
-      (file) =>
-        /^\.changeset\/[^/]+\.md$/.test(file)
-        && file !== '.changeset/README.md',
-    )
+    .filter((file) => {
+      const match = /^\.changeset\/([^/]+\.md)$/.exec(file)
+      if (!match) {
+        return false
+      }
+
+      const filename = match[1]
+      return !filename.startsWith('.') && !/^README\.md$/i.test(filename)
+    })
 }
 
 // Print paths for the workflow while keeping the function importable by tests.

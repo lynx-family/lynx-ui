@@ -78,6 +78,14 @@ describe('listChangesetFilesSince', () => {
     assert.deepEqual(listChangesetFilesSince(baseRef, cwd), [])
   })
 
+  it('ignores hidden files and case-insensitive changeset READMEs', (t) => {
+    const { baseRef, cwd } = createRepository(t)
+    commitFile(cwd, '.changeset/.ignored.md', 'metadata\n')
+    commitFile(cwd, '.changeset/readme.md', 'documentation\n')
+
+    assert.deepEqual(listChangesetFilesSince(baseRef, cwd), [])
+  })
+
   it('propagates an invalid merge-base ref', (t) => {
     const { cwd } = createRepository(t)
 
