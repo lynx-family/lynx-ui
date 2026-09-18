@@ -12,7 +12,6 @@ import { clsx } from 'clsx'
 import './styles.css'
 
 import type {
-  ViewPagerItemOptions,
   ViewPagerLazyOptions,
   ViewPagerProps,
   ViewPagerRef,
@@ -39,8 +38,7 @@ interface PageItemProps extends PageContentProps {
   itemKey: string | number
   initial: boolean
   className?: string
-  style?: ViewPagerItemOptions['style']
-  options?: ViewPagerItemOptions
+  style?: ViewPagerProps<unknown>['itemStyle']
   lazyOptions?: ViewPagerLazyOptions
 }
 
@@ -53,7 +51,6 @@ function PageItem(props: PageItemProps) {
     renderItem,
     className,
     style,
-    options,
     lazyOptions,
   } = props
   const content = (
@@ -62,13 +59,11 @@ function PageItem(props: PageItemProps) {
 
   return (
     <viewpager-item
-      {...options?.itemProps}
       className={clsx(
         'lynx-ui-view-pager__item',
         className,
-        options?.className,
       )}
-      style={{ ...style, ...options?.style }}
+      style={style}
     >
       {lazyOptions?.enableLazy && !initial
         ? (
@@ -102,7 +97,6 @@ function ViewPagerImpl<T>(
     style,
     itemClassName,
     itemStyle,
-    getItemProps,
     viewpagerProps,
     enableScroll = true,
     bounces = true,
@@ -172,7 +166,6 @@ function ViewPagerImpl<T>(
             renderItem={renderItem}
             className={itemClassName}
             style={itemStyle}
-            options={getItemProps?.(item, index)}
             lazyOptions={lazyOptions}
           />
         )

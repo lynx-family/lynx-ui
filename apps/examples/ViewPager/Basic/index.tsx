@@ -37,10 +37,9 @@ export function App() {
         onPageChange={event => setIndex(event.detail.index)}
         className='view-pager-basic__pager'
         itemClassName='view-pager-basic__item'
-        getItemProps={page => ({ className: page.className })}
       >
         {page => (
-          <view className='view-pager-basic__content'>
+          <view className={`view-pager-basic__content ${page.className}`}>
             <text className='view-pager-basic__title'>{page.title}</text>
             <text className='view-pager-basic__description'>
               {page.description}
