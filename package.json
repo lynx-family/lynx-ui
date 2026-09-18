@@ -41,6 +41,7 @@
     "prepare": "husky",
     "spell": "cspell lint --config cspell.jsonc --gitignore --no-progress --no-must-find-files --show-suggestions **",
     "test": "vitest",
+    "test:changeset-files": "node --test .github/scripts/list-changeset-files.test.cjs",
     "test:changesets-private": "node --test tools/scripts/check-changeset-private-targets.test.mjs",
     "test:example-bundle-stats": "node --test tools/scripts/merge-example-bundle-stats.test.mjs",
     "test:new-packages": "node --test tools/scripts/check-new-publishable-packages.test.mjs",

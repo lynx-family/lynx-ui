@@ -1,5 +1,7 @@
 name: pkg.pr.new
 
+# cspell:ignore worktree
+
 on:
   pull_request:
     branches:
@@ -18,7 +20,9 @@ concurrency:
 jobs:
   build:
     name: Build
-    if: github.repository == 'lynx-family/lynx-ui'
+    if: >-
+      github.repository == 'lynx-family/lynx-ui' &&
+      !startsWith(github.head_ref, 'changeset-release/')
     permissions:
       contents: read
     uses: ./.github/workflows/build.yml
@@ -30,7 +34,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.repository == 'lynx-family/lynx-ui'
+    if: >-
+      github.repository == 'lynx-family/lynx-ui' &&
+      !startsWith(github.head_ref, 'changeset-release/')
     permissions:
       actions: read
       contents: read
@@ -54,34 +60,96 @@ jobs:
           name: package-artifacts-${{ github.sha }}
       - name: Extract Package Artifacts
         run: tar -xzf package-artifacts.tgz
+      # Use the PR head only to decide whether this PR needs a preview. Build,
+      # resolve, and publish the complete merge-ref release plan together.
       - name: Collect Packages with Changesets
         id: changeset
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         shell: bash
         run: |
-          pnpm changeset status --since="$BASE_SHA" --output .changeset-status.json
-          PACKAGE_DIRS="$(node .github/scripts/list-changeset-packages.cjs .changeset-status.json | tr '\n' ' ')"
-          if [ -z "$(echo "$PACKAGE_DIRS" | tr -d '[:space:]')" ]; then
+          # Branch refs can move between the original event and a rerun. Use
+          # the immutable event commits to keep M and H from the same snapshot.
+          MERGE_BASE="$(git merge-base "$BASE_SHA" "$PR_HEAD_SHA")"
+          PR_HEAD_DIR="$RUNNER_TEMP/pkg-pr-new-head-$PR_HEAD_SHA"
+          git worktree add --detach "$PR_HEAD_DIR" "$PR_HEAD_SHA"
+          trap 'git worktree remove --force "$PR_HEAD_DIR"' EXIT
+
+          CHANGESET_FILES="$(
+            cd "$PR_HEAD_DIR"
+            # Stale PR heads may predate this helper, so load it from the
+            # merge-ref workspace while running Git against the PR-head tree.
+            node "$GITHUB_WORKSPACE/.github/scripts/list-changeset-files.cjs" \
+              "$MERGE_BASE"
+          )"
+          if [ -z "$CHANGESET_FILES" ]; then
+            echo "No active changesets found; skipping pkg.pr.new publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          (
+            cd "$PR_HEAD_DIR"
+            "$GITHUB_WORKSPACE/node_modules/.bin/changeset" status \
+              --since="$MERGE_BASE" \
+              --output .changeset-pr-status.json
+          )
+          if ! pr_package_dirs_output="$(
+            node .github/scripts/list-changeset-packages.cjs \
+              "$PR_HEAD_DIR/.changeset-pr-status.json"
+          )"; then
+            echo "Failed to resolve PR package directories." >&2
+            exit 1
+          fi
+          if [ -z "$pr_package_dirs_output" ]; then
+            echo "No publishable packages affected by PR changesets; skipping pkg.pr.new publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Without --since, Changesets includes every active changeset in the
+          # merge ref and computes the complete dependency propagation. Keep
+          # its configured baseBranch resolvable from the detached checkout.
+          git update-ref refs/heads/main "$MERGE_BASE"
+          pnpm changeset status --output .changeset-status.json
+          if ! package_dirs_output="$(
+            node .github/scripts/list-changeset-packages.cjs \
+              .changeset-status.json
+          )"; then
+            echo "Failed to resolve publishable package directories." >&2
+            exit 1
+          fi
+          package_dirs=()
+          if [ -n "$package_dirs_output" ]; then
+            while IFS= read -r package_dir; do
+              package_dirs+=("$package_dir")
+            done <<< "$package_dirs_output"
+          fi
+          if [ "${#package_dirs[@]}" -eq 0 ]; then
             echo "No publishable packages affected by changesets; skipping pkg.pr.new publish."
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "Publishing the following package directories to pkg.pr.new:"
-          printf '  %s\n' $PACKAGE_DIRS
+          printf '  %s\n' "${package_dirs[@]}"
           {
             echo "skip=false"
             echo "package-dirs<<EOF"
-            echo "$PACKAGE_DIRS"
+            printf '%s\n' "${package_dirs[@]}"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
       - name: Publish Preview Packages
         if: steps.changeset.outputs.skip == 'false'
         env:
           PACKAGE_DIRS: ${{ steps.changeset.outputs.package-dirs }}
-        run: >
-          pnpm exec pkg-pr-new publish
-          --pnpm
-          --commentWithSha
-          --packageManager=pnpm
-          $PACKAGE_DIRS
+        shell: bash
+        run: |
+          package_dirs=()
+          while IFS= read -r package_dir; do
+            package_dirs+=("$package_dir")
+          done <<< "$PACKAGE_DIRS"
+          pnpm exec pkg-pr-new publish \
+            --pnpm \
+            --commentWithSha \
+            --packageManager=pnpm \
+            "${package_dirs[@]}"
