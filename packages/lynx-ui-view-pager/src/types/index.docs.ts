@@ -6,7 +6,6 @@ import type { ReactNode } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type {
-  ViewPagerItemProps as NativeViewPagerItemProps,
   ViewPagerProps as NativeViewPagerProps,
   ViewPagerChangeEvent,
   ViewPagerOffsetChangeEvent,
@@ -49,17 +48,6 @@ export type ViewPagerLazyOptions =
     /** Extend or shrink the placeholder's right exposure boundary. @defaultValue 10px @zh 扩展或缩小占位节点的右侧曝光边界。 */
     exposureRight?: ViewPagerExposureMargin
   }
-
-export interface ViewPagerItemOptions extends ComponentBasicProps {
-  /**
-   * Native attributes applied to the generated viewpager-item, including
-   * accessibility properties.
-   * @zh 应用于自动生成的 viewpager-item 的原生属性，包括无障碍属性。
-   * @Android
-   * @iOS
-   */
-  itemProps?: Omit<NativeViewPagerItemProps, 'children' | 'className' | 'style'>
-}
 
 export interface ViewPagerProps<T> extends ComponentBasicProps {
   /**
@@ -119,15 +107,6 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
    * @iOS
    */
   itemStyle?: ComponentBasicProps['style']
-  /**
-   * Return class names, styles, or native attributes for one generated
-   * viewpager-item. Per-item class names and styles are merged with shared values.
-   * @zh 为单个自动生成的 viewpager-item 返回类名、样式或原生属性。每项的类名和样式会与共享值合并。
-   * @docTypeFallback (item: T, index: number) => ViewPagerItemOptions
-   * @Android
-   * @iOS
-   */
-  getItemProps?: (item: T, index: number) => ViewPagerItemOptions
   /**
    * Enable horizontal swipe gestures.
    * @defaultValue true

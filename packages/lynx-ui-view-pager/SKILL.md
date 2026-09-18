@@ -33,7 +33,7 @@ export function Pages() {
 }
 ```
 
-`getItemKey` defaults to the item index. Provide stable, unique values when pages can be inserted, removed, or reordered so page state remains attached to the correct data item. Use `itemClassName` and `itemStyle` for every generated native item, and `getItemProps` for per-item class names, styles, accessibility attributes, or other native item attributes.
+`getItemKey` defaults to the item index. Provide stable, unique values when pages can be inserted, removed, or reordered so page state remains attached to the correct data item. Use `itemClassName` and `itemStyle` to style every generated native item; put page-specific styling and accessibility attributes on the rendered page content.
 
 `initialSelectIndex` applies only at mount. Navigate later with `ref.current?.selectTab(index, smooth)`. `onPageChange`, `onPageWillChange`, and `onOffsetChange` receive native events; read payload fields such as the selected index from `event.detail`.
 

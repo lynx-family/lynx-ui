@@ -33,7 +33,7 @@ const stories = [
     lines: [
       'The render function receives the current data item.',
       'Stable keys preserve each page across collection updates.',
-      'Wrapper styles belong in getItemProps.',
+      'Shared wrapper styles belong in itemClassName or itemStyle.',
       'Content stays focused on the page itself.',
       'No explicit ViewPagerItem is required.',
       'The component creates the direct native children.',

@@ -62,13 +62,12 @@ function App() {
         onPageChange={event => setIndex(event.detail.index)}
         className='view-pager-gallery__pager'
         itemClassName='view-pager-gallery__item'
-        getItemProps={destination => ({
-          className: destination.className,
-          itemProps: { 'accessibility-label': destination.title },
-        })}
       >
         {destination => (
-          <view className='view-pager-gallery__card'>
+          <view
+            className={`view-pager-gallery__card ${destination.className}`}
+            accessibility-label={destination.title}
+          >
             <text className='view-pager-gallery__number'>
               {destination.number}
             </text>

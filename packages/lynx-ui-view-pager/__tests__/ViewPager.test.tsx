@@ -56,18 +56,13 @@ describe('ViewPager', () => {
     expect(getByText('2:C')).toBeDefined()
   })
 
-  it('generates direct native items and merges shared and per-item props', () => {
+  it('generates direct native items with shared styles', () => {
     const { container } = render(
       <ViewPager
         data={pages}
         getItemKey={page => page.id}
         itemClassName='shared'
         itemStyle={{ width: '90%' }}
-        getItemProps={(page, index) => ({
-          className: index === 0 ? 'first' : undefined,
-          style: { height: `${index + 1}px` },
-          itemProps: { 'accessibility-label': `Page ${page.label}` },
-        })}
       >
         {page => <text>{page.label}</text>}
       </ViewPager>,
@@ -80,12 +75,9 @@ describe('ViewPager', () => {
       ),
     ).toBe(true)
     expect(pager.children[0]?.className).toContain('shared')
-    expect(pager.children[0]?.className).toContain('first')
-    expect(pager.children[0]?.getAttribute('accessibility-label')).toBe(
-      'Page A',
-    )
     expect(pager.children[0]?.getAttribute('style')).toContain('width: 90%')
-    expect(pager.children[0]?.getAttribute('style')).toContain('height: 1px')
+    expect(pager.children[1]?.className).toContain('shared')
+    expect(pager.children[1]?.getAttribute('style')).toContain('width: 90%')
   })
 
   it('uses exposure placeholders without eagerly calling the page renderer', () => {
