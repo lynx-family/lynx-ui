@@ -77,7 +77,10 @@ jobs:
 
           CHANGESET_FILES="$(
             cd "$PR_HEAD_DIR"
-            node .github/scripts/list-changeset-files.cjs "$MERGE_BASE"
+            # Stale PR heads may predate this helper, so load it from the
+            # merge-ref workspace while running Git against the PR-head tree.
+            node "$GITHUB_WORKSPACE/.github/scripts/list-changeset-files.cjs" \
+              "$MERGE_BASE"
           )"
           if [ -z "$CHANGESET_FILES" ]; then
             echo "No active changesets found; skipping pkg.pr.new publish."
@@ -92,13 +95,19 @@ jobs:
           )
           # Resolve package names in the merge-ref workspace. These absolute
           # paths remain valid after the temporary PR-head worktree is removed.
-          package_dirs=()
-          while IFS= read -r package_dir; do
-            package_dirs+=("$package_dir")
-          done < <(
+          if ! package_dirs_output="$(
             node .github/scripts/list-changeset-packages.cjs \
               "$PR_HEAD_DIR/.changeset-status.json"
-          )
+          )"; then
+            echo "Failed to resolve publishable package directories." >&2
+            exit 1
+          fi
+          package_dirs=()
+          if [ -n "$package_dirs_output" ]; then
+            while IFS= read -r package_dir; do
+              package_dirs+=("$package_dir")
+            done <<< "$package_dirs_output"
+          fi
           if [ "${#package_dirs[@]}" -eq 0 ]; then
             echo "No publishable packages affected by changesets; skipping pkg.pr.new publish."
             echo "skip=true" >> "$GITHUB_OUTPUT"
