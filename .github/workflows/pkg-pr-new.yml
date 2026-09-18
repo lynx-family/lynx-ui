@@ -22,8 +22,7 @@ jobs:
     name: Build
     if: >-
       github.repository == 'lynx-family/lynx-ui' &&
-      !startsWith(github.head_ref, 'changeset-release/') &&
-      !startsWith(github.head_ref, 'release/')
+      !startsWith(github.head_ref, 'changeset-release/')
     permissions:
       contents: read
     uses: ./.github/workflows/build.yml
@@ -37,8 +36,7 @@ jobs:
     timeout-minutes: 30
     if: >-
       github.repository == 'lynx-family/lynx-ui' &&
-      !startsWith(github.head_ref, 'changeset-release/') &&
-      !startsWith(github.head_ref, 'release/')
+      !startsWith(github.head_ref, 'changeset-release/')
     permissions:
       actions: read
       contents: read
@@ -62,8 +60,8 @@ jobs:
           name: package-artifacts-${{ github.sha }}
       - name: Extract Package Artifacts
         run: tar -xzf package-artifacts.tgz
-      # Select releases from the PR head, but publish from the merge-ref
-      # workspace so package manifests and extracted artifacts stay aligned.
+      # Use the PR head only to decide whether this PR needs a preview. Build,
+      # resolve, and publish the complete merge-ref release plan together.
       - name: Collect Packages with Changesets
         id: changeset
         env:
@@ -91,13 +89,29 @@ jobs:
             cd "$PR_HEAD_DIR"
             "$GITHUB_WORKSPACE/node_modules/.bin/changeset" status \
               --since="$MERGE_BASE" \
-              --output .changeset-status.json
+              --output .changeset-pr-status.json
           )
-          # Resolve package names in the merge-ref workspace. These absolute
-          # paths remain valid after the temporary PR-head worktree is removed.
+          if ! pr_package_dirs_output="$(
+            node .github/scripts/list-changeset-packages.cjs \
+              "$PR_HEAD_DIR/.changeset-pr-status.json"
+          )"; then
+            echo "Failed to resolve PR package directories." >&2
+            exit 1
+          fi
+          if [ -z "$pr_package_dirs_output" ]; then
+            echo "No publishable packages affected by PR changesets; skipping pkg.pr.new publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Without --since, Changesets includes every active changeset in the
+          # merge ref and computes the complete dependency propagation. Keep
+          # its configured baseBranch resolvable from the detached checkout.
+          git update-ref refs/heads/main "$MERGE_BASE"
+          pnpm changeset status --output .changeset-status.json
           if ! package_dirs_output="$(
             node .github/scripts/list-changeset-packages.cjs \
-              "$PR_HEAD_DIR/.changeset-status.json"
+              .changeset-status.json
           )"; then
             echo "Failed to resolve publishable package directories." >&2
             exit 1
