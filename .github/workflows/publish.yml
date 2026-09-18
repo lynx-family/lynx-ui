@@ -5,6 +5,12 @@ on:
     branches: [
       "main",
     ]
+  workflow_dispatch:
+    inputs:
+      publish_deferred_component_0_0_1:
+        description: "Publish @lynx-js/lynx-ui-deferred-component@0.0.1"
+        required: true
+        type: boolean
 
 # Set default minimum permissions to prevent unnecessary access
 permissions: {}
@@ -59,7 +65,7 @@ jobs:
     timeout-minutes: 30
     needs: build
     runs-on: ubuntu-latest
-    if: github.repository == 'lynx-family/lynx-ui'
+    if: github.repository == 'lynx-family/lynx-ui' && github.event_name == 'push'
     concurrency:
       group: ${{ github.workflow }}-publish-${{ github.ref }}
       cancel-in-progress: false
@@ -120,3 +126,47 @@ jobs:
           version: pnpm version:packages
           publish: pnpm changeset publish
           title: "chore: Release ${{ steps.date.outputs.date }}"
+  publish-deferred-component-0-0-1:
+    name: Publish DeferredComponent 0.0.1
+    timeout-minutes: 30
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.repository == 'lynx-family/lynx-ui' && github.event_name == 'workflow_dispatch' && inputs.publish_deferred_component_0_0_1
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      - name: Install
+        run: |
+          npm install -g corepack@latest
+          corepack enable && corepack prepare
+          corepack pnpm install --frozen-lockfile
+      - name: Download Turbo Cache
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        timeout-minutes: 5
+        with:
+          name: deploy-${{ github.sha }}
+          path: .turbo
+      - name: Build
+        run: |
+          corepack pnpm turbo build --summarize
+          corepack pnpm check:package-types
+      - name: Verify Package Version
+        run: |
+          test "$(node -p "require('./packages/lynx-ui-deferred-component/package.json').version")" = "0.0.1"
+          if npm view @lynx-js/lynx-ui-deferred-component@0.0.1 version >/dev/null 2>&1; then
+            echo "@lynx-js/lynx-ui-deferred-component@0.0.1 is already published"
+            exit 1
+          fi
+      - name: Publish DeferredComponent 0.0.1
+        run: corepack pnpm --filter '@lynx-js/lynx-ui-deferred-component' publish --access public --no-git-checks
