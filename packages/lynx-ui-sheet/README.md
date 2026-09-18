@@ -44,7 +44,53 @@ The `Sheet` component is composed of several specialized sub-components to give 
 - **`SheetView`**: The viewport container for the sheet components.
 - **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.
+- **`SheetGestureContent`**: A gesture-runtime backed replacement for
+  `SheetContent`, intended for nested scrolling.
 - **`SheetHandle`**: (Optional) A draggable visual indicator (usually a small bar) at the top of the sheet content.
+
+## Nested scrolling
+
+Replace only the content layer, then bind `useSheetScrollGesture` to each
+native scrolling node:
+
+```tsx
+function Results() {
+  const scrollGesture = useSheetScrollGesture({
+    behavior: 'sheet-first',
+    handoffAt: 'max',
+  })
+
+  return (
+    <list main-thread:gesture={scrollGesture}>
+      {/* list items */}
+    </list>
+  )
+}
+
+<SheetRoot snapPoints={['40%', '90%']}>
+  <SheetView>
+    <SheetBackdrop />
+    <SheetGestureContent>
+      <SheetHandle />
+      <Results />
+    </SheetGestureContent>
+  </SheetView>
+</SheetRoot>
+```
+
+The enumerable `behavior` policies are:
+
+- `sheet-first`: expand the Sheet to `handoffAt`, then scroll content; a
+  downward drag at the content start collapses the Sheet.
+- `content-first`: scroll content first, then expand the Sheet when the content
+  reaches its end; a downward drag at the content start collapses the Sheet.
+- `disabled`: keep the nested gesture entirely in the content.
+
+`handoffAt` accepts a snap-point index or `'max'`. For advanced integration,
+`gestureConfig` and `gestureRelations` expose recognition and cross-gesture
+relationships. `unstable_customizeGesture` can compose or replace the default
+pan gesture, but is intentionally unstable because it follows the experimental
+gesture-runtime API.
 
 ## About @lynx-js/lynx-ui
 
