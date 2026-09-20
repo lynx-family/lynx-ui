@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@lynx-js/lynx-ui-button": "workspace:*",
+    "@lynx-js/lynx-ui-calendar": "workspace:*",
     "@lynx-js/lynx-ui-checkbox": "workspace:*",
     "@lynx-js/lynx-ui-common": "workspace:*",
     "@lynx-js/lynx-ui-deferred-component": "workspace:*",

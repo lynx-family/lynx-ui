@@ -12,6 +12,9 @@
       "path": "./packages/lynx-ui-button"
     },
     {
+      "path": "./packages/lynx-ui-calendar"
+    },
+    {
       "path": "./packages/lynx-ui-checkbox"
     },
     {
@@ -54,9 +57,6 @@
       "path": "./packages/lynx-ui-presence"
     },
     {
-      "path": "./packages/lynx-ui-slider"
-    },
-    {
       "path": "./packages/lynx-ui-radio-group"
     },
     {
@@ -64,6 +64,9 @@
     },
     {
       "path": "./packages/lynx-ui-sheet"
+    },
+    {
+      "path": "./packages/lynx-ui-slider"
     },
     {
       "path": "./packages/lynx-ui-sortable"
