@@ -57,7 +57,7 @@ function App() {
         itemClassName='view-pager-presentation__item'
         style={{ height: `${pages[0].pagerHeight}px` }}
         viewpagerProps={{ id: 'presentation-pager' }}
-        MTOnOffsetChange={handleOffsetChangeMT}
+        main-thread:onOffsetChange={handleOffsetChangeMT}
         onPageChange={event => setIndex(event.detail.index)}
       >
         {page => (

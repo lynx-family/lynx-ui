@@ -176,19 +176,19 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
    * @Android
    * @iOS
    */
-  MTOnPageChange?: (event: ViewPagerChangeEvent) => void
+  'main-thread:onPageChange'?: (event: ViewPagerChangeEvent) => void
   /**
    * Main-thread page transition handler. Use a main thread function.
    * @zh 主线程页面即将切换回调，需使用主线程函数。
    * @Android
    * @iOS
    */
-  MTOnPageWillChange?: (event: ViewPagerWillChangeEvent) => void
+  'main-thread:onPageWillChange'?: (event: ViewPagerWillChangeEvent) => void
   /**
    * Main-thread scroll progress handler. Use a main thread function.
    * @zh 主线程滚动进度回调，需使用主线程函数。
    * @Android
    * @iOS
    */
-  MTOnOffsetChange?: (event: ViewPagerOffsetChangeEvent) => void
+  'main-thread:onOffsetChange'?: (event: ViewPagerOffsetChangeEvent) => void
 }

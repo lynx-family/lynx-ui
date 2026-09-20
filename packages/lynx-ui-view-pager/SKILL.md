@@ -37,6 +37,8 @@ export function Pages() {
 
 `initialSelectIndex` applies only at mount. Navigate later with `ref.current?.selectTab(index, smooth)`. `onPageChange`, `onPageWillChange`, and `onOffsetChange` receive native events; read payload fields such as the selected index from `event.detail`.
 
+Use `main-thread:onPageChange`, `main-thread:onPageWillChange`, or `main-thread:onOffsetChange` with a `'main thread'` function when the handler must run on the main thread. These props receive the same event shapes as their regular-thread counterparts.
+
 Pages render eagerly unless `lazyOptions.enableLazy` is true. Lazy mode renders the initial page immediately and uses Lynx exposure placeholders for the rest. Give each pager a page-unique `scene`; use `exposureLeft` and `exposureRight` to control how early neighboring pages render. Once rendered, a page stays mounted while its keyed data item remains.
 
 The page renderer receives only `(item, index)`, not selection state. Keep selection-dependent UI outside page content or update it explicitly from `onPageChange`; native swipes do not otherwise require React to rerender the pager's page content.

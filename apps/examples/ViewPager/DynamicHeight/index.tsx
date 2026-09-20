@@ -47,7 +47,7 @@ function App() {
         itemClassName='view-pager-dynamic-height__item'
         style={{ height: `${pages[0].height}px` }}
         viewpagerProps={{ id: 'dynamic-height-pager' }}
-        MTOnOffsetChange={handleOffsetChangeMT}
+        main-thread:onOffsetChange={handleOffsetChangeMT}
       >
         {(page, index) => (
           <view

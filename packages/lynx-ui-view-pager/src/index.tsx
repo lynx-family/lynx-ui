@@ -104,9 +104,9 @@ function ViewPagerImpl<T>(
     onPageChange,
     onPageWillChange,
     onOffsetChange,
-    MTOnPageChange,
-    MTOnPageWillChange,
-    MTOnOffsetChange,
+    'main-thread:onPageChange': onPageChangeMT,
+    'main-thread:onPageWillChange': onPageWillChangeMT,
+    'main-thread:onOffsetChange': onOffsetChangeMT,
   } = props
   const initialIndex = useRef(initialSelectIndex)
   const nativeRef = useRef<NodesRef>(null)
@@ -150,9 +150,9 @@ function ViewPagerImpl<T>(
       bindchange={onPageChange}
       bindwillchange={onPageWillChange}
       bindoffsetchange={onOffsetChange}
-      main-thread:bindchange={MTOnPageChange}
-      main-thread:bindwillchange={MTOnPageWillChange}
-      main-thread:bindoffsetchange={MTOnOffsetChange}
+      main-thread:bindchange={onPageChangeMT}
+      main-thread:bindwillchange={onPageWillChangeMT}
+      main-thread:bindoffsetchange={onOffsetChangeMT}
     >
       {data.map((item, index) => {
         const itemKey = getItemKey?.(item, index) ?? index
