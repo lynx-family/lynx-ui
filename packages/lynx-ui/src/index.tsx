@@ -289,6 +289,7 @@ export type {
   ViewPagerOffsetChangeEvent,
   ViewPagerProps,
   ViewPagerRef,
+  ViewPagerWillChangeEvent,
 } from '@lynx-js/lynx-ui-view-pager'
 
 export {
