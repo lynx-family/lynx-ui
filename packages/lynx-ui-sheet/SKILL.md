@@ -12,7 +12,18 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - **`SheetView`**: Renders the sheet subtree in the overlay layer and controls mount/unmount.
 - **`SheetBackdrop`**: Renders the scrim behind the sheet and optionally closes the sheet on tap.
 - **`SheetContent`**: Renders the moving sheet or drawer surface and receives consumer sizing/styling.
+- **`SheetGestureContent`**: Drop-in content layer for gesture-runtime input and nested native scrolling. Keep `SheetContent` for the existing raw-touch behavior.
 - **`SheetHandle`**: Optional drag handle. It renders its `children`, so custom handle visuals can be placed directly inside the draggable target. Use it for bottom sheets when a visible handle is desired; horizontal drawers usually do not need it unless the design intentionally calls for a side grip.
+
+## Nested Scroll Rules
+
+- Use `SheetGestureContent` when the content contains a `scroll-view`, `list`, FoldView, or another native scrolling node.
+- In a descendant component, call `useSheetScrollGesture()` and bind the returned gesture directly to that scrolling node with `main-thread:gesture`.
+- Prefer `behavior: 'sheet-first'`: expanding drags move the Sheet to `handoffAt` before content scrolls, and collapsing drags transfer to the Sheet only when content is at its start.
+- Use `behavior: 'content-first'` when content must exhaust its scroll range before the Sheet expands.
+- Use `behavior: 'disabled'` when a particular nested scroll container must never hand its gesture to the Sheet.
+- Set `handoffAt` to a snap-point index or `'max'`; do not encode direction combinations in consumer callbacks.
+- Use `gestureConfig` and `gestureRelations` for stable recognition/relationship customization. Reserve `unstable_customizeGesture` for gesture-runtime composition or replacement.
 
 ## Side Rules
 
@@ -47,7 +58,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 ## Verification
 
-- Run `pnpm --filter @lynx-js/lynx-ui-sheet test -- --run` after changing snap, side, or drag helpers.
+- Run `pnpm --filter @lynx-js/lynx-ui-sheet test -- --run` after changing snap, side, drag, or nested-scroll helpers.
 - Run `pnpm --filter @lynx-js/lynx-ui-sheet build` after public API or type changes.
 - Run `pnpm --filter @lynx-example/lynx-ui-sheet build` after example changes.
 - Run `pnpm check:exports` when exported types or aggregate exports change.

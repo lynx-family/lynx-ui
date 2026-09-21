@@ -283,20 +283,27 @@ export type {
 export {
   SheetRoot,
   SheetContent,
+  SheetGestureContent,
   SheetBackdrop,
   SheetHandle,
   SheetView,
   useSnap,
+  useSheetScrollGesture,
 } from '@lynx-js/lynx-ui-sheet'
 export type {
   SheetBackdropProps,
   SheetContentProps,
+  SheetGestureConfig,
+  SheetGestureContentProps,
+  SheetGestureRelations,
+  SheetNestedScrollBehavior,
   SheetRootProps,
   SheetRootRef,
   SheetSide,
   SheetViewProps,
   SheetHandleProps,
   SheetTransition,
+  UseSheetScrollGestureOptions,
 } from '@lynx-js/lynx-ui-sheet'
 
 // slider

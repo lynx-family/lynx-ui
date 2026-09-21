@@ -36,6 +36,7 @@ const primitivesConfig: Record<string, string[]> = {
     'SheetBackdrop',
     'SheetView',
     'SheetContent',
+    'SheetGestureContent',
   ],
   'lynx-ui-dialog': [
     'DialogRoot',

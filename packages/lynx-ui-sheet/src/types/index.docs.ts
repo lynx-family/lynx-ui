@@ -4,6 +4,7 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
+import type { GestureKind, PanGestureConfig } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
@@ -132,6 +133,52 @@ export interface SheetContentProps extends ComponentBasicProps {
    * @Harmony
    */
   children?: ReactNode
+}
+
+/** Determines which surface owns a drag that starts in nested scroll content. */
+export type SheetNestedScrollBehavior =
+  | 'sheet-first'
+  | 'content-first'
+  | 'disabled'
+
+export type SheetGestureConfig = Pick<
+  PanGestureConfig,
+  | 'enabled'
+  | 'minDistance'
+  | 'activeOffsetX'
+  | 'activeOffsetY'
+  | 'failOffsetX'
+  | 'failOffsetY'
+>
+
+export interface SheetGestureRelations {
+  simultaneousWith?: GestureKind[]
+  waitFor?: GestureKind[]
+  continueWith?: GestureKind[]
+}
+
+export interface UseSheetScrollGestureOptions {
+  /**
+   * `sheet-first` expands the Sheet before scrolling its content.
+   * `content-first` scrolls content first and expands only at its end.
+   * `disabled` leaves the gesture entirely to the scroll container.
+   * @defaultValue 'sheet-first'
+   */
+  behavior?: SheetNestedScrollBehavior
+  /** Snap-point index at which an expanding drag is handed to content. */
+  handoffAt?: 'max' | number
+  enabled?: boolean
+}
+
+/** A gesture-enabled replacement for SheetContent. */
+export interface SheetGestureContentProps extends SheetContentProps {
+  gestureConfig?: SheetGestureConfig
+  gestureRelations?: SheetGestureRelations
+  /**
+   * Advanced escape hatch for composing or replacing the default Sheet pan.
+   * This API is experimental and may change with gesture-runtime.
+   */
+  unstable_customizeGesture?: (defaultGesture: GestureKind) => GestureKind
 }
 
 /**

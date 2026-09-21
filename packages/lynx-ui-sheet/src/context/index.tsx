@@ -5,12 +5,17 @@
 import { createContext, useContext } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
+import type { GestureKind, StateManager } from '@lynx-js/gesture-runtime'
 import { noop } from '@lynx-js/lynx-ui-common'
 import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetSide, SheetTransition } from '../types'
+import type {
+  SheetNestedScrollBehavior,
+  SheetSide,
+  SheetTransition,
+} from '../types'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
@@ -68,10 +73,27 @@ export interface SheetContextValue {
 
 export interface SheetDragContextValue {
   dragHandlers: {
-    handleTouchStartMT: (e: MainThread.TouchEvent) => void
-    handleTouchMoveMT: (e: MainThread.TouchEvent) => void
-    handleTouchEndMT: (e: MainThread.TouchEvent) => void
+    handleTouchStartMT?: (e: MainThread.TouchEvent) => void
+    handleTouchMoveMT?: (e: MainThread.TouchEvent) => void
+    handleTouchEndMT?: (e: MainThread.TouchEvent) => void
+    gesture?: GestureKind
   }
+}
+
+export interface ActiveSheetScrollGesture {
+  manager: StateManager | null
+  behavior: SheetNestedScrollBehavior
+  handoffAt: 'max' | number
+  atStart: boolean
+  atEnd: boolean
+}
+
+export interface SheetGestureContextValue {
+  sheetGesture?: GestureKind
+  activeScrollMTRef?: MainThreadRef<ActiveSheetScrollGesture | null>
+  resolvedSide: SheetResolvedSide
+  position?: MainThreadRef<MotionValue<number>>
+  getResolvedSnapOffsets?: () => number[]
 }
 
 // @ts-expect-error MT initialize is useless
@@ -105,4 +127,12 @@ export const SheetDragContext = createContext<SheetDragContextValue>({})
 
 export function useSheetDragContext() {
   return useContext(SheetDragContext)
+}
+
+export const SheetGestureContext = createContext<SheetGestureContextValue>({
+  resolvedSide: 'bottom',
+})
+
+export function useSheetGestureContext() {
+  return useContext(SheetGestureContext)
 }
