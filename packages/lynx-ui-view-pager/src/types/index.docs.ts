@@ -12,7 +12,11 @@ import type {
   ViewPagerWillChangeEvent,
 } from '@lynx-js/types'
 
-export type { ViewPagerChangeEvent, ViewPagerOffsetChangeEvent }
+export type {
+  ViewPagerChangeEvent,
+  ViewPagerOffsetChangeEvent,
+  ViewPagerWillChangeEvent,
+}
 
 export interface ViewPagerRef {
   /**
