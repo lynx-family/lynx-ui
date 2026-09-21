@@ -21,8 +21,15 @@ export interface Rect {
   top: number
 }
 
-// TODO(fangzhou.fz): add id if it becomes necessary in the future
 export interface ComponentBasicProps {
+  /**
+   * Identifier applied to the component's root element.
+   * @zh 应用于组件根元素的标识符。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  id?: string
   /**
    * className
    * @zh 类名

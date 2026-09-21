@@ -93,6 +93,7 @@ function ViewPagerImpl<T>(
     getItemKey,
     children,
     initialSelectIndex = 0,
+    id,
     className,
     style,
     itemClassName,
@@ -139,6 +140,7 @@ function ViewPagerImpl<T>(
     <viewpager
       {...viewpagerProps}
       ref={nativeRef}
+      id={id}
       className={clsx('lynx-ui-view-pager__root', className)}
       style={style}
       initial-select-index={normalizedInitialIndex}

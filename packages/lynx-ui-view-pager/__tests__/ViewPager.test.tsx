@@ -80,6 +80,18 @@ describe('ViewPager', () => {
     expect(pager.children[1]?.getAttribute('style')).toContain('width: 90%')
   })
 
+  it('forwards the shared id prop to the native root', () => {
+    const { container } = render(
+      <ViewPager id='featured-pages' data={pages}>
+        {page => <text>{page.label}</text>}
+      </ViewPager>,
+    )
+
+    expect(container.querySelector('viewpager')?.getAttribute('id')).toBe(
+      'featured-pages',
+    )
+  })
+
   it('uses exposure placeholders without eagerly calling the page renderer', () => {
     const renderPage = vi.fn((page: (typeof pages)[number]) => (
       <text>{page.label}</text>
