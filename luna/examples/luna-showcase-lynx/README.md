@@ -5,15 +5,22 @@ Stage and Studio showcases in lynx-ui.
 
 ## How to Explore
 
-From the repository root, build the app and its workspace dependencies:
+From this example directory, build the app and its workspace dependencies:
 
 ```bash
-pnpm turbo build --filter @lynx-js/example-luna-showcase-lynx
+pnpm turbo build
 ```
 
 Start the development server:
 
 ```bash
+pnpm dev
+```
+
+Or run both commands from the repository root:
+
+```bash
+pnpm turbo build --filter @lynx-js/example-luna-showcase-lynx
 pnpm --filter @lynx-js/example-luna-showcase-lynx dev
 ```
 

@@ -7,20 +7,27 @@ and Studio integration in lynx-ui. It consumes the workspace
 
 ## How to Explore
 
-From the repository root, build the showcase and its workspace dependencies:
+From this example directory, build the showcase and its workspace dependencies,
+then preview the production build:
 
 ```bash
-pnpm turbo build --filter @lynx-js/example-luna-showcase-studio
+pnpm demo
 ```
 
-Preview the production build:
+Or run the same command from the repository root:
 
 ```bash
-pnpm --filter @lynx-js/example-luna-showcase-studio preview
+pnpm --filter @lynx-js/example-luna-showcase-studio demo
 ```
 
 To iterate on the Studio UI after building the Lynx showcase payload, start the
-development server:
+development server from this example directory:
+
+```bash
+pnpm dev
+```
+
+Or start it from the repository root:
 
 ```bash
 pnpm --filter @lynx-js/example-luna-showcase-studio dev
