@@ -1,0 +1,82 @@
+@import "../shared/base.css";
+
+.payment-sheet {
+  max-width: 480px;
+  align-self: center;
+}
+
+.payment-layout {
+  height: 100%;
+  display: linear;
+  linear-orientation: vertical;
+  background-color: var(--canvas);
+}
+
+.payment-heading {
+  width: 100%;
+  height: 72px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid var(--rule);
+}
+
+.payment-heading-title {
+  color: var(--content);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payment-heading-copy,
+.payment-detail {
+  color: var(--content-muted);
+  font-size: 12px;
+}
+
+.payment-methods {
+  width: 100%;
+  height: calc(100% - 168px);
+}
+
+.payment-method {
+  width: 100%;
+  height: 72px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.payment-icon {
+  width: 40px;
+  height: 28px;
+  border-radius: 6px;
+  background-color: var(--secondary);
+}
+
+.payment-copy {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+}
+
+.payment-title {
+  color: var(--content);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.fixed-actions {
+  width: 100%;
+  height: 96px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 16px;
+  background-color: var(--canvas);
+  border-top: 1px solid var(--rule);
+}

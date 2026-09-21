@@ -4,6 +4,11 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
+import type {
+  GestureKind,
+  NativeGesture,
+  PanGestureConfig,
+} from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
@@ -132,6 +137,46 @@ export interface SheetContentProps extends ComponentBasicProps {
    * @Harmony
    */
   children?: ReactNode
+}
+
+export type SheetGestureConfig = Pick<
+  PanGestureConfig,
+  | 'enabled'
+  | 'minDistance'
+  | 'activeOffsetX'
+  | 'activeOffsetY'
+  | 'failOffsetX'
+  | 'failOffsetY'
+>
+
+export interface SheetGestureRelations {
+  simultaneousWith?: GestureKind[]
+  waitFor?: GestureKind[]
+  continueWith?: GestureKind[]
+}
+
+export interface SheetGestureRenderProps {
+  /**
+   * The coordinated native gesture to bind to the outermost vertical scrolling
+   * node. This is the same object returned by useSheetScrollGesture().
+   */
+  scrollGesture: NativeGesture
+}
+
+/** A gesture-enabled replacement for SheetContent; all other parts are reused. */
+export interface SheetGestureContentProps
+  extends Omit<SheetContentProps, 'children'>
+{
+  /**
+   * Regular content or a render function receiving the coordinated scroll
+   * gesture. Deep descendants can access the same gesture with
+   * useSheetScrollGesture().
+   */
+  children?: ReactNode | ((props: SheetGestureRenderProps) => ReactNode)
+  /** Native pan recognition thresholds. */
+  gestureConfig?: SheetGestureConfig
+  /** Relationships between the Sheet pan and external gestures. */
+  gestureRelations?: SheetGestureRelations
 }
 
 /**

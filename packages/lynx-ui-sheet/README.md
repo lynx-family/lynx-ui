@@ -44,7 +44,54 @@ The `Sheet` component is composed of several specialized sub-components to give 
 - **`SheetView`**: The viewport container for the sheet components.
 - **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.
+- **`SheetGestureContent`**: A gesture-runtime backed replacement for
+  `SheetContent`, intended for nested scrolling.
 - **`SheetHandle`**: (Optional) A draggable visual indicator (usually a small bar) at the top of the sheet content.
+
+## Nested scrolling
+
+Replace only the content layer with `SheetGestureContent`, then bind its
+coordinated gesture to the outermost vertical native scrolling node. The render
+prop is the most explicit path:
+
+```tsx
+<SheetRoot snapPoints={['40%', '90%']}>
+  <SheetView>
+    <SheetBackdrop />
+    <SheetGestureContent>
+      {({ scrollGesture }) => (
+        <list main-thread:gesture={scrollGesture}>
+          {/* list items */}
+        </list>
+      )}
+    </SheetGestureContent>
+  </SheetView>
+</SheetRoot>
+```
+
+For deeply nested content, use the argument-free Hook instead of forwarding the
+gesture through every component:
+
+```tsx
+function Results() {
+  const scrollGesture = useSheetScrollGesture()
+  return <list main-thread:gesture={scrollGesture}>{/* list items */}</list>
+}
+```
+
+Both access paths expose the same gesture created by the nearest
+`SheetGestureContent`; calling the Hook does not create another recognizer. Bind
+it to the outermost vertical scrolling node. The built-in ownership rule matches
+common bottom-sheet behavior: an upward drag expands the Sheet to its maximum
+snap before content scrolls, while a downward drag scrolls content back to its
+start before the Sheet collapses. Both transfers can occur without lifting the
+finger. A region that should scroll independently simply does not bind this
+gesture.
+
+`gestureConfig` and `gestureRelations` remain available on
+`SheetGestureContent` for recognition thresholds and relationships with external
+gestures. They configure the single coordinator rather than individual scrolling
+nodes.
 
 ## About @lynx-js/lynx-ui
 

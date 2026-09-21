@@ -283,14 +283,20 @@ export type {
 export {
   SheetRoot,
   SheetContent,
+  SheetGestureContent,
   SheetBackdrop,
   SheetHandle,
   SheetView,
   useSnap,
+  useSheetScrollGesture,
 } from '@lynx-js/lynx-ui-sheet'
 export type {
   SheetBackdropProps,
   SheetContentProps,
+  SheetGestureConfig,
+  SheetGestureContentProps,
+  SheetGestureRenderProps,
+  SheetGestureRelations,
   SheetRootProps,
   SheetRootRef,
   SheetSide,

@@ -500,7 +500,7 @@ The root component of the Sheet, containing all of its child components.
   },
   {
     "name": "rubberBand",
-    "type": "number | boolean | Record<string, unknown>",
+    "type": "number | boolean | {coeff?: number, max?: number}",
     "summary": [
       {
         "kind": "text",
@@ -1716,6 +1716,270 @@ The main content of the Sheet.
 ]}/>
 
 
+### SheetGestureContent
+
+A gesture-enabled replacement for SheetContent; all other parts are reused.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | (props: SheetGestureRenderProps) => ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Regular content or a render function receiving the coordinated scroll\ngesture. Deep descendants can access the same gesture with\nuseSheetScrollGesture()."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "enterAnimation",
+    "type": "SheetTransition",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The enter animation configuration."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 进入动画配置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "exitAnimation",
+    "type": "SheetTransition",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The exit animation configuration."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 退出动画配置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gestureConfig",
+    "type": "SheetGestureConfig",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native pan recognition thresholds."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gestureRelations",
+    "type": "SheetGestureRelations",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Relationships between the Sheet pan and external gestures."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "innerClassName",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "CSS class name for the inner layer.\nUse this for content layout and sizing styles. In horizontal drawer mode,\nthe drawer width should be set here so "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " can resolve from the\nmeasured drawer width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内层容器的 CSS 类名。\n用于设置内容区域的布局和尺寸样式。\n在水平抽屉模式下，应在这里设置抽屉宽度，这样 "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 才能根据测量得到的抽屉宽度完成解析。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "innerStyle",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Inline styles for the inner layer.\nUse this for content layout and sizing styles.\nNote: Visual styles (background, borderRadius, etc.) should be set via\nthe main "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " prop which applies to the moving surface layer.\nIn horizontal drawer mode, set drawer width here so "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " can resolve\nfrom the measured drawer width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内层容器的内联样式。\n用于设置内容区域的布局和尺寸样式。\n注意：背景、圆角等视觉样式应通过主 "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " 属性设置，该属性会应用到移动的 surface 层。\n在水平抽屉模式下，应在这里设置抽屉宽度，这样 "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 才能根据测量得到的抽屉宽度完成解析。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "snapAnimation",
+    "type": "SheetTransition",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The transition configuration for the Sheet snap animation."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 动画的过渡配置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+
+
+
+
 
 
 
@@ -1728,7 +1992,7 @@ The main content of the Sheet.
 <UIApiTable source={[
   {
     "name": "close",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1740,7 +2004,7 @@ The main content of the Sheet.
   },
   {
     "name": "collapse",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1752,7 +2016,7 @@ The main content of the Sheet.
   },
   {
     "name": "expand",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1764,7 +2028,7 @@ The main content of the Sheet.
   },
   {
     "name": "open",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1776,7 +2040,7 @@ The main content of the Sheet.
   },
   {
     "name": "snapTo",
-    "type": "(index: number, opts: Record<string, unknown>) => void",
+    "type": "(index: number, opts: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",

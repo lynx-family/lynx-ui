@@ -30,6 +30,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@lynx-js/gesture-runtime": "catalog:",
     "@lynx-js/lynx-ui-common": "workspace:*",
     "@lynx-js/lynx-ui-dialog": "workspace:*",
     "@lynx-js/lynx-ui-overlay": "workspace:*",

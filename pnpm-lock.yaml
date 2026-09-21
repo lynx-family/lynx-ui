@@ -1916,6 +1916,9 @@ importers:
 
   packages/lynx-ui-sheet:
     dependencies:
+      '@lynx-js/gesture-runtime':
+        specifier: 'catalog:'
+        version: 2.1.1(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)
       '@lynx-js/lynx-ui-common':
         specifier: workspace:*
         version: link:../lynx-ui-common
