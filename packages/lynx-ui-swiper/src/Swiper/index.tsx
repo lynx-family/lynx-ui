@@ -12,7 +12,7 @@ import {
 import type { ForwardedRef } from '@lynx-js/react'
 
 import { useTouchEmulation } from '@lynx-js/react-use'
-import type { MainThread } from '@lynx-js/types'
+import type { CSSProperties, MainThread } from '@lynx-js/types'
 
 import { LOOP_COUNT } from '../const'
 import { useBounceConfig } from '../hooks/useBounceConfig'
@@ -355,16 +355,19 @@ const Swiper = forwardRef(
       containerWidth,
     })
 
+    const rootStyle: CSSProperties = {
+      zIndex: 0,
+      ...style,
+      width: `${containerWidth}px`,
+      height: `${itemHeight}px`,
+      direction: RTL === 'lynx-rtl' ? 'lynx-rtl' : (RTL ? 'rtl' : 'ltr'),
+    }
+
     return (
       <SwiperContext.Provider value={contextValue}>
         <view
           class='lynx-ui-swiper__root'
-          style={{
-            ...style,
-            width: `${containerWidth}px`,
-            height: `${itemHeight}px`,
-            direction: RTL === 'lynx-rtl' ? 'lynx-rtl' : (RTL ? 'rtl' : 'ltr'),
-          }}
+          style={rootStyle}
           {...touchHandlers}
           consume-slide-event={consumeSlideEvent}
           block-native-event={blockNativeEvent}
