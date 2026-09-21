@@ -1,6 +1,11 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
+<!-- cspell:disable -->
+
+
 ### ViewPager
+
+
 
 <UIApiTable source={[
   {
@@ -79,21 +84,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "data",
-    "type": {
-      "type": "typeOperator",
-      "operator": "readonly",
-      "target": {
-        "type": "array",
-        "elementType": {
-          "type": "reference",
-          "target": 46,
-          "name": "T",
-          "package": "@lynx-js/lynx-ui-view-pager",
-          "qualifiedName": "ViewPagerProps.T",
-          "refersToTypeParameter": true
-        }
-      }
-    },
+    "type": "readonly T[]",
     "summary": [
       {
         "kind": "text",
@@ -137,7 +128,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "getItemKey",
-    "type": "(item: T, index: number) => [object Object]",
+    "type": "(item: T, index: number) => string | number",
     "summary": [
       {
         "kind": "text",
@@ -164,6 +155,28 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
         }
       ]
     }
+  },
+  {
+    "name": "id",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Identifier applied to the component's root element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "应用于组件根元素的标识符。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
   },
   {
     "name": "initialSelectIndex",
@@ -409,7 +422,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "viewpagerProps",
-    "type": "Omit",
+    "type": "Omit<ViewPagerProps, style | children | ref | className | initial-select-index | select-index | align-width | enable-scroll | allow-horizontal-gesture | bounces | keep-item-view | bindchange | bindwillchange | bindoffsetchange | main-thread:bindchange | main-thread:bindwillchange | main-thread:bindoffsetchange>",
     "summary": [
       {
         "kind": "text",
@@ -431,7 +444,16 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   }
 ]}/>
 
+
+
+
+
+
+
 ## ViewPagerRef
+
+
+
 <UIApiTable source={[
   {
     "name": "selectTab",
