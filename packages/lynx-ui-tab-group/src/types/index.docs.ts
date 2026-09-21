@@ -192,7 +192,7 @@ export interface TabsBarProps<T>
   renderTabItem?: (tabItem: TabsData<T>) => ReactNode
 }
 
-export interface TabItemProps extends
+export interface TabsItemProps extends
   Omit<
     StandardProps,
     'bindtap' | 'main-thread:bindlayoutchange' | 'main-thread:ref'

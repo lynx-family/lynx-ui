@@ -49,6 +49,8 @@ export function renderArrayType(
   )
   const needsParentheses = elementType.type === 'union'
     || elementType.type === 'intersection'
+    || (elementType.type === 'reflection'
+      && elementType.declaration?.signatures?.length > 0)
   return `${needsParentheses ? `(${renderedElement})` : renderedElement}[]`
 }
 

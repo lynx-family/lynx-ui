@@ -276,6 +276,7 @@ export type {
   TabsData,
   TabsIndicatorAnimation,
   TabsIndicatorProps,
+  TabsItemProps,
   TabsPanelProps,
   TabsPanelRef,
   TabsRootProps,

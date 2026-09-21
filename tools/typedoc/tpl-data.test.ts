@@ -26,6 +26,18 @@ describe('renderArrayType', () => {
     }, false)).toBe('(A & B)[]')
   })
 
+  it('parenthesizes function elements', () => {
+    expect(renderArrayType({
+      type: 'reflection',
+      declaration: {
+        signatures: [{
+          parameters: [],
+          type: { type: 'intrinsic', name: 'void' },
+        }],
+      },
+    }, false)).toBe('(() => void)[]')
+  })
+
   it('does not add unnecessary parentheses to nested arrays', () => {
     expect(renderArrayType({
       type: 'array',

@@ -16,5 +16,6 @@ export type {
   TabsPanelRef,
   TabsRootProps,
   TabsBarProps,
+  TabsItemProps,
   TabsRootRef,
 } from './types'

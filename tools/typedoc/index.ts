@@ -90,7 +90,6 @@ const primitivesConfig: Record<string, string[]> = {
     'TabsRoot',
     'TabsBar',
     'TabsItem',
-    'TabItem',
     'TabsPanel',
     'TabsIndicator',
   ],
