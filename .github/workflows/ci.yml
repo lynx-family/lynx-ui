@@ -121,6 +121,28 @@ jobs:
       runs-on: lynx-ubuntu-24.04-medium
       run: pnpm check:package-types
 
+  generated-documentation:
+    name: Generated Documentation
+    needs: build
+    uses: ./.github/workflows/common-test.yml
+    with:
+      runs-on: lynx-ubuntu-24.04-medium
+      run: |
+        pnpm genDoc
+
+        # Keep these paths aligned with every committed output written by
+        # pnpm genDoc. Unlike git diff, git status also reports new files.
+        generated_documentation_outputs=(
+          ":(glob)packages/lynx-ui-*/docs/APIReference*.mdx"
+        )
+        changes="$(git status --porcelain=v1 --untracked-files=all -- "${generated_documentation_outputs[@]}")"
+        if [ -n "$changes" ]; then
+          printf '%s\n' "$changes"
+          git diff --stat -- "${generated_documentation_outputs[@]}"
+          echo "::error::Generated documentation is out of date. Run pnpm genDoc and commit all changes reported above."
+          exit 1
+        fi
+
   test-publish:
     name: Test Publish
     needs: build
@@ -203,6 +225,7 @@ jobs:
       - luna-vars
       - check-exports
       - check-package-types
+      - generated-documentation
       - eslint
       - test-publish
       - test-typos

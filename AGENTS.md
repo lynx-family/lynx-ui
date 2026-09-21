@@ -116,6 +116,11 @@ LUNA foundation packages under `luna/packages/` build from local source with Rsl
 Before submitting changes, ensure the project builds and passes checks.
 **CRITICAL**: You MUST run `pnpm turbo build` to perform a full workspace build and ensure no compilation errors are introduced.
 
+After changing component API documentation sources or the TypeDoc generator, run `pnpm genDoc`
+after the full workspace build and commit every affected
+`packages/lynx-ui-*/docs/APIReference*.mdx` files, including generated deletions. CI regenerates
+these files and fails when the committed output is stale.
+
 The required `Done` check from the `Test` workflow must be reported for every pull request targeting
 `main`, including documentation-only and changeset-only pull requests. Do not add pull request path
 filters that can skip the entire workflow.
@@ -123,6 +128,9 @@ filters that can skip the entire workflow.
 ```bash
 # Build all packages
 pnpm run build
+
+# Regenerate committed component API references
+pnpm genDoc
 
 # Verify the aggregate lynx-ui entry re-exports the expected package surface
 pnpm check:exports
