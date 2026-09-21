@@ -31,6 +31,7 @@ export default defineConfig({
       ActRadioGroup: './src/demos/ActRadioGroup.tsx',
       ActPopover: './src/demos/ActPopover.tsx',
       ActDialog: './src/demos/ActDialog.tsx',
+      TailwindTransformProbe: './src/demos/TailwindTransformProbe.tsx',
     },
   },
   plugins: [

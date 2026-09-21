@@ -83,8 +83,8 @@ catalogs:
       version: 2.1.9
   tailwind:
     '@lynx-js/tailwind-preset':
-      specifier: 0.5.0
-      version: 0.5.0
+      specifier: https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231
+      version: 0.5.1
     rsbuild-plugin-tailwindcss:
       specifier: 0.2.4
       version: 0.2.4
@@ -364,7 +364,7 @@ importers:
         version: 0.16.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@rspack/core@2.1.5(@swc/helpers@0.5.23))(core-js@3.47.0)(typescript@5.9.3)(webpack@5.106.2(postcss@8.5.14))
       '@lynx-js/tailwind-preset':
         specifier: catalog:tailwind
-        version: 0.5.0(tailwindcss@3.4.17)
+        version: https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231(tailwindcss@3.4.17)
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
@@ -591,7 +591,7 @@ importers:
         version: 0.16.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@rspack/core@2.1.5(@swc/helpers@0.5.23))(core-js@3.47.0)(typescript@5.9.3)(webpack@5.106.2(postcss@8.5.14))
       '@lynx-js/tailwind-preset':
         specifier: catalog:tailwind
-        version: 0.5.0(tailwindcss@3.4.17)
+        version: https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231(tailwindcss@3.4.17)
       '@lynx-js/types':
         specifier: 'catalog:'
         version: 4.1.0
@@ -845,7 +845,7 @@ importers:
         version: 0.16.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@rspack/core@2.1.5(@swc/helpers@0.5.23))(core-js@3.47.0)(typescript@5.9.3)(webpack@5.106.2(postcss@8.5.14))
       '@lynx-js/tailwind-preset':
         specifier: catalog:tailwind
-        version: 0.5.0(tailwindcss@3.4.17)
+        version: https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231(tailwindcss@3.4.17)
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
@@ -952,7 +952,7 @@ importers:
         version: 0.16.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(@rspack/core@2.1.5(@swc/helpers@0.5.23))(core-js@3.47.0)(typescript@5.9.3)(webpack@5.106.2(postcss@8.5.14))
       '@lynx-js/tailwind-preset':
         specifier: catalog:tailwind
-        version: 0.5.0(tailwindcss@3.4.17)
+        version: https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231(tailwindcss@3.4.17)
       '@lynx-js/types':
         specifier: 'catalog:'
         version: 4.1.0
@@ -3249,8 +3249,9 @@ packages:
     resolution: {integrity: sha512-xqBQ+g8fJn1kPJN+7tgzypPj+FK9+8ifDVhXu9i0S6630XebdZ7ZKPehlGMNdfZPnS96Wo0EBCoEaAwJ6c9UpA==}
     engines: {node: '>=18'}
 
-  '@lynx-js/tailwind-preset@0.5.0':
-    resolution: {integrity: sha512-6rAwGSpGsx6jPC8g/zZtDkC8GztMezcjuDzRZXh99BpRQpuRJlKAqLkyD1yGQ42gHQCtO3ssWXIudTZlt2/+jg==}
+  '@lynx-js/tailwind-preset@https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231':
+    resolution: {integrity: sha512-iaMi8OO654EISALU20jyCA/VLU6E+b5t47xae55jGdQriHt+MfXLXNjEL8DFT1+2JrxOLKy6njJ0TS+6oLT9Dw==, tarball: https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231}
+    version: 0.5.1
     peerDependencies:
       tailwindcss: ^3.4.0
 
@@ -8770,7 +8771,7 @@ snapshots:
     dependencies:
       '@lynx-js/webpack-runtime-globals': 0.0.7
 
-  '@lynx-js/tailwind-preset@0.5.0(tailwindcss@3.4.17)':
+  '@lynx-js/tailwind-preset@https://pkg.pr.new/@lynx-js/tailwind-preset@0bb6231(tailwindcss@3.4.17)':
     dependencies:
       tailwindcss: 3.4.17
 
