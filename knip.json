@@ -12,7 +12,6 @@
       "entry": [
         "tools/**/*.ts",
         "tools/**/*.js",
-        "eslint.config.mjs",
         "rslint.config.mjs",
         "cspell.jsonc"
       ],

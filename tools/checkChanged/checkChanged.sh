@@ -1,16 +1,6 @@
 #!/bin/bash
 set -e
 
-# Parse command line arguments
-UNSAFE_FIX=0
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --unsafe) UNSAFE_FIX=1 ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
-    esac
-    shift
-done
-
 # Get list of files changed compared to main.
 CHANGED_FILES=$(git diff --name-only main)
 
@@ -38,12 +28,12 @@ set +e
 
 # Run Rslint with auto-fix and capture its exit code
 echo "Running Rslint with auto-fix..."
-npx rslint -c rslint.config.mjs --fix $FILES
+pnpm exec rslint -c rslint.config.mjs --fix $FILES
 RSLINT_RESULT=$?
 
 # Run dprint formatter and capture its exit code
 echo "Running dprint formatter..."
-npx dprint fmt --allow-no-files
+pnpm exec dprint fmt --allow-no-files
 DPRINT_RESULT=$?
 
 # Re-enable exit on error

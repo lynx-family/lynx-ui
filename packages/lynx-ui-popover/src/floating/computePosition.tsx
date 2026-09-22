@@ -31,7 +31,7 @@ export const computePosition: ComputePosition = async (
   let middlewareData: MiddlewareData = {}
   let resetCount = 0
 
-  // biome-ignore lint/style/useForOf: <explanation>
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of -- indexed access is intentional
   for (let i = 0; i < validMiddleware.length; i++) {
     const { name, fn } = validMiddleware[i]
 

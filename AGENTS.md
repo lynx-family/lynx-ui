@@ -246,7 +246,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
        )
     }
     ```
-- **File Headers**: All source files must include the copyright header (checked by ESLint):
+- **File Headers**: All source files must include the copyright header (checked by Rslint):
 
   ```typescript
   // Copyright 2026 The Lynx Authors. All rights reserved.

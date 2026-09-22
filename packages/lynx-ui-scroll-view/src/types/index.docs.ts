@@ -24,7 +24,7 @@ type ScrollPropagationBehaviorOption =
   // | 'propagateAtEdge' // @todo Child scrolls first; parent scrolls on next touch at edge
   | 'preventPropagate' // Never allow scroll propagation
 
-// biome-ignore lint/suspicious/noEmptyInterface: <explanation>
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- expected empty interface
 export interface ScrollViewRef {}
 
 export interface ScrollViewProps
@@ -374,7 +374,7 @@ export interface BounceableBasicProps {
    * @Android
    * @Harmony
    */
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- expected dynamic value
   upperBounceItem?: any
   /**
    * Content of lower bounces view, which will be displayed during the lower bouncing effect.
@@ -383,7 +383,7 @@ export interface BounceableBasicProps {
    * @Android
    * @Harmony
    */
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- expected dynamic value
   lowerBounceItem?: any
   /**
    * Whether the scrollable container can bounce when the content area of the scrollable container is smaller than the viewport area.

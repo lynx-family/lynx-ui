@@ -5,7 +5,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-/* eslint-disable unicorn/no-negated-condition */
+/* eslint-disable unicorn-js/no-negated-condition */
 /* eslint-disable no-extra-boolean-cast */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable regexp/no-useless-lazy */

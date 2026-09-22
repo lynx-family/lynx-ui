@@ -58,7 +58,7 @@ export interface RefreshProps {
    * @defaultValue 'hook'
    */
   mode?: 'hook' | 'native'
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic main-thread value
   headerContent: any
   validAnimationVersion?: boolean
   onStartRefresh?: (e: { triggeredBy: 'startRefresh' | 'drag' }) => void
@@ -482,7 +482,7 @@ export function useRefreshAndBounce(
   // Use translate to implement real bouncing effect
   function bouncingSetStyle(offset: number) {
     'main thread'
-    if (isNaN(Number(offset))) {
+    if (Number.isNaN(Number(offset))) {
       console.error(
         '[lynx-ui-feed-list][useRefresh] ERROR! bouncingOffset is NaN',
       )

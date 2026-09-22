@@ -120,7 +120,7 @@ function main() {
   }
 
   if (hasError) {
-    // eslint-disable-next-line n/no-process-exit
+    // eslint-disable-next-line node/no-process-exit
     process.exit(1)
   } else {
     console.log('\n✅ All submodules check passed.')
