@@ -42,8 +42,6 @@ const useMainThreadifyEvents = (
 }
 /**
  * Only bind the events that are passed in and registered in the registeredProps to improve performance.
- * @param events
- * @param registeredEventsMapping
  * @example
  * ```
  * const XXXOwnedProps: Record<string, string> = {

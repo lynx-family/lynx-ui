@@ -175,6 +175,7 @@ export default defineConfig([
   {
     rules: {
       'jsdoc/require-jsdoc': 'off',
+      'jsdoc/require-param': ['warn', { enableFixer: false }],
       'jsdoc/require-returns': 'off',
       'jsdoc/check-alignment': 'off',
       'jsdoc/tag-lines': 'off',

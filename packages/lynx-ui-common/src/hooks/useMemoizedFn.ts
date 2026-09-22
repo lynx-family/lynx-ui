@@ -15,7 +15,6 @@ type PickFunction<T extends noop> = (
 /**
  * Hooks for persistent functions. In general, useMemoizedFn can be used instead of useCallback.
  * In some scenarios, we need to use useCallback to cache a function, but when the second parameter deps changes, the function will be regenerated, causing the function reference to change.
- * @param fn
  */
 function useMemoizedFn<T extends noop>(fn: T) {
   const fnRef = useRef<T>(fn)

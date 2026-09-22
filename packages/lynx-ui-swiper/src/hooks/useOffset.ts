@@ -96,28 +96,6 @@ function rubberEffect(rubberDelta: number, bounceWidth: number): number {
 /**
  * This hook are used to maintain a virtual offset, which does not necessarily reflect the actual
  * location of the swiper
- * @param root0
- * @param root0.loop
- * @param root0.duration
- * @param root0.size
- * @param root0.spaceBetween
- * @param root0.easing
- * @param root0.dataCount
- * @param root0.initialIndex
- * @param root0.autoPlay
- * @param root0.autoPlayInterval
- * @param root0.offsetLimit
- * @param root0.enableBounce
- * @param root0.startBounceItemWidth
- * @param root0.endBounceItemWidth
- * @param root0.onStartBounceItemBounce
- * @param root0.onEndBounceItemBounce
- * @param root0.experimentalHorizontalSwipeOnly
- * @param root0.onSwipeStartMT
- * @param root0.onSwipeStopMT
- * @param root0.consumeSlideEvent
- * @param root0.RTL
- * @param onOffsetUpdate
  */
 function useOffset(
   {

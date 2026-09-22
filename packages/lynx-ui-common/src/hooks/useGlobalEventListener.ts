@@ -11,9 +11,6 @@ type noop = (...p: any) => void
  * Use this hook to register events
  * Events will be registered at first render, preventing possible message missing.
  * When deps updates, handlerFunc will be updated, old event listener will be removed.
- * @param eventName
- * @param handler
- * @param deps
  */
 export function useGlobalEventListener(
   eventName: string,
