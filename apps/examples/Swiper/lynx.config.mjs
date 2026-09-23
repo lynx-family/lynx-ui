@@ -24,7 +24,6 @@ const defaultConfig = exampleConfig(
     SwiperRTLLynxRTL: './RTLLoopLynxRTL/index.tsx',
     SwiperRTLCustom: './RTLCustom/index.tsx',
   },
-  { needWeb: true },
 )
 
 export default defaultConfig

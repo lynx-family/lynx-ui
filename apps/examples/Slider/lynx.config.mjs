@@ -13,6 +13,6 @@ const defaultConfig = exampleConfig({
   SliderDynamicWidth: './DynamicWidth/index.tsx',
   SliderProgress: './Progress/index.tsx',
   SliderWithScrollView: './WithScrollView/index.tsx',
-}, { enableWebBundle: true })
+})
 
 export default defaultConfig
