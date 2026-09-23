@@ -33,7 +33,7 @@ export function Pages() {
 }
 ```
 
-`getItemKey` defaults to the item index. Provide stable, unique values when pages can be inserted, removed, or reordered so page state remains attached to the correct data item. Use `itemClassName` and `itemStyle` to style every generated native item; put page-specific styling and accessibility attributes on the rendered page content.
+`getItemKey` defaults to the item index. Provide stable, unique values when pages can be inserted, removed, or reordered so page state remains attached to the correct data item. Use `itemClassName` and `itemStyle` to style every generated native item. Use `getItemProps` for per-item native class names, styles, accessibility attributes, and other native properties. Per-item styles override shared item styles; ViewPager manages item keys, refs, and children.
 
 `initialSelectIndex` applies only at mount. Navigate later with `ref.current?.scrollToPage(index, smooth)`. `onPageChange`, `onPageWillChange`, and `onOffsetChange` receive native events; read payload fields such as the selected index from `event.detail`.
 

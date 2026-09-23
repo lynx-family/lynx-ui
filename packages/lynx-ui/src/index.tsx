@@ -285,6 +285,7 @@ export { ViewPager } from '@lynx-js/lynx-ui-view-pager'
 export type {
   ViewPagerChangeEvent,
   ViewPagerExposureMargin,
+  ViewPagerItemProps,
   ViewPagerLazyOptions,
   ViewPagerOffsetChangeEvent,
   ViewPagerProps,

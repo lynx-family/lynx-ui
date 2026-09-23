@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-view-pager",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "description": "Example app demonstrating ViewPager usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/ViewPager#readme",
   "repository": {
@@ -15,7 +15,6 @@
   "type": "module",
   "files": [
     "LICENSE",
-    "CHANGELOG.md",
     "dist/",
     "**/*.tsx",
     "**/*.ts",

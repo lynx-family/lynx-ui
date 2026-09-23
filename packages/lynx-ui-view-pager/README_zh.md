@@ -27,6 +27,8 @@ import { ViewPager } from '@lynx-js/lynx-ui'
 
 [查看示例](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/ViewPager)
 
+需要为单个原生页面设置样式或无障碍属性时，使用 `getItemProps`。其中的样式会覆盖 `itemStyle` 的同名属性。
+
 ## 许可证
 
 [lynx-ui](https://github.com/lynx-family/lynx-ui) 基于 [Apache License 2.0](./LICENSE) 许可发布。

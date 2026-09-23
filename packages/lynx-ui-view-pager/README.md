@@ -27,6 +27,8 @@ import { ViewPager } from '@lynx-js/lynx-ui'
 
 [View the examples](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/ViewPager)
 
+Use `getItemProps` when individual native page items need their own style or accessibility attributes. Its styles override matching `itemStyle` properties.
+
 ## License
 
 [lynx-ui](https://github.com/lynx-family/lynx-ui) is licensed under the [Apache License 2.0](./LICENSE).

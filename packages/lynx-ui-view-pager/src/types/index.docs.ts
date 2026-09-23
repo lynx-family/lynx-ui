@@ -6,6 +6,7 @@ import type { ReactNode } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type {
+  ViewPagerItemProps as NativeViewPagerItemProps,
   ViewPagerProps as NativeViewPagerProps,
   ViewPagerChangeEvent,
   ViewPagerOffsetChangeEvent,
@@ -37,6 +38,13 @@ export interface ViewPagerRef {
 
 export type ViewPagerExposureMargin = `${number}px` | `${number}rpx`
 
+export type ViewPagerItemProps =
+  & Omit<
+    NativeViewPagerItemProps,
+    'key' | 'ref' | 'children' | 'style'
+  >
+  & { style?: ComponentBasicProps['style'] }
+
 export type ViewPagerLazyOptions =
   | {
     /** Disable lazy rendering. @zh 禁用懒渲染。 */
@@ -54,6 +62,13 @@ export type ViewPagerLazyOptions =
   }
 
 export interface ViewPagerProps<T> extends ComponentBasicProps {
+  /**
+   * Identifier applied to the native ViewPager root.
+   * @zh 应用于原生 ViewPager 根节点的标识符。
+   * @Android
+   * @iOS
+   */
+  id?: string
   /**
    * Data rendered as pages. ViewPager creates one direct native
    * viewpager-item child for every entry.
@@ -112,6 +127,19 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
    */
   itemStyle?: ComponentBasicProps['style']
   /**
+   * Native props for an individual generated item. Its class name is added to
+   * itemClassName; its style overrides matching itemStyle properties. The
+   * item's key, ref, and children are managed by ViewPager.
+   * @zh 单个自动生成条目的原生属性。类名与 itemClassName 合并；样式覆盖 itemStyle 的同名属性。条目的 key、ref 和 children 由 ViewPager 管理。
+   * @docTypeFallback (item: T, index: number) => ViewPagerItemProps
+   * @Android
+   * @iOS
+   */
+  getItemProps?: (
+    item: T,
+    index: number,
+  ) => ViewPagerItemProps
+  /**
    * Enable horizontal swipe gestures.
    * @defaultValue true
    * @zh 启用水平滑动手势。
@@ -141,7 +169,6 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
     | 'className'
     | 'style'
     | 'initial-select-index'
-    | 'select-index'
     | 'align-width'
     | 'enable-scroll'
     | 'allow-horizontal-gesture'

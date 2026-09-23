@@ -9,8 +9,6 @@ import { LazyComponent } from '@lynx-js/lynx-ui-lazy-component'
 import type { NodesRef } from '@lynx-js/types'
 import { clsx } from 'clsx'
 
-import './styles.css'
-
 import type { ViewPagerProps, ViewPagerRef } from './types'
 import { normalizeIndex } from './utils'
 
@@ -46,6 +44,7 @@ function ViewPagerImpl<T>(
     style,
     itemClassName,
     itemStyle,
+    getItemProps,
     viewpagerProps,
     enableScroll = true,
     bounces = true,
@@ -65,6 +64,13 @@ function ViewPagerImpl<T>(
     initialIndex.current,
     data.length,
   )
+  const initialItemKey = useRef<string | number | undefined>(undefined)
+  if (initialItemKey.current === undefined && data.length > 0) {
+    initialItemKey.current = getItemKey?.(
+      data[normalizedInitialIndex],
+      normalizedInitialIndex,
+    ) ?? normalizedInitialIndex
+  }
 
   useImperativeHandle(ref, () => ({
     scrollToPage(next, smooth, success, fail) {
@@ -102,8 +108,8 @@ function ViewPagerImpl<T>(
       {...viewpagerProps}
       ref={nativeRef}
       id={id}
-      className={clsx('lynx-ui-view-pager__root', className)}
-      style={style}
+      className={className}
+      style={{ width: '100%', display: 'flex', flexDirection: 'row', ...style }}
       initial-select-index={normalizedInitialIndex}
       align-width={true}
       enable-scroll={enableScroll}
@@ -114,13 +120,21 @@ function ViewPagerImpl<T>(
     >
       {data.map((item, index) => {
         const itemKey = getItemKey?.(item, index) ?? index
+        const perItemProps = getItemProps?.(item, index)
         return (
           <viewpager-item
+            {...perItemProps}
             key={itemKey}
-            className={clsx('lynx-ui-view-pager__item', itemClassName)}
-            style={itemStyle}
+            className={clsx(itemClassName, perItemProps?.className)}
+            style={{
+              display: 'flex',
+              width: '100%',
+              flexShrink: 0,
+              ...itemStyle,
+              ...perItemProps?.style,
+            }}
           >
-            {lazyOptions?.enableLazy && index !== normalizedInitialIndex
+            {lazyOptions?.enableLazy && itemKey !== initialItemKey.current
               ? (
                 <LazyComponent
                   pid={`lynx-ui-view-pager-${String(itemKey)}`}

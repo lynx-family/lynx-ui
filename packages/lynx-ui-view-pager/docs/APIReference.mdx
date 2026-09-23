@@ -1,6 +1,7 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
 
+
 ### ViewPager
 
 
@@ -155,25 +156,55 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     }
   },
   {
-    "name": "id",
-    "type": "string",
+    "name": "getItemProps",
+    "type": "(item: T, index: number) => ViewPagerItemProps",
     "summary": [
       {
         "kind": "text",
-        "text": "Identifier applied to the component's root element."
+        "text": "Native props for an individual generated item. Its class name is added to\nitemClassName; its style overrides matching itemStyle properties. The\nitem's key, ref, and children are managed by ViewPager."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "应用于组件根元素的标识符。"
+        "text": "单个自动生成条目的原生属性。类名与 itemClassName 合并；样式覆盖 itemStyle 的同名属性。条目的 key、ref 和 children 由 ViewPager 管理。"
       }
     ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportHarmony": false,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "(item: T, index: number) => ViewPagerItemProps"
+        }
+      ]
+    }
+  },
+  {
+    "name": "id",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Identifier applied to the native ViewPager root."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "应用于原生 ViewPager 根节点的标识符。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -420,7 +451,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "viewpagerProps",
-    "type": "Omit<ViewPagerProps, style | children | ref | id | className | initial-select-index | select-index | align-width | enable-scroll | allow-horizontal-gesture | bounces | keep-item-view | bindchange | bindwillchange | bindoffsetchange | main-thread:bindchange | main-thread:bindwillchange | main-thread:bindoffsetchange>",
+    "type": "Omit<ViewPagerProps, style | ref | children | id | className | initial-select-index | align-width | enable-scroll | allow-horizontal-gesture | bounces | keep-item-view | bindchange | bindwillchange | bindoffsetchange | main-thread:bindchange | main-thread:bindwillchange | main-thread:bindoffsetchange>",
     "summary": [
       {
         "kind": "text",

@@ -80,6 +80,31 @@ describe('ViewPager', () => {
     expect(pager.children[1]?.getAttribute('style')).toContain('width: 90%')
   })
 
+  it('merges per-item native props after shared item styles', () => {
+    const { container } = render(
+      <ViewPager
+        data={pages}
+        itemClassName='shared'
+        itemStyle={{ width: '90%', height: '100%' }}
+        getItemProps={(page) => ({
+          className: `page-${page.id}`,
+          style: { width: page.id === 'a' ? '80%' : '70%' },
+          'accessibility-label': `Page ${page.label}`,
+        })}
+      >
+        {page => <text>{page.label}</text>}
+      </ViewPager>,
+    )
+    const items = container.querySelector('viewpager')!.children
+    expect(items[0]?.className).toContain('shared')
+    expect(items[0]?.className).toContain('page-a')
+    expect(items[0]?.getAttribute('style')).toContain('width: 80%')
+    expect(items[0]?.getAttribute('style')).toContain('height: 100%')
+    expect(items[0]?.getAttribute('accessibility-label')).toBe('Page A')
+    expect(items[1]?.className).toContain('page-b')
+    expect(items[1]?.getAttribute('style')).toContain('width: 70%')
+  })
+
   it('forwards the shared id prop to the native root', () => {
     const { container } = render(
       <ViewPager id='featured-pages' data={pages}>
@@ -205,6 +230,41 @@ describe('ViewPager', () => {
       <ViewPager
         data={[pages[1], pages[0], pages[2]]}
         getItemKey={page => page.id}
+      >
+        {renderPage}
+      </ViewPager>,
+    )
+    expect(getByText('A 1')).toBeDefined()
+  })
+
+  it('preserves the initial page state when lazy pages are reordered', () => {
+    function Counter({ label }: { label: string }) {
+      const [count, setCount] = useState(0)
+      return (
+        <text bindtap={() => setCount(value => value + 1)}>
+          {`${label} ${count}`}
+        </text>
+      )
+    }
+    const renderPage = (page: (typeof pages)[number]) => (
+      <Counter label={page.label} />
+    )
+    const lazyOptions = { enableLazy: true as const, scene: 'reorder-test' }
+    const { getByText, rerender } = render(
+      <ViewPager
+        data={pages}
+        getItemKey={page => page.id}
+        lazyOptions={lazyOptions}
+      >
+        {renderPage}
+      </ViewPager>,
+    )
+    fireEvent.tap(getByText('A 0'))
+    rerender(
+      <ViewPager
+        data={[pages[1], pages[0], pages[2]]}
+        getItemKey={page => page.id}
+        lazyOptions={lazyOptions}
       >
         {renderPage}
       </ViewPager>,
