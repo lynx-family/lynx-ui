@@ -1,23 +1,25 @@
 #!/bin/bash
 set -e
 
-# Get list of files changed compared to main.
-CHANGED_FILES=$(git diff --name-only main)
+# Collect changed JavaScript/TypeScript files while preserving path boundaries.
+FILES=()
+while IFS= read -r -d '' file; do
+  case "$file" in
+    *.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.md|*.json|*.jsonc)
+      if [ -f "$file" ]; then
+        FILES+=("$file")
+      fi
+      ;;
+  esac
+done < <(git diff --name-only -z main)
 
-# Filter for JavaScript/TypeScript files and ensure they exist
-FILES=$(echo "$CHANGED_FILES" | grep -E '\.(js|jsx|ts|tsx|mjs|cjs|md|json|jsonc)$' | while read file; do
-  if [ -f "$file" ]; then
-    echo "$file"
-  fi
-done)
-
-if [ -z "$FILES" ]; then
+if [ "${#FILES[@]}" -eq 0 ]; then
   echo "No changed JavaScript/TypeScript files to lint."
   exit 0
 fi
 
 echo "Files to lint/fix:"
-echo "$FILES"
+printf '%s\n' "${FILES[@]}"
 echo ""
 
 
@@ -28,7 +30,7 @@ set +e
 
 # Run Rslint with auto-fix and capture its exit code
 echo "Running Rslint with auto-fix..."
-pnpm exec rslint -c rslint.config.mjs --fix $FILES
+pnpm exec rslint -c rslint.config.mjs --fix "${FILES[@]}"
 RSLINT_RESULT=$?
 
 # Run dprint formatter and capture its exit code

@@ -111,7 +111,6 @@ export default defineConfig([
     '**/rslib.config.ts',
     '**/vitest.config.ts',
     'website/**',
-    'tools/configs/**',
     'tools/typings/**/*.d.ts',
     '**/tools/make-new-component/examplesTemplate/**',
     '**/tools/make-new-component/template/**',
