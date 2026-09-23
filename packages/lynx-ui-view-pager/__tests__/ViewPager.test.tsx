@@ -221,7 +221,7 @@ describe('ViewPager', () => {
         {page => <text>{page.label}</text>}
       </ViewPager>,
     )
-    act(() => ref.current?.selectTab(10, false, success, fail))
+    act(() => ref.current?.scrollToPage(10, false, success, fail))
     expect(invoke).toHaveBeenCalledWith({
       method: 'selectTab',
       params: { index: 2, smooth: false },
@@ -234,7 +234,7 @@ describe('ViewPager', () => {
         {page => <text>{page.label}</text>}
       </ViewPager>,
     )
-    act(() => ref.current?.selectTab(1))
+    act(() => ref.current?.scrollToPage(1))
     expect(invoke).toHaveBeenCalledTimes(1)
   })
 })

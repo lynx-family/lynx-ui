@@ -105,13 +105,13 @@ function App() {
       <view className='view-pager-gallery__controls'>
         <Button
           disabled={index === 0}
-          onClick={() => pagerRef.current?.selectTab(index - 1)}
+          onClick={() => pagerRef.current?.scrollToPage(index - 1)}
         >
           <text>Previous</text>
         </Button>
         <Button
           disabled={index === destinations.length - 1}
-          onClick={() => pagerRef.current?.selectTab(index + 1)}
+          onClick={() => pagerRef.current?.scrollToPage(index + 1)}
         >
           <text>Next</text>
         </Button>

@@ -27,7 +27,7 @@ export interface ViewPagerRef {
    * @Android
    * @iOS
    */
-  selectTab: (
+  scrollToPage: (
     index: number,
     smooth?: boolean,
     success?: (result: unknown) => void,
@@ -81,9 +81,9 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
    */
   children: (item: T, index: number) => ReactNode
   /**
-   * Initial page index. Later changes are ignored; use ref.selectTab to navigate.
+   * Initial page index. Later changes are ignored; use ref.scrollToPage to navigate.
    * @defaultValue 0
-   * @zh 初始页面索引，后续修改不生效。使用 ref.selectTab 切换页面。
+   * @zh 初始页面索引，后续修改不生效。使用 ref.scrollToPage 切换页面。
    * @Android
    * @iOS
    */

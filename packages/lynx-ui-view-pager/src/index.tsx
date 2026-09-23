@@ -119,7 +119,7 @@ function ViewPagerImpl<T>(
   )
 
   useImperativeHandle(ref, () => ({
-    selectTab(next, smooth, success, fail) {
+    scrollToPage(next, smooth, success, fail) {
       if (countRef.current === 0) return
       nativeRef.current?.invoke({
         method: 'selectTab',

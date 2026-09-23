@@ -184,13 +184,13 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "summary": [
       {
         "kind": "text",
-        "text": "Initial page index. Later changes are ignored; use ref.selectTab to navigate."
+        "text": "Initial page index. Later changes are ignored; use ref.scrollToPage to navigate."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "初始页面索引，后续修改不生效。使用 ref.selectTab 切换页面。"
+        "text": "初始页面索引，后续修改不生效。使用 ref.scrollToPage 切换页面。"
       }
     ],
     "defaultValue": "0",
@@ -456,7 +456,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
 <UIApiTable source={[
   {
-    "name": "selectTab",
+    "name": "scrollToPage",
     "type": "(index: number, smooth?: boolean, success?: (result: unknown) => void, fail?: (result: unknown) => void) => void",
     "summary": [
       {
