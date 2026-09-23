@@ -13,7 +13,6 @@ const defaultConfig = exampleConfig(
     ViewPagerNestedList: './NestedList/index.tsx',
     ViewPagerPresentation: './Presentation/index.tsx',
   },
-  { needWeb: false },
 )
 
 export default defaultConfig
