@@ -55,8 +55,8 @@ function App() {
         initialSelectIndex={0}
         className='view-pager-presentation__pager'
         itemClassName='view-pager-presentation__item'
+        id='presentation-pager'
         style={{ height: `${pages[0].pagerHeight}px` }}
-        viewpagerProps={{ id: 'presentation-pager' }}
         main-thread:onOffsetChange={handleOffsetChangeMT}
         onPageChange={event => setIndex(event.detail.index)}
       >

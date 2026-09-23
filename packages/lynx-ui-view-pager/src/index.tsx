@@ -30,9 +30,9 @@ interface PageContentProps {
   renderItem: (item: unknown, index: number) => ReactNode
 }
 
-const PageContent = memo(function PageContent(props: PageContentProps) {
+function PageContent(props: PageContentProps) {
   return props.renderItem(props.item, props.index)
-})
+}
 
 interface PageItemProps extends PageContentProps {
   itemKey: string | number
@@ -135,6 +135,17 @@ function ViewPagerImpl<T>(
 
   const renderItem = children as (item: unknown, index: number) => ReactNode
   const keepItemView = lazyOptions?.enableLazy === true
+  // An undefined main-thread binding is still invoked by Lynx on a swipe.
+  // Omit callbacks that were not supplied instead of passing undefined.
+  const mainThreadEventProps = {
+    ...(onPageChangeMT && { 'main-thread:bindchange': onPageChangeMT }),
+    ...(onPageWillChangeMT && {
+      'main-thread:bindwillchange': onPageWillChangeMT,
+    }),
+    ...(onOffsetChangeMT && {
+      'main-thread:bindoffsetchange': onOffsetChangeMT,
+    }),
+  }
 
   return (
     <viewpager
@@ -152,9 +163,7 @@ function ViewPagerImpl<T>(
       bindchange={onPageChange}
       bindwillchange={onPageWillChange}
       bindoffsetchange={onOffsetChange}
-      main-thread:bindchange={onPageChangeMT}
-      main-thread:bindwillchange={onPageWillChangeMT}
-      main-thread:bindoffsetchange={onOffsetChangeMT}
+      {...mainThreadEventProps}
     >
       {data.map((item, index) => {
         const itemKey = getItemKey?.(item, index) ?? index

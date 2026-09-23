@@ -45,8 +45,8 @@ function App() {
         getItemKey={page => page.id}
         className='view-pager-dynamic-height__pager'
         itemClassName='view-pager-dynamic-height__item'
+        id='dynamic-height-pager'
         style={{ height: `${pages[0].height}px` }}
-        viewpagerProps={{ id: 'dynamic-height-pager' }}
         main-thread:onOffsetChange={handleOffsetChangeMT}
       >
         {(page, index) => (

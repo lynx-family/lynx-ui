@@ -137,6 +137,7 @@ export interface ViewPagerProps<T> extends ComponentBasicProps {
     NativeViewPagerProps,
     | 'children'
     | 'ref'
+    | 'id'
     | 'className'
     | 'style'
     | 'initial-select-index'
