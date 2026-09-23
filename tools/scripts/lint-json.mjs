@@ -2,6 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import path from 'node:path'
+
+import cspellESLintPluginRecommended from '@cspell/eslint-plugin/recommended'
 import { ESLint } from 'eslint'
 import jsoncPlugin from 'eslint-plugin-jsonc'
 
@@ -33,6 +36,20 @@ if (files.length > 0) {
           '**/tools/make-new-component/examplesTemplate/**',
           '**/tools/make-new-component/template/**',
         ],
+      },
+      cspellESLintPluginRecommended,
+      {
+        rules: {
+          '@cspell/spellchecker': [
+            'warn',
+            {
+              configFile: path.resolve(
+                import.meta.dirname,
+                '../../cspell.jsonc',
+              ),
+            },
+          ],
+        },
       },
       ...jsoncPlugin.configs['flat/recommended-with-jsonc'],
     ],

@@ -292,7 +292,7 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
 ### Linting & Formatting
 
 This project uses **Rslint** for JavaScript and TypeScript linting, a JSONC-capable lint check (`pnpm lint:json`) for JSON files, and **dprint** for formatting.
-The JSON check runs `eslint-plugin-jsonc` with its parser through a standalone ESLint runner because Rslint does not support that custom parser.
+The JSON check runs `eslint-plugin-jsonc` and CSpell through a standalone ESLint runner because Rslint does not support the JSONC parser.
 
 - Run checks: `pnpm check`
 - Run all lint checks: `pnpm lint`

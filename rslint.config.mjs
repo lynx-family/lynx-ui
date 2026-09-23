@@ -23,6 +23,7 @@ import unicornESLintPlugin from 'eslint-plugin-unicorn'
 import path from 'node:path'
 
 const TYPESCRIPT_FILES = ['**/*.ts', '**/*.tsx']
+const JAVASCRIPT_FILES = ['**/*.{js,jsx,mjs,cjs}']
 const PROJECT_SERVICE_FILES = [
   'apps/**/*.{ts,tsx}',
   'luna/**/*.{ts,tsx}',
@@ -446,6 +447,27 @@ export default defineConfig([
     },
   },
   {
+    files: JAVASCRIPT_FILES,
+    ignores: BIOME_RULE_IGNORES,
+    // The native TypeScript optional-chain and for-of rules do not report on
+    // JavaScript files; keep those Biome gaps explicit until Rslint supports them.
+    rules: {
+      'default-param-last': 'error',
+      'no-throw-literal': 'error',
+      'no-use-before-define': ['error', { functions: false, classes: false }],
+      'no-useless-constructor': 'error',
+      'require-await': 'error',
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'console',
+          property: 'log',
+          message: 'Use console.info instead.',
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.{jsx,tsx}'],
     plugins: ['react'],
     rules: {
@@ -471,7 +493,10 @@ export default defineConfig([
       'apps/**/*.{js,mjs,cjs,jsx,ts,tsx}',
       'luna/examples/**/*.{js,mjs,cjs,jsx,ts,tsx}',
     ],
-    rules: { 'no-console': 'off' },
+    rules: {
+      'no-console': 'off',
+      'no-restricted-properties': 'off',
+    },
   },
   {
     files: [
