@@ -16,7 +16,6 @@ import {
 import vitest from '@vitest/eslint-plugin'
 import eslintImportPlugin from 'eslint-plugin-import'
 import jsdocPlugin from 'eslint-plugin-jsdoc'
-import jsoncPlugin from 'eslint-plugin-jsonc'
 import eslintNodePlugin from 'eslint-plugin-n'
 import noticePlugin from 'eslint-plugin-notice'
 import * as regexpPlugin from 'eslint-plugin-regexp'
@@ -131,7 +130,6 @@ export default defineConfig([
       ],
     },
   },
-  ...jsoncPlugin.configs['flat/recommended-with-jsonc'],
   regexpPlugin.configs['flat/recommended'],
   {
     files: TYPESCRIPT_FILES,

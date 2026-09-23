@@ -141,6 +141,9 @@ importers:
       dprint:
         specifier: ^0.48.0
         version: 0.48.0
+      eslint:
+        specifier: ^9.39.4
+        version: 9.39.4(jiti@2.7.0)
       eslint-import-resolver-typescript:
         specifier: ^3.7.0
         version: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.7.0))

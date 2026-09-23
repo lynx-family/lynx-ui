@@ -5,7 +5,7 @@ set -e
 FILES=()
 while IFS= read -r -d '' file; do
   case "$file" in
-    *.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.md|*.json|*.jsonc)
+    *.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.md|*.json|*.jsonc|*.json5)
       if [ -f "$file" ]; then
         FILES+=("$file")
       fi
@@ -33,6 +33,10 @@ echo "Running Rslint with auto-fix..."
 pnpm exec rslint -c rslint.config.mjs --fix "${FILES[@]}"
 RSLINT_RESULT=$?
 
+echo "Running JSONC lint..."
+node tools/scripts/lint-json.mjs "${FILES[@]}"
+JSON_RESULT=$?
+
 # Run dprint formatter and capture its exit code
 echo "Running dprint formatter..."
 pnpm exec dprint fmt --allow-no-files
@@ -43,7 +47,7 @@ set -e
 
 # Set error flag if any linter had issues
 HAS_ERRORS=0
-if [ $RSLINT_RESULT -ne 0 ] || [ $DPRINT_RESULT -ne 0 ]; then
+if [ $RSLINT_RESULT -ne 0 ] || [ $JSON_RESULT -ne 0 ] || [ $DPRINT_RESULT -ne 0 ]; then
     HAS_ERRORS=1
 fi
 

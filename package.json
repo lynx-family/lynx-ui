@@ -9,7 +9,7 @@
     "bootstrap:package": "node tools/scripts/bootstrap-package.mjs",
     "build": "turbo build",
     "changeset": "changeset",
-    "check": "pnpm run check:luna-vars && pnpm run lint:rslint && dprint check",
+    "check": "pnpm run check:luna-vars && pnpm run lint && dprint check",
     "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:changesets-private && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "bash tools/checkChanged/checkChanged.sh",
     "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
@@ -27,7 +27,7 @@
     "ensure:skills-changeset": "node tools/skill-lynx-ui/ensure-changeset.mjs",
     "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
-    "fix:all": "pnpm run lint:rslint:fix && pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
+    "fix:all": "pnpm run lint:rslint:fix && pnpm run format && pnpm run lint:json && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
     "fix:changed": "bash tools/checkChanged/checkChanged.sh",
     "fix:manypkg": "pnpm dlx @manypkg/cli fix",
     "fix:sherif": "pnpm dlx sherif@latest --fix",
@@ -35,8 +35,9 @@
     "genDoc": "pnpm tsx tools/typedoc/index.ts",
     "install:all": "pnpm install",
     "knip": "knip",
-    "lint": "rslint -c rslint.config.mjs",
-    "lint:fix": "rslint -c rslint.config.mjs --fix",
+    "lint": "pnpm run lint:rslint && pnpm run lint:json",
+    "lint:fix": "pnpm run lint:rslint:fix && pnpm run lint:json",
+    "lint:json": "node tools/scripts/lint-json.mjs",
     "lint:rslint": "rslint -c rslint.config.mjs",
     "lint:rslint:fix": "rslint -c rslint.config.mjs --fix",
     "make-new-component": "tsx tools/make-new-component/index.ts",
@@ -51,9 +52,13 @@
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
+    "*.{js,jsx,ts,tsx,mjs,cjs,md}": [
       "rslint -c rslint.config.mjs --fix",
       "dprint fmt --allow-no-files --"
+    ],
+    "*.{json,json5,jsonc}": [
+      "dprint fmt --allow-no-files --",
+      "node tools/scripts/lint-json.mjs"
     ],
     "**/*.mdx": [
       "dprint fmt --allow-no-files --"
@@ -88,6 +93,7 @@
     "@vitest/eslint-plugin": "^1.1.24",
     "cspell": "^8.17.1",
     "dprint": "^0.48.0",
+    "eslint": "^9.39.4",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^50.6.1",

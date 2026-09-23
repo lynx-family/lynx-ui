@@ -102,7 +102,7 @@ jobs:
     uses: ./.github/workflows/common-test.yml
     with:
       runs-on: lynx-ubuntu-24.04-medium
-      run: pnpm run lint:rslint
+      run: pnpm run lint
 
   check-exports:
     name: Check Exports
