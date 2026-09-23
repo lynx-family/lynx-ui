@@ -54,16 +54,16 @@ function TabsPanelImpl<T>(
 
   const viewPagerRef = useRef<ViewPagerRef>(null)
 
-  const selectTab = (
+  const scrollToPage = (
     index: number,
     smooth?: boolean,
     success?: (result: unknown) => void,
     fail?: (result: unknown) => void,
   ) => {
-    viewPagerRef.current?.selectTab(index, smooth, success, fail)
+    viewPagerRef.current?.scrollToPage(index, smooth, success, fail)
   }
 
-  useImperativeHandle(ref, () => ({ selectTab }))
+  useImperativeHandle(ref, () => ({ scrollToPage }))
 
   const setHasPanelMT = (hasPanel: boolean) => {
     'main thread'
@@ -115,7 +115,7 @@ function TabsPanelImpl<T>(
       if (target.index < 0) {
         return
       }
-      runOnBackground(selectTab)(target.index, target.smooth)
+      runOnBackground(scrollToPage)(target.index, target.smooth)
     },
   )
 
