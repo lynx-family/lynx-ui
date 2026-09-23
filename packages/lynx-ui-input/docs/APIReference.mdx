@@ -273,7 +273,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onInput",
-    "type": "(value: string, selectionStart: number, selectionEnd: number, isComposing: boolean) => void",
+    "type": "(value: string, selectionStart: number, selectionEnd: number, isComposing?: boolean) => void",
     "summary": [
       {
         "kind": "text",
@@ -501,6 +501,28 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
       {
         "kind": "text",
         "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "id",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Identifier applied to the component's root element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "应用于组件根元素的标识符。"
       }
     ],
     "defaultValue": "",
@@ -1164,6 +1186,28 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "id",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Identifier applied to the component's root element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "应用于组件根元素的标识符。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
     "docTypeFallback": null
   },
   {
@@ -2235,7 +2279,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onInput",
-    "type": "(value: string, selectionStart: number, selectionEnd: number, isComposing: boolean) => void",
+    "type": "(value: string, selectionStart: number, selectionEnd: number, isComposing?: boolean) => void",
     "summary": [
       {
         "kind": "text",
