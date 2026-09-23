@@ -11,11 +11,7 @@ import { clsx } from 'clsx'
 
 import './styles.css'
 
-import type {
-  ViewPagerLazyOptions,
-  ViewPagerProps,
-  ViewPagerRef,
-} from './types'
+import type { ViewPagerProps, ViewPagerRef } from './types'
 import { normalizeIndex } from './utils'
 
 export type * from './types'
@@ -24,62 +20,14 @@ type ViewPagerComponent = <T>(
   props: ViewPagerProps<T> & { ref?: ForwardedRef<ViewPagerRef> },
 ) => ReactElement
 
-interface PageContentProps {
+interface DeferredPageContentProps {
   item: unknown
   index: number
   renderItem: (item: unknown, index: number) => ReactNode
 }
 
-function PageContent(props: PageContentProps) {
+function DeferredPageContent(props: DeferredPageContentProps) {
   return props.renderItem(props.item, props.index)
-}
-
-interface PageItemProps extends PageContentProps {
-  itemKey: string | number
-  initial: boolean
-  className?: string
-  style?: ViewPagerProps<unknown>['itemStyle']
-  lazyOptions?: ViewPagerLazyOptions
-}
-
-function PageItem(props: PageItemProps) {
-  const {
-    item,
-    index,
-    itemKey,
-    initial,
-    renderItem,
-    className,
-    style,
-    lazyOptions,
-  } = props
-  const content = (
-    <PageContent item={item} index={index} renderItem={renderItem} />
-  )
-
-  return (
-    <viewpager-item
-      className={clsx(
-        'lynx-ui-view-pager__item',
-        className,
-      )}
-      style={style}
-    >
-      {lazyOptions?.enableLazy && !initial
-        ? (
-          <LazyComponent
-            pid={`lynx-ui-view-pager-${String(itemKey)}`}
-            scene={lazyOptions.scene}
-            estimatedStyle={{ width: '100%', height: '100%' }}
-            left={lazyOptions.exposureLeft}
-            right={lazyOptions.exposureRight}
-          >
-            {content}
-          </LazyComponent>
-        )
-        : content}
-    </viewpager-item>
-  )
 }
 
 export const ViewPager = memo(forwardRef(ViewPagerImpl)) as ViewPagerComponent
@@ -135,9 +83,11 @@ function ViewPagerImpl<T>(
 
   const renderItem = children as (item: unknown, index: number) => ReactNode
   const keepItemView = lazyOptions?.enableLazy === true
-  // An undefined main-thread binding is still invoked by Lynx on a swipe.
-  // Omit callbacks that were not supplied instead of passing undefined.
-  const mainThreadEventProps = {
+  // Lynx can invoke an undefined native event binding during a swipe.
+  const eventProps = {
+    ...(onPageChange && { bindchange: onPageChange }),
+    ...(onPageWillChange && { bindwillchange: onPageWillChange }),
+    ...(onOffsetChange && { bindoffsetchange: onOffsetChange }),
     ...(onPageChangeMT && { 'main-thread:bindchange': onPageChangeMT }),
     ...(onPageWillChangeMT && {
       'main-thread:bindwillchange': onPageWillChangeMT,
@@ -160,25 +110,34 @@ function ViewPagerImpl<T>(
       allow-horizontal-gesture={enableScroll}
       bounces={bounces}
       keep-item-view={keepItemView}
-      bindchange={onPageChange}
-      bindwillchange={onPageWillChange}
-      bindoffsetchange={onOffsetChange}
-      {...mainThreadEventProps}
+      {...eventProps}
     >
       {data.map((item, index) => {
         const itemKey = getItemKey?.(item, index) ?? index
         return (
-          <PageItem
+          <viewpager-item
             key={itemKey}
-            item={item}
-            index={index}
-            itemKey={itemKey}
-            initial={index === normalizedInitialIndex}
-            renderItem={renderItem}
-            className={itemClassName}
+            className={clsx('lynx-ui-view-pager__item', itemClassName)}
             style={itemStyle}
-            lazyOptions={lazyOptions}
-          />
+          >
+            {lazyOptions?.enableLazy && index !== normalizedInitialIndex
+              ? (
+                <LazyComponent
+                  pid={`lynx-ui-view-pager-${String(itemKey)}`}
+                  scene={lazyOptions.scene}
+                  estimatedStyle={{ width: '100%', height: '100%' }}
+                  left={lazyOptions.exposureLeft}
+                  right={lazyOptions.exposureRight}
+                >
+                  <DeferredPageContent
+                    item={item}
+                    index={index}
+                    renderItem={renderItem}
+                  />
+                </LazyComponent>
+              )
+              : renderItem(item, index)}
+          </viewpager-item>
         )
       })}
     </viewpager>
