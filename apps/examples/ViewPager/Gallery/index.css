@@ -1,6 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.view-pager-gallery {
+.demo-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -10,13 +10,13 @@
   background: linear-gradient(0deg, var(--gradient-b), var(--gradient-c));
 }
 
-.view-pager-gallery__header {
+.header {
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;
 }
 
-.view-pager-gallery__overline {
+.overline {
   margin-bottom: 8px;
   color: var(--primary);
   font-size: 13px;
@@ -24,42 +24,42 @@
   letter-spacing: 1px;
 }
 
-.view-pager-gallery__heading {
+.heading {
   color: var(--content);
   font-size: 32px;
   font-weight: 700;
 }
 
-.view-pager-gallery__intro {
+.intro {
   margin-top: 8px;
   color: var(--content-subtle);
   font-size: 15px;
 }
 
-.view-pager-gallery__pager {
+.view-pager {
   height: 420px;
   border-radius: 24px;
   overflow: hidden;
 }
 
-.view-pager-gallery__item {
+.view-pager-item {
   width: 100%;
   height: 100%;
 }
 
-.view-pager-gallery__page--primary {
+.card-primary {
   background-color: var(--primary);
 }
 
-.view-pager-gallery__page--secondary {
+.card-secondary {
   background-color: var(--secondary);
 }
 
-.view-pager-gallery__page--neutral {
+.card-neutral {
   background-color: var(--neutral);
 }
 
-.view-pager-gallery__card {
+.card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -68,19 +68,19 @@
   padding: 28px;
 }
 
-.view-pager-gallery__number {
+.number {
   align-self: flex-end;
   color: var(--primary-content-faded);
   font-size: 88px;
   font-weight: 700;
 }
 
-.view-pager-gallery__copy {
+.copy {
   display: flex;
   flex-direction: column;
 }
 
-.view-pager-gallery__eyebrow {
+.eyebrow {
   margin-bottom: 10px;
   color: var(--primary-content-faded);
   font-size: 13px;
@@ -88,13 +88,13 @@
   letter-spacing: 1px;
 }
 
-.view-pager-gallery__title {
+.title {
   color: var(--primary-content);
   font-size: 36px;
   font-weight: 700;
 }
 
-.view-pager-gallery__description {
+.description {
   max-width: 290px;
   margin-top: 12px;
   color: var(--primary-content-faded);
@@ -102,45 +102,45 @@
   line-height: 22px;
 }
 
-.view-pager-gallery__page--secondary .view-pager-gallery__number,
-.view-pager-gallery__page--secondary .view-pager-gallery__eyebrow,
-.view-pager-gallery__page--secondary .view-pager-gallery__description {
+.card-secondary .number,
+.card-secondary .eyebrow,
+.card-secondary .description {
   color: var(--secondary-content-faded);
 }
 
-.view-pager-gallery__page--secondary .view-pager-gallery__title {
+.card-secondary .title {
   color: var(--secondary-content);
 }
 
-.view-pager-gallery__page--neutral .view-pager-gallery__number,
-.view-pager-gallery__page--neutral .view-pager-gallery__eyebrow,
-.view-pager-gallery__page--neutral .view-pager-gallery__description {
+.card-neutral .number,
+.card-neutral .eyebrow,
+.card-neutral .description {
   color: var(--neutral-content-faded);
 }
 
-.view-pager-gallery__page--neutral .view-pager-gallery__title {
+.card-neutral .title {
   color: var(--neutral-content);
 }
 
-.view-pager-gallery__status,
-.view-pager-gallery__indicators,
-.view-pager-gallery__controls {
+.status,
+.indicators,
+.controls {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.view-pager-gallery__status,
-.view-pager-gallery__controls {
+.status,
+.controls {
   justify-content: space-between;
   margin-top: 18px;
 }
 
-.view-pager-gallery__indicators {
+.indicators {
   gap: 8px;
 }
 
-.view-pager-gallery__indicator {
+.indicator {
   width: 8px;
   height: 8px;
   border-radius: 4px;
@@ -148,13 +148,13 @@
   opacity: 0.45;
 }
 
-.view-pager-gallery__indicator--active {
+.indicator.active {
   width: 24px;
   background-color: var(--primary);
   opacity: 1;
 }
 
-.view-pager-gallery__count {
+.count {
   color: var(--content-2);
   font-size: 14px;
 }

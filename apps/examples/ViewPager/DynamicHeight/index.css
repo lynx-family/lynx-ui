@@ -1,19 +1,19 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.view-pager-dynamic-height {
+.demo-container {
   width: 100%;
   min-height: 100%;
   padding: 64px 24px 40px;
   background-color: var(--canvas-ambient);
 }
 
-.view-pager-dynamic-height__heading {
+.heading {
   color: var(--content);
   font-size: 30px;
   font-weight: 700;
 }
 
-.view-pager-dynamic-height__intro {
+.intro {
   margin-top: 8px;
   margin-bottom: 24px;
   color: var(--content-subtle);
@@ -21,17 +21,17 @@
   line-height: 21px;
 }
 
-.view-pager-dynamic-height__pager {
+.view-pager {
   width: 100%;
   border-radius: 22px;
   overflow: hidden;
 }
 
-.view-pager-dynamic-height__item {
+.view-pager-item {
   align-items: flex-start;
 }
 
-.view-pager-dynamic-height__card {
+.card {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -40,20 +40,20 @@
   background: linear-gradient(150deg, var(--gradient-d), var(--gradient-a));
 }
 
-.view-pager-dynamic-height__number {
+.number {
   margin-bottom: auto;
   color: var(--content-faded);
   font-size: 52px;
   font-weight: 700;
 }
 
-.view-pager-dynamic-height__label {
+.label {
   color: var(--content);
   font-size: 22px;
   font-weight: 700;
 }
 
-.view-pager-dynamic-height__height {
+.height {
   margin-top: 6px;
   color: var(--content-subtle);
   font-size: 14px;

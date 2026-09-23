@@ -15,11 +15,11 @@ function App() {
   const [index, setIndex] = useState(0)
 
   return (
-    <view className='view-pager-gallery lunaris-dark'>
-      <view className='view-pager-gallery__header'>
-        <text className='view-pager-gallery__overline'>FEATURED JOURNEYS</text>
-        <text className='view-pager-gallery__heading'>Swipe to explore</text>
-        <text className='view-pager-gallery__intro'>
+    <view className='demo-container lunaris-dark'>
+      <view className='header'>
+        <text className='overline'>FEATURED JOURNEYS</text>
+        <text className='heading'>Swipe to explore</text>
+        <text className='intro'>
           Drag the gallery or use the controls to select a page.
         </text>
       </view>
@@ -34,49 +34,45 @@ function App() {
           exposureRight: '80px',
         }}
         onPageChange={event => setIndex(event.detail.index)}
-        className='view-pager-gallery__pager'
-        itemClassName='view-pager-gallery__item'
+        className='view-pager'
+        itemClassName='view-pager-item'
       >
         {destination => (
           <view
-            className={`view-pager-gallery__card ${destination.className}`}
+            className={`card ${destination.className}`}
             accessibility-label={destination.title}
           >
-            <text className='view-pager-gallery__number'>
+            <text className='number'>
               {destination.number}
             </text>
-            <view className='view-pager-gallery__copy'>
-              <text className='view-pager-gallery__eyebrow'>
+            <view className='copy'>
+              <text className='eyebrow'>
                 {destination.eyebrow}
               </text>
-              <text className='view-pager-gallery__title'>
+              <text className='title'>
                 {destination.title}
               </text>
-              <text className='view-pager-gallery__description'>
+              <text className='description'>
                 {destination.description}
               </text>
             </view>
           </view>
         )}
       </ViewPager>
-      <view className='view-pager-gallery__status'>
-        <view className='view-pager-gallery__indicators'>
+      <view className='status'>
+        <view className='indicators'>
           {destinations.map((destination, pageIndex) => (
             <view
               key={destination.id}
-              className={`view-pager-gallery__indicator ${
-                pageIndex === index
-                  ? 'view-pager-gallery__indicator--active'
-                  : ''
-              }`}
+              className={`indicator ${pageIndex === index ? 'active' : ''}`}
             />
           ))}
         </view>
-        <text className='view-pager-gallery__count'>
+        <text className='count'>
           {index + 1} / {destinations.length}
         </text>
       </view>
-      <view className='view-pager-gallery__controls'>
+      <view className='controls'>
         <Button
           disabled={index === 0}
           onClick={() => pagerRef.current?.scrollToPage(index - 1)}

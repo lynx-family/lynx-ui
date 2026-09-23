@@ -9,7 +9,7 @@ export const destinations = [
     eyebrow: 'NORTHERN LIGHTS',
     title: 'Chase the aurora',
     description: 'Quiet skies, frozen lakes, and a night painted in color.',
-    className: 'view-pager-gallery__page--primary',
+    className: 'card-primary',
   },
   {
     id: 'coast',
@@ -17,7 +17,7 @@ export const destinations = [
     eyebrow: 'PACIFIC COAST',
     title: 'Follow the horizon',
     description: 'A slow drive through sea air, cliffs, and open roads.',
-    className: 'view-pager-gallery__page--secondary',
+    className: 'card-secondary',
   },
   {
     id: 'city',
@@ -25,6 +25,6 @@ export const destinations = [
     eyebrow: 'AFTER DARK',
     title: 'Meet the night',
     description: 'Neon streets, late dinners, and a city still moving.',
-    className: 'view-pager-gallery__page--neutral',
+    className: 'card-neutral',
   },
 ]

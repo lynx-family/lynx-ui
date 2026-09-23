@@ -1,19 +1,19 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.view-pager-auto-height {
+.demo-container {
   width: 100%;
   height: 100%;
   padding: 64px 24px 32px;
   background-color: var(--canvas-ambient);
 }
 
-.view-pager-auto-height__heading {
+.heading {
   color: var(--content);
   font-size: 30px;
   font-weight: 700;
 }
 
-.view-pager-auto-height__intro {
+.intro {
   margin-top: 8px;
   margin-bottom: 24px;
   color: var(--content-subtle);
@@ -21,15 +21,15 @@
   line-height: 21px;
 }
 
-.view-pager-auto-height__pager {
+.view-pager {
   width: 100%;
 }
 
-.view-pager-auto-height__item {
+.view-pager-item {
   padding: 1px;
 }
 
-.view-pager-auto-height__card {
+.card {
   width: 100%;
   padding: 24px;
   border-width: 1px;
@@ -38,14 +38,14 @@
   background-color: var(--canvas);
 }
 
-.view-pager-auto-height__label {
+.label {
   color: var(--primary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
-.view-pager-auto-height__title {
+.title {
   margin-top: 10px;
   margin-bottom: 18px;
   color: var(--content);
@@ -54,14 +54,14 @@
   line-height: 29px;
 }
 
-.view-pager-auto-height__row {
+.row {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   margin-top: 12px;
 }
 
-.view-pager-auto-height__dot {
+.dot {
   flex-shrink: 0;
   width: 7px;
   height: 7px;
@@ -71,7 +71,7 @@
   background-color: var(--secondary);
 }
 
-.view-pager-auto-height__line {
+.line {
   flex: 1;
   color: var(--content-2);
   font-size: 15px;

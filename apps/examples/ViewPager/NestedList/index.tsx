@@ -13,19 +13,17 @@ function App() {
   const [pageIndex, setPageIndex] = useState(0)
 
   return (
-    <view className='view-pager-nested-list lunaris-dark'>
-      <view className='view-pager-nested-list__header'>
-        <text className='view-pager-nested-list__heading'>Nested lists</text>
-        <text className='view-pager-nested-list__intro'>
+    <view className='demo-container lunaris-dark'>
+      <view className='header'>
+        <text className='heading'>Nested lists</text>
+        <text className='intro'>
           Swipe horizontally between pages and vertically within each list.
         </text>
-        <view className='view-pager-nested-list__tabs'>
+        <view className='tabs'>
           {sections.map((section, index) => (
             <text
               key={section.id}
-              className={`view-pager-nested-list__tab ${
-                index === pageIndex ? 'view-pager-nested-list__tab--active' : ''
-              }`}
+              className={`tab ${index === pageIndex ? 'active' : ''}`}
             >
               {section.title}
             </text>
@@ -36,13 +34,13 @@ function App() {
         data={sections}
         getItemKey={section => section.id}
         onPageChange={event => setPageIndex(event.detail.index)}
-        className='view-pager-nested-list__pager'
-        itemClassName='view-pager-nested-list__page'
+        className='view-pager'
+        itemClassName='view-pager-item'
         bounces={false}
       >
         {section => (
           <List
-            className='view-pager-nested-list__list'
+            className='list'
             listId={`view-pager-${section.id}-list`}
             listType='single'
             spanCount={1}
@@ -52,15 +50,15 @@ function App() {
           >
             {section.items.map(item => (
               <list-item key={item.id} item-key={item.id}>
-                <view className='view-pager-nested-list__row'>
-                  <text className='view-pager-nested-list__number'>
+                <view className='row'>
+                  <text className='number'>
                     {item.number}
                   </text>
-                  <view className='view-pager-nested-list__copy'>
-                    <text className='view-pager-nested-list__title'>
+                  <view className='copy'>
+                    <text className='title'>
                       {section.title} item {item.number}
                     </text>
-                    <text className='view-pager-nested-list__description'>
+                    <text className='description'>
                       Vertical content inside a horizontal page
                     </text>
                   </view>

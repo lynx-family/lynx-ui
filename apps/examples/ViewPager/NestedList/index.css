@@ -1,6 +1,6 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.view-pager-nested-list {
+.demo-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -9,25 +9,25 @@
   background-color: var(--canvas-ambient);
 }
 
-.view-pager-nested-list__header {
+.header {
   flex-shrink: 0;
   padding-right: 24px;
   padding-left: 24px;
 }
 
-.view-pager-nested-list__heading {
+.heading {
   color: var(--content);
   font-size: 30px;
   font-weight: 700;
 }
 
-.view-pager-nested-list__intro {
+.intro {
   margin-top: 8px;
   color: var(--content-subtle);
   font-size: 15px;
 }
 
-.view-pager-nested-list__tabs {
+.tabs {
   display: flex;
   flex-direction: row;
   gap: 20px;
@@ -37,32 +37,32 @@
   border-bottom-color: var(--line);
 }
 
-.view-pager-nested-list__tab {
+.tab {
   color: var(--content-subtle);
   font-size: 15px;
   font-weight: 600;
 }
 
-.view-pager-nested-list__tab--active {
+.tab.active {
   color: var(--primary);
 }
 
-.view-pager-nested-list__pager {
+.view-pager {
   flex: 1;
   min-height: 0;
 }
 
-.view-pager-nested-list__page,
-.view-pager-nested-list__list {
+.view-pager-item,
+.list {
   width: 100%;
   height: 100%;
 }
 
-.view-pager-nested-list__list {
+.list {
   padding: 16px 24px 32px;
 }
 
-.view-pager-nested-list__row {
+.row {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -76,26 +76,26 @@
   background-color: var(--canvas);
 }
 
-.view-pager-nested-list__number {
+.number {
   width: 44px;
   color: var(--primary);
   font-size: 24px;
   font-weight: 700;
 }
 
-.view-pager-nested-list__copy {
+.copy {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
 
-.view-pager-nested-list__title {
+.title {
   color: var(--content);
   font-size: 16px;
   font-weight: 600;
 }
 
-.view-pager-nested-list__description {
+.description {
   margin-top: 5px;
   color: var(--content-subtle);
   font-size: 13px;

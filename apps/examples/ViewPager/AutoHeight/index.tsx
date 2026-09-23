@@ -11,25 +11,25 @@ import './index.css'
 
 function App() {
   return (
-    <view className='view-pager-auto-height lunaris-dark'>
-      <text className='view-pager-auto-height__heading'>Auto height</text>
-      <text className='view-pager-auto-height__intro'>
+    <view className='demo-container lunaris-dark'>
+      <text className='heading'>Auto height</text>
+      <text className='intro'>
         Leave the pager height unset when its content should define the layout.
       </text>
       <ViewPager
         data={stories}
         getItemKey={story => story.id}
-        className='view-pager-auto-height__pager'
-        itemClassName='view-pager-auto-height__item'
+        className='view-pager'
+        itemClassName='view-pager-item'
       >
         {story => (
-          <view className='view-pager-auto-height__card'>
-            <text className='view-pager-auto-height__label'>{story.label}</text>
-            <text className='view-pager-auto-height__title'>{story.title}</text>
+          <view className='card'>
+            <text className='label'>{story.label}</text>
+            <text className='title'>{story.title}</text>
             {story.lines.map(line => (
-              <view key={line} className='view-pager-auto-height__row'>
-                <view className='view-pager-auto-height__dot' />
-                <text className='view-pager-auto-height__line'>{line}</text>
+              <view key={line} className='row'>
+                <view className='dot' />
+                <text className='line'>{line}</text>
               </view>
             ))}
           </view>

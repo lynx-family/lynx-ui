@@ -13,24 +13,24 @@ export function App() {
   const [index, setIndex] = useState(0)
 
   return (
-    <view className='view-pager-basic lunaris-dark'>
-      <text className='view-pager-basic__heading'>Basic ViewPager</text>
+    <view className='demo-container lunaris-dark'>
+      <text className='heading'>Basic ViewPager</text>
       <ViewPager
         data={pages}
         onPageChange={event => setIndex(event.detail.index)}
-        className='view-pager-basic__pager'
-        itemClassName='view-pager-basic__item'
+        className='view-pager'
+        itemClassName='view-pager-item'
       >
         {page => (
-          <view className={`view-pager-basic__content ${page.className}`}>
-            <text className='view-pager-basic__title'>{page.title}</text>
-            <text className='view-pager-basic__description'>
+          <view className={`page ${page.className}`}>
+            <text className='title'>{page.title}</text>
+            <text className='description'>
               {page.description}
             </text>
           </view>
         )}
       </ViewPager>
-      <text className='view-pager-basic__status'>
+      <text className='status'>
         Page {index + 1} of {pages.length}
       </text>
     </view>

@@ -31,19 +31,19 @@ function App() {
   const [index, setIndex] = useState(0)
 
   return (
-    <view className='view-pager-presentation lunaris-dark'>
-      <view className='view-pager-presentation__header'>
-        <text className='view-pager-presentation__eyebrow'>
+    <view className='demo-container lunaris-dark'>
+      <view className='header'>
+        <text className='eyebrow'>
           COMPONENT STUDY
         </text>
-        <text className='view-pager-presentation__heading'>ViewPager</text>
+        <text className='heading'>ViewPager</text>
       </view>
       <ViewPager
         data={pages}
         getItemKey={page => page.id}
         initialSelectIndex={0}
-        className='view-pager-presentation__pager'
-        itemClassName='view-pager-presentation__item'
+        className='view-pager'
+        itemClassName='view-pager-item'
         id='presentation-pager'
         style={{ height: `${pages[0].pagerHeight}px` }}
         main-thread:onOffsetChange={handleOffsetChangeMT}
@@ -51,25 +51,25 @@ function App() {
       >
         {page => (
           <view
-            className='view-pager-presentation__card'
+            className='card'
             style={{ height: `${page.cardHeight}px` }}
           >
-            <text className='view-pager-presentation__letter'>
+            <text className='letter'>
               {page.letter}
             </text>
-            <text className='view-pager-presentation__title'>ViewPager</text>
-            <text className='view-pager-presentation__subtitle'>
+            <text className='title'>ViewPager</text>
+            <text className='subtitle'>
               @lynx-js/lynx-ui
             </text>
           </view>
         )}
       </ViewPager>
-      <view className='view-pager-presentation__footer'>
-        <text className='view-pager-presentation__progress'>
+      <view className='footer'>
+        <text className='progress'>
           {String(index + 1).padStart(2, '0')} /{' '}
           {String(pages.length).padStart(2, '0')}
         </text>
-        <text className='view-pager-presentation__hint'>SWIPE TO SPELL</text>
+        <text className='hint'>SWIPE TO SPELL</text>
       </view>
     </view>
   )

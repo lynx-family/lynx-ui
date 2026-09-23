@@ -28,33 +28,33 @@ function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
 
 function App() {
   return (
-    <view className='view-pager-dynamic-height lunaris-dark'>
-      <text className='view-pager-dynamic-height__heading'>Dynamic height</text>
-      <text className='view-pager-dynamic-height__intro'>
+    <view className='demo-container lunaris-dark'>
+      <text className='heading'>Dynamic height</text>
+      <text className='intro'>
         The main-thread offset event interpolates the container height while
         swiping.
       </text>
       <ViewPager
         data={pages}
         getItemKey={page => page.id}
-        className='view-pager-dynamic-height__pager'
-        itemClassName='view-pager-dynamic-height__item'
+        className='view-pager'
+        itemClassName='view-pager-item'
         id='dynamic-height-pager'
         style={{ height: `${pages[0].height}px` }}
         main-thread:onOffsetChange={handleOffsetChangeMT}
       >
         {(page, index) => (
           <view
-            className='view-pager-dynamic-height__card'
+            className='card'
             style={{ height: `${page.height}px` }}
           >
-            <text className='view-pager-dynamic-height__number'>
+            <text className='number'>
               0{index + 1}
             </text>
-            <text className='view-pager-dynamic-height__label'>
+            <text className='label'>
               {page.label}
             </text>
-            <text className='view-pager-dynamic-height__height'>
+            <text className='height'>
               {page.height}px
             </text>
           </view>
