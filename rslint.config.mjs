@@ -179,6 +179,15 @@ export default defineConfig([
       'jsdoc/tag-lines': 'off',
     },
   },
+  {
+    files: [
+      'packages/lynx-ui-input/src/NativeTypings.d.ts',
+      'packages/lynx-ui-input/src/types/index.docs.ts',
+      'packages/lynx-ui-scroll-view/src/types/index.docs.ts',
+    ],
+    // These @since values are Lynx runtime major.minor versions, not SemVer.
+    rules: { 'jsdoc/check-values': 'off' },
+  },
   nativeNodePlugin.configs.recommendedModule,
   {
     rules: {
