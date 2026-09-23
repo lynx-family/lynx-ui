@@ -33,9 +33,6 @@ function App() {
   return (
     <view className='demo-container lunaris-dark'>
       <view className='header'>
-        <text className='eyebrow'>
-          COMPONENT STUDY
-        </text>
         <text className='heading'>ViewPager</text>
       </view>
       <ViewPager
@@ -56,10 +53,6 @@ function App() {
           >
             <text className='letter'>
               {page.letter}
-            </text>
-            <text className='title'>ViewPager</text>
-            <text className='subtitle'>
-              @lynx-js/lynx-ui
             </text>
           </view>
         )}

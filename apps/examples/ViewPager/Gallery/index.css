@@ -6,34 +6,20 @@
   width: 100%;
   height: 100%;
   padding: 64px 32px 40px;
-  color: var(--content);
+  color: var(--gradient-content);
   background: linear-gradient(0deg, var(--gradient-b), var(--gradient-c));
 }
 
 .header {
   display: flex;
   flex-direction: column;
-  margin-bottom: 24px;
-}
-
-.overline {
-  margin-bottom: 8px;
-  color: var(--primary);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1px;
+  margin-bottom: 18px;
 }
 
 .heading {
-  color: var(--content);
-  font-size: 32px;
+  color: var(--gradient-content);
+  font-size: 28px;
   font-weight: 700;
-}
-
-.intro {
-  margin-top: 8px;
-  color: var(--content-subtle);
-  font-size: 15px;
 }
 
 .view-pager {
@@ -47,18 +33,6 @@
   height: 100%;
 }
 
-.card-primary {
-  background-color: var(--primary);
-}
-
-.card-secondary {
-  background-color: var(--secondary);
-}
-
-.card-neutral {
-  background-color: var(--neutral);
-}
-
 .card {
   display: flex;
   flex-direction: column;
@@ -66,11 +40,14 @@
   width: 100%;
   height: 100%;
   padding: 28px;
+  border-width: 1px;
+  border-color: var(--line);
+  background-color: var(--canvas);
 }
 
 .number {
   align-self: flex-end;
-  color: var(--primary-content-faded);
+  color: var(--content-faint);
   font-size: 88px;
   font-weight: 700;
 }
@@ -82,44 +59,16 @@
 
 .eyebrow {
   margin-bottom: 10px;
-  color: var(--primary-content-faded);
+  color: var(--content-muted);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 1px;
 }
 
 .title {
-  color: var(--primary-content);
+  color: var(--content);
   font-size: 36px;
   font-weight: 700;
-}
-
-.description {
-  max-width: 290px;
-  margin-top: 12px;
-  color: var(--primary-content-faded);
-  font-size: 16px;
-  line-height: 22px;
-}
-
-.card-secondary .number,
-.card-secondary .eyebrow,
-.card-secondary .description {
-  color: var(--secondary-content-faded);
-}
-
-.card-secondary .title {
-  color: var(--secondary-content);
-}
-
-.card-neutral .number,
-.card-neutral .eyebrow,
-.card-neutral .description {
-  color: var(--neutral-content-faded);
-}
-
-.card-neutral .title {
-  color: var(--neutral-content);
 }
 
 .status,
@@ -144,17 +93,37 @@
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background-color: var(--content-subtle);
-  opacity: 0.45;
+  background-color: var(--gradient-content-trace);
 }
 
 .indicator.active {
   width: 24px;
-  background-color: var(--primary);
-  opacity: 1;
+  background-color: var(--gradient-content);
 }
 
 .count {
-  color: var(--content-2);
+  color: var(--gradient-content-faded);
   font-size: 14px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  height: 44px;
+  border-width: 1px;
+  border-color: var(--line);
+  border-radius: 22px;
+  background-color: var(--paper);
+}
+
+.control.ui-disabled {
+  opacity: 0.4;
+}
+
+.control-label {
+  color: var(--content);
+  font-size: 14px;
+  font-weight: 600;
 }

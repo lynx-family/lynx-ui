@@ -17,11 +17,7 @@ function App() {
   return (
     <view className='demo-container lunaris-dark'>
       <view className='header'>
-        <text className='overline'>FEATURED JOURNEYS</text>
-        <text className='heading'>Swipe to explore</text>
-        <text className='intro'>
-          Drag the gallery or use the controls to select a page.
-        </text>
+        <text className='heading'>Featured journeys</text>
       </view>
       <ViewPager
         ref={pagerRef}
@@ -39,7 +35,7 @@ function App() {
       >
         {destination => (
           <view
-            className={`card ${destination.className}`}
+            className='card'
             accessibility-label={destination.title}
           >
             <text className='number'>
@@ -51,9 +47,6 @@ function App() {
               </text>
               <text className='title'>
                 {destination.title}
-              </text>
-              <text className='description'>
-                {destination.description}
               </text>
             </view>
           </view>
@@ -74,16 +67,18 @@ function App() {
       </view>
       <view className='controls'>
         <Button
+          className='control'
           disabled={index === 0}
           onClick={() => pagerRef.current?.scrollToPage(index - 1)}
         >
-          <text>Previous</text>
+          <text className='control-label'>Previous</text>
         </Button>
         <Button
+          className='control'
           disabled={index === destinations.length - 1}
           onClick={() => pagerRef.current?.scrollToPage(index + 1)}
         >
-          <text>Next</text>
+          <text className='control-label'>Next</text>
         </Button>
       </view>
     </view>
