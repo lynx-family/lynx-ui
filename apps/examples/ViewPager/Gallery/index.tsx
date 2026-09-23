@@ -7,34 +7,8 @@ import { root, useRef, useState } from '@lynx-js/react'
 import { Button, ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerRef } from '@lynx-js/lynx-ui'
 
+import { destinations } from './data'
 import './index.css'
-
-const destinations = [
-  {
-    id: 'aurora',
-    number: '01',
-    eyebrow: 'NORTHERN LIGHTS',
-    title: 'Chase the aurora',
-    description: 'Quiet skies, frozen lakes, and a night painted in color.',
-    className: 'view-pager-gallery__page--primary',
-  },
-  {
-    id: 'coast',
-    number: '02',
-    eyebrow: 'PACIFIC COAST',
-    title: 'Follow the horizon',
-    description: 'A slow drive through sea air, cliffs, and open roads.',
-    className: 'view-pager-gallery__page--secondary',
-  },
-  {
-    id: 'city',
-    number: '03',
-    eyebrow: 'AFTER DARK',
-    title: 'Meet the night',
-    description: 'Neon streets, late dinners, and a city still moving.',
-    className: 'view-pager-gallery__page--neutral',
-  },
-]
 
 function App() {
   const pagerRef = useRef<ViewPagerRef>(null)

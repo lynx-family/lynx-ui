@@ -6,25 +6,8 @@ import { root, useState } from '@lynx-js/react'
 
 import { ViewPager } from '@lynx-js/lynx-ui'
 
+import { pages } from './data'
 import './index.css'
-
-const pages = [
-  {
-    title: 'First page',
-    description: 'Swipe horizontally to see the next page.',
-    className: 'view-pager-basic__page--primary',
-  },
-  {
-    title: 'Second page',
-    description: 'Each data entry becomes one native pager item.',
-    className: 'view-pager-basic__page--secondary',
-  },
-  {
-    title: 'Third page',
-    description: 'Static collections can use the default index keys.',
-    className: 'view-pager-basic__page--neutral',
-  },
-]
 
 export function App() {
   const [index, setIndex] = useState(0)

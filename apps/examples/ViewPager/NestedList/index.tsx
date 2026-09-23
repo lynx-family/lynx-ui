@@ -6,19 +6,8 @@ import { root, useState } from '@lynx-js/react'
 
 import { List, ViewPager } from '@lynx-js/lynx-ui'
 
+import { sections } from './data'
 import './index.css'
-
-const sections = [
-  { id: 'recent', title: 'Recent', start: 1 },
-  { id: 'saved', title: 'Saved', start: 11 },
-  { id: 'shared', title: 'Shared', start: 21 },
-].map(section => ({
-  ...section,
-  items: Array.from({ length: 12 }, (_, index) => ({
-    id: `${section.id}-${index}`,
-    number: section.start + index,
-  })),
-}))
 
 function App() {
   const [pageIndex, setPageIndex] = useState(0)

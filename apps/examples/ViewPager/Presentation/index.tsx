@@ -7,19 +7,8 @@ import { root, useState } from '@lynx-js/react'
 import { ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerOffsetChangeEvent } from '@lynx-js/lynx-ui'
 
+import { pages } from './data'
 import './index.css'
-
-const pages = [
-  { id: 'v', letter: 'V', cardHeight: 500, pagerHeight: 600 },
-  { id: 'i', letter: 'I', cardHeight: 360, pagerHeight: 460 },
-  { id: 'e-1', letter: 'E', cardHeight: 500, pagerHeight: 600 },
-  { id: 'w', letter: 'W', cardHeight: 320, pagerHeight: 420 },
-  { id: 'p', letter: 'P', cardHeight: 410, pagerHeight: 510 },
-  { id: 'a', letter: 'A', cardHeight: 500, pagerHeight: 600 },
-  { id: 'g', letter: 'G', cardHeight: 410, pagerHeight: 510 },
-  { id: 'e-2', letter: 'E', cardHeight: 320, pagerHeight: 420 },
-  { id: 'r', letter: 'R', cardHeight: 410, pagerHeight: 510 },
-]
 
 function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
   'main thread'

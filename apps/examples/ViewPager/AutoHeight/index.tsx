@@ -6,40 +6,8 @@ import { root } from '@lynx-js/react'
 
 import { ViewPager } from '@lynx-js/lynx-ui'
 
+import { stories } from './data'
 import './index.css'
-
-const stories = [
-  {
-    id: 'short',
-    label: 'SHORT',
-    title: 'Content defines the height',
-    lines: ['No height is set on ViewPager.', 'This page only needs two rows.'],
-  },
-  {
-    id: 'medium',
-    label: 'MEDIUM',
-    title: 'Pages can contain different amounts of content',
-    lines: [
-      'The generated pager item participates in layout.',
-      'Keep each page width at 100%.',
-      'Swipe to compare the resulting page sizes.',
-      'Use DynamicHeight when the container must follow every page.',
-    ],
-  },
-  {
-    id: 'long',
-    label: 'LONG',
-    title: 'Natural layout remains data-driven',
-    lines: [
-      'The render function receives the current data item.',
-      'Stable keys preserve each page across collection updates.',
-      'Shared wrapper styles belong in itemClassName or itemStyle.',
-      'Content stays focused on the page itself.',
-      'No explicit ViewPagerItem is required.',
-      'The component creates the direct native children.',
-    ],
-  },
-]
 
 function App() {
   return (

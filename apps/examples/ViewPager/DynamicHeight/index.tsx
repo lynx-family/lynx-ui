@@ -7,14 +7,8 @@ import { root } from '@lynx-js/react'
 import { ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerOffsetChangeEvent } from '@lynx-js/lynx-ui'
 
+import { pages } from './data'
 import './index.css'
-
-const pages = [
-  { id: 'compact', label: 'COMPACT', height: 260 },
-  { id: 'standard', label: 'STANDARD', height: 420 },
-  { id: 'expanded', label: 'EXPANDED', height: 560 },
-  { id: 'finale', label: 'FINALE', height: 340 },
-]
 
 function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
   'main thread'
