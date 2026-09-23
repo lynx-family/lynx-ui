@@ -17,7 +17,7 @@ import {
 } from './utils/tabsIndicatorAnimation'
 import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
 
-import './index.css'
+import './styles.css'
 
 export const TabsIndicator = (props: TabsIndicatorProps) => {
   const { style, className, indicatorProps, children } = props

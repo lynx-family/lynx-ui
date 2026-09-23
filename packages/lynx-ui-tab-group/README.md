@@ -19,7 +19,6 @@ import {
   TabsRoot,
 } from '@lynx-js/lynx-ui'
 import type { TabsData } from '@lynx-js/lynx-ui'
-import './index.css'
 
 const tabs: TabsData<string>[] = [
   { tabItem: 'Home', getTabKey: () => 'home' },

@@ -10,7 +10,7 @@ import { clsx } from 'clsx'
 import { TabsContext, useTabsRootContext } from './TabsContext'
 import type { TabsBarProps } from './types'
 
-import './index.css'
+import './styles.css'
 
 export function TabsBar<T>(props: TabsBarProps<T>) {
   const {
