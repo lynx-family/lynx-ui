@@ -12,10 +12,7 @@ import './index.css'
 function App() {
   return (
     <view className='demo-container lunaris-dark'>
-      <text className='heading'>Auto height</text>
-      <text className='intro'>
-        Leave the pager height unset when its content should define the layout.
-      </text>
+      <text className='heading'>ViewPager / Auto height</text>
       <ViewPager
         data={stories}
         getItemKey={story => story.id}

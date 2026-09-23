@@ -11,24 +11,8 @@
   background-color: var(--canvas);
 }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding-right: 24px;
-  padding-left: 24px;
-  background-color: var(--canvas);
-}
-
-.heading {
-  color: var(--content);
-  font-size: 28px;
-  font-weight: 700;
-}
-
 .view-pager {
   width: 100%;
-  margin-top: 20px;
   background: linear-gradient(
     180deg,
     var(--gradient-d) 0%,
@@ -48,7 +32,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
   padding: 40px;
   border-width: 1px;
@@ -58,9 +41,31 @@
 }
 
 .letter {
-  color: var(--content);
+  margin-top: auto;
+  margin-bottom: auto;
+  color: var(--primary);
   font-size: 180px;
   font-weight: 600;
+  line-height: 180px;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex-direction: column;
+}
+
+.caption-title {
+  color: var(--content);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.caption-meta {
+  margin-top: 4px;
+  color: var(--content-subtle);
+  font-size: 10px;
 }
 
 .footer {
@@ -80,7 +85,6 @@
   color: var(--content-subtle);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1px;
 }
 
 .progress {

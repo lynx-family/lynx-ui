@@ -29,11 +29,7 @@ function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
 function App() {
   return (
     <view className='demo-container lunaris-dark'>
-      <text className='heading'>Dynamic height</text>
-      <text className='intro'>
-        The main-thread offset event interpolates the container height while
-        swiping.
-      </text>
+      <text className='heading'>ViewPager / Dynamic height</text>
       <ViewPager
         data={pages}
         getItemKey={page => page.id}

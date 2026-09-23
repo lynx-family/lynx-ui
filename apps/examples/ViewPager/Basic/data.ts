@@ -5,17 +5,14 @@
 export const pages = [
   {
     title: 'First page',
-    description: 'Swipe horizontally to see the next page.',
     className: 'page-primary',
   },
   {
     title: 'Second page',
-    description: 'Each data entry becomes one native pager item.',
     className: 'page-secondary',
   },
   {
     title: 'Third page',
-    description: 'Static collections can use the default index keys.',
     className: 'page-neutral',
   },
 ]

@@ -32,9 +32,6 @@ function App() {
 
   return (
     <view className='demo-container lunaris-dark'>
-      <view className='header'>
-        <text className='heading'>ViewPager</text>
-      </view>
       <ViewPager
         data={pages}
         getItemKey={page => page.id}
@@ -54,6 +51,10 @@ function App() {
             <text className='letter'>
               {page.letter}
             </text>
+            <view className='caption'>
+              <text className='caption-title'>ViewPager</text>
+              <text className='caption-meta'>@lynx-js/lynx-ui</text>
+            </view>
           </view>
         )}
       </ViewPager>

@@ -14,7 +14,7 @@ export function App() {
 
   return (
     <view className='demo-container lunaris-dark'>
-      <text className='heading'>Basic ViewPager</text>
+      <text className='heading'>ViewPager / Basic</text>
       <ViewPager
         data={pages}
         onPageChange={event => setIndex(event.detail.index)}
@@ -24,9 +24,6 @@ export function App() {
         {page => (
           <view className={`page ${page.className}`}>
             <text className='title'>{page.title}</text>
-            <text className='description'>
-              {page.description}
-            </text>
           </view>
         )}
       </ViewPager>

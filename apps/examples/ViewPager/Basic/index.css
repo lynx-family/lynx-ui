@@ -14,10 +14,10 @@
 
 .heading {
   width: 100%;
-  margin-bottom: 24px;
-  color: var(--content);
-  font-size: 28px;
-  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--content-muted);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .view-pager {
@@ -55,26 +55,12 @@
 
 .title {
   color: var(--primary-content);
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
-}
-
-.description {
-  margin-top: 12px;
-  color: var(--primary-content-faded);
-  font-size: 16px;
-}
-
-.page-secondary .description {
-  color: var(--secondary-content-faded);
 }
 
 .page-secondary .title {
   color: var(--secondary-content);
-}
-
-.page-neutral .description {
-  color: var(--neutral-content-faded);
 }
 
 .page-neutral .title {

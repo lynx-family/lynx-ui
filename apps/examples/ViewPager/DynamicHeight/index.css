@@ -13,18 +13,10 @@
 
 .heading {
   width: 100%;
-  color: var(--content);
-  font-size: 30px;
-  font-weight: 700;
-}
-
-.intro {
-  width: 100%;
-  margin-top: 8px;
-  margin-bottom: 24px;
-  color: var(--content-subtle);
-  font-size: 15px;
-  line-height: 21px;
+  margin-bottom: 16px;
+  color: var(--content-muted);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .view-pager {
@@ -48,19 +40,19 @@
 
 .number {
   margin-bottom: auto;
-  color: var(--content-faded);
+  color: var(--gradient-content-trace);
   font-size: 52px;
   font-weight: 700;
 }
 
 .label {
-  color: var(--content);
+  color: var(--gradient-content);
   font-size: 22px;
   font-weight: 700;
 }
 
 .height {
   margin-top: 6px;
-  color: var(--content-subtle);
+  color: var(--gradient-content-faded);
   font-size: 14px;
 }

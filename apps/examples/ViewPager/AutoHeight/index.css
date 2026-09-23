@@ -13,18 +13,10 @@
 
 .heading {
   width: 100%;
-  color: var(--content);
-  font-size: 30px;
-  font-weight: 700;
-}
-
-.intro {
-  width: 100%;
-  margin-top: 8px;
-  margin-bottom: 24px;
-  color: var(--content-subtle);
-  font-size: 15px;
-  line-height: 21px;
+  margin-bottom: 16px;
+  color: var(--content-muted);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .view-pager {
@@ -48,7 +40,6 @@
   color: var(--primary);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 1px;
 }
 
 .title {
