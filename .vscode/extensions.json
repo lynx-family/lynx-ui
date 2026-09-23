@@ -1,9 +1,9 @@
 {
   "recommendations": [
     "bradlc.vscode-tailwindcss",
-    "dbaeumer.vscode-eslint",
     "dprint.dprint",
     "editorconfig.editorconfig",
+    "rstack.rstack",
     "yoavbls.pretty-ts-errors",
   ],
 }
