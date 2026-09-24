@@ -8,6 +8,8 @@
   width: 100%;
   height: 100%;
   padding-top: 60px;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 .header {
@@ -44,7 +46,11 @@
 
 .view-pager {
   flex: 1;
+  align-self: center;
   min-height: 0;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .view-pager-item,

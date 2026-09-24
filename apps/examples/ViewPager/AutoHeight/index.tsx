@@ -11,7 +11,7 @@ import './index.css'
 
 function App() {
   return (
-    <view className='demo-container lunaris-light luna-gradient-berry'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
       <ViewPager
         data={stories}
         getItemKey={story => story.id}
