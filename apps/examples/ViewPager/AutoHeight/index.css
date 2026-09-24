@@ -11,14 +11,6 @@
   background-color: var(--canvas-ambient);
 }
 
-.heading {
-  width: 100%;
-  margin-bottom: 16px;
-  color: var(--content-muted);
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .view-pager {
   width: 100%;
 }

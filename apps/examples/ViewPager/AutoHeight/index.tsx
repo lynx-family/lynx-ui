@@ -12,7 +12,6 @@ import './index.css'
 function App() {
   return (
     <view className='demo-container lunaris-dark'>
-      <text className='heading'>ViewPager / Auto height</text>
       <ViewPager
         data={stories}
         getItemKey={story => story.id}

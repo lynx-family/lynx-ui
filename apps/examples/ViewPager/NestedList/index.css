@@ -15,14 +15,7 @@
   padding-left: 24px;
 }
 
-.heading {
-  color: var(--content-muted);
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .instruction {
-  margin-top: 6px;
   color: var(--content-subtle);
   font-size: 13px;
   line-height: 18px;
@@ -67,6 +60,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 92px;
   margin-bottom: 10px;
@@ -78,20 +72,7 @@
 }
 
 .number {
-  width: 44px;
   color: var(--primary);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-}
-
-.copy {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-}
-
-.title {
-  color: var(--content);
-  font-size: 16px;
-  font-weight: 600;
 }

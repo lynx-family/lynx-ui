@@ -29,7 +29,6 @@ function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
 function App() {
   return (
     <view className='demo-container lunaris-dark'>
-      <text className='heading'>ViewPager / Dynamic height</text>
       <ViewPager
         data={pages}
         getItemKey={page => page.id}
@@ -46,9 +45,6 @@ function App() {
           >
             <text className='number'>
               0{index + 1}
-            </text>
-            <text className='label'>
-              {page.label}
             </text>
             <text className='height'>
               {page.height}px

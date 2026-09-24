@@ -16,9 +16,6 @@ function App() {
 
   return (
     <view className='demo-container lunaris-dark'>
-      <view className='header'>
-        <text className='heading'>Featured journeys</text>
-      </view>
       <ViewPager
         ref={pagerRef}
         data={destinations}
@@ -52,18 +49,13 @@ function App() {
           </view>
         )}
       </ViewPager>
-      <view className='status'>
-        <view className='indicators'>
-          {destinations.map((destination, pageIndex) => (
-            <view
-              key={destination.id}
-              className={`indicator ${pageIndex === index ? 'active' : ''}`}
-            />
-          ))}
-        </view>
-        <text className='count'>
-          {index + 1} / {destinations.length}
-        </text>
+      <view className='indicators'>
+        {destinations.map((destination, pageIndex) => (
+          <view
+            key={destination.id}
+            className={`indicator ${pageIndex === index ? 'active' : ''}`}
+          />
+        ))}
       </view>
       <view className='controls'>
         <Button

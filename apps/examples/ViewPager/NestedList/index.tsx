@@ -15,7 +15,6 @@ function App() {
   return (
     <view className='demo-container lunaris-dark'>
       <view className='header'>
-        <text className='heading'>ViewPager / Nested lists</text>
         <text className='instruction'>
           Swipe horizontally between pages and vertically within each list.
         </text>
@@ -54,11 +53,6 @@ function App() {
                   <text className='number'>
                     {item.number}
                   </text>
-                  <view className='copy'>
-                    <text className='title'>
-                      {section.title} item {item.number}
-                    </text>
-                  </view>
                 </view>
               </list-item>
             ))}

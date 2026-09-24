@@ -3,8 +3,8 @@
 // LICENSE file in the root directory of this source tree.
 
 export const pages = [
-  { id: 'compact', label: 'COMPACT', height: 260 },
-  { id: 'standard', label: 'STANDARD', height: 420 },
-  { id: 'expanded', label: 'EXPANDED', height: 560 },
-  { id: 'finale', label: 'FINALE', height: 340 },
+  { id: 'compact', height: 260 },
+  { id: 'standard', height: 420 },
+  { id: 'expanded', height: 560 },
+  { id: 'finale', height: 340 },
 ]

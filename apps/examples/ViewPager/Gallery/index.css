@@ -8,21 +8,7 @@
   width: 100%;
   height: 100%;
   padding: 64px 32px;
-  color: var(--gradient-content);
   background: linear-gradient(0deg, var(--gradient-b), var(--gradient-c));
-}
-
-.header {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 18px;
-}
-
-.heading {
-  color: var(--gradient-content);
-  font-size: 28px;
-  font-weight: 700;
 }
 
 .view-pager {
@@ -74,7 +60,6 @@
   font-weight: 700;
 }
 
-.status,
 .indicators,
 .controls {
   display: flex;
@@ -82,15 +67,17 @@
   align-items: center;
 }
 
-.status,
-.controls {
+.indicators {
+  justify-content: center;
   width: 100%;
-  justify-content: space-between;
+  gap: 8px;
   margin-top: 18px;
 }
 
-.indicators {
-  gap: 8px;
+.controls {
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 18px;
 }
 
 .indicator {
@@ -103,11 +90,6 @@
 .indicator.active {
   width: 24px;
   background-color: var(--gradient-content);
-}
-
-.count {
-  color: var(--gradient-content-faded);
-  font-size: 14px;
 }
 
 .control {
