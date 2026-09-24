@@ -4,6 +4,7 @@
 export { TabsRoot } from './TabsRoot'
 export { TabsBar } from './TabsBar'
 export { TabsItem } from './TabsItem'
+export { TabsPanel } from './TabsPanel'
 export { TabsIndicator } from './TabsIndicator'
 
 export type {
@@ -11,7 +12,10 @@ export type {
   TabsData,
   TabsIndicatorAnimation,
   TabsIndicatorProps,
+  TabsPanelProps,
+  TabsPanelRef,
   TabsRootProps,
   TabsBarProps,
+  TabsItemProps,
   TabsRootRef,
 } from './types'

@@ -1,6 +1,6 @@
 # @lynx-js/lynx-ui-tab-group
 
-用于通过 lynx-ui 构建标签导航的可组合 Tab 原语。此软件包提供 `TabsRoot`、`TabsBar`、`TabsItem` 和 `TabsIndicator`。
+用于通过 lynx-ui 构建标签导航的可组合 Tab 原语。此软件包提供 `TabsRoot`、`TabsBar`、`TabsItem`、`TabsIndicator`，以及可选的可滑动 `TabsPanel`。
 
 ## 安装
 

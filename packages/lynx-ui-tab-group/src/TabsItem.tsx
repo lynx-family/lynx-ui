@@ -12,11 +12,11 @@ import { useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { LayoutChangeDetailEvent, MainThread } from '@lynx-js/types'
 
 import { useTabsContext, useTabsRootContext } from './TabsContext'
-import type { TabItemProps } from './types'
+import type { TabsItemProps } from './types'
 
 let nextTabRegistrationId = 0
 
-export const TabsItem = (props: TabItemProps) => {
+export const TabsItem = (props: TabsItemProps) => {
   const { style, className, tabKey, children, ...viewProps } = props
   const { selectTab, tabKeyArray } = useTabsContext()
   const {
@@ -24,6 +24,7 @@ export const TabsItem = (props: TabItemProps) => {
     tabRegistrationMapMT,
     onClickItem,
     initialSelectIndex,
+    panelIndexMT,
     selectTarget,
     selectBehavior,
     unregisterTabWidth,
@@ -59,6 +60,13 @@ export const TabsItem = (props: TabItemProps) => {
       }
     },
   )
+
+  useMotionValueRefEvent(panelIndexMT, 'change', (index) => {
+    'main thread'
+    if (tabKey === tabKeyArray[index]) {
+      scrollToCenterMT(true)
+    }
+  })
 
   const onLayoutChange = (
     event: LayoutChangeDetailEvent<MainThread.Element>,

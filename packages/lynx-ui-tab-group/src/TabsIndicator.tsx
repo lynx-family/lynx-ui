@@ -20,7 +20,7 @@ import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
 import './styles.css'
 
 export const TabsIndicator = (props: TabsIndicatorProps) => {
-  const { style, className, indicatorProps, children } = props
+  const { id, style, className, indicatorProps, children } = props
   const {
     style: indicatorPropsStyle,
     className: indicatorPropsClassName,
@@ -29,6 +29,7 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   const customStyle = indicatorPropsStyle ?? style
   const { tabKeyArray } = useTabsContext()
   const {
+    hasPanelMT,
     tabsWidthMapMT,
     indicatorOffsetMT,
     indicatorAnimation,
@@ -119,6 +120,9 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
         return
       }
       const { index, smooth } = target
+      if (hasPanelMT.current.get()) {
+        return
+      }
       if (hasRenderedIndicatorMT.current && smooth) {
         animateToTab(index)
       } else {
@@ -146,6 +150,7 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   return (
     <view
       {...indicatorPropsWithoutStyle}
+      id={id}
       main-thread:ref={indicatorElementMT}
       style={indicatorStyle}
       className={clsx(
