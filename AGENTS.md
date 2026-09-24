@@ -152,6 +152,8 @@ pnpm check:all
 ## Publishing
 
 - Use `pnpm bootstrap:package` only for initial npm placeholder publishes needed before Trusted Publishing is configured.
+- The stable release workflow runs `build -> select-mode -> version | pack -> publish`. Keep build and pack jobs read-only, and grant the `npm` environment and `id-token: write` permission only to the publish job.
+- Preserve the latest-`main` guard, full Git history, `pnpm version:packages`, and `SKILL_LYNX_UI_BASE_REF` when changing the version PR flow.
 
 ## Coding Standards
 
