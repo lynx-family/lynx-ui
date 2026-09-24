@@ -1,0 +1,46 @@
+@import "@lynx-js/luna-styles/index.css";
+
+@import "../shared/gradients.css";
+
+.demo-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 64px 24px;
+}
+
+.view-pager {
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.view-pager-item {
+  align-items: flex-start;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 30px;
+  background-color: var(--canvas);
+}
+
+.number {
+  margin-bottom: auto;
+  color: var(--content-subtle);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.height {
+  color: var(--primary);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 64px;
+}

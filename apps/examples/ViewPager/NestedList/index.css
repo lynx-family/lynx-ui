@@ -1,0 +1,99 @@
+@import "@lynx-js/luna-styles/index.css";
+
+@import "../shared/gradients.css";
+
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 60px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.header {
+  flex-shrink: 0;
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.instruction {
+  color: var(--gradient-content-faded);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  margin-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-width: 1px;
+  border-bottom-color: var(--gradient-content-trace);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+.tab-label {
+  color: var(--gradient-content-faded);
+  font-size: 15px;
+  font-weight: 600;
+  transition: color 100ms ease-out;
+}
+
+.tab.active .tab-label,
+.tab.ui-active .tab-label {
+  color: var(--gradient-content);
+}
+
+.tab.active.ui-active .tab-label {
+  color: var(--gradient-content-faded);
+}
+
+.view-pager {
+  flex: 1;
+  align-self: center;
+  min-height: 0;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.view-pager-item {
+  height: 100%;
+}
+
+.list {
+  width: 100%;
+  height: 100%;
+  padding: 16px 24px 32px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 92px;
+  margin-bottom: 10px;
+  padding: 16px;
+  border-width: 1px;
+  border-color: var(--gradient-content);
+  border-radius: 16px;
+}
+
+.number {
+  color: var(--gradient-content);
+  font-size: 28px;
+  font-weight: 700;
+}

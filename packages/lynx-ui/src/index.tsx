@@ -280,6 +280,19 @@ export type {
   TabsRootRef,
 } from '@lynx-js/lynx-ui-tab-group'
 
+// view-pager
+export { ViewPager } from '@lynx-js/lynx-ui-view-pager'
+export type {
+  ViewPagerChangeEvent,
+  ViewPagerExposureMargin,
+  ViewPagerItemProps,
+  ViewPagerLazyOptions,
+  ViewPagerOffsetChangeEvent,
+  ViewPagerProps,
+  ViewPagerRef,
+  ViewPagerWillChangeEvent,
+} from '@lynx-js/lynx-ui-view-pager'
+
 export {
   SheetRoot,
   SheetContent,

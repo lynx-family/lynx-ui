@@ -1,0 +1,68 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 56px 0;
+  background-color: var(--canvas);
+}
+
+.view-pager {
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--gradient-d) 0%,
+    var(--gradient-c) 21%,
+    var(--gradient-b) 54%,
+    var(--gradient-b) 77%,
+    var(--gradient-a) 99%
+  );
+  transition: height 100ms linear;
+}
+
+.view-pager-item {
+  align-items: flex-start;
+  padding: 20px 20px 80px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 40px;
+  border-radius: 16px;
+  background-color: var(--canvas);
+}
+
+.letter {
+  margin-top: auto;
+  margin-bottom: auto;
+  color: var(--primary);
+  font-size: 180px;
+  font-weight: 600;
+  line-height: 180px;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex-direction: column;
+}
+
+.caption-title {
+  color: var(--content);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.caption-meta {
+  margin-top: 4px;
+  color: var(--content-subtle);
+  font-size: 10px;
+}
