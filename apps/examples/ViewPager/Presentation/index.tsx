@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useState } from '@lynx-js/react'
+import { root } from '@lynx-js/react'
 
 import { ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerOffsetChangeEvent } from '@lynx-js/lynx-ui'
@@ -29,8 +29,6 @@ function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
 }
 
 function App() {
-  const [index, setIndex] = useState(0)
-
   return (
     <view className='demo-container lunaris-dark'>
       <ViewPager
@@ -42,17 +40,9 @@ function App() {
         id='presentation-pager'
         style={{ height: `${pages[0].pagerHeight}px` }}
         main-thread:onOffsetChange={handleOffsetChangeMT}
-        onPageChange={event => setIndex(event.detail.index)}
       >
         {page => <PresentationCard page={page} />}
       </ViewPager>
-      <view className='footer'>
-        <text className='progress'>
-          {String(index + 1).padStart(2, '0')} /{' '}
-          {String(pages.length).padStart(2, '0')}
-        </text>
-        <text className='hint'>SWIPE TO SPELL</text>
-      </view>
     </view>
   )
 }

@@ -66,26 +66,3 @@
   color: var(--content-subtle);
   font-size: 10px;
 }
-
-.footer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 20px;
-  padding-right: 24px;
-  padding-left: 24px;
-  background-color: var(--canvas);
-}
-
-.progress,
-.hint {
-  color: var(--content-subtle);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.progress {
-  color: var(--content);
-}

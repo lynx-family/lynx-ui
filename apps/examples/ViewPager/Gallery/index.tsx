@@ -9,6 +9,7 @@ import type { ViewPagerRef } from '@lynx-js/lynx-ui'
 
 import { destinations } from './data'
 import { DestinationCard } from './DestinationCard'
+import { PageIndicators } from './PageIndicators'
 import './index.css'
 
 function App() {
@@ -33,14 +34,7 @@ function App() {
       >
         {destination => <DestinationCard destination={destination} />}
       </ViewPager>
-      <view className='indicators'>
-        {destinations.map((destination, pageIndex) => (
-          <view
-            key={destination.id}
-            className={`indicator ${pageIndex === index ? 'active' : ''}`}
-          />
-        ))}
-      </view>
+      <PageIndicators destinations={destinations} activeIndex={index} />
       <view className='controls'>
         <Button
           className='control'

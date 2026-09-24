@@ -8,6 +8,7 @@ import { List, ViewPager } from '@lynx-js/lynx-ui'
 
 import { sections } from './data'
 import { ListRow } from './ListRow'
+import { SectionTabs } from './SectionTabs'
 import './index.css'
 
 function App() {
@@ -19,16 +20,7 @@ function App() {
         <text className='instruction'>
           Swipe horizontally between pages and vertically within each list.
         </text>
-        <view className='tabs'>
-          {sections.map((section, index) => (
-            <text
-              key={section.id}
-              className={`tab ${index === pageIndex ? 'active' : ''}`}
-            >
-              {section.title}
-            </text>
-          ))}
-        </view>
+        <SectionTabs sections={sections} activeIndex={pageIndex} />
       </view>
       <ViewPager
         data={sections}
