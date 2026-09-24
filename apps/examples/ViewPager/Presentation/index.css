@@ -35,8 +35,6 @@
   align-items: center;
   width: 100%;
   padding: 40px;
-  border-width: 1px;
-  border-color: var(--line);
   border-radius: 16px;
   background-color: var(--canvas);
 }

@@ -28,8 +28,6 @@
   justify-content: flex-end;
   width: 100%;
   padding: 30px;
-  border-width: 1px;
-  border-color: var(--line);
   background-color: var(--canvas);
 }
 

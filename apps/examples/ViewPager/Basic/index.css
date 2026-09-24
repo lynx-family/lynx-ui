@@ -20,20 +20,23 @@
 }
 
 .view-pager-item {
-  width: 100%;
   height: 100%;
 }
 
 .page {
   display: flex;
+  box-sizing: border-box;
   flex-direction: column;
   justify-content: center;
   width: 100%;
   height: 100%;
   padding: 32px;
-  border-width: 1px;
-  border-color: var(--line);
   background-color: var(--canvas);
+}
+
+.page:not(.last-item) {
+  border-right-width: 1px;
+  border-right-color: var(--rule);
 }
 
 .title {

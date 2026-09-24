@@ -20,8 +20,10 @@ export function App() {
         className='view-pager'
         itemClassName='view-pager-item'
       >
-        {page => (
-          <view className='page'>
+        {(page, index) => (
+          <view
+            className={index === pages.length - 1 ? 'page last-item' : 'page'}
+          >
             <text className='title'>{page.title}</text>
           </view>
         )}
