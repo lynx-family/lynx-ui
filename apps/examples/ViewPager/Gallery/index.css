@@ -83,10 +83,10 @@
   height: 8px;
   border-radius: 4px;
   background-color: var(--gradient-content-trace);
+  transition: background-color 100ms ease-out;
 }
 
 .indicator.active {
-  width: 24px;
   background-color: var(--gradient-content);
 }
 
@@ -98,6 +98,11 @@
   height: 44px;
   border-radius: 22px;
   background-color: var(--paper);
+  transition: background-color 100ms ease-out;
+}
+
+.control.ui-active {
+  background-color: var(--paper-clear);
 }
 
 .control.ui-disabled {

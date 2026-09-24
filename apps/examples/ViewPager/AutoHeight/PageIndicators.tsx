@@ -4,26 +4,26 @@
 
 import { Button } from '@lynx-js/lynx-ui'
 
-import type { Section } from './data'
+import type { Story } from './data'
 
-interface SectionTabsProps {
+interface PageIndicatorsProps {
   activeIndex: number
   onSelect: (index: number) => void
-  sections: readonly Section[]
+  stories: readonly Story[]
 }
 
-export function SectionTabs(
-  { activeIndex, onSelect, sections }: SectionTabsProps,
+export function PageIndicators(
+  { activeIndex, onSelect, stories }: PageIndicatorsProps,
 ) {
   return (
-    <view className='tabs'>
-      {sections.map((section, index) => (
+    <view className='indicators'>
+      {stories.map((story, index) => (
         <Button
-          key={section.id}
-          className={`tab ${index === activeIndex ? 'active' : ''}`}
+          key={story.id}
+          className={`indicator ${index === activeIndex ? 'active' : ''}`}
           onClick={() => onSelect(index)}
         >
-          <text className='tab-label'>{section.title}</text>
+          <view className='indicator-dot' />
         </Button>
       ))}
     </view>

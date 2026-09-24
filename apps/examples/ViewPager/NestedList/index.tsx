@@ -2,9 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useState } from '@lynx-js/react'
+import { root, useRef, useState } from '@lynx-js/react'
 
 import { List, ViewPager } from '@lynx-js/lynx-ui'
+import type { ViewPagerRef } from '@lynx-js/lynx-ui'
 
 import { sections } from './data'
 import { ListRow } from './ListRow'
@@ -12,6 +13,7 @@ import { SectionTabs } from './SectionTabs'
 import './index.css'
 
 function App() {
+  const pagerRef = useRef<ViewPagerRef>(null)
   const [pageIndex, setPageIndex] = useState(0)
 
   return (
@@ -20,9 +22,14 @@ function App() {
         <text className='instruction'>
           Swipe horizontally between pages and vertically within each list.
         </text>
-        <SectionTabs sections={sections} activeIndex={pageIndex} />
+        <SectionTabs
+          sections={sections}
+          activeIndex={pageIndex}
+          onSelect={index => pagerRef.current?.scrollToPage(index)}
+        />
       </view>
       <ViewPager
+        ref={pagerRef}
         data={sections}
         getItemKey={section => section.id}
         onPageChange={event => setPageIndex(event.detail.index)}

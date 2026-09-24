@@ -20,6 +20,38 @@
   padding: 1px;
 }
 
+.indicators {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: var(--gradient-content-faded);
+  transition: background-color 100ms ease-out;
+}
+
+.indicator.active .indicator-dot,
+.indicator.ui-active .indicator-dot {
+  background-color: var(--gradient-content);
+}
+
+.indicator.active.ui-active .indicator-dot {
+  background-color: var(--gradient-content-faded);
+}
+
 .card {
   width: 100%;
   padding: 24px;
