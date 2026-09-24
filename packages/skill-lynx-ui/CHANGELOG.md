@@ -1,5 +1,13 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.9
+
+### Patch Changes
+
+- Add DeferredComponent usage guidance, API references, example sources, and component selection routing. ([#301](https://github.com/lynx-family/lynx-ui/pull/301))
+
+- Add composable TabGroup primitives for tab navigation and animated indicators. ([#273](https://github.com/lynx-family/lynx-ui/pull/273))
+
 ## 3.133.8
 
 ### Patch Changes
