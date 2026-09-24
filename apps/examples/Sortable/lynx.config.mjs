@@ -6,6 +6,7 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
 const defaultConfig = exampleConfig({
   SortableBasic: './Basic/index.tsx',
+  SortablePerformance90: './Performance90/index.tsx',
   SortableWithScrollView: './WithScrollView/index.tsx',
   SortableScrollableBoundary: './ScrollableBoundary/index.tsx',
   SortableShortScrollView: './ShortScrollView/index.tsx',
