@@ -16,9 +16,10 @@
   background: linear-gradient(
     180deg,
     var(--gradient-d) 0%,
-    var(--gradient-c) 32%,
-    var(--gradient-b) 68%,
-    var(--gradient-a) 100%
+    var(--gradient-c) 21%,
+    var(--gradient-b) 54%,
+    var(--gradient-b) 77%,
+    var(--gradient-a) 99%
   );
   transition: height 100ms linear;
 }

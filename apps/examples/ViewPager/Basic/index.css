@@ -1,5 +1,7 @@
 @import "@lynx-js/luna-styles/index.css";
 
+@import "../shared/gradients.css";
+
 .demo-container {
   display: flex;
   align-items: center;
@@ -8,8 +10,6 @@
   width: 100%;
   height: 100%;
   padding: 64px 24px;
-  background-color: var(--canvas-ambient);
-  color: var(--content);
 }
 
 .view-pager {
@@ -24,18 +24,6 @@
   height: 100%;
 }
 
-.page-primary {
-  background-color: var(--primary);
-}
-
-.page-secondary {
-  background-color: var(--secondary);
-}
-
-.page-neutral {
-  background-color: var(--neutral);
-}
-
 .page {
   display: flex;
   flex-direction: column;
@@ -43,25 +31,20 @@
   width: 100%;
   height: 100%;
   padding: 32px;
+  border-width: 1px;
+  border-color: var(--line);
+  background-color: var(--canvas);
 }
 
 .title {
-  color: var(--primary-content);
+  color: var(--content);
   font-size: 36px;
   font-weight: 700;
 }
 
-.page-secondary .title {
-  color: var(--secondary-content);
-}
-
-.page-neutral .title {
-  color: var(--neutral-content);
-}
-
 .status {
   margin-top: 16px;
-  color: var(--content-2);
+  color: var(--gradient-content-faded);
   font-size: 14px;
   text-align: center;
 }

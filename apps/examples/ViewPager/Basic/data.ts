@@ -5,14 +5,11 @@
 export const pages = [
   {
     title: 'First page',
-    className: 'page-primary',
   },
   {
     title: 'Second page',
-    className: 'page-secondary',
   },
   {
     title: 'Third page',
-    className: 'page-neutral',
   },
 ]

@@ -13,7 +13,7 @@ function App() {
   const [pageIndex, setPageIndex] = useState(0)
 
   return (
-    <view className='demo-container lunaris-dark'>
+    <view className='demo-container lunaris-dark luna-gradient-rose'>
       <view className='header'>
         <text className='instruction'>
           Swipe horizontally between pages and vertically within each list.

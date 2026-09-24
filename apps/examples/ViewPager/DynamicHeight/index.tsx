@@ -28,7 +28,7 @@ function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
 
 function App() {
   return (
-    <view className='demo-container lunaris-dark'>
+    <view className='demo-container lunaris-dark luna-gradient-afterglow'>
       <ViewPager
         data={pages}
         getItemKey={page => page.id}

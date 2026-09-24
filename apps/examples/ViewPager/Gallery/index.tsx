@@ -15,7 +15,7 @@ function App() {
   const [index, setIndex] = useState(0)
 
   return (
-    <view className='demo-container lunaris-dark'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
       <ViewPager
         ref={pagerRef}
         data={destinations}

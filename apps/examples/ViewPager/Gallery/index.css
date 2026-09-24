@@ -1,5 +1,7 @@
 @import "@lynx-js/luna-styles/index.css";
 
+@import "../shared/gradients.css";
+
 .demo-container {
   display: flex;
   align-items: center;
@@ -8,7 +10,6 @@
   width: 100%;
   height: 100%;
   padding: 64px 32px;
-  background: linear-gradient(0deg, var(--gradient-b), var(--gradient-c));
 }
 
 .view-pager {

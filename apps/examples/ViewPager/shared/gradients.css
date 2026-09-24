@@ -1,0 +1,33 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.luna-gradient-rose {
+  background: linear-gradient(
+    0deg,
+    var(--gradient-a),
+    var(--gradient-b)
+  );
+}
+
+.luna-gradient-berry {
+  background: linear-gradient(
+    0deg,
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+
+.luna-gradient-afterglow {
+  background: linear-gradient(
+    150deg,
+    var(--gradient-b) 8.42%,
+    var(--gradient-c) 81.71%
+  );
+}
+
+.luna-gradient-ocean {
+  background: linear-gradient(
+    0deg,
+    var(--gradient-c) 60%,
+    var(--gradient-d) 120%
+  );
+}

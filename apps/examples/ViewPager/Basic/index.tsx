@@ -13,7 +13,7 @@ export function App() {
   const [index, setIndex] = useState(0)
 
   return (
-    <view className='demo-container lunaris-dark'>
+    <view className='demo-container lunaris-dark luna-gradient-rose'>
       <ViewPager
         data={pages}
         onPageChange={event => setIndex(event.detail.index)}
@@ -21,7 +21,7 @@ export function App() {
         itemClassName='view-pager-item'
       >
         {page => (
-          <view className={`page ${page.className}`}>
+          <view className='page'>
             <text className='title'>{page.title}</text>
           </view>
         )}
