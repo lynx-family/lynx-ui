@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.139.0
+
+### Patch Changes
+
+- Correct generated API types for scroll callbacks and union-valued arrays. ([#273](https://github.com/lynx-family/lynx-ui/pull/273))
+
 ## 3.137.0
 
 ### Patch Changes
