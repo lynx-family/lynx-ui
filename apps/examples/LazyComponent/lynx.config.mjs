@@ -7,6 +7,6 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig({
   LazyComponentBasic: './Basic/index.tsx',
   LazyComponentVisibilityMargin: './VisibilityMargin/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig
