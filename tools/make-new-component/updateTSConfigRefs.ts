@@ -21,7 +21,7 @@ interface TSConfig {
 export async function updateTSConfigRefs() {
   if (!fs.existsSync(packagesDir)) {
     console.error('Packages directory not found')
-    // eslint-disable-next-line n/no-process-exit
+    // eslint-disable-next-line node/no-process-exit
     process.exit(1)
   }
 

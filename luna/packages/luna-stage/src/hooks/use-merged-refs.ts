@@ -35,6 +35,6 @@ function mergeRefs<T>(...refs: PossibleRef<T>[]) {
 export function useMergedRefs<T>(
   ...refs: PossibleRef<T>[]
 ): (node: T | null) => void {
-  // biome-ignore lint/correctness/useExhaustiveDependencies: refs is the dependency list for the merged ref callback.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- refs is the dependency list
   return useMemo(() => mergeRefs(...refs), refs)
 }

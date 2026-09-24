@@ -12,7 +12,7 @@ export type DeferredComponent = (props: DeferredComponentProps) => ReactElement
  * Reserved ref interface. No imperative methods are exposed.
  * @zh 预留的引用接口，不提供命令式方法。
  */
-// biome-ignore lint/suspicious/noEmptyInterface: reserved public ref contract
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- reserved public ref contract
 export interface DeferredComponentRef {}
 
 export interface DeferredComponentProps {

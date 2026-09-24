@@ -19,7 +19,7 @@ export async function detectOverflow(
     ...floating,
     x,
     y,
-    // biome-ignore lint/style/useExplicitLengthCheck: Expected
+    // eslint-disable-next-line unicorn-js/explicit-length-check -- numeric side index
     ...(state.middlewareData.size
       ? {
         width: clamp(

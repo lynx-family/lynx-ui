@@ -47,7 +47,6 @@ jobs:
         run: |
           pnpm check:mdx
           pnpm dprint check
-          pnpm biome check
           pnpm dlx sherif@latest
       - name: Changeset Script Tests
         run: |
@@ -97,13 +96,13 @@ jobs:
       runs-on: lynx-ubuntu-24.04-medium
       run: pnpm check:luna-vars
 
-  eslint:
-    name: ESLint
+  rslint:
+    name: Rslint
     needs: build
     uses: ./.github/workflows/common-test.yml
     with:
       runs-on: lynx-ubuntu-24.04-medium
-      run: pnpm eslint . --flag v10_config_lookup_from_file
+      run: pnpm run lint
 
   check-exports:
     name: Check Exports
@@ -226,7 +225,7 @@ jobs:
       - check-exports
       - check-package-types
       - generated-documentation
-      - eslint
+      - rslint
       - test-publish
       - test-typos
       - test-vitest

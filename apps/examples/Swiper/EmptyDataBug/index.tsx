@@ -47,22 +47,27 @@ function EmptyDataWithAutoPlay(): JSX.Element {
   const swiperRef = useRef<SwiperRef>(null)
 
   const handleChange = (index: number) => {
-    console.log('[Scenario 1] onChange:', index, 'isNaN:', isNaN(index))
+    console.log('[Scenario 1] onChange:', index, 'isNaN:', Number.isNaN(index))
     setCurrentIndex(index)
     setOnChangeLog(
       prev => [
         ...prev.slice(-4),
-        `onChange(${index}) ${isNaN(index) ? '⚠️ NaN!' : ''}`,
+        `onChange(${index}) ${Number.isNaN(index) ? '⚠️ NaN!' : ''}`,
       ],
     )
   }
 
   const handleSwipeStop = (index: number) => {
-    console.log('[Scenario 1] onSwipeStop:', index, 'isNaN:', isNaN(index))
+    console.log(
+      '[Scenario 1] onSwipeStop:',
+      index,
+      'isNaN:',
+      Number.isNaN(index),
+    )
     setOnChangeLog(
       prev => [
         ...prev.slice(-4),
-        `onSwipeStop(${index}) ${isNaN(index) ? '⚠️ NaN!' : ''}`,
+        `onSwipeStop(${index}) ${Number.isNaN(index) ? '⚠️ NaN!' : ''}`,
       ],
     )
   }
@@ -110,7 +115,8 @@ function EmptyDataWithAutoPlay(): JSX.Element {
       </Swiper>
       <view class='info'>
         <text>
-          Current Index: {currentIndex} {isNaN(currentIndex) ? '⚠️ NaN!' : ''}
+          Current Index: {currentIndex}{' '}
+          {Number.isNaN(currentIndex) ? '⚠️ NaN!' : ''}
         </text>
         <text>Data Length: {data.length}</text>
         <text class='log-title'>Callback Log:</text>
@@ -136,12 +142,12 @@ function EmptyDataWithManualSwipe(): JSX.Element {
   const swiperRef = useRef<SwiperRef>(null)
 
   const handleChange = (index: number) => {
-    console.log('[Scenario 2] onChange:', index, 'isNaN:', isNaN(index))
+    console.log('[Scenario 2] onChange:', index, 'isNaN:', Number.isNaN(index))
     setCurrentIndex(index)
     setOnChangeLog(
       prev => [
         ...prev.slice(-4),
-        `onChange(${index}) ${isNaN(index) ? '⚠️ NaN!' : ''}`,
+        `onChange(${index}) ${Number.isNaN(index) ? '⚠️ NaN!' : ''}`,
       ],
     )
   }
@@ -152,12 +158,17 @@ function EmptyDataWithManualSwipe(): JSX.Element {
   }
 
   const handleSwipeStop = (index: number) => {
-    console.log('[Scenario 2] onSwipeStop:', index, 'isNaN:', isNaN(index))
+    console.log(
+      '[Scenario 2] onSwipeStop:',
+      index,
+      'isNaN:',
+      Number.isNaN(index),
+    )
     setSwipeStopCount(prev => prev + 1)
     setOnChangeLog(
       prev => [
         ...prev.slice(-4),
-        `onSwipeStop(${index}) ${isNaN(index) ? '⚠️ NaN!' : ''}`,
+        `onSwipeStop(${index}) ${Number.isNaN(index) ? '⚠️ NaN!' : ''}`,
       ],
     )
   }
@@ -221,7 +232,8 @@ function EmptyDataWithManualSwipe(): JSX.Element {
       </view>
       <view class='info'>
         <text>
-          Current Index: {currentIndex} {isNaN(currentIndex) ? '⚠️ NaN!' : ''}
+          Current Index: {currentIndex}{' '}
+          {Number.isNaN(currentIndex) ? '⚠️ NaN!' : ''}
         </text>
         <text>Data Length: {data.length}</text>
         <text>SwipeStart Count: {swipeStartCount}</text>

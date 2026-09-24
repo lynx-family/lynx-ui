@@ -12,7 +12,7 @@ type LynxViewAttributes = HTMLAttributes<HTMLElement> & {
 }
 
 declare global {
-  // biome-ignore lint/style/noNamespace: JSX intrinsic element augmentation uses the JSX namespace.
+  // eslint-disable-next-line @typescript-eslint/no-namespace -- JSX intrinsic element augmentation
   namespace JSX {
     interface IntrinsicElements {
       'lynx-view': DetailedHTMLProps<LynxViewAttributes, HTMLElement>

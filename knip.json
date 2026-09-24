@@ -12,8 +12,7 @@
       "entry": [
         "tools/**/*.ts",
         "tools/**/*.js",
-        "eslint.config.mjs",
-        "biome.jsonc",
+        "rslint.config.mjs",
         "cspell.jsonc"
       ],
       "project": [

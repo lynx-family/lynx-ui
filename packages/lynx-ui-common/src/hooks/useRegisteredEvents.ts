@@ -18,14 +18,14 @@ const EMULATED_TOUCH_EVENT_NAMES = new Set([
 ])
 
 const useMainThreadifyEvents = (
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic event map
   events: Record<string, any>,
   mainThreadEvents: Record<string, string>, // e.g.: { 'onScroll': bindscroll } -> { 'main-thread:bindscroll': main-thread:bindscroll }
 ) => {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic event map
   type reducedEventsType = Record<string, any>
   const mainThreadifyEvents: reducedEventsType = {}
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- main-thread marker
   const dummyRef = useMainThreadRef()
   for (const event of Object.keys(events)) {
     if (event in mainThreadEvents) {
@@ -56,11 +56,11 @@ const useMainThreadifyEvents = (
  * ```
  */
 export const useRegisteredEvents = (
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic event map
   events: Record<string, any>,
   registeredEventsMapping: Record<string, string>,
 ) => {
-  // biome-ignore lint/suspicious/noExplicitAny: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic event map
   type reducedEventsType = Record<string, any>
   const reducedEvents: reducedEventsType = {}
   for (const event of Object.keys(events)) {

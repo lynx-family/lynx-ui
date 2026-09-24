@@ -227,7 +227,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
        )
     }
     ```
-- **File Headers**: All source files must include the copyright header (checked by ESLint):
+- **File Headers**: All source files must include the copyright header (checked by Rslint):
 
   ```typescript
   // Copyright 2026 The Lynx Authors. All rights reserved.
@@ -272,9 +272,11 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
 
 ### Linting & Formatting
 
-This project uses **Biome** for linting and formatting, and **dprint** for Markdown formatting.
+This project uses **Rslint** for JavaScript and TypeScript linting, a JSONC-capable lint check (`pnpm lint:json`) for JSON files, and **dprint** for formatting.
+The JSON check runs `eslint-plugin-jsonc` and CSpell through a standalone ESLint runner because Rslint does not support the JSONC parser.
 
 - Run checks: `pnpm check`
+- Run all lint checks: `pnpm lint`
 - Fix issues: `pnpm fix:all`
 
 ### Documentation & Markdown

@@ -9,9 +9,9 @@
     "bootstrap:package": "node tools/scripts/bootstrap-package.mjs",
     "build": "turbo build",
     "changeset": "changeset",
-    "check": "pnpm run check:luna-vars && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && eslint . --cache --cache-strategy content && dprint check",
+    "check": "pnpm run check:luna-vars && pnpm run lint && dprint check",
     "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:changesets-private && pnpm run check:manypkg && pnpm run check:sherif",
-    "check:changed": "sh tools/checkChanged/checkChanged.sh",
+    "check:changed": "bash tools/checkChanged/checkChanged.sh",
     "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
     "check:changesets-private": "node tools/scripts/check-changeset-private-targets.mjs",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
@@ -27,15 +27,19 @@
     "ensure:skills-changeset": "node tools/skill-lynx-ui/ensure-changeset.mjs",
     "examples:build": "turbo build --filter='./apps/examples/*'",
     "examples:publish": "node tools/scripts/publish-examples.mjs",
-    "fix:all": "pnpm run format && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
-    "fix:changed": "sh tools/checkChanged/checkChanged.sh",
-    "fix:changed:unsafe": "sh tools/checkChanged/checkChanged.sh --unsafe",
+    "fix:all": "pnpm run lint:rslint:fix && pnpm run format && pnpm run lint:json && pnpm run fix:manypkg && pnpm run fix:sherif && pnpm check:mdx",
+    "fix:changed": "bash tools/checkChanged/checkChanged.sh",
     "fix:manypkg": "pnpm dlx @manypkg/cli fix",
     "fix:sherif": "pnpm dlx sherif@latest --fix",
     "format": "dprint fmt",
     "genDoc": "pnpm tsx tools/typedoc/index.ts",
     "install:all": "pnpm install",
     "knip": "knip",
+    "lint": "pnpm run lint:rslint && pnpm run lint:json",
+    "lint:fix": "pnpm run lint:rslint:fix && pnpm run lint:json",
+    "lint:json": "node tools/scripts/lint-json.mjs",
+    "lint:rslint": "rslint -c rslint.config.mjs",
+    "lint:rslint:fix": "rslint -c rslint.config.mjs --fix",
     "make-new-component": "tsx tools/make-new-component/index.ts",
     "merge:example-bundle-stats": "node tools/scripts/merge-example-bundle-stats.mjs",
     "prepare": "husky",
@@ -48,10 +52,13 @@
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,md,json,jsonc}": [
-      "eslint --cache --fix --no-warn-ignored",
-      "biome lint --write --no-errors-on-unmatched --files-ignore-unknown=true",
+    "*.{js,jsx,ts,tsx,mjs,cjs,md}": [
+      "rslint -c rslint.config.mjs --fix",
       "dprint fmt --allow-no-files --"
+    ],
+    "*.{json,json5,jsonc}": [
+      "dprint fmt --allow-no-files --",
+      "node tools/scripts/lint-json.mjs"
     ],
     "**/*.mdx": [
       "dprint fmt --allow-no-files --"
@@ -72,22 +79,21 @@
     ]
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
     "@changesets/cli": "2.28.1",
     "@changesets/parse": "0.4.3",
     "@cspell/eslint-plugin": "^8.17.1",
-    "@eslint/js": "^9.17.0",
     "@lynx-js/qrcode-rsbuild-plugin": "catalog:",
     "@lynx-js/react-rsbuild-plugin": "catalog:",
     "@rsbuild/plugin-react": "catalog:",
     "@rslib/core": "catalog:",
+    "@rslint/core": "^0.9.3",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "2.1.9",
     "@vitest/eslint-plugin": "^1.1.24",
     "cspell": "^8.17.1",
     "dprint": "^0.48.0",
-    "eslint": "^9.17.0",
+    "eslint": "^9.39.4",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^50.6.1",
@@ -96,7 +102,6 @@
     "eslint-plugin-notice": "^1.0.0",
     "eslint-plugin-regexp": "^2.7.0",
     "eslint-plugin-unicorn": "^56.0.1",
-    "globals": "^15.14.0",
     "husky": "^9.1.7",
     "jsonc-parser": "3.3.1",
     "knip": "^5.80.0",
@@ -109,7 +114,6 @@
     "turbo": "^2.9.3",
     "typedoc": "^0.28.0",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.19.1",
     "vitest": "catalog:",
     "yaml": "2.9.0"
   },

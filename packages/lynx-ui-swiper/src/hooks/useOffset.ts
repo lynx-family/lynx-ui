@@ -174,7 +174,7 @@ function useOffset(
   // Offset should only be updated by this function.
   function setOffset(offset: number) {
     'main thread'
-    if (isNaN(offset)) {
+    if (Number.isNaN(offset)) {
       throw new Error('calcBounceOffset: invalid offset')
     }
     offsetRef.current = offset
@@ -567,7 +567,7 @@ function useOffset(
     } else {
       const currentIndex = prevIndexRef.current
       // Guard against NaN from previous empty data state
-      if (isNaN(currentIndex)) {
+      if (Number.isNaN(currentIndex)) {
         swipeToMTS(0, {
           animate: false,
         })

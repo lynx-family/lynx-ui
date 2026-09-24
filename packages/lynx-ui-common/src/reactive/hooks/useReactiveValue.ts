@@ -54,7 +54,7 @@ export function createMainThreadReactiveValue<T>(
     }
 
     subscribe(callback: Subscriber<T>): Unsubscribe {
-      // biome-ignore lint/suspicious/noEmptyBlockStatements: As expected
+      // eslint-disable-next-line @typescript-eslint/no-empty-function -- intentional no-op cleanup
       if (this._isDestroyed) return () => {}
 
       this._subscribers.add(callback)
@@ -124,7 +124,7 @@ export function useReactiveValue<T>(
       runOnMainThread(initReactiveValue)()
     } else {
       // Kept for preventing tree shaking
-      initReactiveValue
+      void initReactiveValue
     }
   }, [])
 

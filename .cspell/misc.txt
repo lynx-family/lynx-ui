@@ -65,7 +65,9 @@ refreshheader
 refreshview
 rltl
 rsdoctor
+rslint
 rspress
+rstest
 rtlcustom
 rtlloop
 scrollers

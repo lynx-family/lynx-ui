@@ -1,0 +1,14 @@
+{
+  "extends": "./tools/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["tools/**/*.ts", "tools/**/*.tsx"],
+  "exclude": [
+    "tools/make-new-component/examplesTemplate/**",
+    "tools/make-new-component/template/**",
+    "tools/typings/**/*.d.ts"
+  ]
+}

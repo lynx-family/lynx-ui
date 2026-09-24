@@ -57,7 +57,7 @@ export interface CustomTouch {
  * see: https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
  */
 declare module 'react' {
-  // biome-ignore lint/complexity/noBannedTypes: Expected
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- intentional empty config
   function forwardRef<T, P = {}>(
     render: (props: P, ref: React.Ref<T>) => React.ReactElement | null,
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null
