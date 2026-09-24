@@ -8,6 +8,7 @@ import { ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerOffsetChangeEvent } from '@lynx-js/lynx-ui'
 
 import { pages } from './data'
+import { PresentationCard } from './PresentationCard'
 import './index.css'
 
 function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
@@ -43,20 +44,7 @@ function App() {
         main-thread:onOffsetChange={handleOffsetChangeMT}
         onPageChange={event => setIndex(event.detail.index)}
       >
-        {page => (
-          <view
-            className='card'
-            style={{ height: `${page.cardHeight}px` }}
-          >
-            <text className='letter'>
-              {page.letter}
-            </text>
-            <view className='caption'>
-              <text className='caption-title'>ViewPager</text>
-              <text className='caption-meta'>@lynx-js/lynx-ui</text>
-            </view>
-          </view>
-        )}
+        {page => <PresentationCard page={page} />}
       </ViewPager>
       <view className='footer'>
         <text className='progress'>

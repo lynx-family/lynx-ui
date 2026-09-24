@@ -13,3 +13,5 @@ export const pages = [
   { id: 'e-2', letter: 'E', cardHeight: 320, pagerHeight: 420 },
   { id: 'r', letter: 'R', cardHeight: 410, pagerHeight: 510 },
 ]
+
+export type PresentationPage = (typeof pages)[number]

@@ -8,6 +8,7 @@ import { Button, ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerRef } from '@lynx-js/lynx-ui'
 
 import { destinations } from './data'
+import { DestinationCard } from './DestinationCard'
 import './index.css'
 
 function App() {
@@ -30,24 +31,7 @@ function App() {
         className='view-pager'
         itemClassName='view-pager-item'
       >
-        {destination => (
-          <view
-            className='card'
-            accessibility-label={destination.title}
-          >
-            <text className='number'>
-              {destination.number}
-            </text>
-            <view className='copy'>
-              <text className='eyebrow'>
-                {destination.eyebrow}
-              </text>
-              <text className='title'>
-                {destination.title}
-              </text>
-            </view>
-          </view>
-        )}
+        {destination => <DestinationCard destination={destination} />}
       </ViewPager>
       <view className='indicators'>
         {destinations.map((destination, pageIndex) => (

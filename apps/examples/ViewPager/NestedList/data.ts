@@ -13,3 +13,5 @@ export const sections = [
     number: section.start + index,
   })),
 }))
+
+export type SectionItem = (typeof sections)[number]['items'][number]

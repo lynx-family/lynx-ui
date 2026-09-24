@@ -7,6 +7,7 @@ import { root, useState } from '@lynx-js/react'
 import { List, ViewPager } from '@lynx-js/lynx-ui'
 
 import { sections } from './data'
+import { ListRow } from './ListRow'
 import './index.css'
 
 function App() {
@@ -47,15 +48,7 @@ function App() {
             useRefactorList={true}
             bounces={true}
           >
-            {section.items.map(item => (
-              <list-item key={item.id} item-key={item.id}>
-                <view className='row'>
-                  <text className='number'>
-                    {item.number}
-                  </text>
-                </view>
-              </list-item>
-            ))}
+            {section.items.map(item => <ListRow key={item.id} item={item} />)}
           </List>
         )}
       </ViewPager>

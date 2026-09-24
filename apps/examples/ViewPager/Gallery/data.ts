@@ -22,3 +22,5 @@ export const destinations = [
     title: 'Meet the night',
   },
 ]
+
+export type Destination = (typeof destinations)[number]

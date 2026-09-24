@@ -34,3 +34,5 @@ export const stories = [
     ],
   },
 ]
+
+export type Story = (typeof stories)[number]

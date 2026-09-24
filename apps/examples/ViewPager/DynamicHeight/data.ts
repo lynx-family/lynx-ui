@@ -8,3 +8,5 @@ export const pages = [
   { id: 'expanded', height: 560 },
   { id: 'finale', height: 340 },
 ]
+
+export type DynamicHeightPage = (typeof pages)[number]

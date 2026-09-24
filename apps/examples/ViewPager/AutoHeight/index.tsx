@@ -7,6 +7,7 @@ import { root } from '@lynx-js/react'
 import { ViewPager } from '@lynx-js/lynx-ui'
 
 import { stories } from './data'
+import { StoryCard } from './StoryCard'
 import './index.css'
 
 function App() {
@@ -18,18 +19,7 @@ function App() {
         className='view-pager'
         itemClassName='view-pager-item'
       >
-        {story => (
-          <view className='card'>
-            <text className='label'>{story.label}</text>
-            <text className='title'>{story.title}</text>
-            {story.lines.map(line => (
-              <view key={line} className='row'>
-                <view className='dot' />
-                <text className='line'>{line}</text>
-              </view>
-            ))}
-          </view>
-        )}
+        {story => <StoryCard story={story} />}
       </ViewPager>
     </view>
   )
