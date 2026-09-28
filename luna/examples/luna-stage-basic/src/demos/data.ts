@@ -55,6 +55,13 @@ const demosByPackage = {
     'PopoverCustomArrow',
   ],
   radioGroup: ['RadioGroupBasic', 'RadioGroupDisabled'],
+  scrollCoordinator: [
+    'ScrollCoordinatorList',
+    'ScrollCoordinatorViewPager',
+    'ScrollCoordinatorViewPagerList',
+    'ScrollCoordinatorRefreshCoordinator',
+    'ScrollCoordinatorRefreshPage',
+  ],
   scrollView: [
     'ScrollViewBasic',
     'ScrollViewBounces',

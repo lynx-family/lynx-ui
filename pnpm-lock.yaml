@@ -1177,6 +1177,9 @@ importers:
       '@lynx-example/lynx-ui-radio-group':
         specifier: workspace:*
         version: link:../../../apps/examples/RadioGroup
+      '@lynx-example/lynx-ui-scroll-coordinator':
+        specifier: workspace:*
+        version: link:../../../apps/examples/ScrollCoordinator
       '@lynx-example/lynx-ui-scroll-view':
         specifier: workspace:*
         version: link:../../../apps/examples/ScrollView
