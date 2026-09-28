@@ -210,14 +210,9 @@ export interface TabItemProps extends
 
 export type TabsPanelRef = ViewPagerRef
 
-export interface TabsPanelProps<T = unknown> extends ViewPagerProps<T> {
-  /**
-   * Configure the initial index on TabsRoot so the tab bar and panel share the
-   * same initial selection.
-   * @zh 请在 TabsRoot 上配置初始索引，确保标签栏和面板使用相同的初始选中项。
-   */
-  initialSelectIndex?: never
-}
+export interface TabsPanelProps<T = unknown>
+  extends Omit<ViewPagerProps<T>, 'initialSelectIndex'>
+{}
 
 export interface TabsIndicatorProps extends ComponentBasicProps {
   /**
