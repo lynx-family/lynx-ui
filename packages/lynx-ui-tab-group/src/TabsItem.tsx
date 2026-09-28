@@ -24,6 +24,7 @@ export const TabsItem = (props: TabItemProps) => {
     tabRegistrationMapMT,
     onClickItem,
     initialSelectIndex,
+    panelIndexMT,
     selectTarget,
     selectBehavior,
     unregisterTabWidth,
@@ -59,6 +60,13 @@ export const TabsItem = (props: TabItemProps) => {
       }
     },
   )
+
+  useMotionValueRefEvent(panelIndexMT, 'change', (index) => {
+    'main thread'
+    if (tabKey === tabKeyArray[index]) {
+      scrollToCenterMT(true)
+    }
+  })
 
   const onLayoutChange = (
     event: LayoutChangeDetailEvent<MainThread.Element>,
