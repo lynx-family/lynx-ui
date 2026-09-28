@@ -26,7 +26,8 @@
   ],
   "scripts": {
     "build": "rslib build",
-    "build:watch": "rslib build --watch"
+    "build:watch": "rslib build --watch",
+    "test": "vitest"
   },
   "dependencies": {
     "@lynx-js/lynx-ui-button": "workspace:*",
@@ -38,6 +39,7 @@
     "@lynx-js/types": "catalog:",
     "@rslib/core": "catalog:",
     "@types/react": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
