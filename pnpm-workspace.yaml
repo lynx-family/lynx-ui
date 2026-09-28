@@ -17,7 +17,7 @@ catalog:
   "@lynx-js/gesture-runtime": 2.1.1
   "@lynx-js/lynx-core": 0.1.4
   "@lynx-js/qrcode-rsbuild-plugin": 0.6.0
-  "@lynx-js/web-core": 0.23.0
+  "@lynx-js/web-core": 0.26.2
   "@rsbuild/core": 2.1.0
   "@rsbuild/plugin-react": 2.1.0
   "@rslib/core": 0.23.2

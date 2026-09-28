@@ -5,8 +5,29 @@
     "build": {
       "dependsOn": [
         "@lynx-js/luna-stage#build",
+        "@lynx-example/lynx-ui-button#build",
+        "@lynx-example/lynx-ui-checkbox#build",
+        "@lynx-example/lynx-ui-common#build",
+        "@lynx-example/lynx-ui-deferred-component#build",
+        "@lynx-example/lynx-ui-dialog#build",
+        "@lynx-example/lynx-ui-draggable#build",
+        "@lynx-example/lynx-ui-feed-list#build",
+        "@lynx-example/lynx-ui-form#build",
+        "@lynx-example/lynx-ui-input#build",
+        "@lynx-example/lynx-ui-input-otp#build",
+        "@lynx-example/lynx-ui-lazy-component#build",
+        "@lynx-example/lynx-ui-list#build",
         "@lynx-example/lynx-ui-popover#build",
-        "@lynx-example/lynx-ui-switch#build"
+        "@lynx-example/lynx-ui-radio-group#build",
+        "@lynx-example/lynx-ui-scroll-view#build",
+        "@lynx-example/lynx-ui-sheet#build",
+        "@lynx-example/lynx-ui-slider#build",
+        "@lynx-example/lynx-ui-sortable#build",
+        "@lynx-example/lynx-ui-swipe-action#build",
+        "@lynx-example/lynx-ui-swiper#build",
+        "@lynx-example/lynx-ui-switch#build",
+        "@lynx-example/lynx-ui-tab-group#build",
+        "@lynx-example/lynx-ui-view-pager#build"
       ],
       "inputs": [
         "src/**",

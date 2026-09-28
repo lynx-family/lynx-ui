@@ -34,8 +34,8 @@ catalogs:
       specifier: 4.1.0
       version: 4.1.0
     '@lynx-js/web-core':
-      specifier: 0.23.0
-      version: 0.23.0
+      specifier: 0.26.2
+      version: 0.26.2
     '@rsbuild/core':
       specifier: 2.1.0
       version: 2.1.0
@@ -1044,7 +1044,7 @@ importers:
         version: link:../../packages/luna-studio
       '@lynx-js/web-core':
         specifier: 'catalog:'
-        version: 0.23.0(@lynx-js/css-serializer@0.1.7)(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
+        version: 0.26.2(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -1099,7 +1099,7 @@ importers:
         version: 0.1.4
       '@lynx-js/web-core':
         specifier: 'catalog:'
-        version: 0.23.0(@lynx-js/css-serializer@0.1.7)(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
+        version: 0.26.2(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -1110,18 +1110,72 @@ importers:
       '@lynx-example/lynx-ui-button':
         specifier: workspace:*
         version: link:../../../apps/examples/Button
+      '@lynx-example/lynx-ui-checkbox':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Checkbox
+      '@lynx-example/lynx-ui-common':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Common
+      '@lynx-example/lynx-ui-deferred-component':
+        specifier: workspace:*
+        version: link:../../../apps/examples/DeferredComponent
+      '@lynx-example/lynx-ui-dialog':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Dialog
+      '@lynx-example/lynx-ui-draggable':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Draggable
+      '@lynx-example/lynx-ui-feed-list':
+        specifier: workspace:*
+        version: link:../../../apps/examples/FeedList
+      '@lynx-example/lynx-ui-form':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Form
+      '@lynx-example/lynx-ui-input':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Input
+      '@lynx-example/lynx-ui-input-otp':
+        specifier: workspace:*
+        version: link:../../../apps/examples/InputOTP
+      '@lynx-example/lynx-ui-lazy-component':
+        specifier: workspace:*
+        version: link:../../../apps/examples/LazyComponent
+      '@lynx-example/lynx-ui-list':
+        specifier: workspace:*
+        version: link:../../../apps/examples/List
       '@lynx-example/lynx-ui-popover':
         specifier: workspace:*
         version: link:../../../apps/examples/Popover
       '@lynx-example/lynx-ui-radio-group':
         specifier: workspace:*
         version: link:../../../apps/examples/RadioGroup
+      '@lynx-example/lynx-ui-scroll-view':
+        specifier: workspace:*
+        version: link:../../../apps/examples/ScrollView
+      '@lynx-example/lynx-ui-sheet':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Sheet
       '@lynx-example/lynx-ui-slider':
         specifier: workspace:*
         version: link:../../../apps/examples/Slider
+      '@lynx-example/lynx-ui-sortable':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Sortable
+      '@lynx-example/lynx-ui-swipe-action':
+        specifier: workspace:*
+        version: link:../../../apps/examples/SwipeAction
+      '@lynx-example/lynx-ui-swiper':
+        specifier: workspace:*
+        version: link:../../../apps/examples/Swiper
       '@lynx-example/lynx-ui-switch':
         specifier: workspace:*
         version: link:../../../apps/examples/Switch
+      '@lynx-example/lynx-ui-tab-group':
+        specifier: workspace:*
+        version: link:../../../apps/examples/TabGroup
+      '@lynx-example/lynx-ui-view-pager':
+        specifier: workspace:*
+        version: link:../../../apps/examples/ViewPager
       '@rsbuild/core':
         specifier: 'catalog:'
         version: 2.1.0(core-js@3.47.0)
@@ -1148,7 +1202,7 @@ importers:
         version: 0.1.4
       '@lynx-js/web-core':
         specifier: 'catalog:'
-        version: 0.23.0(@lynx-js/css-serializer@0.1.7)(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
+        version: 0.26.2(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
       motion:
         specifier: 'catalog:'
         version: 12.42.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1260,7 +1314,7 @@ importers:
     devDependencies:
       '@lynx-js/web-core':
         specifier: 'catalog:'
-        version: 0.23.0(@lynx-js/css-serializer@0.1.7)(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
+        version: 0.26.2(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
       '@rsbuild/plugin-react':
         specifier: 'catalog:'
         version: 2.1.0(@rsbuild/core@2.1.8(core-js@3.47.0))(@rspack/core@2.1.5(@swc/helpers@0.5.23))
@@ -1309,7 +1363,7 @@ importers:
     devDependencies:
       '@lynx-js/web-core':
         specifier: 'catalog:'
-        version: 0.23.0(@lynx-js/css-serializer@0.1.7)(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
+        version: 0.26.2(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)
       '@rsbuild/plugin-react':
         specifier: 'catalog:'
         version: 2.1.0(@rsbuild/core@2.1.8(core-js@3.47.0))(@rspack/core@2.1.5(@swc/helpers@0.5.23))
@@ -3266,6 +3320,9 @@ packages:
   '@lynx-js/css-serializer@0.1.7':
     resolution: {integrity: sha512-k8J/zZdYvsxqSZxT25dWBT4leOvYSpAanC5NmpYmf0EkSDWbQohensPSMOnEvEmP9R97gDO7K+eA6vgv8IYWGg==}
 
+  '@lynx-js/css-serializer@0.1.9':
+    resolution: {integrity: sha512-O4wthGp3eBcE9mX+A7Ojla8mRJwucBhRJthEha5dgtvBfcx+P8GI6A0VvhvNwjclTaLnqNNbBRd+ClJQtirptA==}
+
   '@lynx-js/debug-metadata-rsbuild-plugin@0.2.1':
     resolution: {integrity: sha512-uvpX41tk7TxkIs8fJqIHqOUyOhRC5BVTH4ri+B1rZI6k3yclYIKA7lSnDirgEL+92GmkInerO3Zwg9y3Zyg5hA==}
     engines: {node: '>=18'}
@@ -3408,6 +3465,25 @@ packages:
       tslib:
         optional: true
 
+  '@lynx-js/web-core@0.26.2':
+    resolution: {integrity: sha512-y/+5uztLYQmZ7lXVkYDbpwKtbKtUQyGnymEhwU1ohPlNW2mJLLesFnblAljci2UdjCedlIq/KE7tE4ILYXDrpw==}
+    peerDependencies:
+      '@lynx-js/animax': 0.1.0-alpha.0
+      '@lynx-js/lynx-core': 0.1.4
+      tslib: ^2.5.0
+    peerDependenciesMeta:
+      '@lynx-js/animax':
+        optional: true
+      '@lynx-js/lynx-core':
+        optional: true
+      tslib:
+        optional: true
+
+  '@lynx-js/web-elements@0.12.12':
+    resolution: {integrity: sha512-LHxCTMoSTgM5iLKSMolE87riEuFkNY9NpMxC27x4MO28+7PLI/mA18i644l4I0BweiU6gbD82+NAvak0SjWcCA==}
+    peerDependencies:
+      tslib: ^2.5.0
+
   '@lynx-js/web-elements@0.12.7':
     resolution: {integrity: sha512-ht7vxYVtLGP6YpSd/g5YYNszxUU6i6Lcdpr/OILTmUBkA2mSbZx3D+6fUHXzrVkee4bNvDOFMV3hQm6L6/F+OQ==}
     peerDependencies:
@@ -3418,6 +3494,9 @@ packages:
 
   '@lynx-js/web-worker-rpc@0.23.0':
     resolution: {integrity: sha512-nrWLMjjOmb4uMg9MITX3nyaEPO61QGGUvCvl0IIH/yxgQKtzS7qITVQlzxaBHbajZqXtRr8vnzPYBFGfUSr6dw==}
+
+  '@lynx-js/web-worker-rpc@0.26.2':
+    resolution: {integrity: sha512-HrM/pFLmcDKPq0MSxl8D8JleZIYbkbHPD2v20USVIPDUqHSk6HdP4APpioZ2lMmItS/S7t+8xuHKVNTtLeQTRw==}
 
   '@lynx-js/webpack-dev-transport@0.3.0':
     resolution: {integrity: sha512-vpa0X/eqb50DhNhXEEfCi6gEd/ti32bFJtkt9zkPv6dTTsd2HJkYnCiKSUWpHpqPbnRbVLf/UacAY6h1uTtZeA==}
@@ -4029,6 +4108,7 @@ packages:
   '@svitejs/changesets-changelog-github-compact@1.2.0':
     resolution: {integrity: sha512-08eKiDAjj4zLug1taXSIJ0kGL5cawjVCyJkBb6EWSg5fEPX6L+Wtr0CH2If4j5KYylz85iaZiFlUItvgJvll5g==}
     engines: {node: ^14.13.1 || ^16.0.0 || >=18}
+    deprecated: unmaintained
 
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
@@ -4557,6 +4637,9 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  argparse@3.0.2:
+    resolution: {integrity: sha512-mFdDM6WqWKraGLsVb+C9CahPnzTXOefAOLq3jYcca2YZ8bEWpr++Tzj+zSaKW9+X9L5uSxcm1AZ3Y6aZJ09OhQ==}
 
   aria-hidden@1.2.6:
     resolution: {integrity: sha512-ik3ZgC9dY/lYVVM++OISsaYDeg1tb0VtP5uL3ouh1koGOaUMDPpbFIei4JkFimWUFPn90sbMNMXQAIVOlnYKJA==}
@@ -5104,6 +5187,9 @@ packages:
   dompurify@3.4.12:
     resolution: {integrity: sha512-zQvGet8Z2sWbQhCmfFz/T5QWH2oBmjnqK3qvOjaqaNLrLEF912WamU+ohnTp0TCep/MFVHpdJuCZEdFOdTnEFg==}
 
+  dompurify@3.4.16:
+    resolution: {integrity: sha512-sqo+pNp3qRhCIpbgRi1y8Tgk27Bo2Ry7w0dC1NBeNTdZChWjz9Xb/KOoZbRP/R6pQZ80Qw8YhXw13hWWBbMRnQ==}
+
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
 
@@ -5154,6 +5240,10 @@ packages:
   entities@6.0.1:
     resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
     engines: {node: '>=0.12'}
+
+  entities@8.1.0:
+    resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
+    engines: {node: '>=20.19.0'}
 
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
@@ -5367,6 +5457,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -6131,6 +6222,9 @@ packages:
   linkify-it@5.0.2:
     resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==}
 
+  linkify-it@6.1.0:
+    resolution: {integrity: sha512-wJ/TwpSDTLepCrQoYWYIExIKg5Zchex2Nn5yk2mFnB+6PtdkHtyLx742md9csRjjOnGkKIS/RrbY7l8D6gT9Vw==}
+
   loader-runner@4.3.2:
     resolution: {integrity: sha512-DFEqQ3ihfS9blba08cLfYf1NRAIEm+dDjic073DRDc3/JspI/8wYmtDsHwd3+4hwvdxSK7PGaElfTmm0awWJ4w==}
     engines: {node: '>=6.11.5'}
@@ -6201,6 +6295,10 @@ packages:
     resolution: {integrity: sha512-RCEsPjR+sr0x+AuYp601tKTkgFG4YEPLCzHST3cQ/fhlJkqAkz1L2/Qbp1j9qw5SBwQHFBoW8+hoN5xssOF0Tw==}
     hasBin: true
 
+  markdown-it@15.0.2:
+    resolution: {integrity: sha512-q4IGxMv56jCqT4OCRCADBoDP3LO4MhmTXjFbphHPXs4g3j9Xg5RDnxqN8IF/3vIWEU+VCnUq+7JUg/cfy2E6Qw==}
+    hasBin: true
+
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
@@ -6219,6 +6317,9 @@ packages:
 
   mdurl@2.0.0:
     resolution: {integrity: sha512-Lf+9+2r+Tdp5wXDXC4PcIBjTDtq4UKjCPMQhKIuzpJNW0b96kVqSwW0bT7FhRSfmAiFYgP+SCRvdrDozfh0U5w==}
+
+  mdurl@2.1.0:
+    resolution: {integrity: sha512-1+HBaOx0zi/dQWht8rNv9MYf9qqpqL/kxI0hXImU6Y547zM6Sni8BQibt7ifgMcYtQg41ao3Ivd6cnSM86inpg==}
 
   meow@14.1.0:
     resolution: {integrity: sha512-EDYo6VlmtnumlcBCbh1gLJ//9jvM/ndXHfVXIFrZVr6fGcwTUyCTFNTLCKuY3ffbK8L/+3Mzqnd58RojiZqHVw==}
@@ -6506,6 +6607,9 @@ packages:
 
   pathe@1.1.2:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
+
+  pathe@2.0.3:
+    resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
 
   pathval@2.0.1:
     resolution: {integrity: sha512-//nshmD55c46FuFw26xV/xFAaB5HF9Xdap7HJBBnrKdAd6/GxDBaNA1870O79+9ueg61cZLSVc+OaFlfmObYVQ==}
@@ -7537,6 +7641,9 @@ packages:
 
   uc.micro@2.1.0:
     resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
+
+  uc.micro@3.0.0:
+    resolution: {integrity: sha512-U3PppEkleoTnIfi8BozMx3yju3qc/L6SwqWo2Sw+54PX+PX0q9I+r1Um5HCmqD7n9VDX5/v3vQH/AjA6deDdtw==}
 
   unbash@2.2.0:
     resolution: {integrity: sha512-X2wH19RAPZE3+ldGicOkoj/SIA83OIxcJ6Cuaw23hf8Xc6fQpvZXY0SftE2JgS0QhYLUG4uwodSI3R53keyh7w==}
@@ -8759,6 +8866,11 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
+  '@lynx-js/css-serializer@0.1.9':
+    dependencies:
+      css-tree: 3.2.1
+      pathe: 2.0.3
+
   '@lynx-js/debug-metadata-rsbuild-plugin@0.2.1':
     dependencies:
       '@lynx-js/debug-metadata': 0.1.0
@@ -8930,6 +9042,22 @@ snapshots:
       '@lynx-js/lynx-core': 0.1.4
       tslib: 2.8.1
 
+  '@lynx-js/web-core@0.26.2(@lynx-js/lynx-core@0.1.4)(tslib@2.8.1)':
+    dependencies:
+      '@lynx-js/css-serializer': 0.1.9
+      '@lynx-js/web-elements': 0.12.12(tslib@2.8.1)
+      '@lynx-js/web-worker-rpc': 0.26.2
+      wasm-feature-detect: 1.8.0
+    optionalDependencies:
+      '@lynx-js/lynx-core': 0.1.4
+      tslib: 2.8.1
+
+  '@lynx-js/web-elements@0.12.12(tslib@2.8.1)':
+    dependencies:
+      dompurify: 3.4.16
+      markdown-it: 15.0.2
+      tslib: 2.8.1
+
   '@lynx-js/web-elements@0.12.7(tslib@2.8.1)':
     dependencies:
       dompurify: 3.4.12
@@ -8939,6 +9067,8 @@ snapshots:
   '@lynx-js/web-rsbuild-server-middleware@0.23.0': {}
 
   '@lynx-js/web-worker-rpc@0.23.0': {}
+
+  '@lynx-js/web-worker-rpc@0.26.2': {}
 
   '@lynx-js/webpack-dev-transport@0.3.0': {}
 
@@ -10059,6 +10189,8 @@ snapshots:
 
   argparse@2.0.1: {}
 
+  argparse@3.0.2: {}
+
   aria-hidden@1.2.6:
     dependencies:
       tslib: 2.8.1
@@ -10642,6 +10774,10 @@ snapshots:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
+  dompurify@3.4.16:
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
+
   domutils@3.2.2:
     dependencies:
       dom-serializer: 2.0.0
@@ -10708,6 +10844,8 @@ snapshots:
   entities@4.5.0: {}
 
   entities@6.0.1: {}
+
+  entities@8.1.0: {}
 
   env-paths@2.2.1: {}
 
@@ -11863,6 +12001,10 @@ snapshots:
     dependencies:
       uc.micro: 2.1.0
 
+  linkify-it@6.1.0:
+    dependencies:
+      uc.micro: 3.0.0
+
   loader-runner@4.3.2: {}
 
   locate-path@5.0.0:
@@ -11933,6 +12075,15 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
+  markdown-it@15.0.2:
+    dependencies:
+      argparse: 3.0.2
+      entities: 8.1.0
+      linkify-it: 6.1.0
+      mdurl: 2.1.0
+      punycode.js: 2.3.1
+      uc.micro: 3.0.0
+
   math-intrinsics@1.1.0: {}
 
   mathml-tag-names@4.0.0: {}
@@ -11944,6 +12095,8 @@ snapshots:
   mdn-data@2.27.1: {}
 
   mdurl@2.0.0: {}
+
+  mdurl@2.1.0: {}
 
   meow@14.1.0: {}
 
@@ -12244,6 +12397,8 @@ snapshots:
   path-type@4.0.0: {}
 
   pathe@1.1.2: {}
+
+  pathe@2.0.3: {}
 
   pathval@2.0.1: {}
 
@@ -13382,6 +13537,8 @@ snapshots:
   typescript@5.9.3: {}
 
   uc.micro@2.1.0: {}
+
+  uc.micro@3.0.0: {}
 
   unbash@2.2.0: {}
 

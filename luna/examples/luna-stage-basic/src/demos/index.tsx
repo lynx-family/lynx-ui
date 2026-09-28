@@ -5,15 +5,9 @@
 import { Stage, StageContainer } from '@lynx-js/luna-stage'
 import { LynxStage } from '@lynx-js/luna-stage/lynx'
 
-import './index.css'
+import { demos } from './data'
 
-const demos = [
-  'PopoverBasic',
-  'SwitchBasic',
-  'ButtonBasic',
-  'RadioGroupBasic',
-  'SliderDynamicWidth',
-]
+import './index.css'
 
 export default function Demo() {
   return (
