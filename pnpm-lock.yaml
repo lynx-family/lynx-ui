@@ -1578,6 +1578,9 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
+      jsdom:
+        specifier: 'catalog:'
+        version: 25.0.1
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
