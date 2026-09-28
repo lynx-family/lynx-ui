@@ -93,7 +93,11 @@ function TabsPanelImpl<T>(
 
   const onOffsetChangeMT = (event: ViewPagerOffsetChangeEvent) => {
     'main thread'
-    const offset = event.detail.offset
+    // Native runtimes may serialize this numeric offset as a string.
+    const offset = Number(event.detail.offset)
+    if (!Number.isFinite(offset)) {
+      return
+    }
     mtsLog(debugLog, '[lynx-ui tabs] offset change', offset)
     indicatorOffsetMT.current.stop()
     indicatorOffsetMT.current.jump(offset)
