@@ -45,6 +45,7 @@
     "@lynx-js/lynx-ui-popover": "workspace:*",
     "@lynx-js/lynx-ui-presence": "workspace:*",
     "@lynx-js/lynx-ui-radio-group": "workspace:*",
+    "@lynx-js/lynx-ui-scroll-coordinator": "workspace:*",
     "@lynx-js/lynx-ui-scroll-view": "workspace:*",
     "@lynx-js/lynx-ui-sheet": "workspace:*",
     "@lynx-js/lynx-ui-slider": "workspace:*",

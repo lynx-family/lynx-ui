@@ -220,6 +220,16 @@ export type {
   RadioProps,
 } from '@lynx-js/lynx-ui-radio-group'
 
+// scroll-coordinator
+export { ScrollCoordinator } from '@lynx-js/lynx-ui-scroll-coordinator'
+export type {
+  ScrollCoordinatorProps,
+  ScrollCoordinatorRefreshOptions,
+  ScrollCoordinatorRef,
+  ScrollCoordinatorOffset,
+  ScrollCoordinatorUIVariants,
+} from '@lynx-js/lynx-ui-scroll-coordinator'
+
 // scroll-view
 export { ScrollView, useBounce } from '@lynx-js/lynx-ui-scroll-view'
 export type {
