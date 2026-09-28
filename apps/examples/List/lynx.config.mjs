@@ -7,6 +7,6 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig({
   ListBasic: './Basic/index.tsx',
   ListMaxSize: './MaxSize/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig

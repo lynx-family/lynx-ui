@@ -19,7 +19,6 @@ const defaultConfig = exampleConfig(
     SheetTablet: './Tablet/index.tsx',
     SheetInternalTest: './InternalTest/index.tsx', */
   },
-  { needWeb: false },
 )
 
 export default defaultConfig

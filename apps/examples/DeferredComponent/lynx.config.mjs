@@ -7,6 +7,6 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig({
   DeferredComponentBasic: './Basic/index.tsx',
   DeferredComponentDelayFrames: './DelayFrames/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig

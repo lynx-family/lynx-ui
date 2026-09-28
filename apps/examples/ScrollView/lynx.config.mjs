@@ -12,6 +12,6 @@ const defaultConfig = exampleConfig({
   ScrollViewNativeUseBounces: './NativeUseBounces/index.tsx',
   ScrollViewScrollBy: './ScrollBy/index.tsx',
   ScrollViewZIndex: './ZIndex/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig

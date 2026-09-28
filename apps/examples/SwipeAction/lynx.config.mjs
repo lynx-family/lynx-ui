@@ -7,6 +7,6 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig({
   SwipeActionBasic: './Basic/index.tsx',
   SwipeActionWithScrollView: './WithScrollView/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig

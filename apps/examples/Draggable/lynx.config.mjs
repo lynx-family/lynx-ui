@@ -8,6 +8,6 @@ const defaultConfig = exampleConfig({
   DraggableBasic: './Basic/index.tsx',
   DraggableWithBounds: './WithBounds/index.tsx',
   DraggableWithArea: './WithArea/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig

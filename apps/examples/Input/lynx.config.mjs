@@ -8,6 +8,6 @@ const defaultConfig = exampleConfig({
   InputBasic: './Basic/index.tsx',
   InputKeyboardAwareView: './KeyboardAwareView/index.tsx',
   InputKeyboardInScrollView: './KeyboardAwareInScrollView/index.tsx',
-}, { needWeb: false })
+})
 
 export default defaultConfig

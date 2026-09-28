@@ -14,7 +14,6 @@ const defaultConfig = exampleConfig(
     TabGroupOneTab: './OneTab/index.tsx',
     TabGroupSelectTab: './SelectTab/index.tsx',
   },
-  { needWeb: false },
 )
 
 export default defaultConfig
