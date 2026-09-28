@@ -16,6 +16,8 @@ import { TabsRootContext } from './TabsContext'
 import type { TabsRootProps, TabsRootRef } from './types'
 
 function useDataSubscript(initValue: number) {
+  const hasPanelMT = useMotionValueRef<boolean>(false)
+  const panelIndexMT = useMotionValueRef<number>(initValue)
   const tabsWidthMapMT = useMotionValueRef<Record<string, number>>({})
   const tabRegistrationMapMT = useMainThreadRef<Record<string, number>>({})
   const indicatorOffsetMT = useMotionValueRef<number>(initValue)
@@ -25,6 +27,8 @@ function useDataSubscript(initValue: number) {
   })
 
   return {
+    hasPanelMT,
+    panelIndexMT,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
@@ -44,6 +48,8 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     enableRTL = false,
   } = props
   const {
+    hasPanelMT,
+    panelIndexMT,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
@@ -55,11 +61,14 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
   }
   const selectTabMT = (target: { index: number, smooth: boolean }) => {
     'main thread'
-    if (selectTarget.current.get().index === target.index) {
+    if (panelIndexMT.current.get() === target.index) {
       return
     }
     selectTarget.current.set(target)
-    runOnBackground(onTabChangedJS)(target.index)
+    if (!hasPanelMT.current.get()) {
+      panelIndexMT.current.set(target.index)
+      runOnBackground(onTabChangedJS)(target.index)
+    }
   }
   const selectTabByIndex = (index: number) => {
     runOnMainThread(selectTabMT)({
@@ -89,12 +98,15 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       selectBehavior,
       indicatorAnimation,
       initialSelectIndex,
+      hasPanelMT,
+      panelIndexMT,
       tabsWidthMapMT,
       tabRegistrationMapMT,
       indicatorOffsetMT,
       selectTabByIndex,
       unregisterTabWidth,
       onClickItem,
+      onTabChanged,
       selectTarget,
     }),
     [
@@ -103,7 +115,10 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       selectBehavior,
       indicatorAnimation,
       initialSelectIndex,
+      hasPanelMT,
       onClickItem,
+      onTabChanged,
+      panelIndexMT,
       tabsWidthMapMT,
       tabRegistrationMapMT,
       indicatorOffsetMT,

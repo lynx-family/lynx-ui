@@ -268,6 +268,7 @@ export {
   TabsRoot,
   TabsBar,
   TabsItem,
+  TabsPanel,
   TabsIndicator,
 } from '@lynx-js/lynx-ui-tab-group'
 export type {
@@ -275,6 +276,8 @@ export type {
   TabsData,
   TabsIndicatorAnimation,
   TabsIndicatorProps,
+  TabsPanelProps,
+  TabsPanelRef,
   TabsRootProps,
   TabsBarProps,
   TabsRootRef,

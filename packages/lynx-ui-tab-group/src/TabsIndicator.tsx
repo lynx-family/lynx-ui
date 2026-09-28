@@ -29,6 +29,7 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   const customStyle = indicatorPropsStyle ?? style
   const { tabKeyArray } = useTabsContext()
   const {
+    hasPanelMT,
     tabsWidthMapMT,
     indicatorOffsetMT,
     indicatorAnimation,
@@ -119,6 +120,9 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
         return
       }
       const { index, smooth } = target
+      if (hasPanelMT.current.get()) {
+        return
+      }
       if (hasRenderedIndicatorMT.current && smooth) {
         animateToTab(index)
       } else {
