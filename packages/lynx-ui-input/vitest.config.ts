@@ -2,12 +2,14 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { defineConfig, type UserConfig } from 'vitest/config'
+import { vitestTestingLibraryPlugin } from '@lynx-js/react/testing-library/plugins'
+import { defineConfig } from 'vitest/config'
 
-const config: UserConfig = defineConfig({
+export default defineConfig({
+  root: import.meta.dirname,
+  plugins: [vitestTestingLibraryPlugin()],
   test: {
+    include: ['__tests__/**/*.test.{ts,tsx}'],
     name: 'lynx-ui-input',
   },
 })
-
-export default config

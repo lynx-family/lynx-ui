@@ -1773,6 +1773,9 @@ importers:
       '@lynx-js/lynx-ui-scroll-view':
         specifier: workspace:*
         version: link:../lynx-ui-scroll-view
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
     devDependencies:
       '@lynx-js/react':
         specifier: 'catalog:'
@@ -1786,6 +1789,9 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
+      jsdom:
+        specifier: 'catalog:'
+        version: 25.0.1
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
