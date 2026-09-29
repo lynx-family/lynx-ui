@@ -125,7 +125,7 @@ export interface CheckboxRenderProps {
  * Use them as CSS selectors to style different states.
  * @zh Checkbox 根据交互状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
  */
-export interface CheckboxUiVariants {
+export interface CheckboxUIVariants {
   /**
    * Applied when `status.checked` is true.
    * @zh 当 status.checked 为 true 时生效，可用于 `.ui-checked { ... }`。
@@ -150,3 +150,8 @@ export interface CheckboxUiVariants {
    */
   'ui-disabled'?: boolean
 }
+
+/**
+ * @deprecated Use `CheckboxUIVariants` instead.
+ */
+export type CheckboxUiVariants = CheckboxUIVariants

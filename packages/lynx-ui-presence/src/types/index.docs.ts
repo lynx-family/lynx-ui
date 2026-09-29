@@ -50,7 +50,7 @@ export interface PresenceAnimationStatus {
  * Use them as CSS selectors to style different states.
  * @zh Presence 根据状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
  */
-export interface PresenceUiVariants {
+export interface PresenceUIVariants {
   /**
    * Applied when `status.open` is true.
    * @zh 当 status.open 为 true 时生效，可用于 `.ui-open { ... }`。
@@ -81,6 +81,11 @@ export interface PresenceUiVariants {
    */
   'ui-animating'?: boolean
 }
+
+/**
+ * @deprecated Use `PresenceUIVariants` instead.
+ */
+export type PresenceUiVariants = PresenceUIVariants
 
 export type PresenceChildrenType = (
   status: PresenceAnimationStatus,
