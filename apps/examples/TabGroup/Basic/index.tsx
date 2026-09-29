@@ -22,10 +22,8 @@ export function App() {
     <view className='tab-group-demo-basic lunaris-dark'>
       <text className='tab-group-demo-basic__title'>TabGroup</text>
       <TabsRoot
-        onClickItem={(index, tabKey) =>
-          console.info('tabs click', index, tabKey)}
-        onTabChanged={(index, tabKey) =>
-          console.info('tabs changed', index, tabKey)}
+        onClickItem={index => console.info('tabs click', index)}
+        onTabChanged={index => console.info('tabs changed', index)}
       >
         <TabsBar
           data={tabs}
