@@ -1,84 +1,54 @@
+@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
 
-.keyboard-page {
-  width: 100%;
-  height: 100%;
+.demo-container {
+  justify-content: flex-start;
+  padding: 0;
   background-color: var(--canvas);
 }
 
-.keyboard-responder {
+.responder {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 56px 24px 32px;
+  padding: 56px 24px 64px;
 }
 
-.keyboard-intro {
+.intro {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.keyboard-eyebrow {
-  color: var(--primary);
+.eyebrow {
+  color: var(--gradient-content-faded);
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
 }
 
-.keyboard-title {
+.title {
   margin-top: 10px;
-  color: var(--content);
+  color: var(--gradient-content);
   font-size: 30px;
   font-weight: 700;
   line-height: 36px;
 }
 
-.keyboard-description {
+.description {
   margin-top: 12px;
-  color: var(--content-subtle);
+  color: var(--gradient-content-faded);
   font-size: 14px;
   line-height: 21px;
 }
 
-.keyboard-illustration {
-  position: relative;
+.spacer {
   min-height: 140px;
   flex: 1;
-  margin-top: 24px;
-  overflow: hidden;
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--line);
-  border-radius: 24px;
-  background-color: var(--neutral-ambient);
 }
 
-.keyboard-orb {
-  position: absolute;
-  border-radius: 999px;
-}
-
-.keyboard-orb-primary {
-  top: 38px;
-  left: 36px;
-  width: 156px;
-  height: 156px;
-  background-color: var(--primary);
-  opacity: 0.72;
-}
-
-.keyboard-orb-secondary {
-  right: 24px;
-  bottom: 28px;
-  width: 112px;
-  height: 112px;
-  background-color: var(--primary-2);
-  opacity: 0.62;
-}
-
-.keyboard-card {
+.card {
   display: flex;
   flex-direction: column;
   margin-top: 28px;
@@ -90,14 +60,14 @@
   background-color: var(--paper);
 }
 
-.keyboard-label {
+.label {
   color: var(--content);
   font-size: 18px;
   font-weight: 600;
   line-height: 24px;
 }
 
-.keyboard-hint {
+.hint {
   margin-top: 4px;
   margin-bottom: 20px;
   color: var(--content-muted);
@@ -105,7 +75,7 @@
   line-height: 18px;
 }
 
-.keyboard-status {
+.status {
   margin-top: 14px;
   color: var(--content-muted);
   font-size: 13px;

@@ -13,6 +13,8 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SliderRef, SliderRootProps } from '@lynx-js/lynx-ui'
 
+import { formatPercentage } from '../shared/formatPercentage'
+
 import './index.css'
 
 interface SliderProps extends Omit<SliderRootProps, 'children'> {
@@ -48,10 +50,6 @@ const Slider = memo(
   }),
 )
 
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
-
 function App() {
   const [defaultValue, setDefaultValue] = useState(0.4)
   const [pillValue, setPillValue] = useState(0.72)
@@ -68,7 +66,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(defaultValue)}
+              {formatPercentage(defaultValue)}
             </text>
             <Slider
               className='slider-root'
@@ -85,7 +83,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(pillValue)}
+              {formatPercentage(pillValue)}
             </text>
             <Slider
               className='slider-root'
@@ -101,7 +99,7 @@ function App() {
           </view>
 
           <view className='row'>
-            <text className='slider-label disabled'>Readonly</text>
+            <text className='slider-label disabled'>Disabled</text>
             <Slider
               className='slider-root'
               defaultValue={0.45}

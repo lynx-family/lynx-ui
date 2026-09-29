@@ -33,6 +33,7 @@
     "@lynx-example/lynx-ui-list": "workspace:*",
     "@lynx-example/lynx-ui-popover": "workspace:*",
     "@lynx-example/lynx-ui-radio-group": "workspace:*",
+    "@lynx-example/lynx-ui-scroll-coordinator": "workspace:*",
     "@lynx-example/lynx-ui-scroll-view": "workspace:*",
     "@lynx-example/lynx-ui-sheet": "workspace:*",
     "@lynx-example/lynx-ui-slider": "workspace:*",

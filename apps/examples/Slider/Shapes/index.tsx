@@ -11,11 +11,9 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
-import './index.css'
+import { formatPercentage } from '../shared/formatPercentage'
 
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
+import './index.css'
 
 function App() {
   const [fullValue, setFullValue] = useState(0.4)
@@ -36,7 +34,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(fullValue)} — Full
+              {formatPercentage(fullValue)} — Full
             </text>
             <SliderRoot
               className='slider-root'
@@ -56,7 +54,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(gradientValue)} — Gradient
+              {formatPercentage(gradientValue)} — Gradient
             </text>
             <SliderRoot
               className='slider-root'
@@ -78,7 +76,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(secondaryValue)} — Ring
+              {formatPercentage(secondaryValue)} — Ring
             </text>
             <SliderRoot
               className='slider-root'
@@ -98,7 +96,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(invertedRingValue)} — Inverted Ring
+              {formatPercentage(invertedRingValue)} — Inverted Ring
             </text>
             <SliderRoot
               className='slider-root'
@@ -120,7 +118,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(pillValue)} — Pill
+              {formatPercentage(pillValue)} — Pill
             </text>
             <SliderRoot
               className='slider-root-pill'

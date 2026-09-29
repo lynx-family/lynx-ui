@@ -1,0 +1,7 @@
+@import "../shared/base.css";
+
+.tab-item-equal {
+  width: 160px;
+  padding-left: 0;
+  padding-right: 0;
+}

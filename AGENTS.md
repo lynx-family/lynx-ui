@@ -27,6 +27,7 @@ This repository follows a standard Monorepo structure. Understanding this is cru
   - Example: `packages/lynx-ui-button/` contains the Button component.
 
 - **`apps/examples/`**: Contains runnable examples for development and testing.
+  - Authoring rules: [`apps/examples/CONTRIBUTING.md`](apps/examples/CONTRIBUTING.md).
   - Structure: `apps/examples/<Component>/<UseCase>/`
   - Key files per example:
     - `index.tsx`: The entry point for the example.
@@ -59,15 +60,30 @@ pnpm make-new-component --create <component-name>
 # Example: pnpm make-new-component --create toast
 ```
 
-### 3. Running Examples
+### 3. Developing and Reviewing Examples
 
-To test changes, run the specific example for the component.
+Use this workflow to create, run, and review component examples.
 
 1. **Create example (if missing)**:
 
    ```bash
    pnpm make-new-component --example <component-name>
    ```
+
+   - Prefer importing public component APIs from `@lynx-js/lynx-ui` instead
+     of `@lynx-js/lynx-ui-<component>` or `@lynx-js/lynx-ui-common`, unless a
+     symbol is intentionally excluded from the aggregate entry.
+   - When adding a new example under
+     `apps/examples/<Component>/<UseCase>/`, ALWAYS register it in that
+     component's sibling `lynx.config.mjs`. If the entry is missing, the
+     example will not appear in the example app.
+   - When adding examples for an existing component, follow that component's
+     established example patterns. For a new component, use examples from
+     components with similar behavior and layouts as references.
+   - For an initial example package release, align its version with the
+     existing example packages. Keeping example versions aligned reduces
+     maintenance overhead and lets consumers identify examples from the same
+     release batch by version.
 
 2. **Run the dev server**:
    Check `apps/examples/README.md` or `package.json` in the example folder for the exact filter name. Typically:
@@ -76,12 +92,16 @@ To test changes, run the specific example for the component.
    npx turbo watch dev --filter '@lynx-example/lynx-ui-<component-name>'
    ```
 
-Examples should prefer importing public APIs from `@lynx-js/lynx-ui` instead of `@lynx-js/lynx-ui-<component>` or `@lynx-js/lynx-ui-common`, unless a symbol is intentionally excluded from the aggregate entry.
+3. **Run the L.U.N.A Web preview**:
+   Use
+   [`luna/examples/luna-stage-basic`](luna/examples/luna-stage-basic/README.md)
+   to review entries from `apps/examples/` together in device frames. Follow
+   its README for the build and iteration workflow. This browser preview does
+   not replace LynxExplorer or device validation for Native behavior.
 
-When adding a new example under `apps/examples/<Component>/<UseCase>/`, ALWAYS register it in that component's sibling `lynx.config.mjs`. If the entry is missing, the example will not appear in the example app.
-
-When adding examples for an existing component, follow that component's established example patterns; for a new component, use examples from components with similar behavior and layouts as references.
-
+Follow the
+[`apps/examples` authoring guidelines](apps/examples/CONTRIBUTING.md) for the
+complete source, interaction, layout, and styling conventions.
 
 ### 3.1 Example Theming With LUNA
 
@@ -95,7 +115,7 @@ Examples should use the in-repo LUNA theme foundation by default instead of ad-h
 - Use token semantics rather than visual guesses. Choose surface, content, accent, backdrop, divider, or gradient roles based on purpose, then resolve the exact token from the source of truth in `luna/`.
 - Put styles and local CSS variables shared by multiple examples under `apps/examples/<Component>/shared/`, using `base.css` for broadly reused foundations and purpose-specific filenames for subsets; each shared stylesheet must import `@lynx-js/luna-styles/index.css` directly.
 - Define repeated literal colors once as semantically named local CSS variables, such as `--negative`, instead of duplicating the literal across example styles. Register shared files that declare non-LUNA variables in `extraTokenFiles` in `stylelint.config.cjs`.
-- Give every example page root enough top padding to keep its first visible content clear of device safe-area overlays such as the iPhone Dynamic Island, whether or not the example itself scrolls.
+- Account for device safe-area overlays at the stage boundary when the target viewport needs it. Lynx support for CSS safe-area `env()` values is not yet stable, so prefer explicit hard-coded padding unless the embedding host already owns the inset.
 - After adding or editing demo CSS, run `pnpm check:luna-vars` from `lynx-ui-open-source` to verify every referenced CSS variable is known.
 - Fix every `check:luna-vars` violation before handing off or submitting the demo change.
 - When an example needs RTL support, set `direction: rtl` on the outer container and let descendants inherit it through CSS instead of duplicating directional styles on every node.
@@ -109,7 +129,6 @@ LUNA foundation packages under `luna/packages/` build from local source with Rsl
 ### 3.3 LUNA Design Foundation Examples
 
 - Keep standalone examples for developing the LUNA design foundation and design language under `luna/examples/`, with explicit Turbo build dependencies for any generated assets they consume.
-- For `luna/examples/luna-stage-*` workflows, keep the `@lynx-js/luna-stage#build` dependency, declare explicit Turbo build dependencies for workspace packages whose generated `dist` assets are copied through `rsbuild.config.ts`, and keep local public asset inputs such as `public/**` aligned.
 
 ### 4. Build & Verify
 

@@ -1,66 +1,127 @@
 @import "@lynx-js/luna-styles/index.css";
 
-.deferred-demo-page {
+.demo-container {
   width: 100%;
   height: 100%;
-  padding: 64px 20px 32px;
+  padding: 84px 16px 64px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
   background-color: var(--canvas);
 }
 
-.deferred-demo-title {
+.luna-gradient-berry {
+  background: linear-gradient(
+    0deg,
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 16px;
+  background-color: var(--canvas);
+}
+
+.canvas-compact {
+  height: auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
   font-size: 24px;
   font-weight: 700;
   color: var(--content);
 }
 
-.deferred-demo-description {
-  font-size: 14px;
-  line-height: 20px;
+.description {
+  font-size: 13px;
+  line-height: 18px;
   color: var(--content-muted);
 }
 
-.deferred-demo-label {
-  font-size: 16px;
+.comparison {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
   color: var(--content);
 }
 
-.deferred-demo-panel {
+.panel {
   width: 100%;
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-single {
+  flex: 0 0 auto;
+}
+
+.panel-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+}
+
+.meta {
+  color: var(--content-subtle);
+  font-size: 12px;
+}
+
+.preview {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  border-radius: 16px;
+  background-color: var(--paper);
+  overflow: hidden;
+}
+
+.content {
+  width: 100%;
+  height: 120px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px;
   border-radius: 16px;
   background-color: var(--paper);
 }
 
-.deferred-demo-preview {
-  width: 100%;
-  height: 160px;
-  border-radius: 12px;
-  background-color: var(--paper-clear);
-  overflow: hidden;
+.content-fill {
+  height: 100%;
 }
 
-.deferred-demo-content {
-  width: 100%;
-  height: 160px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border-radius: 12px;
-  background-color: var(--secondary-2);
-}
-
-.deferred-demo-content-expanded {
+.content-expanded {
   height: 240px;
 }
 
-.deferred-demo-cells {
+.cells {
   width: 100%;
   flex: 1;
   display: flex;
@@ -69,39 +130,75 @@
   overflow: hidden;
 }
 
-.deferred-demo-cell {
+.cell {
   width: 6px;
   height: 6px;
-  margin: 2px;
   background-color: var(--primary-muted);
 }
 
-.deferred-demo-placeholder {
-  width: 100%;
-  height: 120px;
-  padding: 12px;
+.status {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: var(--primary);
+}
+
+.status-label {
+  color: var(--content);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 16px;
   background-color: var(--paper-clear);
 }
 
-.deferred-demo-button {
+.placeholder-mark {
+  width: 48px;
+  height: 6px;
+  border-radius: 999px;
+  background-color: var(--primary-muted);
+}
+
+.placeholder-label {
+  color: var(--content);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.action-button {
   min-height: 44px;
   padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 999px;
   background-color: var(--primary);
 }
 
-.deferred-demo-button.ui-active {
+.action-button.ui-active {
   background-color: var(--primary-2);
 }
 
-.deferred-demo-button-label {
+.action-button-label {
   font-size: 14px;
   color: var(--primary-content);
 }

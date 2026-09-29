@@ -74,7 +74,7 @@ function App() {
   }, [mountEpoch])
 
   return (
-    <view className='container lunaris-dark luna-gradient-berry'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
       <view className='canvas'>
         <view className='toolbar'>
           <Button className='restart-button' onClick={restart}>
@@ -92,7 +92,9 @@ function App() {
           {/* Left */}
           <view className='column'>
             <view className='info'>
-              <text>bottom: 0px (mount when visible)</text>
+              <text className='info-text'>
+                bottom: 0px (mount when visible)
+              </text>
             </view>
 
             <ScrollView
@@ -118,7 +120,9 @@ function App() {
           {/* Right */}
           <view className='column'>
             <view className='info'>
-              <text>bottom: 200px (preload before visible)</text>
+              <text className='info-text'>
+                bottom: 200px (preload before visible)
+              </text>
             </view>
 
             <ScrollView

@@ -30,15 +30,7 @@ function App() {
   const [sticky, setSticky] = useState(false)
 
   return (
-    <view className='sc-demo lunaris-dark'>
-      <view className='sc-masthead'>
-        <text className='sc-brand'>lynx-ui / ScrollCoordinator</text>
-        <text className='sc-mode'>ViewPager + List</text>
-        <text className='sc-caption'>
-          Scroll to fold the cover. Swipe or tap a section, then come back to
-          where you left off.
-        </text>
-      </view>
+    <view className='demo-container lunaris-dark'>
       <view className='sc-frame'>
         <ScrollCoordinator
           className='sc-coordinator'
@@ -57,19 +49,7 @@ function App() {
           headers={
             <view className='sc-cover'>
               <view className='sc-hero'>
-                <text className='sc-hero-kicker'>A MOMENT TO YOURSELF</text>
-                <text className='sc-hero-title'>Read something good.</text>
-                <text className='sc-hero-caption'>
-                  Three collections, ready when you are.
-                </text>
-              </view>
-              <view className='sc-details'>
-                <text className='sc-detail-title'>
-                  Pick up where you left off.
-                </text>
-                <text className='sc-caption'>
-                  30 reads in each section. Keep exploring at your own pace.
-                </text>
+                <text className='sc-hero-title'>Reading room</text>
               </view>
             </view>
           }
@@ -140,11 +120,7 @@ function App() {
                             <text className='sc-number'>{item.number}</text>
                           </view>
                           <view className='sc-story-copy'>
-                            <text className='sc-eyebrow'>{section.title}</text>
                             <text className='sc-story-title'>{item.title}</text>
-                            <text className='sc-caption'>
-                              {item.description}
-                            </text>
                           </view>
                         </view>
                       </list-item>

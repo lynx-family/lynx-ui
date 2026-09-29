@@ -24,11 +24,11 @@
   background-color: var(--paper);
 }
 
-.option-chip--selected {
+.option-chip.selected {
   background-color: var(--primary);
 }
 
-.option-chip--selected.ui-active {
+.option-chip.selected.ui-active {
   background-color: var(--primary-2);
 }
 
@@ -37,6 +37,6 @@
   color: var(--content-2);
 }
 
-.option-chip-label--selected {
+.option-chip-label.selected {
   color: var(--primary-content);
 }

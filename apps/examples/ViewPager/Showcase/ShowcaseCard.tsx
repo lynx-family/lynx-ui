@@ -2,9 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { PresentationPage } from './data'
+import type { ShowcasePage } from './data'
 
-export function PresentationCard({ page }: { page: PresentationPage }) {
+export function ShowcaseCard({ page }: { page: ShowcasePage }) {
   return (
     <view
       className='card'

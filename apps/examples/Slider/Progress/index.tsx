@@ -6,11 +6,9 @@ import { root, useEffect, useRef, useState } from '@lynx-js/react'
 
 import { SliderIndicator, SliderRoot, SliderTrack } from '@lynx-js/lynx-ui'
 
-import './index.css'
+import { formatPercentage } from '../shared/formatPercentage'
 
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
+import './index.css'
 
 function App() {
   const [downloadProgress, setDownloadProgress] = useState(0)
@@ -53,7 +51,7 @@ function App() {
             <view className='progress-meta'>
               <text className='progress-label'>Downloading...</text>
               <text className='progress-value'>
-                {formatValue(downloadProgress)}
+                {formatPercentage(downloadProgress)}
               </text>
             </view>
             <SliderRoot
@@ -71,7 +69,7 @@ function App() {
             <view className='progress-meta'>
               <text className='progress-label'>Uploading...</text>
               <text className='progress-value'>
-                {formatValue(uploadProgress)}
+                {formatPercentage(uploadProgress)}
               </text>
             </view>
             <SliderRoot
@@ -95,7 +93,7 @@ function App() {
           <view className='progress-row'>
             {[0.25, 0.5, 0.75, 1].map((v) => (
               <view key={`static-${v}`} className='static-row'>
-                <text className='static-label'>{formatValue(v)}</text>
+                <text className='static-label'>{formatPercentage(v)}</text>
                 <view className='static-bar-wrapper'>
                   <SliderRoot
                     className='progress-root'

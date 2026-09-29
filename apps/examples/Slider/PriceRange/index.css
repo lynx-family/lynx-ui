@@ -1,7 +1,7 @@
 @import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
 
-.price-range-page {
+.demo-container {
   align-items: center;
   box-sizing: border-box;
   padding-top: 64px;
@@ -10,7 +10,7 @@
   padding-left: 32px;
 }
 
-.price-range-card {
+.card {
   width: 100%;
   max-width: 420px;
   box-sizing: border-box;
@@ -22,44 +22,24 @@
   box-shadow: var(--shadow);
 }
 
-.price-range-header {
+.header {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  column-gap: 12px;
-}
-
-.price-range-heading-group {
-  display: flex;
-  flex: 1;
   flex-direction: column;
   row-gap: 8px;
 }
 
-.price-range-heading {
+.heading {
   font-size: 18px;
   font-weight: 600;
   color: var(--content-2);
 }
 
-.price-range-drag-status {
+.status {
   font-size: 13px;
   color: var(--content-muted);
 }
 
-.price-range-all-vehicles {
-  height: 28px;
-  padding-right: 10px;
-  padding-left: 10px;
-  border-radius: 9999px;
-  font-size: 13px;
-  line-height: 28px;
-  color: var(--content-2);
-  background-color: var(--neutral-faint);
-}
-
-.price-range-selection {
+.selection {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -71,24 +51,24 @@
   background-color: var(--paper);
 }
 
-.price-range-selection-label {
+.selection-label {
   font-size: 14px;
   color: var(--content-muted);
 }
 
-.price-range-selection-value {
+.selection-value {
   font-size: 26px;
   font-weight: 700;
   color: var(--primary);
 }
 
-.price-range-slider-section {
+.slider-section {
   display: flex;
   flex-direction: column;
   margin-top: 14px;
 }
 
-.price-range-slider {
+.slider {
   position: relative;
   width: auto;
   height: 64px;
@@ -96,14 +76,14 @@
   margin-left: 30px;
 }
 
-.price-range-track {
+.slider-track {
   width: 100%;
   height: 6px;
   border-radius: 9999px;
   background-color: var(--neutral-ambient);
 }
 
-.price-range-indicator {
+.slider-indicator {
   width: 100%;
   height: 6px;
   margin-top: 29px;
@@ -111,13 +91,13 @@
   background: linear-gradient(90deg, var(--primary), var(--primary-2));
 }
 
-.price-range-thumb {
+.slider-thumb {
   position: relative;
   width: 58px;
   height: 64px;
 }
 
-.price-range-thumb-label {
+.thumb-label {
   position: absolute;
   top: 0;
   left: 0;
@@ -133,7 +113,7 @@
   background-color: var(--paper-clear);
 }
 
-.price-range-thumb-dot {
+.thumb-dot {
   position: absolute;
   top: 22px;
   left: 19px;
@@ -147,11 +127,11 @@
   transition: transform 100ms ease-out;
 }
 
-.price-range-thumb.ui-active .price-range-thumb-dot {
+.slider-thumb.ui-active .thumb-dot {
   transform: scale(1.15);
 }
 
-.price-range-endpoints {
+.endpoints {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -160,49 +140,26 @@
   margin-left: 24px;
 }
 
-.price-range-endpoint {
+.endpoint {
   font-size: 12px;
   color: var(--content-subtle);
 }
 
-.price-range-response-hint {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  column-gap: 6px;
-  height: 36px;
-  margin-top: 18px;
-  border-radius: 12px;
-  background-color: var(--secondary-2);
-}
-
-.price-range-response-icon {
-  font-size: 16px;
-  color: var(--secondary-content);
-}
-
-.price-range-response-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--secondary-content);
-}
-
-.price-range-options {
+.preset-list {
   display: flex;
   flex-direction: column;
   row-gap: 10px;
-  margin-top: 14px;
+  margin-top: 18px;
 }
 
-.price-range-option-row {
+.preset-row {
   display: flex;
   flex-direction: row;
   column-gap: 10px;
   width: 100%;
 }
 
-.price-range-option {
+.preset {
   display: flex;
   flex: 1;
   align-items: center;
@@ -214,25 +171,25 @@
   transition: background-color 100ms ease-out, border-color 100ms ease-out;
 }
 
-.price-range-option.ui-active {
+.preset.ui-active {
   background-color: var(--paper-clear);
 }
 
-.price-range-option--selected {
+.preset.selected {
   border-color: var(--primary);
   background-color: var(--primary);
 }
 
-.price-range-option--selected.ui-active {
+.preset.selected.ui-active {
   background-color: var(--primary-2);
 }
 
-.price-range-option-text {
+.preset-label {
   font-size: 13px;
   color: var(--content-2);
 }
 
-.price-range-option-text--selected {
+.preset-label.selected {
   font-weight: 600;
   color: var(--primary-content);
 }

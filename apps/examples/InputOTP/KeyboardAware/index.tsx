@@ -18,27 +18,24 @@ function App() {
   const [value, setValue] = useState('')
 
   return (
-    <view className='keyboard-page lunaris-dark luna-gradient-berry'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
       <KeyboardAwareRoot androidStatusBarPlusBottomBarHeight={74}>
-        <KeyboardAwareResponder className='keyboard-responder'>
-          <view className='keyboard-intro'>
-            <text className='keyboard-eyebrow'>Keyboard avoidance</text>
-            <text className='keyboard-title'>Confirm your identity</text>
-            <text className='keyboard-description'>
+        <KeyboardAwareResponder className='responder'>
+          <view className='spacer' />
+
+          <view className='intro'>
+            <text className='eyebrow'>Keyboard avoidance</text>
+            <text className='title'>Confirm your identity</text>
+            <text className='description'>
               Tap the code field near the bottom. The focused field stays above
               the software keyboard as the page moves.
             </text>
           </view>
 
-          <view className='keyboard-illustration'>
-            <view className='keyboard-orb keyboard-orb-primary' />
-            <view className='keyboard-orb keyboard-orb-secondary' />
-          </view>
-
           <KeyboardAwareTrigger offset={0}>
-            <view className='keyboard-card'>
-              <text className='keyboard-label'>Verification code</text>
-              <text className='keyboard-hint'>Enter the 6-digit code</text>
+            <view className='card'>
+              <text className='label'>Verification code</text>
+              <text className='hint'>Enter the 6-digit code</text>
 
               <InputOTP
                 className='otp-field'
@@ -55,7 +52,7 @@ function App() {
                 ))}
               </InputOTP>
 
-              <text className='keyboard-status'>
+              <text className='status'>
                 {value.length === 6
                   ? 'Code complete'
                   : `${6 - value.length} digits remaining`}

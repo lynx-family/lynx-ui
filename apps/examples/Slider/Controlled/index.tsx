@@ -11,15 +11,12 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
+import { formatPercentage } from '../shared/formatPercentage'
 import { OptionChipRow } from '../shared/OptionChipRow'
 
 import './index.css'
 
 const PRESET_VALUES = [0, 0.25, 0.5, 0.75, 1]
-
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
 
 function App() {
   const [value, setValue] = useState(0.32)
@@ -40,7 +37,7 @@ function App() {
             <text className='slider-label'>
               {primitiveDragging
                 ? 'Dragging...'
-                : formatValue(value)}
+                : formatPercentage(value)}
             </text>
             <SliderRoot
               className='slider-root'
@@ -66,7 +63,7 @@ function App() {
             <OptionChipRow
               options={PRESET_VALUES}
               getKey={(preset) => `preset-${preset}`}
-              getLabel={(preset) => formatValue(preset)}
+              getLabel={(preset) => formatPercentage(preset)}
               isSelected={(preset) => Math.abs(preset - value) < 0.001}
               onSelect={(preset) => {
                 setPrimitiveDragging(false)
@@ -84,7 +81,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(steppedValue)} — Step: 10%
+              {formatPercentage(steppedValue)} — Step: 10%
             </text>
             <SliderRoot
               className='slider-root'

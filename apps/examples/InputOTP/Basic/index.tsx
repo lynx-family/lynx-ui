@@ -12,7 +12,7 @@ function App() {
   const [value, setValue] = useState('')
 
   return (
-    <view className='demo-page lunaris-dark luna-gradient-berry'>
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
       <view className='demo-card'>
         <text className='eyebrow'>Account security</text>
         <text className='title'>Enter the 6-character code</text>

@@ -5,12 +5,14 @@
 import { root, useMainThreadRef, useState } from '@lynx-js/react'
 import './styles.css'
 
-import { usePreCommit } from '@lynx-js/lynx-ui'
+import { Button, usePreCommit } from '@lynx-js/lynx-ui'
 import type { MainThread } from '@lynx-js/types'
 
-function App() {
+function PreCommitBox() {
   const nodeMTRef = useMainThreadRef<MainThread.Element>(null)
+  const textMTRef = useMainThreadRef<MainThread.Element>(null)
   const [boxStyle, setBoxStyle] = useState('')
+  const [textStyle, setTextStyle] = useState('')
 
   /**
    * When update happens, state will be patched to main thread
@@ -20,22 +22,57 @@ function App() {
   usePreCommit(() => {
     'main thread'
     nodeMTRef.current?.setStyleProperties({
-      'background-color': '#ff5a7a',
+      'background-color': '#00D0F1',
+    })
+    textMTRef.current?.setStyleProperties({
+      color: '#ffffff',
     })
   }, [])
 
   return (
-    <view className='demo-container lunaris-dark'>
-      <view
-        bindtap={() => {
-          setBoxStyle('background-color: var(--primary);')
-        }}
-        main-thread:ref={nodeMTRef}
-        style={boxStyle}
-        className='box'
+    <view
+      bindtap={() => {
+        setBoxStyle('background-color: var(--primary);')
+        setTextStyle('color: var(--primary-content);')
+      }}
+      main-thread:ref={nodeMTRef}
+      style={boxStyle}
+      className='box'
+    >
+      <text
+        main-thread:ref={textMTRef}
+        style={textStyle}
+        className='box-text'
       >
-        <text className='box-text'>PreCommit</text>
+        PreCommit
+      </text>
+    </view>
+  )
+}
+
+function App() {
+  const [revision, setRevision] = useState(0)
+
+  return (
+    <view className='demo-container lunaris-dark'>
+      <PreCommitBox key={revision} />
+      <text className='tap-hint'>Tap to restore original style</text>
+      <view className='legend'>
+        <view className='legend-item'>
+          <view className='legend-swatch legend-swatch-original' />
+          <text className='legend-label'>Original</text>
+        </view>
+        <view className='legend-item'>
+          <view className='legend-swatch legend-swatch-pre-commit' />
+          <text className='legend-label'>Pre-commit</text>
+        </view>
       </view>
+      <Button
+        className='redo-button'
+        onClick={() => setRevision((value) => value + 1)}
+      >
+        <text className='redo-button-label'>Redo mount</text>
+      </Button>
     </view>
   )
 }

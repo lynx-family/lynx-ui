@@ -107,7 +107,7 @@ export function App() {
   }, [])
 
   return (
-    <view className='demo-container lunaris-light'>
+    <view className='demo-container lunaris-dark'>
       <view className='scroll-boundary-info'>
         <text className='scroll-boundary-info-title'>Locked Items</text>
         <text className='scroll-boundary-info-description'>

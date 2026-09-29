@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root } from '@lynx-js/react'
+import { root, useState } from '@lynx-js/react'
 
 import {
   TabsBar,
@@ -11,56 +11,66 @@ import {
   TabsPanel,
   TabsRoot,
 } from '@lynx-js/lynx-ui'
-import type { TabsData } from '@lynx-js/lynx-ui'
 
+import { pages, tabs } from './data'
 import './index.css'
 
-const labels = ['Home', 'Discover', 'Messages', 'Profile']
-const tabs: TabsData<string>[] = labels.map(label => ({
-  tabItem: label,
-  getTabKey: () => label,
-}))
-
 export function App() {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
   return (
     <view className='demo-container lunaris-dark'>
-      <view className='stage'>
-        <TabsRoot initialSelectIndex={0}>
-          <TabsBar
-            data={tabs}
-            className='tabs'
-            tabsItemWrapperClass='tab-row'
-            renderTabItem={item => (
+      <TabsRoot
+        initialSelectIndex={0}
+        onTabChanged={setSelectedIndex}
+      >
+        <TabsBar
+          data={tabs}
+          className='tabs'
+          tabsItemWrapperClass='tab-row'
+          renderTabItem={item => {
+            const selected = item.getTabKey() === pages[selectedIndex]?.id
+
+            return (
               <TabsItem
                 key={item.getTabKey()}
-                className='tab'
+                className='tab-item'
                 tabKey={item.getTabKey()}
               >
-                <text>{item.tabItem}</text>
+                <text
+                  className={selected
+                    ? 'tab-label selected'
+                    : 'tab-label'}
+                >
+                  {item.tabItem.label}
+                </text>
               </TabsItem>
-            )}
-          >
-            <TabsIndicator className='indicator'>
-              <view className='indicator-line' />
-            </TabsIndicator>
-          </TabsBar>
+            )
+          }}
+        >
+          <TabsIndicator className='indicator'>
+            <view className='indicator-line' />
+          </TabsIndicator>
+        </TabsBar>
+        <view className='panel'>
           <TabsPanel
-            data={labels}
-            getItemKey={label => label}
+            data={pages}
+            getItemKey={page => page.id}
             className='view-pager'
             itemClassName='view-pager-item'
-            style={{ width: '100%', height: '360px' }}
+            style={{ width: '100%', height: '100%' }}
           >
-            {(_, index) => (
-              <view className='page'>
-                <text className='page-number'>
-                  {String(index + 1).padStart(2, '0')}
-                </text>
+            {page => (
+              <view className={page.className}>
+                <view className='page-copy'>
+                  <text className='page-title'>TabGroup</text>
+                  <text className='page-package'>@lynx-js/lynx-ui</text>
+                </view>
               </view>
             )}
           </TabsPanel>
-        </TabsRoot>
-      </view>
+        </view>
+      </TabsRoot>
     </view>
   )
 }

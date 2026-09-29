@@ -11,7 +11,7 @@
   box-sizing: border-box;
 }
 
-.demo-page {
+.demo-container {
   position: relative;
   width: 100%;
   height: 100%;
@@ -30,8 +30,7 @@
   );
 }
 
-.demo-card,
-.cap-section {
+.demo-card {
   padding: 32px;
   border-radius: 20px;
   background-color: var(--paper);

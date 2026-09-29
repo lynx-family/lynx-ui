@@ -35,6 +35,10 @@ Optimize `index.tsx` for understanding the demonstrated API:
 - Keep behavior that proves the example in `index.tsx`. Extract a card or row,
   but do not hide the relevant component composition, event handler, state, or
   imperative command merely to reduce line count.
+- Every registered entry must render the demonstrated component and its core
+  interaction directly in `index.tsx`. Do not reduce entries to a shared
+  mode-switching wrapper such as `<Demo mode='...'>`; downstream documentation
+  cannot expose the actual composition or behavior from that source.
 - Do not hide core interaction logic in a helper merely to shorten the entry.
 - Keep incidental implementation details out of the entry when they do not
   help explain the demonstrated behavior.
@@ -48,6 +52,9 @@ Optimize `index.tsx` for understanding the demonstrated API:
 - Use the appropriate headless control, such as `Button`, for clickable
   indicators, tabs, and actions instead of attaching tap handlers to
   presentational `view` or `text` nodes.
+- Do not stretch a modest-radius button across most of its container. Constrain
+  the action width, or use a capsule silhouette when the action intentionally
+  spans the available width.
 - Drive an imperative interaction from the control, then use the component's
   change event as the source of truth for the resulting state. Gesture and
   click paths must keep the same selected state.
@@ -75,6 +82,10 @@ styles supplied by the website or application that hosts the example.
   the embedding website.
 - Keep dynamic class values in `data.ts` synchronized with their CSS
   selectors.
+- Use only selectors documented in the
+  [Lynx CSS selector reference](https://lynxjs.org/next/api/css/selectors).
+  Structural pseudo-classes such as `:nth-child()` are not supported; assign
+  explicit per-item class names in the example data instead.
 
 ## Visual Economy
 
@@ -94,11 +105,24 @@ styles supplied by the website or application that hosts the example.
 
 - Treat the demonstrated component and its essential heading, status, or
   controls as one visual stage.
-- Center a cover-oriented or single-component stage horizontally and
-  vertically within the safe viewport. Do not anchor the primary content near
-  the top merely by adding fixed padding.
+- Choose the stage geometry from the component's spatial behavior, not from a
+  single default composition.
+- Center compact, self-contained components, such as inputs and single-value
+  controls, horizontally and vertically within the safe viewport. Do not
+  anchor them near the top merely by adding fixed padding.
+- Let page-navigation components, such as `TabGroup`, `ViewPager`, and
+  `Swiper`, use the available canvas when their page-to-viewport relationship
+  is part of the demonstrated behavior. Do not force the entire component
+  into a centered card solely because one page looks compact.
+- For a page-navigation stage, either let the panel or page occupy the
+  available viewport, or place it in a clearly bounded viewing field. Keep
+  surrounding navigation and controls on the canvas so the paged region
+  remains the visual and interactive anchor.
 - Give the primary component stable dimensions or responsive constraints so
   its visual weight remains balanced as content changes.
+- Balance stage insets optically rather than making them mechanically equal.
+  Keep a tall panel clear of the bottom safe boundary, with breathing room
+  comparable to the space above its navigation or controls.
 - Keep headings and controls subordinate to the primary component. They
   should support the stage rather than define its size or visual center.
 - Let full-screen work surfaces, scrollable lists, and other spatial examples
@@ -113,8 +137,12 @@ styles supplied by the website or application that hosts the example.
 - Keep interaction insets and content padding independent. An outer gesture
   escape lane does not replace the inner spacing that gives content rhythm
   and keeps item edges clear of a clipped container.
-- Leave enough inset for device safe-area overlays without shifting the whole
-  stage visibly away from center.
+- Account for device overlays at the stage boundary when the target viewport
+  needs it, without shifting the composition visibly away from center.
+- Lynx support for CSS safe-area `env()` values is not yet stable. Prefer
+  explicit, hard-coded stage padding for the supported preview viewport, and
+  do not add another inset when the embedding host already owns safe-area
+  spacing.
 
 ## Typography
 
@@ -145,6 +173,29 @@ styles supplied by the website or application that hosts the example.
   references LUNA variables.
 - Apply a LUNA theme class at the example root.
 - Prefer semantic LUNA tokens over literal colors.
+- Build subtle neutral depth with adjacent surface roles, such as
+  `canvas-ambient` behind `canvas`, or `canvas` behind `paper`. When a panel
+  needs a quiet edge, prefer a padded wrapper using the adjacent surface token
+  over an arbitrary outline.
+- Use `content` for a selected navigation item and `content-muted` for
+  unselected peers. Separate the navigation band from adjacent content with
+  `rule` when the boundary needs reinforcement.
+- Group a thin selection indicator with its navigation item through
+  proximity. Keep it closer to the item label than to an adjacent structural
+  rule, and use square ends when the indicator reads as a rule itself.
+- Reserve `secondary` surfaces and content colors for small, local accents,
+  such as a status indicator. Do not use them as a repeated decorative fill
+  across lists, grids, or other large content groups. A component may use
+  multiple content color roles when its behavior specifically demonstrates a
+  hierarchy or palette, but that should be intentional rather than the
+  default decoration.
+- When state, data, or legend visuals already carry prominent color, keep
+  supporting actions such as reset, replay, or remount controls visually
+  subdued with neutral surfaces. Reserve the primary treatment for the
+  stage's primary action.
+- Give every visible `text` node a class that explicitly sets its `color`.
+  Do not rely on inherited or default text colors, because styles from a
+  downstream website can otherwise override the example.
 - Keep example copy brief, especially for cover-oriented entries. Explanatory
   text must not compete with the component or primary visual.
 - Put styles shared by multiple entries under the component's `shared/`
@@ -154,9 +205,16 @@ styles supplied by the website or application that hosts the example.
 
 ## Gradient-First Composition
 
-- In cover-oriented Lunaris examples, let the signature gradient define the
+- Decide whether the signature gradient represents the surrounding
+  environment or the content being navigated. Match that role to the stage
+  geometry instead of applying one composition to every component.
+- In a compact cover-oriented stage, the signature gradient can define the
   surrounding environment instead of filling most of the viewport with
   `paper`, `canvas`, or `canvas-ambient`.
+- In a page-navigation stage, `canvas` can fill the viewport while the
+  signature gradient fills a panel, page, or inset viewing field. Align the
+  gradient boundary with the actual paged region so it reinforces the
+  navigation model.
 - Prefer the established local-range gradients for ordinary screens:
   `luna-gradient-rose` spans `gradient-a` to `gradient-b`,
   `luna-gradient-berry` and `luna-gradient-afterglow` span `gradient-b` to
@@ -179,9 +237,12 @@ styles supplied by the website or application that hosts the example.
 - Use `gradient-content`, `gradient-content-faded`, and
   `gradient-content-trace` for text and icons placed directly on a gradient.
   Do not use the mode-dependent `content` scale on a gradient surface.
-- Keep direct-on-gradient controls and copy sparse. Prefer placing compact
-  controls on an opaque `paper` or `canvas` surface, then use the matching
-  `content` tokens inside that surface.
+- When the gradient is the surrounding environment, do not leave ordinary
+  buttons or control groups floating directly on it. Use one continuous
+  `canvas` foundation to support controls, then use `paper` for content
+  surfaces raised above that foundation.
+- Reserve direct-on-gradient controls for deliberate overlay or cover
+  interactions, and keep them sparse.
 - Treat opaque `paper` and `canvas` regions as bounded physical objects within
   that environment. If a content surface must cover a large area, prefer a
   translucent `film` or `veil`, unless an intentional neutral band is part of

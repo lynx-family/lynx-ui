@@ -40,7 +40,8 @@
 }
 
 .button {
-  width: 348px;
+  width: 100%;
+  max-width: 348px;
   height: 48px;
   flex-shrink: 0;
   border-radius: 24px;
