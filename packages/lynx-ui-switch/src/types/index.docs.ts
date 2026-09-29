@@ -103,7 +103,7 @@ export interface SwitchRenderProps {
  * Use them as CSS selectors to style different states.
  * @zh Switch 根据状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
  */
-export interface SwitchUiVariants {
+export interface SwitchUIVariants {
   /**
    * Applied when `status.active` is true.
    * @zh 当 status.active 为 true 时生效，可用于 `.ui-active { ... }`。
@@ -122,6 +122,11 @@ export interface SwitchUiVariants {
    */
   'ui-disabled'?: boolean
 }
+
+/**
+ * @deprecated Use `SwitchUIVariants` instead.
+ */
+export type SwitchUiVariants = SwitchUIVariants
 
 /**
  * The thumb of the Switch.

@@ -123,6 +123,7 @@ export async function runTypeDocForPackage(
       '@Harmony',
       '@param',
       '@defaultValue',
+      '@deprecated',
       '@docTypeFallback',
     ],
     plugin: [join(__dirname, 'plugins/expand-union-plugin.ts')],

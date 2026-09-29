@@ -178,7 +178,7 @@ function findBestInterfaceByKeys(
       const nodeName = typeof node?.name === 'string' ? node.name : ''
       const extra = names.length - keys.length
       const preferName =
-        /(?:RenderProps|AnimationStatus|Status|UiVariants)$/i.test(nodeName)
+        /(?:RenderProps|AnimationStatus|Status|UIVariants)$/i.test(nodeName)
           ? -10
           : 0
       const score = extra * 10 + preferName
