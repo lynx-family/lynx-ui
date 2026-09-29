@@ -9,7 +9,7 @@ import { clsx } from 'clsx'
 
 import { TabsContext, useTabsRootContext } from './TabsContext'
 import type { TabsBarProps } from './types'
-import { findUniqueTabIndex } from './utils/tabKeys'
+import { findUniqueTabIndex, getUniqueTabKey } from './utils/tabKeys'
 
 import './styles.css'
 
@@ -35,19 +35,28 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
     data,
   ])
   const registrationId = useMemo(() => nextTabsBarRegistrationId++, [])
+  // The registered callback stays stable while reading the latest tab order.
+  const resolveTabKey = useMemoizedFn((index: number) => {
+    return getUniqueTabKey(tabKeys, index)
+  })
 
   useEffect(() => {
-    registerTabKeys(registrationId, tabKeys)
+    registerTabKeys(registrationId, resolveTabKey)
     return () => {
       unregisterTabKeys(registrationId)
     }
-  }, [registerTabKeys, registrationId, tabKeys, unregisterTabKeys])
+  }, [
+    registerTabKeys,
+    registrationId,
+    resolveTabKey,
+    unregisterTabKeys,
+  ])
 
   const selectTab = useMemoizedFn((tabsKey: string) => {
     const index = findUniqueTabIndex(tabKeys, tabsKey)
     log(debugLog, '[lynx-ui tabs] selectTab', tabsKey, index)
     if (index !== undefined) {
-      selectTabByIndex(index)
+      selectTabByIndex(index, tabsKey)
     }
     return index
   })

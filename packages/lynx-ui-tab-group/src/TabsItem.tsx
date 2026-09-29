@@ -48,7 +48,7 @@ export const TabsItem = (props: TabItemProps) => {
     runOnMainThread(scrollToCenterMT)(selectBehavior !== 'instant')
     const index = selectTab(tabKey)
     if (index !== undefined) {
-      notifyClickItem(index)
+      notifyClickItem(index, tabKey)
     }
   }
 

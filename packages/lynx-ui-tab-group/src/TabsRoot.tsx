@@ -14,32 +14,29 @@ import {
 import { useMotionValueRef } from '@lynx-js/motion/mini'
 
 import { TabsRootContext } from './TabsContext'
+import type { TabSelectionTarget } from './TabsContext'
 import type { TabsRootProps, TabsRootRef } from './types'
-import { getUniqueTabKey } from './utils/tabKeys'
 
 interface TabKeysRegistration {
   registrationId: number
-  tabKeys: string[]
+  resolveTabKey: (index: number) => string | undefined
 }
 
 function useDataSubscript(initValue: number) {
   const hasPanelMT = useMotionValueRef<boolean>(false)
   const panelIndexMT = useMotionValueRef<number>(initValue)
-  const tabKeysRegistrationMT = useMainThreadRef<TabKeysRegistration | null>(
-    null,
-  )
   const tabsWidthMapMT = useMotionValueRef<Record<string, number>>({})
   const tabRegistrationMapMT = useMainThreadRef<Record<string, number>>({})
   const indicatorOffsetMT = useMotionValueRef<number>(initValue)
-  const selectTarget = useMotionValueRef<{ index: number, smooth: boolean }>({
+  const selectTarget = useMotionValueRef<TabSelectionTarget>({
     index: initValue,
     smooth: false,
+    shouldNotifyTabChanged: false,
   })
 
   return {
     hasPanelMT,
     panelIndexMT,
-    tabKeysRegistrationMT,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
@@ -61,7 +58,6 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
   const {
     hasPanelMT,
     panelIndexMT,
-    tabKeysRegistrationMT,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
@@ -69,49 +65,35 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
   } = useDataSubscript(initialSelectIndex)
   const tabKeysRegistrationRef = useRef<TabKeysRegistration | null>(null)
 
-  const registerTabKeysMT = (registration: TabKeysRegistration) => {
-    'main thread'
-    tabKeysRegistrationMT.current = registration
-  }
-  const unregisterTabKeysMT = (registrationId: number) => {
-    'main thread'
-    if (tabKeysRegistrationMT.current?.registrationId === registrationId) {
-      tabKeysRegistrationMT.current = null
-    }
-  }
-  const registerTabKeys = (registrationId: number, tabKeys: string[]) => {
-    const registration = { registrationId, tabKeys }
-    tabKeysRegistrationRef.current = registration
-    runOnMainThread(registerTabKeysMT)(registration)
+  const registerTabKeys = (
+    registrationId: number,
+    resolveTabKey: (index: number) => string | undefined,
+  ) => {
+    tabKeysRegistrationRef.current = { registrationId, resolveTabKey }
   }
   const unregisterTabKeys = (registrationId: number) => {
     if (tabKeysRegistrationRef.current?.registrationId === registrationId) {
       tabKeysRegistrationRef.current = null
     }
-    runOnMainThread(unregisterTabKeysMT)(registrationId)
   }
-  const resolveTabKey = (index: number) =>
-    getUniqueTabKey(
-      tabKeysRegistrationRef.current?.tabKeys ?? [],
-      index,
-    )
-  const notifyClickItem = (index: number) => {
-    const tabKey = resolveTabKey(index)
-    if (tabKey !== undefined) {
-      onClickItem?.(index, tabKey)
-    }
+  const resolveTabKey = (index: number) => {
+    return tabKeysRegistrationRef.current?.resolveTabKey(index)
+  }
+  const notifyClickItem = (index: number, tabKey: string) => {
+    onClickItem?.(index, tabKey)
   }
   const notifyTabChanged = (index: number) => {
+    const registration = tabKeysRegistrationRef.current
     const tabKey = resolveTabKey(index)
-    if (tabKey !== undefined) {
+    if (registration === null || tabKey !== undefined) {
       onTabChanged?.(index, tabKey)
     }
   }
-  const onTabChangedJS = (index: number, tabKey: string) => {
+  const onTabChangedJS = (index: number, tabKey?: string) => {
     onTabChanged?.(index, tabKey)
   }
 
-  const selectTabMT = (target: { index: number, smooth: boolean }) => {
+  const selectTabMT = (target: TabSelectionTarget) => {
     'main thread'
     if (panelIndexMT.current.get() === target.index) {
       return
@@ -119,21 +101,17 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     selectTarget.current.set(target)
     if (!hasPanelMT.current.get()) {
       panelIndexMT.current.set(target.index)
-      const tabKeys = tabKeysRegistrationMT.current?.tabKeys ?? []
-      const tabKey = tabKeys[target.index]
-      if (
-        tabKey !== undefined
-        && tabKeys.indexOf(tabKey) === target.index
-        && tabKeys.lastIndexOf(tabKey) === target.index
-      ) {
-        runOnBackground(onTabChangedJS)(target.index, tabKey)
+      if (target.shouldNotifyTabChanged) {
+        runOnBackground(onTabChangedJS)(target.index, target.tabKey)
       }
     }
   }
-  const selectTabByIndex = (index: number) => {
+  const selectTabByIndex = (index: number, tabKey: string) => {
     runOnMainThread(selectTabMT)({
       index,
       smooth: selectBehavior !== 'instant',
+      tabKey,
+      shouldNotifyTabChanged: true,
     })
   }
 
@@ -194,7 +172,14 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     selectTab: (index: number, smooth: boolean) => {
-      runOnMainThread(selectTabMT)({ index, smooth })
+      const registration = tabKeysRegistrationRef.current
+      const tabKey = resolveTabKey(index)
+      runOnMainThread(selectTabMT)({
+        index,
+        smooth,
+        tabKey,
+        shouldNotifyTabChanged: registration === null || tabKey !== undefined,
+      })
     },
   }))
 

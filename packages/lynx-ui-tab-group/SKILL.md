@@ -40,5 +40,6 @@ layout and visual treatment, and whether content should use the synchronized
 - Render `TabsIndicator` as a child of `TabsBar`.
 - Use `TabsPanel` for synchronized swipeable content, or `onTabChanged` to coordinate content rendered elsewhere.
 - Read the current index and stable item key from the first and second arguments
-  of `onClickItem` and `onTabChanged`.
+  of `onClickItem` and `onTabChanged`. The `onTabChanged` key is `undefined`
+  when no `TabsBar` is registered.
 - Configure `indicatorAnimation` on `TabsRoot` for custom indicator motion.

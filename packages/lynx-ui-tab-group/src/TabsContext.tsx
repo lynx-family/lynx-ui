@@ -10,6 +10,13 @@ import type { TabsIndicatorAnimation } from './types'
 
 type MotionValueRef<T> = MainThreadRef<MotionValue<T>>
 
+export interface TabSelectionTarget {
+  index: number
+  smooth: boolean
+  tabKey?: string
+  shouldNotifyTabChanged: boolean
+}
+
 interface TabsRootContextValue {
   debugLog: boolean
   enableRTL: boolean
@@ -22,13 +29,16 @@ interface TabsRootContextValue {
   tabsWidthMapMT: MotionValueRef<Record<string, number>>
   tabRegistrationMapMT: MainThreadRef<Record<string, number>>
   indicatorOffsetMT: MotionValueRef<number>
-  selectTarget: MotionValueRef<{ index: number, smooth: boolean }>
-  selectTabByIndex: (index: number) => void
-  registerTabKeys: (registrationId: number, tabKeys: string[]) => void
+  selectTarget: MotionValueRef<TabSelectionTarget>
+  selectTabByIndex: (index: number, tabKey: string) => void
+  registerTabKeys: (
+    registrationId: number,
+    resolveTabKey: (index: number) => string | undefined,
+  ) => void
   unregisterTabKeys: (registrationId: number) => void
   unregisterTabWidth: (tabKey: string, registrationId: number) => void
 
-  notifyClickItem: (index: number) => void
+  notifyClickItem: (index: number, tabKey: string) => void
   notifyTabChanged: (index: number) => void
 }
 

@@ -231,11 +231,11 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTabChanged",
-    "type": "(index: number, tabKey: string) => void",
+    "type": "(index: number, tabKey?: string) => void",
     "summary": [
       {
         "kind": "text",
-        "text": "Called after the selected tab changes. The first argument is its current\nindex, and the second is the stable key returned by "
+        "text": "Called after the selected tab changes. The first argument is its current\nindex. The second is the stable key returned by "
       },
       {
         "kind": "code",
@@ -243,13 +243,29 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
       },
       {
         "kind": "text",
-        "text": "."
+        "text": ", or "
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": "\nwhen no "
+      },
+      {
+        "kind": "code",
+        "text": "`TabsBar`"
+      },
+      {
+        "kind": "text",
+        "text": " is registered."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "选中的 Tab 发生变化后调用。第一个参数是当前索引，第二个参数是 "
+        "text": "选中的 Tab 发生变化后调用。第一个参数是当前索引。第二个参数是 "
       },
       {
         "kind": "code",
@@ -257,7 +273,23 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
       },
       {
         "kind": "text",
-        "text": " 返回的稳定 key。"
+        "text": " 返回的稳定 key；未注册 "
+      },
+      {
+        "kind": "code",
+        "text": "`TabsBar`"
+      },
+      {
+        "kind": "text",
+        "text": " 时为 "
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
       }
     ],
     "defaultValue": "",

@@ -106,13 +106,14 @@ export interface TabsRootProps {
   onClickItem?: (index: number, tabKey: string) => void
   /**
    * Called after the selected tab changes. The first argument is its current
-   * index, and the second is the stable key returned by `getTabKey`.
-   * @zh 选中的 Tab 发生变化后调用。第一个参数是当前索引，第二个参数是 `getTabKey` 返回的稳定 key。
+   * index. The second is the stable key returned by `getTabKey`, or `undefined`
+   * when no `TabsBar` is registered.
+   * @zh 选中的 Tab 发生变化后调用。第一个参数是当前索引。第二个参数是 `getTabKey` 返回的稳定 key；未注册 `TabsBar` 时为 `undefined`。
    * @eventProperty
    * @Android
    * @iOS
    */
-  onTabChanged?: (index: number, tabKey: string) => void
+  onTabChanged?: (index: number, tabKey?: string) => void
 
   /**
    * Display debug logs. Open it when you find a bug.
