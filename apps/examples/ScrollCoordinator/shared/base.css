@@ -1,0 +1,236 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.sc-demo {
+  width: 100%;
+  height: 100%;
+  padding: 56px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--canvas);
+}
+.sc-masthead {
+  padding-bottom: 16px;
+  flex-shrink: 0;
+}
+.sc-brand {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.sc-mode {
+  color: var(--content);
+  font-size: 25px;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+.sc-caption {
+  color: var(--content-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+.sc-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding-bottom: 16px;
+  flex-shrink: 0;
+}
+.sc-control {
+  flex: 1;
+  height: 34px;
+  border-radius: 17px;
+  background-color: var(--paper-clear);
+  align-items: center;
+  justify-content: center;
+}
+.sc-control-label {
+  color: var(--content);
+  font-size: 12px;
+  font-weight: 500;
+}
+.sc-frame {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  background-color: var(--paper);
+}
+.sc-coordinator {
+  background-color: var(--paper);
+}
+.sc-toolbar {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--paper);
+}
+.sc-toolbar-title {
+  color: var(--content);
+  font-size: 13px;
+  font-weight: 600;
+}
+.sc-toolbar-status {
+  color: var(--primary);
+  font-size: 11px;
+}
+.sc-cover {
+  width: 100%;
+  padding-top: 44px;
+}
+.sc-hero {
+  height: 164px;
+  padding: 22px 20px;
+  justify-content: center;
+  background: linear-gradient(
+    130deg,
+    var(--gradient-a),
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+.sc-hero-kicker {
+  color: var(--gradient-content);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.sc-hero-title {
+  color: var(--gradient-content);
+  font-size: 36px;
+  font-weight: 700;
+  margin-top: 12px;
+  margin-bottom: 5px;
+}
+.sc-hero-caption {
+  color: var(--gradient-content);
+  font-size: 12px;
+}
+.sc-details {
+  height: 84px;
+  padding: 18px 20px;
+  background-color: var(--paper-clear);
+}
+.sc-detail-title {
+  color: var(--content);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.sc-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.sc-tabs {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--paper);
+  flex-shrink: 0;
+  border-bottom-width: 1px;
+  border-bottom-color: var(--rule);
+}
+.sc-tab {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.sc-tab-label {
+  color: var(--content-muted);
+  font-size: 13px;
+}
+.sc-selected {
+  color: var(--primary);
+  font-weight: 600;
+}
+.sc-tab-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--primary);
+}
+.sc-pager {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+.sc-pager-item {
+  width: 100%;
+  height: 100%;
+}
+.sc-list {
+  width: 100%;
+  height: 100%;
+}
+.sc-story {
+  width: 100%;
+  min-height: 116px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  border-bottom-width: 1px;
+  border-bottom-color: var(--rule);
+}
+.sc-story-number {
+  width: 42px;
+  height: 48px;
+  background-color: var(--secondary);
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sc-number {
+  color: var(--secondary-content);
+  font-size: 19px;
+  font-weight: 600;
+}
+.sc-story-copy {
+  flex: 1;
+}
+.sc-eyebrow {
+  color: var(--primary);
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+.sc-story-title {
+  color: var(--content);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.sc-page-status {
+  height: 32px;
+  padding-left: 16px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sc-page-refresh {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+.sc-refresh-content {
+  height: 64px;
+  /* Keep the native header size stable as its status text changes. */
+  width: calc(100vw - 40px);
+  align-items: center;
+  justify-content: center;
+}
+.sc-refresh-label {
+  color: var(--primary);
+  font-size: 13px;
+}

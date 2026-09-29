@@ -1,0 +1,21 @@
+@import "@lynx-js/luna-styles/index.css";
+
+@import "../shared/base.css";
+
+.sc-composed-tabs,
+.sc-composed-tabs-items {
+  width: 100%;
+  height: 100%;
+}
+
+.sc-composed-tabs-indicator {
+  height: 3px;
+  align-items: center;
+}
+
+.sc-composed-tabs-indicator-line {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--primary);
+}

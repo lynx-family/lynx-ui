@@ -70,6 +70,11 @@
       "useWhen": "The user needs one selected value from a mutually exclusive option set.",
       "avoidWhen": "Multiple options may be selected independently; use Checkbox."
     },
+    "scroll-coordinator": {
+      "label": "ScrollCoordinator",
+      "useWhen": "The UI needs a collapsible header coordinated with nested vertical scrolling or paged lists.",
+      "avoidWhen": "The UI only needs a standalone vertical scroll container; use ScrollView or List."
+    },
     "scroll-view": {
       "label": "ScrollView",
       "useWhen": "A bounded region with mixed or relatively small content needs scrolling.",

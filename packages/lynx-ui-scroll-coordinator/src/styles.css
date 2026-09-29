@@ -1,0 +1,43 @@
+.lynx-ui-scroll-coordinator__refresh {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.lynx-ui-scroll-coordinator__refresh-header {
+  width: 100%;
+  position: absolute;
+  overflow: visible;
+}
+
+.lynx-ui-scroll-coordinator__root {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.lynx-ui-scroll-coordinator__header {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  overflow: visible;
+}
+
+.lynx-ui-scroll-coordinator__toolbar {
+  width: 100%;
+  display: flex;
+  z-index: 2;
+  overflow: visible;
+}
+
+.lynx-ui-scroll-coordinator__slot {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  z-index: 1;
+  overflow: visible;
+}
