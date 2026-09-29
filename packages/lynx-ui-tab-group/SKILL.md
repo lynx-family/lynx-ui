@@ -39,4 +39,6 @@ layout and visual treatment, and whether content should use the synchronized
 - Give every item a stable, unique value from `getTabKey`.
 - Render `TabsIndicator` as a child of `TabsBar`.
 - Use `TabsPanel` for synchronized swipeable content, or `onTabChanged` to coordinate content rendered elsewhere.
+- Read the current index and stable item key from the first and second arguments
+  of `onClickItem` and `onTabChanged`.
 - Configure `indicatorAnimation` on `TabsRoot` for custom indicator motion.

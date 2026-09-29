@@ -96,21 +96,23 @@ export interface TabsRootProps {
   indicatorAnimation?: TabsIndicatorAnimation
 
   /**
-   * Click callback
-   * @zh 点击回调
+   * Called when a tab item is clicked. The first argument is its current
+   * index, and the second is the stable key returned by `getTabKey`.
+   * @zh 点击 Tab 项时调用。第一个参数是当前索引，第二个参数是 `getTabKey` 返回的稳定 key。
    * @eventProperty
    * @Android
    * @iOS
    */
-  onClickItem?: (index: number) => void
+  onClickItem?: (index: number, tabKey: string) => void
   /**
-   * Tab change callback
-   * @zh 标签页更改回调
+   * Called after the selected tab changes. The first argument is its current
+   * index, and the second is the stable key returned by `getTabKey`.
+   * @zh 选中的 Tab 发生变化后调用。第一个参数是当前索引，第二个参数是 `getTabKey` 返回的稳定 key。
    * @eventProperty
    * @Android
    * @iOS
    */
-  onTabChanged?: (index: number) => void
+  onTabChanged?: (index: number, tabKey: string) => void
 
   /**
    * Display debug logs. Open it when you find a bug.

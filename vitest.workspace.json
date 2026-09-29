@@ -1,5 +1,6 @@
 [
   "packages/**/vitest.config.ts",
+  "packages/**/vitest.react.config.mjs",
   "luna/packages/**/vitest.config.ts",
   "apps/examples/vitest.config.ts",
   "tools/typedoc/vitest.config.ts",

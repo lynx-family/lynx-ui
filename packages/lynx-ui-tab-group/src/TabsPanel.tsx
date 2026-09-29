@@ -40,7 +40,7 @@ function TabsPanelImpl<T>(
     initialSelectIndex,
     hasPanelMT,
     indicatorOffsetMT,
-    onTabChanged,
+    notifyTabChanged,
     panelIndexMT,
     selectTarget,
   } = useTabsRootContext()
@@ -108,7 +108,7 @@ function TabsPanelImpl<T>(
     const index = event.detail.index
     log(debugLog, '[lynx-ui tabs] page change', index)
     onPageChangeProp?.(event)
-    onTabChanged?.(index)
+    notifyTabChanged(index)
   }
 
   useMotionValueRefEvent(

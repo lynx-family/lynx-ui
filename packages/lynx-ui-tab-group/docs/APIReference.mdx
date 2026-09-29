@@ -193,17 +193,33 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 <UIApiTable source={[
   {
     "name": "onClickItem",
-    "type": "(index: number) => void",
+    "type": "(index: number, tabKey: string) => void",
     "summary": [
       {
         "kind": "text",
-        "text": "Click callback"
+        "text": "Called when a tab item is clicked. The first argument is its current\nindex, and the second is the stable key returned by "
+      },
+      {
+        "kind": "code",
+        "text": "`getTabKey`"
+      },
+      {
+        "kind": "text",
+        "text": "."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "点击回调"
+        "text": "点击 Tab 项时调用。第一个参数是当前索引，第二个参数是 "
+      },
+      {
+        "kind": "code",
+        "text": "`getTabKey`"
+      },
+      {
+        "kind": "text",
+        "text": " 返回的稳定 key。"
       }
     ],
     "defaultValue": "",
@@ -215,17 +231,33 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTabChanged",
-    "type": "(index: number) => void",
+    "type": "(index: number, tabKey: string) => void",
     "summary": [
       {
         "kind": "text",
-        "text": "Tab change callback"
+        "text": "Called after the selected tab changes. The first argument is its current\nindex, and the second is the stable key returned by "
+      },
+      {
+        "kind": "code",
+        "text": "`getTabKey`"
+      },
+      {
+        "kind": "text",
+        "text": "."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "标签页更改回调"
+        "text": "选中的 Tab 发生变化后调用。第一个参数是当前索引，第二个参数是 "
+      },
+      {
+        "kind": "code",
+        "text": "`getTabKey`"
+      },
+      {
+        "kind": "text",
+        "text": " 返回的稳定 key。"
       }
     ],
     "defaultValue": "",

@@ -24,10 +24,12 @@ interface TabsRootContextValue {
   indicatorOffsetMT: MotionValueRef<number>
   selectTarget: MotionValueRef<{ index: number, smooth: boolean }>
   selectTabByIndex: (index: number) => void
+  registerTabKeys: (registrationId: number, tabKeys: string[]) => void
+  unregisterTabKeys: (registrationId: number) => void
   unregisterTabWidth: (tabKey: string, registrationId: number) => void
 
-  onClickItem?: (index: number) => void
-  onTabChanged?: (index: number) => void
+  notifyClickItem: (index: number) => void
+  notifyTabChanged: (index: number) => void
 }
 
 export const TabsRootContext = createContext<TabsRootContextValue | null>(null)
@@ -41,7 +43,7 @@ export function useTabsRootContext() {
 }
 
 interface TabsContextValue {
-  selectTab: (tabKey: string) => void
+  selectTab: (tabKey: string) => number | undefined
   tabKeyArray: string[]
 }
 

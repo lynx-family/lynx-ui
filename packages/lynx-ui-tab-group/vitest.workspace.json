@@ -1,0 +1,4 @@
+[
+  "./vitest.config.ts",
+  "./vitest.react.config.mjs"
+]

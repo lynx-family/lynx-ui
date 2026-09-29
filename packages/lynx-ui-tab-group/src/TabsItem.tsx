@@ -22,7 +22,7 @@ export const TabsItem = (props: TabItemProps) => {
   const {
     tabsWidthMapMT,
     tabRegistrationMapMT,
-    onClickItem,
+    notifyClickItem,
     initialSelectIndex,
     panelIndexMT,
     selectTarget,
@@ -46,8 +46,10 @@ export const TabsItem = (props: TabItemProps) => {
 
   const onClick = () => {
     runOnMainThread(scrollToCenterMT)(selectBehavior !== 'instant')
-    selectTab(tabKey)
-    onClickItem?.(tabKeyArray.indexOf(tabKey))
+    const index = selectTab(tabKey)
+    if (index !== undefined) {
+      notifyClickItem(index)
+    }
   }
 
   useMotionValueRefEvent(

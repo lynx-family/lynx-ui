@@ -1,7 +1,7 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
-import { useMemo } from '@lynx-js/react'
+import { useEffect, useMemo } from '@lynx-js/react'
 
 import { log, useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
@@ -9,8 +9,11 @@ import { clsx } from 'clsx'
 
 import { TabsContext, useTabsRootContext } from './TabsContext'
 import type { TabsBarProps } from './types'
+import { findUniqueTabIndex } from './utils/tabKeys'
 
 import './styles.css'
+
+let nextTabsBarRegistrationId = 0
 
 export function TabsBar<T>(props: TabsBarProps<T>) {
   const {
@@ -23,17 +26,30 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
 
   const {
     debugLog,
+    registerTabKeys,
     selectTabByIndex,
+    unregisterTabKeys,
   } = useTabsRootContext()
 
   const tabKeys: string[] = useMemo(() => data.map(item => item.getTabKey()), [
     data,
   ])
+  const registrationId = useMemo(() => nextTabsBarRegistrationId++, [])
+
+  useEffect(() => {
+    registerTabKeys(registrationId, tabKeys)
+    return () => {
+      unregisterTabKeys(registrationId)
+    }
+  }, [registerTabKeys, registrationId, tabKeys, unregisterTabKeys])
 
   const selectTab = useMemoizedFn((tabsKey: string) => {
-    const index = tabKeys.indexOf(tabsKey)
+    const index = findUniqueTabIndex(tabKeys, tabsKey)
     log(debugLog, '[lynx-ui tabs] selectTab', tabsKey, index)
-    selectTabByIndex(index)
+    if (index !== undefined) {
+      selectTabByIndex(index)
+    }
+    return index
   })
 
   const tabsContextValue = useMemo(() => ({

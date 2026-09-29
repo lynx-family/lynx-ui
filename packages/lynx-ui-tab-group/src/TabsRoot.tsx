@@ -8,16 +8,26 @@ import {
   useImperativeHandle,
   useMainThreadRef,
   useMemo,
+  useRef,
 } from '@lynx-js/react'
 
 import { useMotionValueRef } from '@lynx-js/motion/mini'
 
 import { TabsRootContext } from './TabsContext'
 import type { TabsRootProps, TabsRootRef } from './types'
+import { getUniqueTabKey } from './utils/tabKeys'
+
+interface TabKeysRegistration {
+  registrationId: number
+  tabKeys: string[]
+}
 
 function useDataSubscript(initValue: number) {
   const hasPanelMT = useMotionValueRef<boolean>(false)
   const panelIndexMT = useMotionValueRef<number>(initValue)
+  const tabKeysRegistrationMT = useMainThreadRef<TabKeysRegistration | null>(
+    null,
+  )
   const tabsWidthMapMT = useMotionValueRef<Record<string, number>>({})
   const tabRegistrationMapMT = useMainThreadRef<Record<string, number>>({})
   const indicatorOffsetMT = useMotionValueRef<number>(initValue)
@@ -29,6 +39,7 @@ function useDataSubscript(initValue: number) {
   return {
     hasPanelMT,
     panelIndexMT,
+    tabKeysRegistrationMT,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
@@ -50,15 +61,56 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
   const {
     hasPanelMT,
     panelIndexMT,
+    tabKeysRegistrationMT,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
     selectTarget,
   } = useDataSubscript(initialSelectIndex)
+  const tabKeysRegistrationRef = useRef<TabKeysRegistration | null>(null)
 
-  const onTabChangedJS = (index: number) => {
-    onTabChanged?.(index)
+  const registerTabKeysMT = (registration: TabKeysRegistration) => {
+    'main thread'
+    tabKeysRegistrationMT.current = registration
   }
+  const unregisterTabKeysMT = (registrationId: number) => {
+    'main thread'
+    if (tabKeysRegistrationMT.current?.registrationId === registrationId) {
+      tabKeysRegistrationMT.current = null
+    }
+  }
+  const registerTabKeys = (registrationId: number, tabKeys: string[]) => {
+    const registration = { registrationId, tabKeys }
+    tabKeysRegistrationRef.current = registration
+    runOnMainThread(registerTabKeysMT)(registration)
+  }
+  const unregisterTabKeys = (registrationId: number) => {
+    if (tabKeysRegistrationRef.current?.registrationId === registrationId) {
+      tabKeysRegistrationRef.current = null
+    }
+    runOnMainThread(unregisterTabKeysMT)(registrationId)
+  }
+  const resolveTabKey = (index: number) =>
+    getUniqueTabKey(
+      tabKeysRegistrationRef.current?.tabKeys ?? [],
+      index,
+    )
+  const notifyClickItem = (index: number) => {
+    const tabKey = resolveTabKey(index)
+    if (tabKey !== undefined) {
+      onClickItem?.(index, tabKey)
+    }
+  }
+  const notifyTabChanged = (index: number) => {
+    const tabKey = resolveTabKey(index)
+    if (tabKey !== undefined) {
+      onTabChanged?.(index, tabKey)
+    }
+  }
+  const onTabChangedJS = (index: number, tabKey: string) => {
+    onTabChanged?.(index, tabKey)
+  }
+
   const selectTabMT = (target: { index: number, smooth: boolean }) => {
     'main thread'
     if (panelIndexMT.current.get() === target.index) {
@@ -67,7 +119,15 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     selectTarget.current.set(target)
     if (!hasPanelMT.current.get()) {
       panelIndexMT.current.set(target.index)
-      runOnBackground(onTabChangedJS)(target.index)
+      const tabKeys = tabKeysRegistrationMT.current?.tabKeys ?? []
+      const tabKey = tabKeys[target.index]
+      if (
+        tabKey !== undefined
+        && tabKeys.indexOf(tabKey) === target.index
+        && tabKeys.lastIndexOf(tabKey) === target.index
+      ) {
+        runOnBackground(onTabChangedJS)(target.index, tabKey)
+      }
     }
   }
   const selectTabByIndex = (index: number) => {
@@ -104,9 +164,11 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       tabRegistrationMapMT,
       indicatorOffsetMT,
       selectTabByIndex,
+      registerTabKeys,
+      unregisterTabKeys,
       unregisterTabWidth,
-      onClickItem,
-      onTabChanged,
+      notifyClickItem,
+      notifyTabChanged,
       selectTarget,
     }),
     [
@@ -116,14 +178,16 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       indicatorAnimation,
       initialSelectIndex,
       hasPanelMT,
-      onClickItem,
-      onTabChanged,
       panelIndexMT,
       tabsWidthMapMT,
       tabRegistrationMapMT,
       indicatorOffsetMT,
       selectTabByIndex,
+      registerTabKeys,
+      unregisterTabKeys,
       unregisterTabWidth,
+      notifyClickItem,
+      notifyTabChanged,
       selectTarget,
     ],
   )
