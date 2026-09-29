@@ -3,14 +3,23 @@
 // LICENSE file in the root directory of this source tree.
 
 import { LunaPreset } from '@lynx-js/luna-tailwind'
-import LynxPreset from '@lynx-js/tailwind-preset'
+import { createLynxPreset } from '@lynx-js/tailwind-preset'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
   // 'content' config will be replaced by pluginTailwindCSS,
   // retains here for correct typing
   content: [],
-  presets: [LynxPreset, LunaPreset],
+  presets: [
+    createLynxPreset({
+      lynxUIPlugins: {
+        uiVariants: {
+          prefixes: ['ui', 'ui-side', 'ui-align'],
+        },
+      },
+    }),
+    LunaPreset,
+  ],
   theme: {
     extend: {
       keyframes: {

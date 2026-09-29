@@ -200,10 +200,14 @@ export {
 export type {
   PopoverOverlayProps,
   PopoverArrowProps,
+  PopoverArrowUIVariants,
   PopoverAnchorProps,
   PopoverBackdropProps,
   PopoverContentProps,
+  PopoverContentUIVariants,
+  PopoverPlacementUIVariants,
   PopoverPositionerProps,
+  PopoverPositionerUIVariants,
   PopoverRootProps,
   PopoverTriggerProps,
 } from '@lynx-js/lynx-ui-popover'

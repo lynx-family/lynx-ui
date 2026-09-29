@@ -53,8 +53,11 @@ const primitivesConfig: Record<string, string[]> = {
     'PopoverRoot',
     'PopoverTrigger',
     'PopoverPositioner',
+    'PopoverPositionerUIVariants',
     'PopoverContent',
+    'PopoverContentUIVariants',
     'PopoverArrow',
+    'PopoverArrowUIVariants',
   ],
   'lynx-ui-radio-group': [
     'RadioGroupRoot',

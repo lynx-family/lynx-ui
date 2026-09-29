@@ -18,7 +18,7 @@ import './index.css'
 
 function App() {
   return (
-    <view className='lunaris-dark size-full pb-[160px] px-[48px] flex flex-col justify-center items-center bg-primary-muted'>
+    <view className='demo-container lunaris-dark size-full pb-[160px] px-[48px] flex flex-col justify-center items-center bg-primary-muted'>
       <PopoverRoot
         onClose={() => console.info('dismissed!')}
         onOpen={() => console.info('shown!')}
@@ -36,7 +36,11 @@ function App() {
             <PopoverContent
               className={clsx(
                 'flex flex-col items-start justify-start w-[264px] min-h-[192px] h-auto px-[36px] py-[24px] gap-[12px] rounded-[24px] bg-canvas shadow-lg',
-                'ui-open:animate-popover-in ui-closed:animate-popover-out origin-top-right',
+                'ui-open:animate-popover-in ui-closed:animate-popover-out',
+                'ui-side-top:ui-align-start:origin-bottom-left ui-side-top:ui-align-center:origin-bottom ui-side-top:ui-align-end:origin-bottom-right',
+                'ui-side-right:ui-align-start:origin-top-left ui-side-right:ui-align-center:origin-left ui-side-right:ui-align-end:origin-bottom-left',
+                'ui-side-bottom:ui-align-start:origin-top-left ui-side-bottom:ui-align-center:origin-top ui-side-bottom:ui-align-end:origin-top-right',
+                'ui-side-left:ui-align-start:origin-top-right ui-side-left:ui-align-center:origin-right ui-side-left:ui-align-end:origin-bottom-right',
               )}
             >
               <OptionsMenu />

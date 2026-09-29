@@ -9,6 +9,7 @@ import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 import type {
   PresenceChildrenType,
   PresenceState,
+  PresenceUIVariants,
 } from '@lynx-js/lynx-ui-presence'
 import type { OverlayProps, ViewProps } from '@lynx-js/types'
 
@@ -19,6 +20,85 @@ import type {
   Placement,
   Rect,
 } from '../floating'
+
+/**
+ * Placement UI variants shared by the position-dependent Popover nodes.
+ *
+ * These classes are always emitted from the resolved placement used for
+ * layout. A placement without an alignment suffix, such as `top`, uses
+ * `ui-align-center`.
+ * With `@lynx-js/tailwind-preset`, explicitly enable the `ui-side` and
+ * `ui-align` prefix maps in the `uiVariants` plugin.
+ *
+ * @zh 受位置影响的 Popover 节点共享的 placement UI variants。这些类名始终根据布局使用的最终 placement 输出；`top` 等无 alignment 后缀的 placement 使用 `ui-align-center`。使用 `@lynx-js/tailwind-preset` 时，需要在 `uiVariants` 插件中显式启用 `ui-side` 和 `ui-align` prefix maps。
+ */
+export interface PopoverPlacementUIVariants {
+  /**
+   * Applied when the resolved physical side is top.
+   * @zh 当最终物理方向为上方时应用。
+   */
+  'ui-side-top'?: boolean
+
+  /**
+   * Applied when the resolved physical side is right.
+   * @zh 当最终物理方向为右侧时应用。
+   */
+  'ui-side-right'?: boolean
+
+  /**
+   * Applied when the resolved physical side is bottom.
+   * @zh 当最终物理方向为下方时应用。
+   */
+  'ui-side-bottom'?: boolean
+
+  /**
+   * Applied when the resolved physical side is left.
+   * @zh 当最终物理方向为左侧时应用。
+   */
+  'ui-side-left'?: boolean
+
+  /**
+   * Applied when the resolved alignment is start.
+   * @zh 当最终对齐方式为 start 时应用。
+   */
+  'ui-align-start'?: boolean
+
+  /**
+   * Applied for center alignment, including placements without an alignment suffix.
+   * @zh 当最终对齐方式为居中时应用，包括没有 alignment 后缀的 placement。
+   */
+  'ui-align-center'?: boolean
+
+  /**
+   * Applied when the resolved alignment is end.
+   * @zh 当最终对齐方式为 end 时应用。
+   */
+  'ui-align-end'?: boolean
+}
+
+/**
+ * Placement UI variants applied to the view owned by `PopoverPositioner`.
+ * @zh 应用于 `PopoverPositioner` 所拥有视图的 placement UI variants。
+ */
+export interface PopoverPositionerUIVariants
+  extends PopoverPlacementUIVariants, PresenceUIVariants
+{}
+
+/**
+ * Placement UI variants applied to `PopoverContent`.
+ * @zh 应用于 `PopoverContent` 的 placement UI variants。
+ */
+export interface PopoverContentUIVariants
+  extends PopoverPlacementUIVariants, PresenceUIVariants
+{}
+
+/**
+ * Placement UI variants applied to `PopoverArrow`.
+ * @zh 应用于 `PopoverArrow` 的 placement UI variants。
+ */
+export interface PopoverArrowUIVariants
+  extends PopoverPlacementUIVariants, PresenceUIVariants
+{}
 
 /**
  * The arrow of the Popover.

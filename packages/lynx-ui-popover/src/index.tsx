@@ -19,10 +19,14 @@ export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
 export type {
   PopoverOverlayProps,
   PopoverArrowProps,
+  PopoverArrowUIVariants,
   PopoverAnchorProps,
   PopoverBackdropProps,
   PopoverContentProps,
+  PopoverContentUIVariants,
+  PopoverPlacementUIVariants,
   PopoverPositionerProps,
+  PopoverPositionerUIVariants,
   PopoverRootProps,
   PopoverTriggerProps,
 } from './types'
