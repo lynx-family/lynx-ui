@@ -15,6 +15,7 @@ import './styles.css'
 export function TabsBar<T>(props: TabsBarProps<T>) {
   const {
     data,
+    getTabKey,
     children,
     tabsItemWrapperClass,
     renderTabItem,
@@ -26,8 +27,9 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
     selectTabByIndex,
   } = useTabsRootContext()
 
-  const tabKeys: string[] = useMemo(() => data.map(item => item.getTabKey()), [
+  const tabKeys: string[] = useMemo(() => data.map(item => getTabKey(item)), [
     data,
+    getTabKey,
   ])
 
   const selectTab = useMemoizedFn((tabsKey: string) => {
@@ -44,8 +46,8 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
   // children: Indicator
   // renderedChildren: TabItem
   const renderedChildren = useMemo(
-    () => data.map(item => renderTabItem?.(item)),
-    [data, renderTabItem],
+    () => data.map((item, index) => renderTabItem?.(item, tabKeys[index])),
+    [data, renderTabItem, tabKeys],
   )
 
   return (

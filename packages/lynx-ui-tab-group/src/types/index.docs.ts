@@ -137,25 +137,6 @@ export interface TabsRootRef {
   selectTab: (index: number, smooth: boolean) => void
 }
 
-export interface TabsData<T> {
-  /**
-   * A function that returns the unique key for every Tab.
-   * @Android
-   * @iOS
-   * @Harmony
-   * @zh 返回每个 Tab 项的唯一键的函数。
-   */
-  getTabKey: () => string
-  /**
-   * The original data item for the Tab.
-   * @Android
-   * @iOS
-   * @Harmony
-   * @zh 用于渲染 Tab 的原始数据项。
-   */
-  tabItem: T
-}
-
 export interface TabsBarProps<T>
   extends Omit<ScrollViewProps, 'children' | 'horizontal' | 'scrollOrientation'>
 {
@@ -173,7 +154,15 @@ export interface TabsBarProps<T>
    * @Harmony
    * @zh Tabs 的数据。
    */
-  data: TabsData<T>[]
+  data: T[]
+  /**
+   * Return a stable, unique key for each tab.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 返回每个 Tab 的稳定且唯一的键。
+   */
+  getTabKey: (tabItem: T) => string
   /**
    * children
    * @Android
@@ -189,7 +178,7 @@ export interface TabsBarProps<T>
    * @Harmony
    * @zh 用于渲染每一个 Tab 的函数。
    */
-  renderTabItem?: (tabItem: TabsData<T>) => ReactNode
+  renderTabItem?: (tabItem: T, tabKey: string) => ReactNode
 }
 
 export interface TabItemProps extends

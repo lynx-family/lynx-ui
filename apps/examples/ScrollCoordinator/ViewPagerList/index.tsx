@@ -18,11 +18,6 @@ import type { TabsRootRef, ViewPagerRef } from '@lynx-js/lynx-ui'
 import { sections } from './data'
 import './index.css'
 
-const tabs = sections.map(section => ({
-  tabItem: section,
-  getTabKey: () => section.id,
-}))
-
 function App() {
   const pager = useRef<ViewPagerRef>(null)
   const tabsRoot = useRef<TabsRootRef>(null)
@@ -66,19 +61,20 @@ function App() {
                   <TabsBar
                     className='sc-composed-tabs'
                     tabsItemWrapperClass='sc-composed-tabs-items'
-                    data={tabs}
-                    renderTabItem={item => (
+                    data={sections}
+                    getTabKey={section => section.id}
+                    renderTabItem={(section, tabKey) => (
                       <TabsItem
-                        key={item.getTabKey()}
-                        tabKey={item.getTabKey()}
+                        key={tabKey}
+                        tabKey={tabKey}
                         className='sc-tab'
                       >
                         <text
-                          className={item.tabItem.id === sections[pageIndex].id
+                          className={section.id === sections[pageIndex].id
                             ? 'sc-tab-label sc-selected'
                             : 'sc-tab-label'}
                         >
-                          {item.tabItem.title}
+                          {section.title}
                         </text>
                       </TabsItem>
                     )}

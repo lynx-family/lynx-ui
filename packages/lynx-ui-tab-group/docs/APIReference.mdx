@@ -356,7 +356,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "data",
-    "type": "TabsData<T>[]",
+    "type": "T[]",
     "summary": [
       {
         "kind": "text",
@@ -771,6 +771,28 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
+    "name": "getTabKey",
+    "type": "(tabItem: T) => string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Return a stable, unique key for each tab."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "返回每个 Tab 的稳定且唯一的键。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
     "name": "iOSBounces",
     "type": "boolean",
     "summary": [
@@ -904,7 +926,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "renderTabItem",
-    "type": "(tabItem: TabsData<T>) => ReactNode",
+    "type": "(tabItem: T, tabKey: string) => ReactNode",
     "summary": [
       {
         "kind": "text",
@@ -7486,7 +7508,6 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-
 
 
 
