@@ -1,5 +1,19 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.9
+
+### Patch Changes
+
+- Add DeferredComponent usage guidance, API references, example sources, and component selection routing. ([#301](https://github.com/lynx-family/lynx-ui/pull/301))
+
+- Add composable TabGroup primitives for tab navigation and animated indicators. ([#273](https://github.com/lynx-family/lynx-ui/pull/273))
+
+- Add a data-driven ViewPager with generated native page items, exposure-driven lazy rendering, native-ref imperative selection, shared and per-item native props, and a root `id`. ([#277](https://github.com/lynx-family/lynx-ui/pull/277))
+
+- Add ScrollCoordinator with collapsible headers, persistent toolbars, nested scrolling, and whole-page or per-page refresh using the public native elements. Align refresh configuration, callbacks, and start/finish methods with FeedList while keeping the implementation independent. Include aggregate exports, API documentation, and component guidance. ([#323](https://github.com/lynx-family/lynx-ui/pull/323))
+
+- Add TabsPanel with ViewPager integration for synchronized tab selection and swipeable content. ([#290](https://github.com/lynx-family/lynx-ui/pull/290))
+
 ## 3.133.8
 
 ### Patch Changes

@@ -1,5 +1,48 @@
 # @lynx-js/lynx-ui
 
+## 3.139.0
+
+### Minor Changes
+
+- Export DeferredComponent and its props and ref types from the aggregate package. ([#301](https://github.com/lynx-family/lynx-ui/pull/301))
+
+- Export TabGroup primitives from the aggregate lynx-ui package. ([#273](https://github.com/lynx-family/lynx-ui/pull/273))
+
+- Export ViewPager and its public types from the aggregate lynx-ui package. ([#277](https://github.com/lynx-family/lynx-ui/pull/277))
+
+- Export ScrollCoordinator and its public types from the aggregate package. ([#323](https://github.com/lynx-family/lynx-ui/pull/323))
+
+### Patch Changes
+
+- Export the ViewPager-backed TabsPanel from the aggregate lynx-ui package. ([#290](https://github.com/lynx-family/lynx-ui/pull/290))
+
+- Updated dependencies [[`0faac11`](https://github.com/lynx-family/lynx-ui/commit/0faac11a4bf265aef9ab00d84a9b93de029c6b74), [`4588802`](https://github.com/lynx-family/lynx-ui/commit/4588802388d8f2b04b2819b50cd165432e8bcdd5), [`1a4ad19`](https://github.com/lynx-family/lynx-ui/commit/1a4ad190993d57425b4c377a7dd63882cc65a8d2), [`18d4559`](https://github.com/lynx-family/lynx-ui/commit/18d4559bde1fff0f316d45f43c1eb47b935f9557), [`1a4ad19`](https://github.com/lynx-family/lynx-ui/commit/1a4ad190993d57425b4c377a7dd63882cc65a8d2), [`e926e76`](https://github.com/lynx-family/lynx-ui/commit/e926e76b8941a8bd4b8948c2b65412304d29eb98), [`e4f241f`](https://github.com/lynx-family/lynx-ui/commit/e4f241ff177faa3bbeaf6226b32337c59abfc76d), [`dde9dd8`](https://github.com/lynx-family/lynx-ui/commit/dde9dd84d41c19ff3a5d126a0479cf1d117da644), [`7be1704`](https://github.com/lynx-family/lynx-ui/commit/7be170409acf1720185c1108430fb26da7e613d5)]:
+  - @lynx-js/lynx-ui-checkbox@3.139.0
+  - @lynx-js/lynx-ui-deferred-component@3.139.0
+  - @lynx-js/lynx-ui-tab-group@3.139.0
+  - @lynx-js/lynx-ui-view-pager@3.139.0
+  - @lynx-js/lynx-ui-common@3.139.0
+  - @lynx-js/lynx-ui-list@3.139.0
+  - @lynx-js/lynx-ui-scroll-view@3.139.0
+  - @lynx-js/lynx-ui-feed-list@3.139.0
+  - @lynx-js/lynx-ui-input@3.139.0
+  - @lynx-js/lynx-ui-sheet@3.139.0
+  - @lynx-js/lynx-ui-scroll-coordinator@3.139.0
+  - @lynx-js/lynx-ui-swiper@3.139.0
+  - @lynx-js/lynx-ui-presence@3.139.0
+  - @lynx-js/lynx-ui-form@3.139.0
+  - @lynx-js/lynx-ui-button@3.139.0
+  - @lynx-js/lynx-ui-dialog@3.139.0
+  - @lynx-js/lynx-ui-draggable@3.139.0
+  - @lynx-js/lynx-ui-input-otp@3.139.0
+  - @lynx-js/lynx-ui-lazy-component@3.139.0
+  - @lynx-js/lynx-ui-popover@3.139.0
+  - @lynx-js/lynx-ui-radio-group@3.139.0
+  - @lynx-js/lynx-ui-slider@3.139.0
+  - @lynx-js/lynx-ui-sortable@3.139.0
+  - @lynx-js/lynx-ui-swipe-action@3.139.0
+  - @lynx-js/lynx-ui-switch@3.139.0
+
 ## 3.138.0
 
 ### Minor Changes

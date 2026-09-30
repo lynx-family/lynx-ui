@@ -1,5 +1,16 @@
 # @lynx-js/lynx-ui-presence
 
+## 3.139.0
+
+### Minor Changes
+
+- Add the canonical `PresenceUIVariants` type name and deprecate the previous `PresenceUiVariants` alias. ([#333](https://github.com/lynx-family/lynx-ui/pull/333))
+
+### Patch Changes
+
+- Updated dependencies [[`1a4ad19`](https://github.com/lynx-family/lynx-ui/commit/1a4ad190993d57425b4c377a7dd63882cc65a8d2)]:
+  - @lynx-js/lynx-ui-common@3.139.0
+
 ## 3.137.0
 
 ### Patch Changes
