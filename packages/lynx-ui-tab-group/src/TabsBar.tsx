@@ -7,7 +7,11 @@ import { log, useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
 import { clsx } from 'clsx'
 
-import { TabsContext, useTabsRootContext } from './TabsContext'
+import {
+  TabsContext,
+  TabsItemKeyContext,
+  useTabsRootContext,
+} from './TabsContext'
 import type { TabsBarProps } from './types'
 
 import './styles.css'
@@ -27,10 +31,10 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
     selectTabByIndex,
   } = useTabsRootContext()
 
-  const tabKeys: string[] = useMemo(() => data.map(item => getTabKey(item)), [
-    data,
-    getTabKey,
-  ])
+  const tabKeys: string[] = useMemo(
+    () => data.map((item, index) => getTabKey?.(item, index) ?? String(index)),
+    [data, getTabKey],
+  )
 
   const selectTab = useMemoizedFn((tabsKey: string) => {
     const index = tabKeys.indexOf(tabsKey)
@@ -46,7 +50,15 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
   // children: Indicator
   // renderedChildren: TabItem
   const renderedChildren = useMemo(
-    () => data.map((item, index) => renderTabItem?.(item, tabKeys[index])),
+    () =>
+      data.map((item, index) => (
+        <TabsItemKeyContext.Provider
+          key={tabKeys[index]}
+          value={tabKeys[index]}
+        >
+          {renderTabItem?.(item, index)}
+        </TabsItemKeyContext.Provider>
+      )),
     [data, renderTabItem, tabKeys],
   )
 

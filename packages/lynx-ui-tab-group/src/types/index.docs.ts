@@ -156,13 +156,14 @@ export interface TabsBarProps<T>
    */
   data: T[]
   /**
-   * Return a stable, unique key for each tab.
+   * Return a stable, unique key for each tab. When omitted, the item index is
+   * used. Provide this function when tabs can be inserted, removed, or reordered.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 返回每个 Tab 的稳定且唯一的键。
+   * @zh 返回每个 Tab 的稳定唯一键。省略时使用索引；当标签可能插入、删除或重排时请提供此函数。
    */
-  getTabKey: (tabItem: T) => string
+  getTabKey?: (tabItem: T, index: number) => string
   /**
    * children
    * @Android
@@ -172,13 +173,13 @@ export interface TabsBarProps<T>
    */
   children?: ReactNode
   /**
-   * The function used to render each tab item.
+   * Render each tab item. TabsItem reads its key from TabsBar automatically.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 用于渲染每一个 Tab 的函数。
+   * @zh 渲染每个 Tab 项。TabsItem 会自动从 TabsBar 读取其键。
    */
-  renderTabItem?: (tabItem: T, tabKey: string) => ReactNode
+  renderTabItem?: (tabItem: T, index: number) => ReactNode
 }
 
 export interface TabItemProps extends
@@ -188,13 +189,14 @@ export interface TabItemProps extends
   >
 {
   /**
-   * The unique key of the tab item.
-   * @zh Tab 项的唯一键。
+   * TabsBar supplies this automatically to items rendered by renderTabItem.
+   * Set it for manually rendered items, matching the key derived from data.
+   * @zh renderTabItem 渲染的 Tab 项会自动从 TabsBar 获取此键。手动渲染时需提供与数据对应的键。
    * @Android
    * @iOS
    * @Harmony
    */
-  tabKey: string
+  tabKey?: string
 }
 
 export type TabsPanelRef = ViewPagerRef

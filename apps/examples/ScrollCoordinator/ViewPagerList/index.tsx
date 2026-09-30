@@ -63,12 +63,8 @@ function App() {
                     tabsItemWrapperClass='sc-composed-tabs-items'
                     data={sections}
                     getTabKey={section => section.id}
-                    renderTabItem={(section, tabKey) => (
-                      <TabsItem
-                        key={tabKey}
-                        tabKey={tabKey}
-                        className='sc-tab'
-                      >
+                    renderTabItem={section => (
+                      <TabsItem className='sc-tab'>
                         <text
                           className={section.id === sections[pageIndex].id
                             ? 'sc-tab-label sc-selected'

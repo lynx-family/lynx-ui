@@ -26,14 +26,10 @@ export function App() {
           data={tabs}
           getTabKey={item => item.getTabKey()}
           className='tabs'
-          renderTabItem={(tabItemData, tabKey) => (
-            <TabsItem
-              key={tabKey}
-              className='tab-item'
-              tabKey={tabKey}
-            >
+          renderTabItem={tabItemData => (
+            <TabsItem className='tab-item'>
               <text
-                className={tabKey
+                className={tabItemData.getTabKey()
                     === tabs[selectedIndex]?.getTabKey()
                   ? 'tab-label selected'
                   : 'tab-label'}

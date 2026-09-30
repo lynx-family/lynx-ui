@@ -29,15 +29,11 @@ export function App() {
           getTabKey={item => item.getTabKey()}
           className='tabs'
           tabsItemWrapperClass='tab-row'
-          renderTabItem={(item, tabKey) => {
-            const selected = tabKey === pages[selectedIndex]?.id
+          renderTabItem={item => {
+            const selected = item.getTabKey() === pages[selectedIndex]?.id
 
             return (
-              <TabsItem
-                key={tabKey}
-                className='tab-item'
-                tabKey={tabKey}
-              >
+              <TabsItem className='tab-item'>
                 <text
                   className={selected
                     ? 'tab-label selected'

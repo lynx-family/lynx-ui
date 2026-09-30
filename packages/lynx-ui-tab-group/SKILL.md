@@ -9,12 +9,12 @@
 ```tsx
 import { TabsBar, TabsIndicator, TabsItem, TabsPanel, TabsRoot } from '@lynx-js/lynx-ui'
 
-const tabs = [{ id: 'home', label: 'Home' }]
+const tabs = ['Home', 'Profile']
 
 <TabsRoot>
-  <TabsBar data={tabs} getTabKey={item => item.id} renderTabItem={(item, tabKey) => (
-    <TabsItem key={tabKey} tabKey={tabKey}>
-      <text>{item.label}</text>
+  <TabsBar data={tabs} renderTabItem={item => (
+    <TabsItem>
+      <text>{item}</text>
     </TabsItem>
   )}>
     <TabsIndicator />
@@ -37,7 +37,7 @@ layout and visual treatment, and whether content should use the synchronized
 
 ## Best Practices
 
-- Return a stable, unique value for every item from `getTabKey`.
+- Provide `getTabKey` with a stable, unique value when tabs can be inserted, removed, or reordered.
 - Render `TabsIndicator` as a child of `TabsBar`.
 - Use `TabsPanel` for synchronized swipeable content, or `onTabChanged` to coordinate content rendered elsewhere.
 - Configure `indicatorAnimation` on `TabsRoot` for custom indicator motion.

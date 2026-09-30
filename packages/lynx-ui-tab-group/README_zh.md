@@ -18,20 +18,16 @@ import {
   TabsItem,
   TabsRoot,
 } from '@lynx-js/lynx-ui'
-const tabs = [
-  { id: 'home', label: '首页' },
-  { id: 'profile', label: '个人资料' },
-]
+const tabs = ['首页', '个人资料']
 
 export function App() {
   return (
     <TabsRoot>
       <TabsBar
         data={tabs}
-        getTabKey={item => item.id}
-        renderTabItem={(item, tabKey) => (
-          <TabsItem key={tabKey} tabKey={tabKey}>
-            <text>{item.label}</text>
+        renderTabItem={item => (
+          <TabsItem>
+            <text>{item}</text>
           </TabsItem>
         )}
       >
