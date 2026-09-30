@@ -11,7 +11,7 @@ const defaultConfig = exampleConfig(
     ViewPagerAutoHeight: './AutoHeight/index.tsx',
     ViewPagerDynamicHeight: './DynamicHeight/index.tsx',
     ViewPagerNestedList: './NestedList/index.tsx',
-    ViewPagerPresentation: './Presentation/index.tsx',
+    ViewPagerShowcase: './Showcase/index.tsx',
   },
 )
 

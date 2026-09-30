@@ -27,6 +27,7 @@ const examplePackages = [
   '@lynx-example/lynx-ui-list',
   '@lynx-example/lynx-ui-popover',
   '@lynx-example/lynx-ui-radio-group',
+  '@lynx-example/lynx-ui-scroll-coordinator',
   '@lynx-example/lynx-ui-scroll-view',
   '@lynx-example/lynx-ui-sheet',
   '@lynx-example/lynx-ui-slider',

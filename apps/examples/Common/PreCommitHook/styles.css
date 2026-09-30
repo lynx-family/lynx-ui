@@ -2,8 +2,10 @@
 
 .demo-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   width: 100%;
   height: 100%;
   background-color: var(--canvas);
@@ -21,4 +23,65 @@
 .box-text {
   color: var(--primary-content);
   font-size: 24px;
+}
+
+.tap-hint {
+  color: var(--content-muted);
+  font-size: 14px;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.legend-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-swatch-original {
+  background-color: var(--primary);
+}
+
+.legend-swatch-pre-commit {
+  background-color: #00d0f1;
+}
+
+.legend-label {
+  color: var(--content);
+  font-size: 13px;
+}
+
+.redo-button {
+  width: 80%;
+  max-width: 240px;
+  height: 44px;
+  margin-top: 8px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background-color: var(--neutral-ambient);
+}
+
+.redo-button.ui-active {
+  background-color: var(--neutral-faint);
+}
+
+.redo-button-label {
+  color: var(--content);
+  font-size: 14px;
+  font-weight: 600;
 }

@@ -4,15 +4,13 @@
  * Layout
  * ========================= */
 
-.container {
+.demo-container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 48px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 48px 16px 64px;
 }
 
 .canvas {
@@ -103,10 +101,14 @@
   border-width: 1px;
   border-style: dotted;
   border-color: var(--line);
-  color: var(--content-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.info-text {
+  color: var(--content-subtle);
+  font-size: 14px;
 }
 
 /* =========================

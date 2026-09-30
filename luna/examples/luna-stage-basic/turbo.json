@@ -19,6 +19,7 @@
         "@lynx-example/lynx-ui-list#build",
         "@lynx-example/lynx-ui-popover#build",
         "@lynx-example/lynx-ui-radio-group#build",
+        "@lynx-example/lynx-ui-scroll-coordinator#build",
         "@lynx-example/lynx-ui-scroll-view#build",
         "@lynx-example/lynx-ui-sheet#build",
         "@lynx-example/lynx-ui-slider#build",

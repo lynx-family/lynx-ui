@@ -5,41 +5,45 @@
 import { root, useState } from '@lynx-js/react'
 
 import { TabsBar, TabsIndicator, TabsItem, TabsRoot } from '@lynx-js/lynx-ui'
-import type { TabsData } from '@lynx-js/lynx-ui'
 
+import { tabs } from './data'
 import './index.css'
 
 export function App() {
-  const tabsArray = ['Home', 'Discover', 'Messages', 'Profile']
-  const [tabs] = useState<TabsData<string>[]>(
-    Array.from({ length: tabsArray.length }, (_, index) => ({
-      tabItem: tabsArray[index],
-      getTabKey: () => tabsArray[index],
-    })),
-  )
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   return (
-    <view className='tab-group-demo-basic lunaris-dark'>
-      <text className='tab-group-demo-basic__title'>TabGroup</text>
+    <view className='demo-container lunaris-dark'>
+      <text className='caption'>Basic tab selection</text>
       <TabsRoot
         onClickItem={index => console.info('tabs click', index)}
-        onTabChanged={index => console.info('tabs changed', index)}
+        onTabChanged={index => {
+          setSelectedIndex(index)
+          console.info('tabs changed', index)
+        }}
       >
         <TabsBar
           data={tabs}
-          className='tab-group-demo-basic__tabs'
-          renderTabItem={(tabItemData: TabsData<string>) => (
+          className='tabs'
+          renderTabItem={tabItemData => (
             <TabsItem
               key={tabItemData.getTabKey()}
-              className='tab-group-demo-basic__tab-item'
+              className='tab-item'
               tabKey={tabItemData.getTabKey()}
             >
-              <text>{tabItemData.tabItem}</text>
+              <text
+                className={tabItemData.getTabKey()
+                    === tabs[selectedIndex]?.getTabKey()
+                  ? 'tab-label selected'
+                  : 'tab-label'}
+              >
+                {tabItemData.tabItem}
+              </text>
             </TabsItem>
           )}
         >
-          <TabsIndicator className='tab-group-demo-basic__indicator'>
-            <view className='tab-group-demo-basic__indicator-line' />
+          <TabsIndicator className='indicator'>
+            <view className='indicator-line' />
           </TabsIndicator>
         </TabsBar>
       </TabsRoot>

@@ -12,12 +12,13 @@ import {
   KeyboardAwareTrigger,
 } from '@lynx-js/lynx-ui'
 import type {
-  InputOTPInputType,
   InputOTPLength,
   InputOTPRenderProps,
   InputOTPSlotRenderProps,
 } from '@lynx-js/lynx-ui'
 
+import { INPUT_TYPE_FIXTURES } from './data'
+import type { InputTypeFixture } from './data'
 import './index.css'
 
 interface SlotSetProps {
@@ -33,7 +34,10 @@ function SlotSet({ length, masked = false }: SlotSetProps) {
       index={index}
     >
       {masked
-        ? ({ filled }) => filled ? <text>•</text> : null
+        ? ({ filled }) =>
+          filled
+            ? <text className='slot-character'>•</text>
+            : null
         : undefined}
     </InputOTPSlot>
   ))
@@ -46,14 +50,14 @@ function renderOTPSlot({
   filled,
 }: InputOTPSlotRenderProps) {
   if (filled) {
-    return <text>{char}</text>
+    return <text className='slot-character'>{char}</text>
   }
 
   if (focused) {
-    return <view />
+    return <view className='caret' />
   }
 
-  return <text className='render-prop-placeholder'>{index + 1}</text>
+  return <text className='slot-placeholder'>{index + 1}</text>
 }
 
 function renderOTPField({
@@ -65,7 +69,7 @@ function renderOTPField({
 }: InputOTPRenderProps) {
   return (
     <>
-      <view className='otp-field render-prop-slots'>
+      <view className='otp-field slot-row'>
         {Array.from({ length }, (_, index) => (
           <InputOTPSlot
             key={index}
@@ -76,7 +80,7 @@ function renderOTPField({
           </InputOTPSlot>
         ))}
       </view>
-      <text className='render-prop-meta'>
+      <text className='render-meta'>
         {`${value.length}/${length} · ${inputType} · ${
           focused ? 'focused' : 'blurred'
         } · ${complete ? 'complete' : 'incomplete'}`}
@@ -85,22 +89,16 @@ function renderOTPField({
   )
 }
 
-interface TypeRowProps {
-  defaultValue: string
-  inputType: InputOTPInputType
-  label: string
-}
-
 function TypeRow({
   defaultValue,
   inputType,
   label,
-}: TypeRowProps) {
+}: InputTypeFixture) {
   return (
     <view className='type-row'>
       <text className='row-label'>{label}</text>
       <InputOTP
-        className='otp-field otp-field--compact'
+        className='otp-field compact'
         defaultValue={defaultValue}
         inputType={inputType}
         length={4}
@@ -117,21 +115,21 @@ function App() {
   const [keyboardValue, setKeyboardValue] = useState('')
 
   return (
-    <view className='cap-page lunaris-dark'>
+    <view className='demo-container lunaris-dark'>
       <KeyboardAwareRoot androidStatusBarPlusBottomBarHeight={74}>
         <KeyboardAwareResponder
           as='ScrollView'
-          className='cap-scroll'
+          className='scroll'
           scrollviewId='input-otp-capabilities'
         >
-          <view className='cap-content'>
-            <text className='cap-title'>InputOTP capabilities</text>
-            <text className='cap-description'>
+          <view className='content'>
+            <text className='page-title'>InputOTP capabilities</text>
+            <text className='page-description'>
               Headless composition for verification codes and PINs.
             </text>
 
             <KeyboardAwareTrigger offset={0}>
-              <view className='cap-section'>
+              <view className='section'>
                 <view className='section-heading'>
                   <text className='section-title'>
                     Controlled numeric value
@@ -159,33 +157,21 @@ function App() {
             </KeyboardAwareTrigger>
 
             <KeyboardAwareTrigger offset={0}>
-              <view className='cap-section'>
+              <view className='section'>
                 <text className='section-title'>Accepted character sets</text>
-                <TypeRow
-                  defaultValue='AB-cd1'
-                  inputType='alphabetic'
-                  label='Alphabetic'
-                />
-                <TypeRow
-                  defaultValue='6a51.4'
-                  inputType='numeric'
-                  label='Numeric'
-                />
-                <TypeRow
-                  defaultValue='A1-b2'
-                  inputType='alphanumeric'
-                  label='Alphanumeric'
-                />
+                {INPUT_TYPE_FIXTURES.map((fixture) => (
+                  <TypeRow key={fixture.inputType} {...fixture} />
+                ))}
               </view>
             </KeyboardAwareTrigger>
 
             <KeyboardAwareTrigger offset={0}>
-              <view className='cap-section'>
+              <view className='section'>
                 <text className='section-title'>
                   Field and slot render props
                 </text>
                 <InputOTP
-                  className='render-prop-field'
+                  className='render-field'
                   defaultValue='A1'
                   inputType='alphanumeric'
                   length={5}
@@ -196,7 +182,7 @@ function App() {
             </KeyboardAwareTrigger>
 
             <KeyboardAwareTrigger offset={0}>
-              <view className='cap-section'>
+              <view className='section'>
                 <text className='section-title'>
                   Disabled and invalid states
                 </text>
@@ -205,7 +191,7 @@ function App() {
                     <text className='row-label'>Disabled</text>
                     <InputOTP
                       disabled
-                      className='otp-field otp-field--compact'
+                      className='otp-field compact'
                       defaultValue='6514'
                       length={4}
                     >
@@ -216,7 +202,7 @@ function App() {
                     <text className='row-label error-text'>Invalid</text>
                     <InputOTP
                       invalid
-                      className='otp-field otp-field--compact'
+                      className='otp-field compact'
                       defaultValue='6174'
                       length={4}
                     >
@@ -228,12 +214,12 @@ function App() {
             </KeyboardAwareTrigger>
 
             <KeyboardAwareTrigger offset={0}>
-              <view className='cap-section'>
+              <view className='section'>
                 <text className='section-title'>Masking and separators</text>
                 <view className='type-row'>
                   <text className='row-label'>Masked</text>
                   <InputOTP
-                    className='otp-field otp-field--compact'
+                    className='otp-field compact'
                     defaultValue='6514'
                     length={4}
                   >
@@ -243,7 +229,7 @@ function App() {
                 <view className='type-row'>
                   <text className='row-label'>Grouped</text>
                   <InputOTP
-                    className='otp-field otp-field--grouped'
+                    className='otp-field grouped'
                     defaultValue='651468'
                     length={6}
                   >
@@ -279,7 +265,7 @@ function App() {
             </KeyboardAwareTrigger>
 
             <KeyboardAwareTrigger offset={0}>
-              <view className='cap-section'>
+              <view className='section'>
                 <view className='section-heading'>
                   <text className='section-title'>
                     Keyboard avoidance in ScrollView

@@ -29,7 +29,7 @@ export function OptionChipRow<T extends number | string>({
         return (
           <Button
             key={getKey?.(option, index) ?? `option-${String(option)}-${index}`}
-            className={clsx('option-chip', selected && 'option-chip--selected')}
+            className={clsx('option-chip', selected && 'selected')}
             onClick={() => {
               onSelect(option, index)
             }}
@@ -37,7 +37,7 @@ export function OptionChipRow<T extends number | string>({
             <text
               className={clsx(
                 'option-chip-label',
-                selected && 'option-chip-label--selected',
+                selected && 'selected',
               )}
             >
               {getLabel?.(option, index) ?? String(option)}

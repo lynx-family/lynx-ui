@@ -6,71 +6,49 @@ import { root, useState } from '@lynx-js/react'
 
 import { Button, DeferredComponent } from '@lynx-js/lynx-ui'
 
+import { ComparisonPanel, DeferredPlaceholder, MountedContent } from './Preview'
 import '../shared/base.css'
 
-/** Creates a larger subtree so the example can demonstrate deferred mounting. */
-function Content() {
-  return (
-    <view className='deferred-demo-content'>
-      <text className='deferred-demo-label'>Content mounted</text>
-      <view className='deferred-demo-cells'>
-        {Array.from(
-          { length: 300 },
-          (_, index) => (
-            <view key={index} flatten={false} className='deferred-demo-cell' />
-          ),
-        )}
-      </view>
-    </view>
-  )
-}
-
-/** Compares one-frame deferral with immediate rendering and allows replaying both. */
+/** Compares one-frame deferral with immediate rendering. */
 function App() {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(true)
 
   return (
-    <view className='deferred-demo-page lunaris-dark'>
-      <text className='deferred-demo-title'>Deferred content</text>
-      <text className='deferred-demo-description'>
-        Show both panels to compare the default one-frame delay with immediate
-        rendering. Hide and show them to replay.
-      </text>
-      <Button
-        className='deferred-demo-button'
-        onClick={() => setVisible((value) => !value)}
-      >
-        <text className='deferred-demo-button-label'>
-          {visible ? 'Hide content' : 'Show content'}
-        </text>
-      </Button>
-      <view className='deferred-demo-panel'>
-        <text className='deferred-demo-label'>Default: one frame</text>
-        <view className='deferred-demo-preview'>
-          {visible && (
-            <DeferredComponent
-              estimatedStyle={{ width: '100%', height: '160px' }}
-              placeholder={
-                <view className='deferred-demo-placeholder'>
-                  <text className='deferred-demo-description'>
-                    Waiting for the first layout
-                  </text>
-                </view>
-              }
-            >
-              <Content />
-            </DeferredComponent>
-          )}
+    <view className='demo-container lunaris-dark luna-gradient-berry'>
+      <view className='canvas'>
+        <view className='header'>
+          <text className='title'>Deferred mount</text>
+          <text className='description'>
+            Compare the default delay with immediate rendering.
+          </text>
         </view>
-      </view>
-      <view className='deferred-demo-panel'>
-        <text className='deferred-demo-label'>Immediate: zero frames</text>
-        <view className='deferred-demo-preview'>
-          {visible && (
-            <DeferredComponent delayFrames={0}>
-              <Content />
-            </DeferredComponent>
-          )}
+        <Button
+          className='action-button'
+          onClick={() => setVisible((value) => !value)}
+        >
+          <text className='action-button-label'>
+            {visible ? 'Hide content' : 'Show content'}
+          </text>
+        </Button>
+        <view className='comparison'>
+          <ComparisonPanel label='Default' meta='1 frame'>
+            {visible && (
+              <DeferredComponent
+                estimatedStyle={{ width: '100%', height: '100%' }}
+                placeholder={<DeferredPlaceholder />}
+              >
+                <MountedContent />
+              </DeferredComponent>
+            )}
+          </ComparisonPanel>
+
+          <ComparisonPanel label='Immediate' meta='0 frames'>
+            {visible && (
+              <DeferredComponent delayFrames={0}>
+                <MountedContent />
+              </DeferredComponent>
+            )}
+          </ComparisonPanel>
         </view>
       </view>
     </view>

@@ -8,7 +8,7 @@ import { ViewPager } from '@lynx-js/lynx-ui'
 import type { ViewPagerOffsetChangeEvent } from '@lynx-js/lynx-ui'
 
 import { pages } from './data'
-import { PresentationCard } from './PresentationCard'
+import { ShowcaseCard } from './ShowcaseCard'
 import './index.css'
 
 function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
@@ -24,7 +24,7 @@ function handleOffsetChangeMT(event: ViewPagerOffsetChangeEvent) {
       * (pages[index + 1].pagerHeight - pages[index].pagerHeight)
 
   lynx
-    .querySelector('#presentation-pager')
+    .querySelector('#showcase-pager')
     ?.setStyleProperty('height', `${height}px`)
 }
 
@@ -37,11 +37,11 @@ function App() {
         initialSelectIndex={0}
         className='view-pager'
         itemClassName='view-pager-item'
-        id='presentation-pager'
+        id='showcase-pager'
         style={{ height: `${pages[0].pagerHeight}px` }}
         main-thread:onOffsetChange={handleOffsetChangeMT}
       >
-        {page => <PresentationCard page={page} />}
+        {page => <ShowcaseCard page={page} />}
       </ViewPager>
     </view>
   )

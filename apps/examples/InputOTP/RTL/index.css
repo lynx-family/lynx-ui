@@ -1,11 +1,12 @@
+@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
 
-.rtl-page {
+.rtl {
   direction: rtl;
   background-color: var(--canvas-ambient);
 }
 
-.rtl-title {
+.title {
   color: var(--content);
   font-size: 24px;
   font-weight: 700;
@@ -13,7 +14,7 @@
   text-align: right;
 }
 
-.rtl-description {
+.description {
   margin-top: 8px;
   margin-bottom: 24px;
   color: var(--content-subtle);

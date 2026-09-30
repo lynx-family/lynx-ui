@@ -7,13 +7,11 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 const defaultConfig = exampleConfig(
   {
     TabGroupBasic: './Basic/index.tsx',
-    TabGroupDifferentWidth: './DifferentWidth/index.tsx',
-    TabGroupFirstScreenIndicator: './FirstScreenIndicator/index.tsx',
-    TabGroupInstantSelect: './InstantSelect/index.tsx',
-    TabGroupMotion: './Motion/index.tsx',
-    TabGroupOneTab: './OneTab/index.tsx',
+    TabGroupSizing: './Sizing/index.tsx',
+    TabGroupIndicatorMotion: './IndicatorMotion/index.tsx',
+    TabGroupInitialSelection: './InitialSelection/index.tsx',
+    TabGroupImperativeSelection: './ImperativeSelection/index.tsx',
     TabGroupPanel: './Panel/index.tsx',
-    TabGroupSelectTab: './SelectTab/index.tsx',
   },
 )
 

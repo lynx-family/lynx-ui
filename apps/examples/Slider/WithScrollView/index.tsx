@@ -11,11 +11,9 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
-import './index.css'
+import { formatPercentage } from '../shared/formatPercentage'
 
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
+import './index.css'
 
 const VERTICAL_ITEMS = Array.from({ length: 8 }, (_, i) => i)
 
@@ -25,7 +23,7 @@ function SliderCard({ index }: { index: number }) {
   return (
     <view className='card'>
       <text className='card-title'>Slider {index + 1}</text>
-      <text className='card-value'>{formatValue(value)}</text>
+      <text className='card-value'>{formatPercentage(value)}</text>
       <SliderRoot
         className='slider-root'
         defaultValue={0.5}

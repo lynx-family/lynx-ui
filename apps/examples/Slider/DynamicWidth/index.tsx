@@ -11,16 +11,13 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
+import { formatPercentage } from '../shared/formatPercentage'
 import { OptionChipRow } from '../shared/OptionChipRow'
 
 import './index.css'
 
 const WIDTH_RATIOS = [0.56, 0.68, 0.8, 0.92, 1]
 const DEMO_CONTAINER_HORIZONTAL_PADDING = 72
-
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
 
 function App() {
   const [widthIndex, setWidthIndex] = useState(2)
@@ -52,7 +49,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(value)} — {currentWidth}px
+              {formatPercentage(value)} — {currentWidth}px
             </text>
             <SliderRoot
               className='slider-root'

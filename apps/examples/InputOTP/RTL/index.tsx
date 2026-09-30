@@ -11,10 +11,10 @@ import './index.css'
 
 function App() {
   return (
-    <view className='demo-page rtl-page lunaris-dark'>
+    <view className='demo-container rtl lunaris-dark'>
       <view className='demo-card'>
-        <text className='rtl-title'>أدخل رمز التحقق</text>
-        <text className='rtl-description'>
+        <text className='title'>أدخل رمز التحقق</text>
+        <text className='description'>
           يرث الحقل اتجاه الصفحة من الحاوية الخارجية.
         </text>
 

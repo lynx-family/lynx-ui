@@ -10,7 +10,7 @@ const demosByPackage = {
     'ButtonPropagateTapEvent',
   ],
   checkbox: ['CheckboxBasic', 'CheckboxIndeterminate'],
-  common: ['PreCommitHook'],
+  common: ['CommonPreCommitHook'],
   deferredComponent: [
     'DeferredComponentBasic',
     'DeferredComponentDelayFrames',
@@ -55,6 +55,13 @@ const demosByPackage = {
     'PopoverCustomArrow',
   ],
   radioGroup: ['RadioGroupBasic', 'RadioGroupDisabled'],
+  scrollCoordinator: [
+    'ScrollCoordinatorList',
+    'ScrollCoordinatorViewPager',
+    'ScrollCoordinatorViewPagerList',
+    'ScrollCoordinatorRefreshCoordinator',
+    'ScrollCoordinatorRefreshPage',
+  ],
   scrollView: [
     'ScrollViewBasic',
     'ScrollViewBounces',
@@ -99,7 +106,8 @@ const demosByPackage = {
     'SwiperCustomTinder',
     'SwiperDifferentHeight',
     'SwiperBasicDynamic',
-    'SwiperEmptyDataBug',
+    // Debug-only examples are intentionally excluded from the public gallery.
+    // 'SwiperEmptyDataBug',
     'SwiperBasicUpdateSize',
     'SwiperWithGap',
     'SwiperBounces',
@@ -116,12 +124,11 @@ const demosByPackage = {
   switch: ['SwitchBasic', 'SwitchBasicTailwind', 'SwitchThemed'],
   tabGroup: [
     'TabGroupBasic',
-    'TabGroupDifferentWidth',
-    'TabGroupFirstScreenIndicator',
-    'TabGroupInstantSelect',
-    'TabGroupMotion',
-    'TabGroupOneTab',
-    'TabGroupSelectTab',
+    'TabGroupSizing',
+    'TabGroupIndicatorMotion',
+    'TabGroupInitialSelection',
+    'TabGroupImperativeSelection',
+    'TabGroupPanel',
   ],
   viewPager: [
     'ViewPagerBasic',
@@ -129,7 +136,7 @@ const demosByPackage = {
     'ViewPagerAutoHeight',
     'ViewPagerDynamicHeight',
     'ViewPagerNestedList',
-    'ViewPagerPresentation',
+    'ViewPagerShowcase',
   ],
 } as const
 

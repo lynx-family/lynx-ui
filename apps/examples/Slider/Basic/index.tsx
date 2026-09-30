@@ -11,11 +11,9 @@ import {
   SliderTrack,
 } from '@lynx-js/lynx-ui'
 
-import './index.css'
+import { formatPercentage } from '../shared/formatPercentage'
 
-function formatValue(value: number) {
-  return `${Math.round(value * 100)}%`
-}
+import './index.css'
 
 function App() {
   const [variantValue, setVariantValue] = useState(0.68)
@@ -32,7 +30,7 @@ function App() {
 
           <view className='row'>
             <text className='slider-label'>
-              {formatValue(variantValue)}
+              {formatPercentage(variantValue)}
             </text>
             <SliderRoot
               className='slider-root'
@@ -51,9 +49,9 @@ function App() {
           </view>
 
           <view className='row'>
-            <text className='slider-label disabled'>Readonly</text>
+            <text className='slider-label disabled'>Disabled</text>
             <SliderRoot
-              className='slider-root ui-disabled'
+              className='slider-root'
               defaultValue={0.45}
               disabled
             >
@@ -76,7 +74,7 @@ function App() {
 
           <view className='row rtl-card'>
             <text className='slider-label'>
-              {formatValue(rtlValue)}
+              {formatPercentage(rtlValue)}
             </text>
             <SliderRoot
               className='slider-root'

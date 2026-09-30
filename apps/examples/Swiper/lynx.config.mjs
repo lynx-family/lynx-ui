@@ -10,7 +10,8 @@ const defaultConfig = exampleConfig(
     SwiperCustomTinder: './CustomTinder/index.tsx',
     SwiperDifferentHeight: './DifferentHeight/index.tsx',
     SwiperBasicDynamic: './BasicDynamic/index.tsx',
-    SwiperEmptyDataBug: './EmptyDataBug/index.tsx',
+    // Debug-only examples are intentionally excluded from the public registry.
+    // SwiperEmptyDataBug: './EmptyDataBug/index.tsx',
     SwiperBasicUpdateSize: './BasicUpdateSize/index.tsx',
     SwiperWithGap: './WithGap/index.tsx',
     SwiperBounces: './Bounces/index.tsx',
