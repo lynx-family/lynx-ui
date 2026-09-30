@@ -24,17 +24,16 @@ export function App() {
       >
         <TabsBar
           data={tabs}
-          getTabKey={item => item.getTabKey()}
+          getTabKey={item => item.id}
           className='tabs'
-          renderTabItem={tabItemData => (
+          renderTabItem={item => (
             <TabsItem className='tab-item'>
               <text
-                className={tabItemData.getTabKey()
-                    === tabs[selectedIndex]?.getTabKey()
+                className={item.id === tabs[selectedIndex]?.id
                   ? 'tab-label selected'
                   : 'tab-label'}
               >
-                {tabItemData.tabItem}
+                {item.label}
               </text>
             </TabsItem>
           )}

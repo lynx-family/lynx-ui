@@ -2,11 +2,6 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { TabsData } from '@lynx-js/lynx-ui'
-
 import { moonPhases } from '../shared/moonPhases'
 
-export const tabs: TabsData<string>[] = moonPhases.map(phase => ({
-  tabItem: phase.label,
-  getTabKey: () => phase.id,
-}))
+export const tabs = [...moonPhases]
