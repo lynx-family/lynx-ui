@@ -1,5 +1,14 @@
 # @lynx-js/lynx-ui-swiper
 
+## 3.139.0
+
+### Patch Changes
+
+- Default the Swiper root view's `z-index` to `0` so z-indexed items remain in the wrapper event chain and directional gesture consumption works in custom mode. ([#310](https://github.com/lynx-family/lynx-ui/pull/310))
+
+- Updated dependencies [[`1a4ad19`](https://github.com/lynx-family/lynx-ui/commit/1a4ad190993d57425b4c377a7dd63882cc65a8d2)]:
+  - @lynx-js/lynx-ui-common@3.139.0
+
 ## 3.137.0
 
 ### Patch Changes
