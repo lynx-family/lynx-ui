@@ -3,6 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 import {
   runOnMainThread,
+  useContext,
   useEffect,
   useMainThreadRef,
   useMemo,
@@ -11,13 +12,30 @@ import {
 import { useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { LayoutChangeDetailEvent, MainThread } from '@lynx-js/types'
 
-import { useTabsContext, useTabsRootContext } from './TabsContext'
+import {
+  TabsItemKeyContext,
+  useTabsContext,
+  useTabsRootContext,
+} from './TabsContext'
 import type { TabItemProps } from './types'
 
 let nextTabRegistrationId = 0
 
 export const TabsItem = (props: TabItemProps) => {
-  const { style, className, tabKey, children, ...viewProps } = props
+  const { style, className, tabKey: explicitTabKey, children, ...viewProps } =
+    props
+  const inferredTabKey = useContext(TabsItemKeyContext)
+  if (
+    explicitTabKey !== undefined
+    && inferredTabKey !== undefined
+    && explicitTabKey !== inferredTabKey
+  ) {
+    throw new Error('TabsItem.tabKey must match the key from TabsBar')
+  }
+  const tabKey = explicitTabKey ?? inferredTabKey
+  if (tabKey === undefined) {
+    throw new Error('TabsItem requires tabKey outside TabsBar.renderTabItem')
+  }
   const { selectTab, tabKeyArray } = useTabsContext()
   const {
     tabsWidthMapMT,

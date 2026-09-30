@@ -46,6 +46,7 @@ interface TabsContextValue {
 }
 
 export const TabsContext = createContext<TabsContextValue | null>(null)
+export const TabsItemKeyContext = createContext<string | undefined>(undefined)
 
 export function useTabsContext() {
   const context = useContext(TabsContext)

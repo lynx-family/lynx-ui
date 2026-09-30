@@ -18,12 +18,7 @@ import {
   TabsItem,
   TabsRoot,
 } from '@lynx-js/lynx-ui'
-import type { TabsData } from '@lynx-js/lynx-ui'
-
-const tabs: TabsData<string>[] = [
-  { tabItem: 'Home', getTabKey: () => 'home' },
-  { tabItem: 'Profile', getTabKey: () => 'profile' },
-]
+const tabs = ['Home', 'Profile']
 
 export function App() {
   return (
@@ -31,8 +26,8 @@ export function App() {
       <TabsBar
         data={tabs}
         renderTabItem={item => (
-          <TabsItem key={item.getTabKey()} tabKey={item.getTabKey()}>
-            <text>{item.tabItem}</text>
+          <TabsItem>
+            <text>{item}</text>
           </TabsItem>
         )}
       >
