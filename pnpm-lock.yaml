@@ -1948,9 +1948,15 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 0.23.2(core-js@3.47.0)(typescript@5.9.3)
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.28
+      jsdom:
+        specifier: 'catalog:'
+        version: 25.0.1
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

@@ -22,6 +22,24 @@
 - **Animation Safety**: Handles animation/transition **start**, **end**, and **cancel** events to ensure state never stalls.
 - **Debugging**: Enable `debugLog={true}` on `PopoverRoot` to trace lifecycle state changes in the console.
 
+### Placement Variants
+
+- `PopoverPositioner`, `PopoverContent`, and `PopoverArrow` receive `ui-side-{top,right,bottom,left}` and `ui-align-{start,center,end}` classes.
+- The classes follow the resolved placement used by floating layout. Before layout resolves, they use the requested `placement`.
+- Placements without an alignment suffix, such as `top`, use `ui-align-center`.
+- Side values are physical directions. Only alignment uses `start` and `end`.
+- With `@lynx-js/tailwind-preset`, opt in to the value prefixes while retaining the default `ui` vocabulary:
+
+  ```ts
+  createLynxPreset({
+    lynxUIPlugins: {
+      uiVariants: {
+        prefixes: ['ui', 'ui-side', 'ui-align'],
+      },
+    },
+  })
+  ```
+
 ### Interactions
 
 - **Trigger**: Toggles visibility on click/tap.
