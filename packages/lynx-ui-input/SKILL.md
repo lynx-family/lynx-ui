@@ -310,13 +310,14 @@ confirmation, newline insertion, and blur behavior vary by platform, especially
 for TextArea; `confirm-enter` is not exposed by the wrapper. Use a separate
 submit control when a multiline editor needs an unambiguous submit action.
 
-**Q: Where are the clear button, error state, and `ui-focused` styles?**
+**Q: Where are the clear button, error state, and filled styles?**
 
-A: Input and TextArea expose neither children/render props nor typed `ui-*`
-variants in the current implementation. Compose controls and messages around
-the field, track focus with `onFocus` / `onBlur`, and style consumer-owned views.
-Do not assume the slot or state-variant APIs from InputOTP apply to these
-components.
+A: Input and TextArea expose `ui-focused` after native focus and until native
+blur, and `ui-readonly` while `readonly` is true. These classes style the native
+input node itself. The components do not expose children/render props, error
+state, clear controls, or `ui-filled`. Compose those behaviors around the input;
+filled state belongs to a future Field contract so wrappers, labels, and
+accessories can consume it consistently.
 
 ## 5. Sub Components
 

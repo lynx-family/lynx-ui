@@ -14,8 +14,10 @@ export {
 export type {
   InputProps,
   InputRef,
+  InputUIVariants,
   TextAreaProps,
   TextAreaRef,
+  TextAreaUIVariants,
   KeyboardAwareTriggerProps,
   KeyboardAwareResponderProps,
   KeyboardAwareRootProps,
