@@ -25,7 +25,7 @@ interface SortableOptionsType<T> {
   dirtyKeysRef: MainThreadRef<Record<string, boolean>>
   disabledKeysRef: MainThreadRef<Record<string, boolean>>
   onDragEnd?: (sortedKeyArray: SortableData<T>[]) => void
-  onDragStart?: () => void
+  onDragStart?: (sortingKey: string) => void
   debugLog?: boolean
 }
 
@@ -65,8 +65,8 @@ export function useSortable<T>(
     dirtyKeysRef.current[sortingKey] = true
   }, [itemMTSRefMap, dirtyKeysRef])
 
-  const handleDragStartJS = useCallback(() => {
-    onDragStart?.()
+  const handleDragStartJS = useCallback((sortingKey: string) => {
+    onDragStart?.(sortingKey)
   }, [onDragStart])
 
   const handleDragStart = useCallback(
@@ -76,7 +76,7 @@ export function useSortable<T>(
       event: MainThread.MouseEvent | MainThread.TouchEvent,
     ) => {
       'main thread'
-      runOnBackground(handleDragStartJS)()
+      runOnBackground(handleDragStartJS)(sortingKey)
       touchStartPoint.current = pagePoint
       changedKey.current.push(sortingKey)
       changeItemZIndex(10000, sortingKey)
