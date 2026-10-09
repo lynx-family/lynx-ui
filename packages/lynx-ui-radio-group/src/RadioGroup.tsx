@@ -38,6 +38,7 @@ export const RadioGroupRoot = (props: RadioGroupRootProps): ReactNode => {
   const {
     children,
     onValueChange,
+    onValueSelect,
     defaultValue,
     value,
     disabled = false,
@@ -57,12 +58,17 @@ export const RadioGroupRoot = (props: RadioGroupRootProps): ReactNode => {
     }
   })
 
+  const sendOnValueSelectEvent = useMemoizedFn((value: string) => {
+    onValueSelect?.(value)
+  })
+
   const handleValueChange = useCallback((value: string) => {
     if (!isControlled) {
       setUncontrolledValue(value)
     }
     sendOnValueChangeEvent(value)
-  }, [isControlled, sendOnValueChangeEvent])
+    sendOnValueSelectEvent(value)
+  }, [isControlled, sendOnValueChangeEvent, sendOnValueSelectEvent])
 
   useEffect(() => {
     sendOnValueChangeEvent(value ?? '')

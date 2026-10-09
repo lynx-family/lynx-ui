@@ -56,6 +56,16 @@ export interface RadioGroupRootProps {
    * @zh 选中状态改变时触发
    */
   onValueChange?: (value: string) => void
+  /**
+   * Called whenever an enabled Radio is selected through interaction, including
+   * repeated selections of the current value. Not called on mount or when the
+   * controlled value changes programmatically. Does not update a controlled value.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 交互选择未禁用的 Radio 时触发，包含重复选择当前值。挂载及受控值的程序化更新不会触发，也不会修改受控值。
+   */
+  onValueSelect?: (value: string) => void
 }
 
 /** Render state props passed to custom RadioGroup content.

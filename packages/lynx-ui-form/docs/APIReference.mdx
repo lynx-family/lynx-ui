@@ -533,6 +533,28 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
     "docTypeFallback": null
   },
   {
+    "name": "onValueSelect",
+    "type": "(value: string) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called whenever an enabled Radio is selected through interaction, including\nrepeated selections of the current value. Not called on mount or when the\ncontrolled value changes programmatically. Does not update a controlled value."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "交互选择未禁用的 Radio 时触发，包含重复选择当前值。挂载及受控值的程序化更新不会触发，也不会修改受控值。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
     "name": "checkboxProps",
     "type": "ViewProps",
     "summary": [
