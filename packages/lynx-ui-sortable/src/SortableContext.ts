@@ -10,18 +10,31 @@ import type { Point } from '@lynx-js/lynx-ui-common'
 import type { DraggableRef } from '@lynx-js/lynx-ui-draggable'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SortableData } from './types'
+export interface SortableRect {
+  height: number
+  width: number
+  top: number
+  left: number
+  bottom: number
+  right: number
+}
 
-interface SortableContextType<T = unknown> {
-  data: SortableData<T>[]
+export interface SortableContextType {
   isDragOverlay: boolean
+  resetItemVisualsRef: MutableRefObject<
+    Record<string, (() => void) | undefined>
+  >
   boundaryId?: string
   scrollableBoundaryId?: string
   scrollableBoundaryUpperEdgeRef?: MutableRefObject<boolean>
   scrollableBoundaryLowerEdgeRef?: MutableRefObject<boolean>
+  scrollableBoundaryRectRef?: MutableRefObject<SortableRect | null>
   scrollableScrollTopRef?: MutableRefObject<number>
   dragOverlayRefMap?: MutableRefObject<
     Record<string, MainThread.Element | null>
+  >
+  dragOverlayActivatorRefMap?: MutableRefObject<
+    Record<string, (() => void) | null>
   >
   dirtyKeysRef: MutableRefObject<Record<string, boolean>>
   disabledKeysRef: MutableRefObject<Record<string, boolean>>
@@ -39,6 +52,7 @@ interface SortableContextType<T = unknown> {
     refI: RefObject<MainThread.Element | null>,
     key: string,
   ) => void
+  clearDragOverlayRef: (key: string) => void
   handleDragStart: (
     pagePoint: Point,
     sortingKey: string,
@@ -52,13 +66,16 @@ interface SortableContextType<T = unknown> {
   handleDragEnd: (
     sortingKey: string,
     event: MainThread.MouseEvent | MainThread.TouchEvent,
-  ) => void
+  ) => boolean
 }
 
+// Only legacy geometry observers subscribe to ordering, not gesture owners.
+export const SortableOrderContext = createContext('[]')
+
 export const SortableContext = createContext<SortableContextType>({
-  data: [],
   isDragOverlay: false,
   debugLog: false,
+  resetItemVisualsRef: { current: {} },
   enableSorting: true,
   scrollableStickyUpperOffset: 0,
   scrollableStickyLowerOffset: 0,
@@ -68,7 +85,8 @@ export const SortableContext = createContext<SortableContextType>({
   setChildrenRef: noop,
   setChildrenMTSRef: noop,
   setDragOverlayRef: noop,
+  clearDragOverlayRef: noop,
   handleDragStart: noop,
   handleDragMove: noop,
-  handleDragEnd: noop,
+  handleDragEnd: () => false,
 })

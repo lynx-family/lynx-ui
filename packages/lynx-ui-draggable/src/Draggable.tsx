@@ -56,7 +56,7 @@ export const Draggable = forwardRef<NodesRef, DraggableProps>(
           MTSSetOtherStyles: utils.setStyleProperties,
         }
       },
-      [],
+      [utils],
     )
 
     return (
@@ -118,7 +118,7 @@ export const DraggableRoot = forwardRef<NodesRef, DraggableProps>(
           MTSSetOtherStyles: utils.setStyleProperties,
         }
       },
-      [],
+      [utils],
     )
 
     const draggableContextValue = useMemo(() => ({

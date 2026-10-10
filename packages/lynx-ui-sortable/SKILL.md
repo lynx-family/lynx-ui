@@ -80,6 +80,14 @@ function BasicSortable() {
 
 ## 3. Use Cases & Best Practices
 
+### Stable rendering during reorder
+
+Keep the render-prop callback stable with `useCallback` and preserve unchanged
+`SortableData` object identities when reordering. This lets Sortable reuse item
+subtrees and their gesture bindings. Replace the affected item object when its
+content changes; include external rendering dependencies in the callback's
+dependency list so content and disabled state do not become stale.
+
 ### Whole-row drag surface (default)
 
 ```tsx
