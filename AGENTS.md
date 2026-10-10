@@ -294,6 +294,17 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
 This project uses **Rslint** for JavaScript and TypeScript linting, a JSONC-capable lint check (`pnpm lint:json`) for JSON files, and **dprint** for formatting.
 The JSON check runs `eslint-plugin-jsonc` and CSpell through a standalone ESLint runner because Rslint does not support the JSONC parser.
 
+Keep the explicit JavaScript and test projects (`tsconfig.rslint-js.json` and
+`tsconfig.rslint-tests.json`) aligned with their lint scopes. Package build
+projects exclude tests and usually exclude JavaScript; without matching project
+information, type-aware rules can silently skip these files. Validate lint-rule
+migrations with both violation and valid-code fixtures, not only a green lint run.
+The local compatibility plugin preserves Biome's complex-array spelling policy;
+do not replace it with a stricter native array mode without checking valid cases.
+When adding an ordinary React workspace, include it in the dependency-check
+scope in `rslint.config.mjs`; ReactLynx's custom stable callbacks are not covered
+by that React-only compatibility scope.
+
 - Run checks: `pnpm check`
 - Run all lint checks: `pnpm lint`
 - Fix issues: `pnpm fix:all`

@@ -19,7 +19,7 @@ export async function detectOverflow(
     ...floating,
     x,
     y,
-    // eslint-disable-next-line unicorn-js/explicit-length-check -- numeric side index
+    // eslint-disable-next-line unicorn/explicit-length-check -- numeric side index
     ...(state.middlewareData.size
       ? {
         width: clamp(

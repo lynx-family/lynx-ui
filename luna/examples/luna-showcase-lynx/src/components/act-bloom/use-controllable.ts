@@ -5,7 +5,8 @@
 import { useEffect, useRef, useState } from '@lynx-js/react'
 import type { Dispatch, SetStateAction } from '@lynx-js/react'
 
-import { noop, useEffectEvent } from './use-effect-event'
+// This local helper is a stable callback, not React's restricted Effect Event.
+import { noop, useEffectEvent as useStableCallback } from './use-effect-event'
 
 function isUpdater<T>(v: SetStateAction<T>): v is (prev: T) => T {
   return typeof v === 'function'
@@ -29,7 +30,7 @@ function useControllable<T>({
 
   const isControlled = controlled !== undefined
 
-  const stableOnChange = useEffectEvent(onValueChange ?? noop)
+  const stableOnChange = useStableCallback(onValueChange ?? noop)
 
   const current = isControlled ? controlled : uncontrolled
 
@@ -56,7 +57,7 @@ function useUncontrolled<T>({
 }: Omit<UseControllableProps<T>, 'value'>) {
   const [current, setCurrent] = useState<T>(defaultValue)
   const prevRef = useRef(current)
-  const stableOnChange = useEffectEvent(onValueChange ?? noop)
+  const stableOnChange = useStableCallback(onValueChange ?? noop)
 
   useEffect(() => {
     if (prevRef.current !== current) {

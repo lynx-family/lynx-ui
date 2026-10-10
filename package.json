@@ -86,7 +86,7 @@
     "@lynx-js/react-rsbuild-plugin": "catalog:",
     "@rsbuild/plugin-react": "catalog:",
     "@rslib/core": "catalog:",
-    "@rslint/core": "^0.9.3",
+    "@rslint/core": "^0.9.5",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "2.1.9",

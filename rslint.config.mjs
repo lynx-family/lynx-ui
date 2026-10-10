@@ -22,6 +22,8 @@ import * as regexpPlugin from 'eslint-plugin-regexp'
 import unicornESLintPlugin from 'eslint-plugin-unicorn'
 import path from 'node:path'
 
+import biomeCompatPlugin from './tools/lint/biome-compat.mjs'
+
 const TYPESCRIPT_FILES = ['**/*.ts', '**/*.tsx']
 const JAVASCRIPT_FILES = ['**/*.{js,jsx,mjs,cjs}']
 const PROJECT_SERVICE_FILES = [
@@ -40,23 +42,13 @@ function scopeConfigs(configs, files, ignores = []) {
   }))
 }
 
-// The existing Unicorn configuration contains rules that are not all available
-// in Rslint 0.9.3. Keep the JavaScript implementation until native parity is
-// available.
+// Keep rules without equivalent native behavior on the JavaScript bridge.
 const unicornRules = {
   'unicorn-js/consistent-function-scoping': 'off',
-  'unicorn-js/explicit-length-check': 'error',
-  'unicorn-js/expiring-todo-comments': 'error',
   'unicorn-js/no-abusive-eslint-disable': 'error',
-  'unicorn-js/no-anonymous-default-export': 'error',
-  'unicorn-js/no-array-callback-reference': 'error',
   'unicorn-js/no-array-push-push': 'error',
-  'unicorn-js/no-console-spaces': 'error',
   'unicorn-js/no-hex-escape': 'error',
-  'unicorn-js/no-lonely-if': 'error',
-  'unicorn-js/no-negated-condition': 'error',
   'unicorn-js/no-nested-ternary': 'error',
-  'unicorn-js/no-new-array': 'error',
   'unicorn-js/no-instanceof-array': 'error',
   'unicorn-js/prefer-number-properties': 'off',
 }
@@ -96,6 +88,8 @@ export default defineConfig([
     '.codebase/**',
     '.vscode/**',
     '**/.turbo/**',
+    '**/.vite-temp/**',
+    '**/*.timestamp-*.mjs',
     'coverage/**',
     'output/**',
     'target/**',
@@ -215,10 +209,19 @@ export default defineConfig([
     rules: {
       'unicorn/empty-brace-spaces': 'error',
       'unicorn/error-message': 'error',
+      // Native date checking is opt-in; preserve eslint-plugin-unicorn's default.
+      'unicorn/expiring-todo-comments': ['error', { checkDates: true }],
+      'unicorn/explicit-length-check': 'error',
       'unicorn/new-for-builtins': 'error',
+      'unicorn/no-anonymous-default-export': 'error',
+      'unicorn/no-array-callback-reference': 'error',
       'unicorn/no-await-expression-member': 'error',
       'unicorn/no-await-in-promise-methods': 'error',
+      'unicorn/no-console-spaces': 'error',
       'unicorn/no-invalid-remove-event-listener': 'error',
+      'unicorn/no-lonely-if': 'error',
+      'unicorn/no-negated-condition': 'error',
+      'unicorn/no-new-array': 'error',
       'unicorn/no-useless-switch-case': 'error',
       'unicorn/prefer-array-flat-map': 'error',
       'unicorn/prefer-date-now': 'error',
@@ -246,6 +249,15 @@ export default defineConfig([
       'import/internal-regex': '^@(lynx-js)/',
     },
     rules: {
+      // The native resolver flags valid stylesheet imports, and the native
+      // default-member check differs on synthetic defaults such as react-dom.
+      // Disable these preset entries; their JavaScript equivalents run below.
+      'import/no-unresolved': 'off',
+      'import/no-named-as-default-member': 'off',
+      'import/export': 'error',
+      'import/no-named-as-default': 'warn',
+      'import/no-commonjs': 'error',
+      'import/consistent-type-specifier-style': 'warn',
       'import/no-cycle': 'error',
       'import/first': 'error',
       'import/newline-after-import': 'error',
@@ -268,14 +280,10 @@ export default defineConfig([
       'import/internal-regex': '^@(lynx-js)/',
     },
     rules: {
-      // These rules are not implemented natively yet. Keep their existing
-      // eslint-plugin-import behavior through Rslint's JavaScript bridge.
-      'import-js/export': 'error',
-      'import-js/no-named-as-default': 'warn',
+      // Keep resolver, synthetic-default and grouped ordering behavior until
+      // native implementations match the existing configuration.
       'import-js/no-named-as-default-member': 'warn',
-      'import-js/no-commonjs': 'error',
       'import-js/no-unresolved': ['error', { ignore: ['vscode'] }],
-      'import-js/consistent-type-specifier-style': 'warn',
       'import-js/order': [
         'error',
         {
@@ -403,15 +411,27 @@ export default defineConfig([
     },
   },
   {
+    files: ['**/*.{test,spec}.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
+    ignores: BIOME_RULE_IGNORES,
+    // Package build projects exclude tests. Supply types for the restored
+    // Biome equivalents without enabling the type-checked ESLint presets.
+    languageOptions: {
+      parserOptions: {
+        projectService: false,
+        project: ['./tsconfig.rslint-tests.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     files: TYPESCRIPT_FILES,
     ignores: BIOME_RULE_IGNORES,
     rules: {
-      // Rslint 0.9.3 can classify runtime const exports as type-only.
-      '@typescript-eslint/consistent-type-exports': 'off',
+      '@typescript-eslint/consistent-type-exports': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/adjacent-overload-signatures': 'error',
       // Biome permits both T[] and Array<T> for non-simple element types;
-      // Rslint's available modes require one spelling, so neither is equivalent.
+      // the compatibility plugin below preserves that policy.
       '@typescript-eslint/array-type': 'off',
       '@typescript-eslint/default-param-last': 'error',
       '@typescript-eslint/no-empty-function': 'error',
@@ -435,7 +455,16 @@ export default defineConfig([
       ],
       '@typescript-eslint/no-unused-vars': 'error',
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-use-before-define': 'off',
+      '@typescript-eslint/no-use-before-define': [
+        'error',
+        {
+          functions: false,
+          classes: false,
+          variables: false,
+          typedefs: false,
+          allowNamedExports: true,
+        },
+      ],
       '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/no-useless-empty-export': 'error',
       '@typescript-eslint/only-throw-error': 'error',
@@ -447,7 +476,16 @@ export default defineConfig([
       '@typescript-eslint/prefer-optional-chain': 'error',
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/no-floating-promises': 'off',
-      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+      // Biome's noConsoleLog does not reject debug, trace or other methods.
+      'no-console': 'off',
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'console',
+          property: 'log',
+          message: 'Use console.info instead.',
+        },
+      ],
       'default-param-last': 'error',
       'no-empty': 'error',
       'no-empty-static-block': 'error',
@@ -456,14 +494,35 @@ export default defineConfig([
     },
   },
   {
+    files: TYPESCRIPT_FILES,
+    ignores: BIOME_RULE_IGNORES,
+    plugins: { 'biome-compat': biomeCompatPlugin },
+    rules: { 'biome-compat/array-type': 'error' },
+  },
+  {
     files: JAVASCRIPT_FILES,
     ignores: BIOME_RULE_IGNORES,
-    // The native TypeScript optional-chain and for-of rules do not report on
-    // JavaScript files; keep those Biome gaps explicit until Rslint supports them.
+    plugins: ['@typescript-eslint'],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.rslint-js.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     rules: {
+      '@typescript-eslint/prefer-for-of': 'error',
+      '@typescript-eslint/prefer-optional-chain': 'error',
       'default-param-last': 'error',
       'no-throw-literal': 'error',
-      'no-use-before-define': ['error', { functions: false, classes: false }],
+      'no-use-before-define': [
+        'error',
+        {
+          functions: false,
+          classes: false,
+          variables: false,
+          allowNamedExports: true,
+        },
+      ],
       'no-useless-constructor': 'error',
       'require-await': 'error',
       'no-restricted-properties': [
@@ -478,6 +537,7 @@ export default defineConfig([
   },
   {
     files: ['**/*.{jsx,tsx}'],
+    ignores: BIOME_RULE_IGNORES,
     plugins: ['react'],
     rules: {
       'react/jsx-key': 'warn',
@@ -488,14 +548,26 @@ export default defineConfig([
     },
   },
   {
-    files: ['**/*.{jsx,tsx}'],
+    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+    ignores: BIOME_RULE_IGNORES,
     ...reactHooksPlugin.configs.recommended,
     rules: {
       ...reactHooksPlugin.configs.recommended.rules,
-      // Rslint reports 61 existing hooks while Biome reports only the one
-      // intentionally suppressed dynamic dependency list.
+      // ReactLynx's stable custom callbacks need a separate semantic migration.
+      // Restore the previous React dependency checks in the workspaces below.
       'react-hooks/exhaustive-deps': 'off',
     },
+  },
+  {
+    files: [
+      'luna/packages/luna-stage/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+      'luna/packages/luna-studio/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+      'luna/examples/luna-design-system/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+      'luna/examples/luna-showcase-studio/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+      'luna/examples/luna-stage-basic/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+      'luna/examples/luna-stage-motion/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+    ],
+    rules: { 'react-hooks/exhaustive-deps': 'error' },
   },
   {
     files: [
@@ -529,6 +601,6 @@ export default defineConfig([
       globals: { ...globals.node, ...globals.es2021 },
       sourceType: 'commonjs',
     },
-    rules: { 'import-js/no-commonjs': 'off' },
+    rules: { 'import/no-commonjs': 'off' },
   },
 ])

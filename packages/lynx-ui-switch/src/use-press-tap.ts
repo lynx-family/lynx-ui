@@ -7,7 +7,8 @@ import { useState } from '@lynx-js/react'
 import { useTouchEmulation } from '@lynx-js/react-use'
 import type { TouchEvent } from '@lynx-js/types'
 
-import { useEffectEvent } from './use-effect-event'
+// This local helper is a stable callback, not React's restricted Effect Event.
+import { useEffectEvent as useStableCallback } from './use-effect-event'
 
 interface UsePressTapReturnValue extends ReturnType<typeof useTouchEmulation> {
   pressed: boolean
@@ -30,16 +31,16 @@ export function usePressTap(
 ): UsePressTapReturnValue {
   const [pressed, setPressed] = useState(false)
 
-  const press = useEffectEvent(() => {
+  const press = useStableCallback(() => {
     if (disabled) return
     setPressed(true)
   })
 
-  const reset = useEffectEvent(() => {
+  const reset = useStableCallback(() => {
     setPressed(false)
   })
 
-  const handleTap = useEffectEvent(() => {
+  const handleTap = useStableCallback(() => {
     if (disabled) return
     onTap?.()
   })

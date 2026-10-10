@@ -1,0 +1,16 @@
+{
+  "extends": "./tools/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "luna/**/*.ts",
+    "luna/**/*.tsx"
+  ],
+  "exclude": ["**/node_modules/**", "**/dist/**", "**/lib/**"]
+}
