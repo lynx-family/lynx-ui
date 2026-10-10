@@ -2,15 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from '@lynx-js/react'
+import { createContext, useContext, useMemo, useState } from '@lynx-js/react'
 import type { ReactNode } from '@lynx-js/react'
 
 import { Button, ButtonContext } from '@lynx-js/lynx-ui-button'
@@ -49,24 +41,13 @@ export const RadioGroupRoot = (props: RadioGroupRootProps): ReactNode => {
   )
   const actualValue = isControlled ? value : uncontrolledValue
 
-  const lastValue = useRef<string | null>(null)
-  const sendOnValueChangeEvent = useMemoizedFn((value: string) => {
-    if (lastValue.current !== value) {
-      onValueChange?.(value)
-      lastValue.current = value
-    }
-  })
-
-  const handleValueChange = useCallback((value: string) => {
+  const handleValueChange = useMemoizedFn((value: string) => {
+    if (value === actualValue) return
     if (!isControlled) {
       setUncontrolledValue(value)
     }
-    sendOnValueChangeEvent(value)
-  }, [isControlled, sendOnValueChangeEvent])
-
-  useEffect(() => {
-    sendOnValueChangeEvent(value ?? '')
-  }, [value, sendOnValueChangeEvent])
+    onValueChange?.(value)
+  })
 
   const radioGroupContextValue = useMemo(
     () => ({ selectedValue: actualValue, handleValueChange, disabled }),
