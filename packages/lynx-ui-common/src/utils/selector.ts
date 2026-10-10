@@ -18,7 +18,7 @@ export class InvokeRejectError extends Error {
 
 export const setNativePropsByRef = (
   ref: RefObject<NodesRef> | undefined,
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Lynx selector result
   props: Record<string, any>,
 ) => {
   ref?.current?.setNativeProps(props).exec()
@@ -26,7 +26,7 @@ export const setNativePropsByRef = (
 
 export const setNativePropsById = (
   id: string,
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Lynx selector result
   props: Record<string, any>,
 ) => {
   lynx.createSelectorQuery().select(`#${id}`).setNativeProps(props).exec()
@@ -37,7 +37,7 @@ export const setNativeProps = (
     ref?: RefObject<NodesRef>
     id?: string
   },
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Lynx selector result
   props: Record<string, any>,
 ) =>
   target.id
@@ -61,7 +61,7 @@ export const invokeByRef = (
         success: (res) => {
           resolve(res)
         },
-        // biome-ignore lint/suspicious/noExplicitAny:expected
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Lynx selector result
         fail: (res: { code: number, data?: any }) => {
           reject(new InvokeRejectError(res.code, JSON.stringify(res.data)))
         },
@@ -84,7 +84,7 @@ export const invokeById = (
         success: (res) => {
           resolve(res)
         },
-        // biome-ignore lint/suspicious/noExplicitAny:expected
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Lynx selector result
         fail: (res: { code: number, data?: any }) => {
           reject(new InvokeRejectError(res.code, JSON.stringify(res.data)))
         },

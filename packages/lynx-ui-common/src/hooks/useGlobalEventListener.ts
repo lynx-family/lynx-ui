@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useMemo } from '@lynx-js/react'
 
-// biome-ignore lint/suspicious/noExplicitAny: generic type definition
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic type definition
 type noop = (...p: any) => void
 
 /**

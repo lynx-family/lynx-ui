@@ -16,9 +16,9 @@ export interface BounceableBasicProps {
   enableBounceEventInFling?: boolean
   startBounceTriggerDistance?: number
   endBounceTriggerDistance?: number
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- expected dynamic callback
   upperBounceItem?: any
-  // biome-ignore lint/suspicious/noExplicitAny: expected
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- expected dynamic callback
   lowerBounceItem?: any
   alwaysBouncing?: boolean
   singleSidedBounce?: 'upper' | 'lower' | 'both' | 'iOSBounces' | 'none'
@@ -278,7 +278,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
   // Use translate to implement real bouncing effect
   function bouncingSetStyle(offset: number) {
     'main thread'
-    if (isNaN(Number(offset))) {
+    if (Number.isNaN(Number(offset))) {
       mtsLog(
         true,
         '[lynx-ui-scroll-view][useBounce] ERROR! bouncingOffset is NaN',

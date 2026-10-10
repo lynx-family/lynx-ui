@@ -112,7 +112,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
 
   const useRefreshAndBounceProps: useRefreshAndBounceReturnInternal | null =
     enableBounce || enableHookRefresh
-      // biome-ignore lint/correctness/useHookAtTopLevel: expected
+      // eslint-disable-next-line react-hooks/rules-of-hooks -- branch is invariant for the component lifetime
       ? useRefreshAndBounceInternal({
         bounceableOptions: bounceableProps,
         debugLog,
@@ -239,8 +239,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     }
     if (
       enableHookRefresh
-      && useRefreshAndBounceProps
-      && useRefreshAndBounceProps.finishRefresh
+      && useRefreshAndBounceProps?.finishRefresh
     ) {
       void runOnMainThread(useRefreshAndBounceProps.finishRefresh)()
     }
@@ -249,8 +248,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     'main thread'
     if (
       enableHookRefresh
-      && useRefreshAndBounceProps
-      && useRefreshAndBounceProps.startRefreshMethod
+      && useRefreshAndBounceProps?.startRefreshMethod
     ) {
       useRefreshAndBounceProps.startRefreshMethod()
     }
@@ -420,11 +418,11 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
       'main-thread:onLayoutComplete',
     ]
     const combinedMTSProps: Record<string, unknown> = {}
-    // biome-ignore lint/suspicious/noExplicitAny: accessing dynamic properties
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing dynamic properties
     const safeInputProps = inputProps as Record<string, any>
     mainThreadRelatedEvents.forEach((eventName) => {
       if (safeInputProps[eventName] && hooksProps?.[eventName]) {
-        // biome-ignore lint/suspicious/noExplicitAny: generic event handler
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic event handler
         combinedMTSProps[eventName] = (e: any) => {
           'main thread'
           // @ts-expect-error error

@@ -1,0 +1,23 @@
+{
+  "extends": "./tools/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.js", "**/*.jsx", "**/*.mjs", "**/*.cjs"],
+  "exclude": [
+    "**/node_modules/**",
+    "**/.vite-temp/**",
+    "**/*.timestamp-*.mjs",
+    "**/dist/**",
+    "**/lib/**",
+    "coverage/**",
+    "output/**",
+    "target/**",
+    "tools/**",
+    "website/**",
+    "rslint.config.mjs",
+    ".commitlintrc.js"
+  ]
+}

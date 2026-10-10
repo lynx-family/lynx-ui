@@ -26,7 +26,7 @@ export type EventDetailWithLayout = {
  */
 export function getEventDetail<
   T extends EventDetailWithLayout = EventDetailWithLayout,
-> // biome-ignore lint/suspicious/noExplicitAny: accept any type of events
+> // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accept any event type
 (event: any): T {
   if (!event) {
     return {} as T
