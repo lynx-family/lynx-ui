@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-radio-group
 
+## 3.140.0
+
+### Minor Changes
+
+- Fix RadioGroup `onValueChange` to report interaction requests for a different selected value. ([#345](https://github.com/lynx-family/lynx-ui/pull/345))
+
 ## 3.139.0
 
 ### Patch Changes

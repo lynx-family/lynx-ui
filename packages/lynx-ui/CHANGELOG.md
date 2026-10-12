@@ -1,5 +1,15 @@
 # @lynx-js/lynx-ui
 
+## 3.140.0
+
+### Patch Changes
+
+- Updated dependencies [[`69eedc6`](https://github.com/lynx-family/lynx-ui/commit/69eedc676442439d74c04621bc89075182c78033), [`edd3006`](https://github.com/lynx-family/lynx-ui/commit/edd3006f71f46dff109309545121c70faf05bd9a)]:
+  - @lynx-js/lynx-ui-sortable@3.140.0
+  - @lynx-js/lynx-ui-draggable@3.140.0
+  - @lynx-js/lynx-ui-radio-group@3.140.0
+  - @lynx-js/lynx-ui-form@3.140.0
+
 ## 3.139.0
 
 ### Minor Changes

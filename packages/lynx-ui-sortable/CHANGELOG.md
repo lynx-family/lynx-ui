@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-sortable
 
+## 3.140.0
+
+### Patch Changes
+
+- Render only the active Sortable drag overlay and keep item gesture handlers ([#278](https://github.com/lynx-family/lynx-ui/pull/278))
+  stable across reorders. Measure only the scroll boundary and active item, and
+  reset dirty item visuals in the same commit as the new order.
+
+  Expose individual `useDraggable` actions for precise hook dependencies while
+  preserving the existing `utils` alias.
+
+- Updated dependencies [[`69eedc6`](https://github.com/lynx-family/lynx-ui/commit/69eedc676442439d74c04621bc89075182c78033)]:
+  - @lynx-js/lynx-ui-draggable@3.140.0
+
 ## 3.139.0
 
 ### Patch Changes

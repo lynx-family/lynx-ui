@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui-form
 
+## 3.140.0
+
+### Patch Changes
+
+- Updated dependencies [[`edd3006`](https://github.com/lynx-family/lynx-ui/commit/edd3006f71f46dff109309545121c70faf05bd9a)]:
+  - @lynx-js/lynx-ui-radio-group@3.140.0
+
 ## 3.139.0
 
 ### Patch Changes

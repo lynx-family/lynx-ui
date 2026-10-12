@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-feed-list
 
+## 0.0.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.140.0
+
 ## 0.0.19
 
 ### Patch Changes
