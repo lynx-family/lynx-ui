@@ -85,26 +85,44 @@
 .input::placeholder {
   color: var(--content-faint);
 }
+
+.input.ui-focused {
+  border-color: var(--primary);
+  background-color: var(--paper-clear);
+}
+
+.input.ui-readonly {
+  color: var(--content-muted);
+  background-color: var(--neutral-ambient);
+}
+
 /* =========================
  * TextArea
  * ========================= */
 
-.textarea-wrap {
+.textarea {
   width: 100%;
+  height: 94px;
   padding: 10px;
   border-radius: 12px;
 
   border-width: 1px;
   border-style: solid;
   border-color: var(--line);
-}
-
-.textarea {
-  height: 72px;
   color: var(--content);
   caret-color: var(--primary);
 }
 
 .textarea::placeholder {
   color: var(--content-faint);
+}
+
+.textarea.ui-focused {
+  border-color: var(--primary);
+  background-color: var(--paper-clear);
+}
+
+.textarea.ui-readonly {
+  color: var(--content-muted);
+  background-color: var(--neutral-ambient);
 }

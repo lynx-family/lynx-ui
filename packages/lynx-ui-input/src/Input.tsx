@@ -10,11 +10,13 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from '@lynx-js/react'
 import type { ForwardedRef } from '@lynx-js/react'
 
 import { InvokeRejectError, setNativePropsByRef } from '@lynx-js/lynx-ui-common'
 import type { NodesRef } from '@lynx-js/types'
+import { clsx } from 'clsx'
 
 import { KeyboardAwareTriggerContext } from './KeyboardAwareContext'
 import type {
@@ -52,6 +54,7 @@ function InputImpl(props: InputProps, ref: ForwardedRef<InputRef>) {
   } = props
 
   const controlled = useRef<boolean>(value !== undefined)
+  const [focused, setFocused] = useState(false)
 
   const inputRef = useRef<NodesRef>(null)
   const { onInputBlurred, onInputFocused } = useContext(
@@ -164,11 +167,13 @@ function InputImpl(props: InputProps, ref: ForwardedRef<InputRef>) {
     })
 
   const onInputDidFocused = (res: { detail: InputFocusEvent }) => {
+    setFocused(true)
     onInputFocused?.()
     onFocus?.(res.detail.value)
   }
 
   const onInputDidBlurred = (res: { detail: InputBlurEvent }) => {
+    setFocused(false)
     onInputBlurred?.()
     onBlur?.(res.detail.value)
   }
@@ -239,7 +244,10 @@ function InputImpl(props: InputProps, ref: ForwardedRef<InputRef>) {
       bindblur={onInputDidBlurred}
       bindconfirm={onInputDidConfirm}
       bindselection={onInputSelectionDidChanged}
-      className={className}
+      className={clsx(className, {
+        'ui-focused': focused,
+        'ui-readonly': readonly,
+      })}
       style={style}
     />
   )

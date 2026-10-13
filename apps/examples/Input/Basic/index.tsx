@@ -50,18 +50,25 @@ function App() {
               onInput={setControlledValue}
             />
           </view>
+
+          <view className='field'>
+            <text className='label'>Readonly</text>
+            <Input
+              className='input'
+              defaultValue='Read only value'
+              readonly
+            />
+          </view>
         </view>
 
         {/* TextArea */}
         <view className='section'>
           <text className='title'>TextArea</text>
 
-          <view className='textarea-wrap'>
-            <TextArea
-              className='textarea'
-              placeholder='Write something...'
-            />
-          </view>
+          <TextArea
+            className='textarea'
+            placeholder='Write something...'
+          />
         </view>
       </view>
     </view>

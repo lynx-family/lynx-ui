@@ -11,6 +11,60 @@ import type {
 } from '@lynx-js/lynx-ui-scroll-view'
 import type { CSSProperties } from '@lynx-js/types'
 
+/**
+ * UI variants applied by Input based on its interaction state.
+ * Use them as CSS selectors to style focused and readonly states.
+ * @zh Input 根据交互状态注入的 ui-variants，可用于 CSS selector 定制聚焦态和只读态。
+ */
+export interface InputUIVariants {
+  /**
+   * Applied while the native input is focused.
+   * @zh 原生输入框聚焦时生效。
+   * @iOS
+   * @Android
+   * @Harmony
+   * @Web
+   */
+  'ui-focused'?: boolean
+
+  /**
+   * Applied when the `readonly` prop is true.
+   * @zh `readonly` 属性为 true 时生效。
+   * @iOS
+   * @Android
+   * @Harmony
+   * @Web
+   */
+  'ui-readonly'?: boolean
+}
+
+/**
+ * UI variants applied by TextArea based on its interaction state.
+ * Use them as CSS selectors to style focused and readonly states.
+ * @zh TextArea 根据交互状态注入的 ui-variants，可用于 CSS selector 定制聚焦态和只读态。
+ */
+export interface TextAreaUIVariants {
+  /**
+   * Applied while the native textarea is focused.
+   * @zh 原生多行输入框聚焦时生效。
+   * @iOS
+   * @Android
+   * @Harmony
+   * @Web
+   */
+  'ui-focused'?: boolean
+
+  /**
+   * Applied when the `readonly` prop is true.
+   * @zh `readonly` 属性为 true 时生效。
+   * @iOS
+   * @Android
+   * @Harmony
+   * @Web
+   */
+  'ui-readonly'?: boolean
+}
+
 export type Input = (props: InputProps) => ReactElement
 
 export interface InputRef {
