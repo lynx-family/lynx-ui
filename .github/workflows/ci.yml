@@ -56,6 +56,8 @@ jobs:
         run: |
           pnpm test:changeset-files
           pnpm test:changesets-private
+      - name: Lint Infrastructure Tests
+        run: node --test tools/lint/*.test.mjs
       - name: Changeset Validation
         run: |
           pnpm check:changesets

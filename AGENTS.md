@@ -293,21 +293,32 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
 ### Linting & Formatting
 
 This project uses **Rslint** for JavaScript and TypeScript linting, a JSONC-capable lint check (`pnpm lint:json`) for JSON files, and **dprint** for formatting.
-The JSON check runs `eslint-plugin-jsonc` and CSpell through a standalone ESLint runner because Rslint does not support the JSONC parser.
+The JSON check runs `eslint-plugin-jsonc` and CSpell through ESLint's API because Rslint does not support the JSONC parser.
 
-Keep the explicit JavaScript and test projects (`tsconfig.rslint-js.json` and
-`tsconfig.rslint-tests.json`) aligned with their lint scopes. Package build
+Lint infrastructure lives in `tools/lint/`: the shared configuration factory,
+JSON runner, typed-project base, and changed-file checker. Repository entry
+points delegate to those helpers. See `tools/lint/README.md` for caller options.
+
+Keep the explicit lint project (`tools/lint/tsconfig.json`) aligned with its
+JavaScript, test, and tooling scopes. Package build
 projects exclude tests and usually exclude JavaScript; without matching project
 information, type-aware rules can silently skip these files. Validate lint-rule
 migrations with both violation and valid-code fixtures, not only a green lint run.
 The local compatibility plugin preserves Biome's complex-array spelling policy;
 do not replace it with a stricter native array mode without checking valid cases.
 When adding an ordinary React workspace, include it in the dependency-check
-scope in `rslint.config.mjs`; ReactLynx's custom stable callbacks are not covered
+scope in `tools/lint/config.mjs`; ReactLynx's custom stable callbacks are not covered
 by that React-only compatibility scope.
+
+Consumers with other directory layouts must configure `sourceFiles`,
+`sourceIgnores`, `toolingFiles`, `toolingIgnores`, and `testFiles` in the shared
+factory and include those files in their lint project. Run
+`node --test tools/lint/*.test.mjs` after changing shared lint infrastructure.
 
 - Run checks: `pnpm check`
 - Run all lint checks: `pnpm lint`
+- Check changed files without writing: `pnpm check:changed`. Use
+  `pnpm fix:changed` to apply fixes.
 - Fix issues: `pnpm fix:all`
 
 ### Documentation & Markdown
