@@ -343,6 +343,19 @@ factory and include those files in their lint project. Run
 
 1. **Changesets**: All changes that affect package versions must include a changeset (`pnpm changeset`).
    Changesets must not target workspace packages with `"private": true`. Remove private package entries before submission, or make the package publishable when it must be versioned and tagged.
+   Release coverage runs only on PRs from `changeset-release/main`. It compares
+   the source snapshot on `main` with the latest tagged release on main's
+   first-parent history, then requires a version bump in the release PR for each
+   changed publishable package under `packages/`, `apps/examples/`, and
+   `luna/packages/`. It ignores documentation, tests, and JavaScript/TypeScript
+   comment or formatting changes; public type changes still need coverage.
+   Fetch complete history and tags before running
+   `pnpm check:changesets-coverage --ref <source-sha> --release-ref <release-sha>`.
+   Use `--since <release-ref>` to select an explicit release baseline. Missing
+   coverage blocks the release PR, not its creation or ordinary PRs. Add missing
+   changesets to `main` and let the release workflow regenerate the release PR.
+   The check covers only the current release window; it does not carry uncovered
+   changes forward from earlier releases or maintain no-release exemptions.
 2. **Toolchain Updates**: Keep `.nvmrc`, `package.json` `engines`/`packageManager`, `pnpm-lock.yaml`, and GitHub Actions `actions/setup-node` versions aligned when changing Node.js or pnpm.
 3. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
    Do not prepend labels like `[codex]` before the release type, because the semantic PR check parses the type from the beginning of the title.

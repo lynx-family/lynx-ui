@@ -6,3 +6,28 @@ find the full documentation for it [in our repository](https://github.com/change
 
 We have a quick list of common questions to get you started engaging with this project in
 [our documentation](https://github.com/changesets/changesets/blob/main/docs/common-questions.md)
+
+## Release coverage
+
+Coverage is checked only on the release PR from `changeset-release/main`.
+The checker compares the last tagged release with the release PR's source
+snapshot on `main`. Each changed publishable component, example, or LUNA package
+must receive a version bump in the release PR. Version bumps are checked because
+Changesets has already consumed the Markdown files on that branch.
+
+To run the same check locally with complete Git history and tags:
+
+```sh
+pnpm check:changesets-coverage --ref <main-source-sha> --release-ref <release-pr-sha>
+```
+
+The baseline is the latest package release tag on the source snapshot's
+first-parent history. Use `--since <release-ref>` to override it explicitly.
+Only the combined diff for that release window is checked; individual commits
+and historical changeset bodies are not inspected. Older changes do not carry
+forward after another release.
+
+Documentation, tests, and JavaScript/TypeScript comment or formatting changes
+are excluded. Public type changes are included. Other source edits, including
+behavior-preserving lint rewrites, can still require review and a changeset.
+An ordinary empty changeset does not exempt individual changed packages.
