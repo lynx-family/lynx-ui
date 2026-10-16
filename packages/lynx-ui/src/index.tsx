@@ -350,3 +350,11 @@ export type {
   PresenceAnimationStatus,
   PresenceState,
 } from '@lynx-js/lynx-ui-presence'
+
+// video
+export { Video } from '@lynx-js/lynx-ui-video'
+export type {
+  VideoProps,
+  VideoRef,
+  VideoPlaybackCallback,
+} from '@lynx-js/lynx-ui-video'

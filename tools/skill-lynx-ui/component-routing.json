@@ -115,6 +115,11 @@
       "useWhen": "The UI needs coordinated tab navigation with selectable items and an animated indicator.",
       "avoidWhen": "The UI needs carousel-style content paging; use Swiper."
     },
+    "video": {
+      "label": "Video",
+      "useWhen": "The UI needs network video playback with imperative controls and playback events.",
+      "avoidWhen": "The host does not support the Lynx 4.1 video element or the task requires private VideoEngine features."
+    },
     "view-pager": {
       "label": "ViewPager",
       "useWhen": "The UI needs page-snapped horizontal content navigation with optional lazy rendering.",

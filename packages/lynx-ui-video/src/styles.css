@@ -1,0 +1,17 @@
+.lynx-ui-video__root {
+  position: relative;
+  overflow: hidden;
+}
+
+.lynx-ui-video__player {
+  width: 100%;
+  height: 100%;
+}
+
+.lynx-ui-video__poster {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}

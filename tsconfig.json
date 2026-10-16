@@ -81,6 +81,9 @@
       "path": "./packages/lynx-ui-switch"
     },
     {
+      "path": "./packages/lynx-ui-video"
+    },
+    {
       "path": "./tsconfig.node.json"
     }
   ]

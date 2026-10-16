@@ -1,0 +1,44 @@
+{
+  "name": "@lynx-example/lynx-ui-video",
+  "version": "0.0.20",
+  "description": "Example app demonstrating Video usage in lynx-ui",
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Video#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "apps/examples/Video"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "type": "module",
+  "files": [
+    "LICENSE",
+    "CHANGELOG.md",
+    "dist/",
+    "**/*.tsx",
+    "**/*.ts",
+    "**/*.css",
+    "lynx.config.mjs"
+  ],
+  "scripts": {
+    "build": "rspeedy build",
+    "build:dev": "rspeedy build --mode=development",
+    "dev": "rspeedy dev"
+  },
+  "dependencies": {
+    "@lynx-js/luna-styles": "workspace:*",
+    "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/react": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-js/qrcode-rsbuild-plugin": "catalog:",
+    "@lynx-js/react-rsbuild-plugin": "catalog:",
+    "@lynx-js/rspeedy": "catalog:",
+    "@types/react": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
