@@ -42,6 +42,7 @@ function fixture(t) {
   git('init', '-q')
   git('config', 'user.name', 'Test')
   git('config', 'user.email', 'test@example.com')
+  git('config', 'tag.gpgSign', 'false')
   pkg('packages/button', '@test/button')
   pkg('apps/examples/Button', '@test/example')
   pkg('luna/packages/tokens', '@test/tokens')
