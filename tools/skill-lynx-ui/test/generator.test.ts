@@ -5,6 +5,7 @@
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
@@ -17,6 +18,33 @@ import {
   getExampleAppPaths,
   validateComponentRoutingManifest,
 } from '../generate-references.mjs'
+
+const packagesRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  'packages',
+)
+
+async function collectComponentSkillPaths() {
+  const entries = await fs.readdir(packagesRoot, { withFileTypes: true })
+  const skillPaths = await Promise.all(
+    entries
+      .filter(entry => entry.isDirectory() && entry.name.startsWith('lynx-ui-'))
+      .map(async entry => {
+        const skillPath = path.join(packagesRoot, entry.name, 'SKILL.md')
+        try {
+          await fs.access(skillPath)
+          return skillPath
+        } catch {
+          return undefined
+        }
+      }),
+  )
+
+  return skillPaths.filter(skillPath => skillPath !== undefined).sort()
+}
 
 describe('skill-lynx-ui generator helpers', () => {
   it('derives component slugs from package names', () => {
@@ -60,12 +88,16 @@ describe('skill-lynx-ui generator helpers', () => {
     expect(slugs).toContain('sheet')
     expect(slugs).toContain('slider')
     expect(slugs).toContain('swiper')
-    expect(slugs).toContain('checkbox')
     expect(slugs).not.toContain('presence')
-    expect(
-      components.find(component => component.slug === 'checkbox')?.skillPath,
-    )
-      .toBeUndefined()
+  })
+
+  it('discovers every component package that provides a skill', async () => {
+    const components = await collectIncludedComponents()
+    const discoveredSkillPaths = components
+      .flatMap(component => component.skillPath ?? [])
+      .sort()
+
+    expect(discoveredSkillPaths).toEqual(await collectComponentSkillPaths())
   })
 
   it('requires new documented components to be routed or excluded', () => {
@@ -118,9 +150,6 @@ describe('skill-lynx-ui generated output', () => {
         ).resolves.toBeTruthy()
       }
 
-      await expect(
-        fs.stat(path.join(tempRoot, 'references', 'components', 'checkbox')),
-      ).resolves.toBeTruthy()
       const lazyComponentApi = await fs.readFile(
         path.join(
           tempRoot,
@@ -146,17 +175,6 @@ describe('skill-lynx-ui generated output', () => {
       )
       expect(lazyComponentExamples).not.toContain('Origin:')
       expect(lazyComponentExamples).not.toContain('Source:')
-      await expect(
-        fs.stat(
-          path.join(
-            tempRoot,
-            'references',
-            'components',
-            'checkbox',
-            'guide.md',
-          ),
-        ),
-      ).rejects.toBeTruthy()
       await expect(fs.stat(path.join(tempRoot, 'examples'))).rejects
         .toBeTruthy()
     } finally {
