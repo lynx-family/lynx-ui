@@ -1,7 +1,6 @@
 name: Test
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
     branches:
       - main
   merge_group:
@@ -64,13 +63,6 @@ jobs:
         run: |
           pnpm check:changesets
           pnpm check:changesets-private
-      - name: Changeset Package Targets
-        if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
-          CHANGESET_BACKFILL: ${{ contains(github.event.pull_request.labels.*.name, 'changeset-backfill') }}
-        run: pnpm check:changesets-coverage --targets --base "$BASE_SHA" --ref "$SOURCE_SHA"
       - name: Release Changeset Coverage
         if: github.head_ref == 'changeset-release/main'
         env:

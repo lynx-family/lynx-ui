@@ -3,16 +3,11 @@
 // LICENSE file in the root directory of this source tree.
 
 import { execFileSync } from 'node:child_process'
-import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { isDeepStrictEqual } from 'node:util'
 
-import parseChangeset from '@changesets/parse'
 import ts from 'typescript'
-import { parse as parseYaml } from 'yaml'
-
-import { isWorkspacePackage } from './check-new-publishable-packages.mjs'
 
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url))
 
@@ -76,101 +71,6 @@ function hasSourceChanges(cwd, baseline, ref, file) {
     return printAtRef(baseline) !== printAtRef(ref)
   }
   return true
-}
-
-function isChangesetFile(file) {
-  return /^\.changeset\/[^./][^/]*\.md$/u.test(file)
-    && path.posix.basename(file).toLowerCase() !== 'readme.md'
-}
-
-function getWorkspacePackages(cwd, ref) {
-  const config = parseYaml(git(cwd, ['show', `${ref}:pnpm-workspace.yaml`]))
-  if (!Array.isArray(config.packages)) {
-    throw new Error('pnpm-workspace.yaml must declare workspace packages')
-  }
-  const manifests = git(cwd, ['ls-tree', '-r', '--name-only', '-z', ref]).split(
-    '\0',
-  )
-    .filter(file => file.endsWith('/package.json'))
-  const packages = new Map()
-  for (const file of manifests) {
-    const directory = path.posix.dirname(file)
-    if (!isWorkspacePackage(file, config.packages)) {
-      continue
-    }
-    const manifest = readManifest(cwd, ref, directory)
-    if (packages.has(manifest.name)) {
-      throw new Error(`Duplicate workspace package: ${manifest.name}`)
-    }
-    packages.set(manifest.name, {
-      directory,
-      private: manifest.private === true,
-    })
-  }
-  return packages
-}
-
-export function checkTargets(
-  { cwd = repoRoot, base, ref, allowBackfill = false, referenceText = '' } = {},
-) {
-  if (!base || !ref) {
-    throw new Error(
-      'Target validation requires --base <base-sha> and --ref <pr-head-sha>',
-    )
-  }
-  const baseline = git(cwd, ['merge-base', base, ref]).trim()
-  const files = git(cwd, [
-    'diff',
-    '--no-renames',
-    '--name-only',
-    '-z',
-    baseline,
-    ref,
-  ]).split('\0').filter(Boolean)
-  const changesetFiles = files.filter(file => isChangesetFile(file)).filter(
-    file => git(cwd, ['ls-tree', '--name-only', ref, '--', file]).trim(),
-  )
-  const packages = getWorkspacePackages(cwd, ref)
-  const changed = new Set()
-  const failures = []
-  for (const [name, pkg] of packages) {
-    if (
-      files.some(file =>
-        file.startsWith(`${pkg.directory}/`)
-        && isReleaseFile(file.slice(pkg.directory.length + 1))
-        && hasSourceChanges(cwd, baseline, ref, file)
-      )
-    ) {
-      changed.add(name)
-    }
-  }
-  for (const file of changesetFiles) {
-    const changeset = parseChangeset(git(cwd, ['show', `${ref}:${file}`]))
-    for (const release of changeset.releases) {
-      const pkg = packages.get(release.name)
-      if (!pkg || pkg.private || !changed.has(release.name)) {
-        failures.push({
-          file,
-          name: release.name,
-          directory: pkg?.directory,
-          summary: changeset.summary,
-          private: pkg?.private === true,
-        })
-      }
-    }
-  }
-  // A focused, explicitly labelled backfill may refer to previously merged
-  // source. It never exempts unknown/private targets or a PR containing code.
-  const hasReference = text =>
-    /https:\/\/github\.com\/lynx-family\/lynx-ui\/(?:pull\/\d+|commit\/[a-f0-9]{7,40})\b|(?:^|\s)#\d+\b|\b[a-f0-9]{7,40}\b/u
-      .test(text)
-  const backfill = failures.length > 0 && allowBackfill
-    && files.every(file => isChangesetFile(file))
-    && failures.every(failure =>
-      failure.directory && !failure.private
-      && hasReference(`${referenceText}\n${failure.summary}`)
-    )
-  return { failures: backfill ? [] : failures, changed: [...changed], backfill }
 }
 
 export function checkCoverage({ cwd = repoRoot, ref, releaseRef, since } = {}) {
@@ -242,60 +142,18 @@ export function checkCoverage({ cwd = repoRoot, ref, releaseRef, since } = {}) {
 function main() {
   const args = process.argv.slice(2)
   const options = {}
-  let targets = false
-  for (let index = 0; index < args.length; index += 1) {
+  for (let index = 0; index < args.length; index += 2) {
     const flag = args[index]
-    if (flag === '--targets') {
-      targets = true
-      continue
-    }
     if (
-      !['--ref', '--release-ref', '--since', '--base'].includes(flag)
-      || !args[index + 1]
+      !['--ref', '--release-ref', '--since'].includes(flag) || !args[index + 1]
       || args[index + 1].startsWith('--')
     ) {
       throw new Error(
-        'Usage: check-changeset-coverage.mjs --ref <source-ref> --release-ref <release-pr-ref> [--since <release-ref>] or --targets --base <base-sha> --ref <pr-head-sha>',
+        'Usage: check-changeset-coverage.mjs --ref <source-ref> --release-ref <release-pr-ref> [--since <release-ref>]',
       )
     }
     const key = flag === '--release-ref' ? 'releaseRef' : flag.slice(2)
-    index += 1
-    options[key] = args[index]
-  }
-  if (targets) {
-    const event = process.env.GITHUB_EVENT_PATH
-      ? JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
-      : {}
-    const result = checkTargets({
-      ...options,
-      allowBackfill: process.env.CHANGESET_BACKFILL === 'true',
-      referenceText: event.pull_request?.body || '',
-    })
-    if (result.failures.length === 0) {
-      console.log(
-        result.backfill
-          ? 'Explicit changeset backfill accepted.'
-          : 'Changeset package target check passed.',
-      )
-      return
-    }
-    console.error('Changeset targets without matching package-local changes:')
-    for (const failure of result.failures) {
-      console.error(`- ${failure.file}: ${failure.name}`)
-      console.error(
-        `  Expected directory: ${
-          failure.directory || '(not a workspace package)'
-        }${failure.private ? ' (private)' : ''}`,
-      )
-    }
-    console.error(
-      `Packages changed by this PR: ${result.changed.join(', ') || '(none)'}`,
-    )
-    console.error(
-      'Correct the targets. For historical backfills, use a changeset-only PR labelled changeset-backfill and reference the original PR or commit.',
-    )
-    process.exitCode = 1
-    return
+    options[key] = args[index + 1]
   }
   const { baseline, missing } = checkCoverage(options)
   console.log(`Checking package changes since release ${baseline}.`)

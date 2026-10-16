@@ -7,29 +7,9 @@ find the full documentation for it [in our repository](https://github.com/change
 We have a quick list of common questions to get you started engaging with this project in
 [our documentation](https://github.com/changesets/changesets/blob/main/docs/common-questions.md)
 
-## Explicit package targets
-
-For ordinary PRs, newly added or edited changesets must target workspace packages
-with relevant source changes in that PR. The check reports the changeset file,
-unmatched package, expected directory, and packages detected as changed. Empty
-changesets and PRs without changesets pass. Dependency-propagated releases are
-not explicit targets and do not need package-local changes.
-
-```sh
-pnpm check:changesets-coverage --targets --base <base-sha> --ref <pr-head-sha>
-```
-
-For an intentional historical backfill, open a changeset-only PR, add the
-`changeset-backfill` label, and reference the original PR (`#195` or its GitHub
-URL) or commit SHA in each backfilled summary or the PR description. This
-exception cannot waive unknown/private targets or a PR containing other files.
-The check reruns when the PR description or labels change. For a local backfill
-check, set `CHANGESET_BACKFILL=true` and include the source reference in the
-changeset summary.
-
 ## Release coverage
 
-Missing release coverage is checked only on the release PR from `changeset-release/main`.
+Coverage is checked only on the release PR from `changeset-release/main`.
 The checker compares the last tagged release with the release PR's source
 snapshot on `main`. Each changed publishable component, example, or LUNA package
 must receive a version bump in the release PR. Version bumps are checked because
