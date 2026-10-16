@@ -283,6 +283,7 @@ export {
 } from '@lynx-js/lynx-ui-tab-group'
 export type {
   TabItemProps,
+  TabsItemProps,
   TabsIndicatorAnimation,
   TabsIndicatorProps,
   TabsPanelProps,

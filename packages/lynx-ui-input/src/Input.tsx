@@ -11,7 +11,7 @@ import {
   useImperativeHandle,
   useRef,
 } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import { InvokeRejectError, setNativePropsByRef } from '@lynx-js/lynx-ui-common'
 import type { NodesRef } from '@lynx-js/types'
@@ -24,11 +24,13 @@ import type {
   InputInputEvent,
   InputSelectionEvent,
 } from './NativeTypings'
-import type { InputProps, InputRef, Input as InputType } from './types'
+import type { InputProps, InputRef } from './types'
 
 export type { InputRef, InputProps }
 
-export const Input = memo(forwardRef(InputImpl)) as InputType
+type InputComponent = (props: InputProps) => ReactElement
+
+export const Input = memo(forwardRef(InputImpl)) as InputComponent
 
 function InputImpl(props: InputProps, ref: ForwardedRef<InputRef>) {
   const {

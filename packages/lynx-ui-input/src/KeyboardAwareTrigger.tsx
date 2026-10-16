@@ -3,6 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { memo, useContext, useMemo, useRef } from '@lynx-js/react'
+import type { ReactElement } from '@lynx-js/react'
 
 import type { NodesRef } from '@lynx-js/types'
 
@@ -10,16 +11,17 @@ import {
   KeyboardAwareRootContext,
   KeyboardAwareTriggerContext,
 } from './KeyboardAwareContext'
-import type {
-  KeyboardAwareTriggerProps,
-  KeyboardAwareTrigger as KeyboardAwareTriggerType,
-} from './types'
+import type { KeyboardAwareTriggerProps } from './types'
 
 export type { KeyboardAwareTriggerProps }
 
+type KeyboardAwareTriggerComponent = (
+  props: KeyboardAwareTriggerProps,
+) => ReactElement
+
 export const KeyboardAwareTrigger = memo(
   KeyboardAwareTriggerImpl,
-) as KeyboardAwareTriggerType
+) as KeyboardAwareTriggerComponent
 
 export function KeyboardAwareTriggerImpl(props: KeyboardAwareTriggerProps) {
   const { children, offset = 0, ...rest } = props

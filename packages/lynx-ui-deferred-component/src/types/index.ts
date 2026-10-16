@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 
 export type {
-  DeferredComponent,
   DeferredComponentProps,
   DeferredComponentRef,
 } from './index.docs.js'

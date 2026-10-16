@@ -6,8 +6,6 @@ import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 
-export type SwipeAction = (props: SwipeActionProps) => ReactElement
-
 export interface SwipeActionProps extends ComponentBasicProps {
   ref?: ForwardedRef<SwipeActionRef>
   /**

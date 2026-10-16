@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 import {
   forwardRef,
   memo,
@@ -17,15 +17,15 @@ import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
 import type { NativeGestureChangeEvent } from '@lynx-js/gesture-runtime'
 import { noop, selectorMT } from '@lynx-js/lynx-ui-common'
 
-import type {
-  SwipeActionProps,
-  SwipeActionRef,
-  SwipeAction as swipeActionType,
-} from './types/index'
+import type { SwipeActionProps, SwipeActionRef } from './types/index'
 
 export type { SwipeActionProps, SwipeActionRef }
 
-export const SwipeAction = memo(forwardRef(SwipeActionImpl)) as swipeActionType
+type SwipeActionComponent = (props: SwipeActionProps) => ReactElement
+
+export const SwipeAction = memo(
+  forwardRef(SwipeActionImpl),
+) as SwipeActionComponent
 
 function SwipeActionImpl(
   props: SwipeActionProps,

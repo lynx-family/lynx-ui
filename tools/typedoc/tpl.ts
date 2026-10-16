@@ -468,13 +468,29 @@ function joinMdxSections(
     .join('\n\n')
 }
 
+function withApiEntityDisplayTitle(
+  data: any,
+  publicRuntimeExportNames: ReadonlySet<string>,
+) {
+  if (!data || typeof data.title !== 'string') return data
+  if (!data.title.endsWith('Props')) return data
+
+  const runtimeExportName = data.title.slice(0, -'Props'.length)
+  if (!publicRuntimeExportNames.has(runtimeExportName)) return data
+
+  return {
+    ...data,
+    title: runtimeExportName,
+  }
+}
+
 /**
  * Generates one props section and its API tables.
  *
  * Render-function children receive an additional state table and localized
  * preamble, while ordinary props remain in the primary API table.
  */
-function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
+function genProps(data: any, isZh?: boolean) {
   const title = data.title
   const children = data.children
   const comments = getCommentText(data.comment, isZh)
@@ -482,9 +498,7 @@ function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
   if (!children?.length) return ''
 
   const sections = [
-    hasMultipleProps
-      ? `### ${title.replace(/props$/i, '').trim()}`
-      : `## ${title}`,
+    `### ${title}`,
     comments,
   ]
 
@@ -500,7 +514,7 @@ function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
 
     const sourceString = JSON.stringify(normalItems, null, 2)
     sections.push(
-      children.length > 1 ? `### ${d.title}` : '',
+      children.length > 1 ? `#### ${d.title}` : '',
       `<UIApiTable source={${sourceString}}/>`,
     )
 
@@ -539,16 +553,14 @@ function genRef(data: any, isZh?: boolean) {
 
   if (!children?.length) return ''
 
-  return joinMdxSections(
-    children.map((d: any, index: number) => {
+  return joinMdxSections([
+    `### ${title}`,
+    comments,
+    ...children.map((d: any) => {
       const sourceString = JSON.stringify(d.children, null, 2)
-      return joinMdxSections([
-        `## ${title}`,
-        index === 0 ? comments : '',
-        `<UIApiTable source={${sourceString}}/>`,
-      ])
+      return `<UIApiTable source={${sourceString}}/>`
     }),
-  )
+  ])
 }
 
 /** Generates an API table for a documented type alias. */
@@ -602,6 +614,7 @@ const doGenTplWithData = async (
   savePath: string,
   multipleProps?: boolean,
   titleOrder: string[] = ['Props', 'Method'],
+  publicRuntimeExportNames: ReadonlySet<string> = new Set(),
 ) => {
   const dataString = fs.readFileSync(dataPath, 'utf-8')
   const data = JSON.parse(dataString)
@@ -702,40 +715,53 @@ const doGenTplWithData = async (
       if (!titleOrder.includes(item.title.replace(/(?:Props|Ref)$/, ''))) {
         return
       }
+      const displayItem = withApiEntityDisplayTitle(
+        item,
+        publicRuntimeExportNames,
+      )
       if (item.title.includes('Ref')) {
-        return genRef(item, isZh)
+        return genRef(displayItem, isZh)
       }
       if (item.typeAlias) {
-        return genTypeAlias(item)
+        return genTypeAlias(displayItem)
       }
       if (
         item.title.includes('Props')
         || item.title.endsWith('UIVariants')
         || item.children?.length
       ) {
-        return genProps(item, multipleProps, isZh)
+        return genProps(displayItem, isZh)
       }
       return
     })
     : sortedData.map((item: any) => {
       if (renderPropsTitlesToSkip.has(item.title)) return ''
+      const displayItem = withApiEntityDisplayTitle(
+        item,
+        publicRuntimeExportNames,
+      )
       if (item.title.includes('Props')) {
         if (!hasProcessedFirstProps) {
           hasProcessedFirstProps = true
-          return genProps(item, false, isZh)
+          return genProps(displayItem, isZh)
         }
-        return doGenMdx([item], isZh)
+        return doGenMdx([displayItem], isZh)
       }
       if (item.title.includes('Ref')) {
-        return genRef(item, isZh)
+        return genRef(displayItem, isZh)
       }
       if (item.typeAlias) {
-        return genTypeAlias(item)
+        return genTypeAlias(displayItem)
       }
-      return doGenMdx([item], isZh)
+      return doGenMdx([displayItem], isZh)
     })
 
-  let content = joinMdxSections([mdxHeader, ...generatedSections])
+  const generatedBody = joinMdxSections(generatedSections)
+  let content = joinMdxSections([
+    mdxHeader,
+    generatedBody ? '## API' : '',
+    generatedBody,
+  ])
 
   // Drop `ClassRenderPropPreamble` from the import statement when the body
   // does not reference it, so components without any render-prop state do
