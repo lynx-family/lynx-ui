@@ -40,7 +40,9 @@
     "@lynx-js/react": "catalog:",
     "@lynx-js/types": "catalog:",
     "@rslib/core": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
     "@types/react": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

@@ -154,7 +154,7 @@ export interface ComputePositionReturn extends Coords {
   /**
    * The final chosen placement of the floating element.
    */
-  // placement: Placement;
+  placement: Placement
   /**
    * The strategy used to position the floating element.
    */

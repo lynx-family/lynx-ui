@@ -35,6 +35,7 @@ import {
 import type { ComputePositionReturn, Middleware, Placement } from './floating'
 import { limitShift, shift } from './floating/shift'
 import { size } from './floating/size'
+import { getAlignment } from './floating/utils'
 import type {
   PopoverAnchorProps,
   PopoverArrowProps,
@@ -47,6 +48,12 @@ import type {
 } from './types'
 import { PopoverContext, useElementInfoReducer } from './useElementInfoReducer'
 import './style.css'
+
+const getPlacementClassName = (placement: Placement) =>
+  clsx(
+    `ui-side-${getSide(placement)}`,
+    `ui-align-${getAlignment(placement) ?? 'center'}`,
+  )
 
 export const PopoverRoot = (
   props: PopoverRootProps,
@@ -140,6 +147,16 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
   } = useContext(
     PopoverContext,
   )
+  const [computedPlacement, setComputedPlacement] = useState<{
+    requested: Placement
+    resolved: Placement
+  }>({
+    requested: placement,
+    resolved: placement,
+  })
+  const resolvedPlacement = computedPlacement.requested === placement
+    ? computedPlacement.resolved
+    : placement
   const { reference, floating, alternativeReference, maxContentSize } =
     sharedInfo
   const { offset: arrowOffset, size: arrowSize } = sharedInfo.arrow
@@ -220,11 +237,16 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
           '[lynx-ui-popover] Compute Floating Result:',
           floatingResult,
         )
-        const { x, y, middlewareData } = floatingResult
+        const { x, y, placement: nextPlacement, middlewareData } =
+          floatingResult
         const arrowData = middlewareData.arrow as
           | { x: number, y: number }
           | undefined
         const { x: arrowX = null, y: arrowY = null } = arrowData ?? {}
+        setComputedPlacement({
+          requested: placement,
+          resolved: nextPlacement,
+        })
         updateRects({ type: 'updateFloatingCoords', coords: { x, y } })
         updateRects({
           type: 'updateArrowCoords',
@@ -237,7 +259,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
     if (state === PresenceState.DelayedEntering) {
       handleDelayedEntering()
     }
-  }, [state])
+  }, [state, placement])
 
   return (
     <Presence
@@ -250,10 +272,13 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
       debugLog={debugLog}
     >
       <PopoverPositionerContext.Provider
-        value={{ placement }}
+        value={{
+          placement: resolvedPlacement,
+          placementClassName: getPlacementClassName(resolvedPlacement),
+        }}
       >
         <PopoverOverlay
-          placement={placement}
+          placement={resolvedPlacement}
           style={{
             ...style,
             ...(maxContentSize
@@ -454,6 +479,7 @@ const PopoverOverlay = (props: PopoverOverlayProps) => {
     className,
     transition,
   })
+  const { placementClassName } = useContext(PopoverPositionerContext)
 
   const visibility = useVisibilityFromPresence(state)
 
@@ -465,7 +491,7 @@ const PopoverOverlay = (props: PopoverOverlayProps) => {
     >
       <view
         bindlayoutchange={handleLayoutChange}
-        className={presenceClassName}
+        className={clsx(presenceClassName, placementClassName)}
         style={{
           ...style,
           visibility: visibility,
@@ -498,6 +524,7 @@ export const PopoverContent = (props: PopoverContentProps) => {
     className,
     transition,
   })
+  const { placementClassName } = useContext(PopoverPositionerContext)
 
   return (
     <view
@@ -519,7 +546,7 @@ export const PopoverContent = (props: PopoverContentProps) => {
             maxHeight: maxContentSize.maxHeight,
           }),
       }}
-      className={presenceClassName}
+      className={clsx(presenceClassName, placementClassName)}
       {...popoverContentProps}
     >
       {children}
@@ -529,8 +556,10 @@ export const PopoverContent = (props: PopoverContentProps) => {
 
 const PopoverPositionerContext = createContext<{
   placement: Placement
+  placementClassName: string
 }>({
   placement: 'top',
+  placementClassName: getPlacementClassName('top'),
 })
 
 export const PopoverArrow = (props: PopoverArrowProps) => {
@@ -565,7 +594,10 @@ export const PopoverArrow = (props: PopoverArrowProps) => {
   }, [])
 
   const { x, y } = sharedInfo.arrow.coords
-  const side = getSide(useContext(PopoverPositionerContext).placement)
+  const { placement, placementClassName } = useContext(
+    PopoverPositionerContext,
+  )
+  const side = getSide(placement)
 
   const TRANSFORMS: Record<string, CSSProperties['transform']> = {
     top: `rotate(180deg) ${custom ? '' : 'translateX(50%)'}`,
@@ -585,7 +617,7 @@ export const PopoverArrow = (props: PopoverArrowProps) => {
 
   return (
     <view
-      className={presenceClassName}
+      className={clsx(presenceClassName, placementClassName)}
       style={{
         width: '0px',
         height: '0px',
