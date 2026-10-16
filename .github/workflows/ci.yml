@@ -48,6 +48,10 @@ jobs:
           pnpm check:mdx
           pnpm dprint check
           pnpm dlx sherif@latest
+      - name: Package Chinese README Check
+        run: |
+          pnpm test:package-readmes
+          pnpm check:package-readmes
       - name: Changeset Script Tests
         run: |
           pnpm test:changeset-files

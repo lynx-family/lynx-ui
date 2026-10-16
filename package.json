@@ -10,7 +10,7 @@
     "build": "turbo build",
     "changeset": "changeset",
     "check": "pnpm run check:luna-vars && pnpm run lint && dprint check",
-    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:changesets-private && pnpm run check:manypkg && pnpm run check:sherif",
+    "check:all": "pnpm run check && pnpm run check:mdx && pnpm run check:package-readmes && pnpm run check:exports && pnpm run check:changed && pnpm run check:changesets && pnpm run check:changesets-private && pnpm run check:manypkg && pnpm run check:sherif",
     "check:changed": "bash tools/checkChanged/checkChanged.sh",
     "check:changesets": "node tools/scripts/check-changeset-targets.mjs",
     "check:changesets-private": "node tools/scripts/check-changeset-private-targets.mjs",
@@ -19,6 +19,7 @@
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:new-packages": "node tools/scripts/check-new-publishable-packages.mjs",
+    "check:package-readmes": "node tools/scripts/check-package-readmes.mjs",
     "check:package-types": "node tools/scripts/check-package-types.mjs",
     "check:sherif": "pnpm dlx sherif@latest",
     "check:skills-eval-definitions": "pnpm --filter @lynx-js/skill-lynx-ui check:eval-definitions",
@@ -49,6 +50,7 @@
     "test:changesets-private": "node --test tools/scripts/check-changeset-private-targets.test.mjs",
     "test:example-bundle-stats": "node --test tools/scripts/merge-example-bundle-stats.test.mjs",
     "test:new-packages": "node --test tools/scripts/check-new-publishable-packages.test.mjs",
+    "test:package-readmes": "node --test tools/scripts/check-package-readmes.test.mjs",
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {
