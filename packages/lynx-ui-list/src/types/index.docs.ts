@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ForwardedRef, ReactElement, ReactNode } from '@lynx-js/react'
+import type { ForwardedRef, ReactNode } from '@lynx-js/react'
 
 import type { BaseGesture } from '@lynx-js/gesture-runtime'
 import type {
@@ -19,8 +19,6 @@ import type {
   ListSnapEvent,
   ListProps as elementListProps,
 } from '@lynx-js/types'
-
-export type List = (props: ListProps) => ReactElement
 
 export interface ListItemInfo {
   width: number

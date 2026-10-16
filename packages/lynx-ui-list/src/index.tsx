@@ -10,7 +10,7 @@ import {
   useMainThreadRef,
   useRef,
 } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import {
   ExposureEventsMapping,
@@ -23,12 +23,14 @@ import type { MainThread } from '@lynx-js/types'
 
 import '@lynx-js/gesture-runtime'
 
-import type { ListProps, ListRef, List as ListType } from './types'
+import type { ListProps, ListRef } from './types'
 import { useMaxSize } from './useMaxSize.jsx'
 
 export type { ListRef, ListProps }
 
-export const List = memo(forwardRef(ListImpl)) as ListType
+type ListComponent = (props: ListProps) => ReactElement
+
+export const List = memo(forwardRef(ListImpl)) as ListComponent
 
 export const ListEventMapping: Record<string, string> = {
   onLayoutComplete: 'bindlayoutcomplete',

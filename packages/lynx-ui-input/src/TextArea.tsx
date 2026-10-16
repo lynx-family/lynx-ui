@@ -11,7 +11,7 @@ import {
   useImperativeHandle,
   useRef,
 } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import { InvokeRejectError, setNativePropsByRef } from '@lynx-js/lynx-ui-common'
 import type { NodesRef } from '@lynx-js/types'
@@ -24,15 +24,13 @@ import type {
   InputInputEvent,
   InputSelectionEvent,
 } from './NativeTypings'
-import type {
-  TextAreaProps,
-  TextAreaRef,
-  TextArea as TextAreaType,
-} from './types'
+import type { TextAreaProps, TextAreaRef } from './types'
 
 export type { TextAreaRef, TextAreaProps }
 
-export const TextArea = memo(forwardRef(TextAreaImpl)) as TextAreaType
+type TextAreaComponent = (props: TextAreaProps) => ReactElement
+
+export const TextArea = memo(forwardRef(TextAreaImpl)) as TextAreaComponent
 
 function TextAreaImpl(props: TextAreaProps, ref: ForwardedRef<TextAreaRef>) {
   const {

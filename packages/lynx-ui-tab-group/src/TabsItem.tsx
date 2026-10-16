@@ -17,11 +17,11 @@ import {
   useTabsContext,
   useTabsRootContext,
 } from './TabsContext'
-import type { TabItemProps } from './types'
+import type { TabsItemProps } from './types'
 
 let nextTabRegistrationId = 0
 
-export const TabsItem = (props: TabItemProps) => {
+export const TabsItem = (props: TabsItemProps) => {
   const { style, className, tabKey: explicitTabKey, children, ...viewProps } =
     props
   const inferredTabKey = useContext(TabsItemKeyContext)

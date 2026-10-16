@@ -9,6 +9,7 @@ export { TabsIndicator } from './TabsIndicator'
 
 export type {
   TabItemProps,
+  TabsItemProps,
   TabsIndicatorAnimation,
   TabsIndicatorProps,
   TabsPanelProps,

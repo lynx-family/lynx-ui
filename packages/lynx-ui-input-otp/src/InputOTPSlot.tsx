@@ -3,17 +3,16 @@
 // LICENSE file in the root directory of this source tree.
 
 import { memo } from '@lynx-js/react'
+import type { ReactElement } from '@lynx-js/react'
 
 import { clsx } from 'clsx'
 
 import { useInputOTPContext } from './InputOTPContext'
-import type {
-  InputOTPSlotProps,
-  InputOTPSlotRenderProps,
-  InputOTPSlot as InputOTPSlotType,
-} from './types'
+import type { InputOTPSlotProps, InputOTPSlotRenderProps } from './types'
 
-export const InputOTPSlot = memo(InputOTPSlotImpl) as InputOTPSlotType
+type InputOTPSlotComponent = (props: InputOTPSlotProps) => ReactElement
+
+export const InputOTPSlot = memo(InputOTPSlotImpl) as InputOTPSlotComponent
 
 function InputOTPSlotImpl(props: InputOTPSlotProps) {
   const {
