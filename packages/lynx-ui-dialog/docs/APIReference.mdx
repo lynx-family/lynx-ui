@@ -1,6 +1,5 @@
 import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
-
 ### DialogRoot
 
 The root component of the Dialog, containing all of its child components.
@@ -210,7 +209,9 @@ The root component of the Dialog, containing all of its child components.
     }
   }
 ]}/>
+
 <ClassRenderPropPreamble />
+
 <ClassRenderPropTable source={[
   {
     "className": "ui-animating",
@@ -258,7 +259,6 @@ The root component of the Dialog, containing all of its child components.
     }
   }
 ]}/>
-
 
 ### DialogBackdrop
 
@@ -507,7 +507,6 @@ The backdrop mask of the dialog.
   }
 ]}/>
 
-
 ### DialogView
 
 View container. When 'container' is set correctly, the underlying layer will be replaced with overlay; otherwise, it will be a regular view. When the underlying layer is overlay, the 'level' property can be used to control the hierarchical relationship. For a regular view, use 'z-index' to control the hierarchical relationship. If this dialog needs to be used outside of LynxView, consider enabling overlay.
@@ -723,7 +722,9 @@ View container. When 'container' is set correctly, the underlying layer will be 
     }
   }
 ]}/>
+
 <ClassRenderPropPreamble />
+
 <ClassRenderPropTable source={[
   {
     "className": "ui-open",
@@ -771,7 +772,6 @@ View container. When 'container' is set correctly, the underlying layer will be 
     }
   }
 ]}/>
-
 
 ### DialogContent
 

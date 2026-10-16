@@ -451,24 +451,43 @@ function mergeRenderPropsAndUiVariants(
   })
 }
 
+/**
+ * Composes independently generated MDX sections with deterministic boundaries.
+ *
+ * Only section edges are trimmed. Whitespace inside a section, including
+ * authored comments and code examples, is preserved.
+ */
+function joinMdxSections(
+  sections: Array<string | null | undefined>,
+): string {
+  return sections
+    .filter((section): section is string =>
+      typeof section === 'string' && section.trim().length > 0
+    )
+    .map(section => section.trim())
+    .join('\n\n')
+}
+
+/**
+ * Generates one props section and its API tables.
+ *
+ * Render-function children receive an additional state table and localized
+ * preamble, while ordinary props remain in the primary API table.
+ */
 function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
   const title = data.title
   const children = data.children
   const comments = getCommentText(data.comment, isZh)
 
-  let context = ''
-
   if (!children?.length) return ''
 
-  context = `
-${
+  const sections = [
     hasMultipleProps
       ? `### ${title.replace(/props$/i, '').trim()}`
-      : `## ${title}`
-  }
+      : `## ${title}`,
+    comments,
+  ]
 
-${comments ?? ''}
-  `
   children.map((d: any) => {
     const rawItems = Array.isArray(d.children) ? d.children : []
     const renderChildren = rawItems.filter((item: unknown) =>
@@ -480,16 +499,10 @@ ${comments ?? ''}
     })
 
     const sourceString = JSON.stringify(normalItems, null, 2)
-    if (children.length > 1) {
-      context += `
-### ${d.title}
-<UIApiTable source={${sourceString}}/>
-      `
-    } else {
-      context += `
-<UIApiTable source={${sourceString}}/>
-      `
-    }
+    sections.push(
+      children.length > 1 ? `### ${d.title}` : '',
+      `<UIApiTable source={${sourceString}}/>`,
+    )
 
     if (renderChildren.length > 0) {
       const renderSourceString = JSON.stringify(renderChildren, null, 2)
@@ -508,16 +521,17 @@ ${comments ?? ''}
       // generated APIReference.mdx that contains at least one ClassRenderPropTable.
       const classRenderPropPreamble = `<ClassRenderPropPreamble />`
 
-      context += `
-<UIApiTable source={${renderSourceString}}/>
-${classRenderPropPreamble}
-<ClassRenderPropTable source={${mergedTableSource}}/>
-      `
+      sections.push(
+        `<UIApiTable source={${renderSourceString}}/>`,
+        classRenderPropPreamble,
+        `<ClassRenderPropTable source={${mergedTableSource}}/>`,
+      )
     }
   })
-  return context
+  return joinMdxSections(sections)
 }
 
+/** Generates the public ref API section from TypeDoc method groups. */
 function genRef(data: any, isZh?: boolean) {
   const title = data.title
   const children = data.children
@@ -525,29 +539,32 @@ function genRef(data: any, isZh?: boolean) {
 
   if (!children?.length) return ''
 
-  return children.map((d: any, index: number) => {
-    const sourceString = JSON.stringify(d.children, null, 2)
-    return `
-## ${title}
-
-${index === 0 ? comments ?? '' : ''}
-
-<UIApiTable source={${sourceString}}/>
-  `
-  }).join('\n')
+  return joinMdxSections(
+    children.map((d: any, index: number) => {
+      const sourceString = JSON.stringify(d.children, null, 2)
+      return joinMdxSections([
+        `## ${title}`,
+        index === 0 ? comments : '',
+        `<UIApiTable source={${sourceString}}/>`,
+      ])
+    }),
+  )
 }
 
+/** Generates an API table for a documented type alias. */
 function genTypeAlias(data: any) {
   if (!data.typeAlias) return ''
 
   const sourceString = JSON.stringify([data.typeAlias], null, 2)
-  return `
-### ${data.title}
-
-<UIApiTable source={${sourceString}}/>
-  `
+  return joinMdxSections([
+    `### ${data.title}`,
+    `<UIApiTable source={${sourceString}}/>`,
+  ])
 }
 
+/**
+ * Recursively converts generic TypeDoc groups into headings and API tables.
+ */
 const doGenMdx = (data: any, isZh?: boolean) => {
   if (!data?.[0]?.flag && !data?.[0]?.children) {
     if (!data) {
@@ -555,27 +572,31 @@ const doGenMdx = (data: any, isZh?: boolean) => {
     }
 
     const sourceString = JSON.stringify(data, null, 2)
-    return `
-<UIApiTable source={${sourceString}}/>
-    `
+    return `<UIApiTable source={${sourceString}}/>`
   }
 
-  return data
-    .map((d: any) => {
+  return joinMdxSections(
+    data.map((d: any) => {
       if (d.flag && d.title) {
         const comments = getCommentText(d.comment, isZh)
         return d.flag === '###'
-          ? `
-${d.flag} ${d.title}
-${comments ?? ''}
-${doGenMdx(d.children, isZh)}
-      `
-          : `${doGenMdx(d.children, isZh)}`
+          ? joinMdxSections([
+            `${d.flag} ${d.title}`,
+            comments,
+            doGenMdx(d.children, isZh),
+          ])
+          : doGenMdx(d.children, isZh)
       }
-    })
-    .join('\n')
+    }),
+  )
 }
 
+/**
+ * Generates one API reference fragment from serialized TypeDoc data.
+ *
+ * Top-level entities are generated independently so joinMdxSections remains
+ * the single owner of structural whitespace between the header and sections.
+ */
 const doGenTplWithData = async (
   dataPath: string,
   savePath: string,
@@ -610,7 +631,6 @@ const doGenTplWithData = async (
   })
 
   let hasProcessedFirstProps = false
-  let content
 
   // If a component consumes render-props via `children`, hide the corresponding
   // standalone `*RenderProps` interface section to match Dialog-style docs.
@@ -673,58 +693,49 @@ const doGenTplWithData = async (
   // generated body does not actually use it, so components without any
   // render-prop table don't ship an unused import.
   const mdxHeader =
-    `import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
-`
+    'import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";'
 
-  if (multipleProps) {
-    content = `${mdxHeader}
-  ${
-      sortedData.map((item: any) => {
-        if (renderPropsTitlesToSkip.has(item.title)) return ''
-        if (!titleOrder.includes(item.title.replace(/(?:Props|Ref)$/, ''))) {
-          return
-        }
-        if (item.title.includes('Ref')) {
-          return genRef(item, isZh)
-        }
-        if (item.typeAlias) {
-          return genTypeAlias(item)
-        }
-        if (
-          item.title.includes('Props')
-          || item.title.endsWith('UIVariants')
-          || item.children?.length
-        ) {
-          return genProps(item, multipleProps, isZh)
-        }
+  // Keep top-level fragments unjoined until every optional entity is filtered.
+  const generatedSections = multipleProps
+    ? sortedData.map((item: any) => {
+      if (renderPropsTitlesToSkip.has(item.title)) return ''
+      if (!titleOrder.includes(item.title.replace(/(?:Props|Ref)$/, ''))) {
         return
-      }).join('\n')
-    }
-  `
-  } else {
-    content = `${mdxHeader}
-
-  ${
-      sortedData.map((item: any) => {
-        if (renderPropsTitlesToSkip.has(item.title)) return ''
-        if (item.title.includes('Props')) {
-          if (!hasProcessedFirstProps) {
-            hasProcessedFirstProps = true
-            return genProps(item, false, isZh)
-          }
-          return doGenMdx([item], isZh)
-        }
-        if (item.title.includes('Ref')) {
-          return genRef(item, isZh)
-        }
-        if (item.typeAlias) {
-          return genTypeAlias(item)
+      }
+      if (item.title.includes('Ref')) {
+        return genRef(item, isZh)
+      }
+      if (item.typeAlias) {
+        return genTypeAlias(item)
+      }
+      if (
+        item.title.includes('Props')
+        || item.title.endsWith('UIVariants')
+        || item.children?.length
+      ) {
+        return genProps(item, multipleProps, isZh)
+      }
+      return
+    })
+    : sortedData.map((item: any) => {
+      if (renderPropsTitlesToSkip.has(item.title)) return ''
+      if (item.title.includes('Props')) {
+        if (!hasProcessedFirstProps) {
+          hasProcessedFirstProps = true
+          return genProps(item, false, isZh)
         }
         return doGenMdx([item], isZh)
-      }).join('\n')
-    }
-  `
-  }
+      }
+      if (item.title.includes('Ref')) {
+        return genRef(item, isZh)
+      }
+      if (item.typeAlias) {
+        return genTypeAlias(item)
+      }
+      return doGenMdx([item], isZh)
+    })
+
+  let content = joinMdxSections([mdxHeader, ...generatedSections])
 
   // Drop `ClassRenderPropPreamble` from the import statement when the body
   // does not reference it, so components without any render-prop state do
@@ -736,8 +747,7 @@ const doGenTplWithData = async (
     )
   }
 
-  const normalizedContent = content.replace(/[ \t]+$/gm, '').trimEnd()
-  fs.writeFileSync(savePath, `${normalizedContent}\n`)
+  fs.writeFileSync(savePath, `${content}\n`)
 }
 
 export { doGenTplWithData }
