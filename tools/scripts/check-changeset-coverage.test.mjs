@@ -9,7 +9,11 @@ import os from 'node:os'
 import path from 'node:path'
 import { test } from 'node:test'
 
-import { checkCoverage, getLastRelease } from './check-changeset-coverage.mjs'
+import {
+  checkCoverage,
+  checkTargets,
+  getLastRelease,
+} from './check-changeset-coverage.mjs'
 
 function fixture(t) {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'release-coverage-'))
@@ -43,6 +47,11 @@ function fixture(t) {
   git('config', 'user.name', 'Test')
   git('config', 'user.email', 'test@example.com')
   git('config', 'tag.gpgSign', 'false')
+  git('config', 'commit.gpgSign', 'false')
+  write(
+    'pnpm-workspace.yaml',
+    'packages:\n  - packages/*\n  - apps/examples/*\n  - luna/packages/*\n  - "!packages/excluded"\n',
+  )
   pkg('packages/button', '@test/button')
   pkg('apps/examples/Button', '@test/example')
   pkg('luna/packages/tokens', '@test/tokens')
@@ -70,6 +79,170 @@ test('checks each package since the release including examples and LUNA', t => {
   f.bump('apps/examples/Button')
   f.bump('luna/packages/tokens')
   assert.deepEqual(f.check(source, f.commit()), [])
+})
+
+test('issue 340: rejects the example scope even when dependency propagation bumps the component', t => {
+  const f = fixture(t)
+  f.pkg('packages/common', '@lynx-js/lynx-ui-common')
+  f.pkg('packages/slider', '@lynx-js/lynx-ui-slider')
+  f.pkg('apps/examples/Common', '@lynx-example/lynx-ui-common')
+  const base = f.commit()
+  f.git('tag', '@lynx-js/lynx-ui@1.0.1')
+  f.write('packages/common/src/index.ts', 'export const value = 2\n')
+  f.write('packages/slider/src/index.ts', 'export const value = 2\n')
+  const file = '.changeset/purple-knives-sin.md'
+  f.write(
+    file,
+    '---\n"@lynx-example/lynx-ui-common": patch\n---\n\nTransform-aware measurement.\n',
+  )
+  f.write(
+    '.changeset/slider.md',
+    '---\n"@lynx-js/lynx-ui-slider": patch\n---\n\nFix slider measurement.\n',
+  )
+  const ref = f.commit()
+  f.bump('packages/common')
+  f.bump('packages/slider')
+  f.bump('apps/examples/Common')
+  // All version bumps pass, but the explicit changeset target is still wrong.
+  assert.deepEqual(f.check(ref, f.commit()), [])
+  const result = checkTargets({ cwd: f.cwd, base, ref })
+  assert.deepEqual(
+    result.failures.map(({ file, name, directory }) => ({
+      file,
+      name,
+      directory,
+    })),
+    [{
+      file,
+      name: '@lynx-example/lynx-ui-common',
+      directory: 'apps/examples/Common',
+    }],
+  )
+  assert.deepEqual(result.changed.sort(), [
+    '@lynx-js/lynx-ui-common',
+    '@lynx-js/lynx-ui-slider',
+  ])
+  f.write(
+    file,
+    '---\n"@lynx-js/lynx-ui-common": patch\n---\n\nTransform-aware measurement.\n',
+  )
+  assert.deepEqual(
+    checkTargets({ cwd: f.cwd, base, ref: f.commit() }).failures,
+    [],
+  )
+})
+
+test('PR target validation allows no changesets, empty changesets and a subset of changed packages', t => {
+  const f = fixture(t)
+  const base = f.git('rev-parse', 'HEAD')
+  f.write('packages/button/src/index.ts', 'export const value = 2\n')
+  f.write('apps/examples/Button/src/index.ts', 'export const value = 2\n')
+  assert.deepEqual(
+    checkTargets({ cwd: f.cwd, base, ref: f.commit() }).failures,
+    [],
+  )
+  f.write('.changeset/empty.md', '---\n---\n\nNo release for this part.\n')
+  f.write(
+    '.changeset/button.md',
+    '---\n"@test/button": patch\n---\n\nUpdate button.\n',
+  )
+  assert.deepEqual(
+    checkTargets({ cwd: f.cwd, base, ref: f.commit() }).failures,
+    [],
+  )
+})
+
+test('target validation follows workspace membership and ignores deleted changesets and inherited targets', t => {
+  const f = fixture(t)
+  f.write(
+    '.changeset/inherited.md',
+    '---\n"@test/example": patch\n---\n\nEarlier change.\n',
+  )
+  f.write(
+    '.changeset/deleted.md',
+    '---\n"@test/example": patch\n---\n\nDeleted.\n',
+  )
+  const base = f.commit()
+  fs.unlinkSync(path.join(f.cwd, '.changeset/deleted.md'))
+  f.pkg('packages/excluded', '@test/excluded')
+  f.write('.changeset/README.md', 'Not a changeset\n')
+  f.write(
+    '.changeset/targets.md',
+    '---\n"@test/excluded": patch\n"@test/unknown": patch\n"@test/private": patch\n---\n\nInvalid targets.\n',
+  )
+  const ref = f.commit()
+  assert.deepEqual(
+    checkTargets({ cwd: f.cwd, base, ref }).failures.map(
+      entry => [entry.name, entry.directory],
+    ),
+    [
+      ['@test/excluded', undefined],
+      ['@test/unknown', undefined],
+      ['@test/private', 'packages/private'],
+    ],
+  )
+})
+
+test('historical backfills require explicit approval, changeset-only files and a source reference', t => {
+  const f = fixture(t)
+  const base = f.git('rev-parse', 'HEAD')
+  f.write(
+    '.changeset/backfill.md',
+    '---\n"@test/button": patch\n---\n\nRestore release note for #195.\n',
+  )
+  let ref = f.commit()
+  assert.equal(checkTargets({ cwd: f.cwd, base, ref }).failures.length, 1)
+  assert.equal(
+    checkTargets({ cwd: f.cwd, base, ref, allowBackfill: true }).backfill,
+    true,
+  )
+  f.write(
+    '.changeset/backfill.md',
+    '---\n"@test/button": patch\n---\n\nRestore release note.\n',
+  )
+  ref = f.commit()
+  assert.equal(
+    checkTargets({ cwd: f.cwd, base, ref, allowBackfill: true }).failures
+      .length,
+    1,
+  )
+  assert.equal(
+    checkTargets({
+      cwd: f.cwd,
+      base,
+      ref,
+      allowBackfill: true,
+      referenceText: 'Backfill https://github.com/lynx-family/lynx-ui/pull/195',
+    }).backfill,
+    true,
+  )
+  f.write('apps/examples/Button/src/index.ts', 'export const value = 2\n')
+  ref = f.commit()
+  assert.equal(
+    checkTargets({
+      cwd: f.cwd,
+      base,
+      ref,
+      allowBackfill: true,
+      referenceText: 'Backfill #195',
+    }).failures.length,
+    1,
+  )
+})
+
+test('backfills never waive unknown or private targets', t => {
+  const f = fixture(t)
+  const base = f.git('rev-parse', 'HEAD')
+  f.write(
+    '.changeset/backfill.md',
+    '---\n"@test/unknown": patch\n"@test/private": patch\n---\n\nBackfill #195.\n',
+  )
+  const ref = f.commit()
+  assert.equal(
+    checkTargets({ cwd: f.cwd, base, ref, allowBackfill: true }).failures
+      .length,
+    2,
+  )
 })
 
 test('ignores changes before the latest release even without individual package tags', t => {

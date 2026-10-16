@@ -68,7 +68,7 @@ function globToRegExp(glob) {
   return new RegExp(`${pattern}$`, 'u')
 }
 
-function isWorkspacePackage(manifestPath, workspacePatterns) {
+export function isWorkspacePackage(manifestPath, workspacePatterns) {
   if (manifestPath === 'package.json') {
     return true
   }

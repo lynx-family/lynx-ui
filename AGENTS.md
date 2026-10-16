@@ -343,6 +343,12 @@ factory and include those files in their lint project. Run
 
 1. **Changesets**: All changes that affect package versions must include a changeset (`pnpm changeset`).
    Changesets must not target workspace packages with `"private": true`. Remove private package entries before submission, or make the package publishable when it must be versioned and tagged.
+   Ordinary PRs validate only added or edited changeset targets against relevant
+   package-local changes; absent and empty changesets pass. To backfill a prior
+   change, use a changeset-only PR with the `changeset-backfill` label and an
+   original PR or commit reference in the summary or PR description. Unknown
+   and private targets cannot use this exception. See
+   [the Changesets guide](.changeset/README.md) for local commands.
    Release coverage runs only on PRs from `changeset-release/main`. It compares
    the source snapshot on `main` with the latest tagged release on main's
    first-parent history, then requires a version bump in the release PR for each
