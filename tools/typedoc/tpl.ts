@@ -667,13 +667,13 @@ const doGenTplWithData = async (
   // Shared MDX header injected into every generated APIReference.mdx.
   //
   // `ClassRenderPropPreamble` is a locale-aware wrapper component (now owned
-  // by the `@lynx-ui/index` entry, not this repository) that is rendered
+  // by the `@lynx-ui` entry, not this repository) that is rendered
   // above every <ClassRenderPropTable/> in the body. We always import it
   // eagerly here and strip it from the import statement at the end if the
   // generated body does not actually use it, so components without any
   // render-prop table don't ship an unused import.
   const mdxHeader =
-    `import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui/index";
+    `import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 `
 
   if (multipleProps) {
@@ -731,8 +731,8 @@ const doGenTplWithData = async (
   // not pull in an unused symbol.
   if (!content.includes('<ClassRenderPropPreamble />')) {
     content = content.replace(
-      'import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui/index";',
-      'import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";',
+      'import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";',
+      'import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";',
     )
   }
 
