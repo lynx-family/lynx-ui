@@ -137,7 +137,13 @@ export interface CheckboxUIVariants {
    * @zh 当 status.indeterminate 为 true 时生效，可用于 `.ui-indeterminate { ... }`。
    */
   'ui-indeterminate'?: boolean
+}
 
+/**
+ * UI variants applied by CheckboxIndicator based on Checkbox state.
+ * @zh CheckboxIndicator 根据 Checkbox 状态注入的 ui-variants。
+ */
+export interface CheckboxIndicatorUIVariants extends CheckboxUIVariants {
   /**
    * Applied when `status.active` is true.
    * @zh 当 status.active 为 true 时生效，可用于 `.ui-active { ... }`。
@@ -152,6 +158,7 @@ export interface CheckboxUIVariants {
 }
 
 /**
- * @deprecated Use `CheckboxUIVariants` instead.
+ * @deprecated Use `CheckboxUIVariants` and `CheckboxIndicatorUIVariants`
+ * instead.
  */
-export type CheckboxUiVariants = CheckboxUIVariants
+export type CheckboxUiVariants = CheckboxIndicatorUIVariants
