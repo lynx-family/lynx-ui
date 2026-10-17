@@ -1,0 +1,46 @@
+{
+  "name": "@lynx-example/lynx-ui-calendar",
+  "version": "0.0.7",
+  "description": "Example app demonstrating Calendar usage in lynx-ui",
+  "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Calendar#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "apps/examples/Calendar"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "type": "module",
+  "files": [
+    "LICENSE",
+    "CHANGELOG.md",
+    "dist/",
+    "**/*.tsx",
+    "**/*.ts",
+    "**/*.css",
+    "lynx.config.mjs"
+  ],
+  "scripts": {
+    "build": "rspeedy build",
+    "build:dev": "rspeedy build --mode=development",
+    "dev": "rspeedy dev",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@lynx-js/luna-styles": "workspace:*",
+    "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/react": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-js/qrcode-rsbuild-plugin": "catalog:",
+    "@lynx-js/react-rsbuild-plugin": "catalog:",
+    "@lynx-js/rspeedy": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@types/react": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
