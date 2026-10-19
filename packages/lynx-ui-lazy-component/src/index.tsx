@@ -3,19 +3,17 @@
 // LICENSE file in the root directory of this source tree.
 
 import { forwardRef, memo, useRef, useState } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactNode } from '@lynx-js/react'
 
 import { useGlobalEventListener } from '@lynx-js/lynx-ui-common'
 import './styles.css'
 import type { LayoutChangeEvent } from '@lynx-js/types'
 
-import type {
-  LazyComponentProps,
-  LazyComponentRef,
-  LazyComponent as LazyComponentType,
-} from './types'
+import type { LazyComponentProps, LazyComponentRef } from './types'
 
 export type { LazyComponentRef, LazyComponentProps }
+
+type LazyComponentType = (props: LazyComponentProps) => ReactNode
 
 export const LazyComponent = memo(
   forwardRef(LazyComponentImpl),

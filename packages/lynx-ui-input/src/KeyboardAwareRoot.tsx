@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { memo, useEffect, useMemo, useRef, useState } from '@lynx-js/react'
-import type { RefObject } from '@lynx-js/react'
+import type { ReactElement, RefObject } from '@lynx-js/react'
 
 import {
   getRectById,
@@ -16,16 +16,17 @@ import type { NodesRef } from '@lynx-js/types'
 
 import { KeyboardAwareRootContext } from './KeyboardAwareContext'
 import { calculateKeyboardAwareScrollOffset } from './keyboardAwareUtils'
-import type {
-  KeyboardAwareRootProps,
-  KeyboardAwareRoot as KeyboardAwareRootType,
-} from './types'
+import type { KeyboardAwareRootProps } from './types'
 
 export type { KeyboardAwareRootProps }
 
+type KeyboardAwareRootComponent = (
+  props: KeyboardAwareRootProps,
+) => ReactElement
+
 export const KeyboardAwareRoot = memo(
   KeyboardAwareRootImpl,
-) as KeyboardAwareRootType
+) as KeyboardAwareRootComponent
 
 export function KeyboardAwareRootImpl(props: KeyboardAwareRootProps) {
   const {

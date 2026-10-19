@@ -6,10 +6,10 @@ import type { CSSProperties, MainThread } from '@lynx-js/types'
 
 import type {
   BounceConfig,
+  OnBounceParams,
   SwipeToOptions,
   SwiperPropsReal as SwiperProps,
   SwiperRef,
-  onBounceParams,
 } from './index.docs'
 
 export interface SwiperContextProps extends
@@ -37,7 +37,7 @@ export type CompoundModeConfig =
   | CompoundNormalModeConfig
   | CompoundCustomModeConfig
 
-export type customAnimation = (
+export type CustomAnimation = (
   progress: number,
   props: SwiperProps<unknown>,
 ) => CSSProperties
@@ -98,8 +98,8 @@ export interface OffsetLimitResult {
 
 export type {
   BounceConfig,
+  OnBounceParams,
   SwiperRef,
-  onBounceParams,
   SwipeToOptions,
   SwiperProps,
 }

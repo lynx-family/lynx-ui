@@ -7,7 +7,7 @@ import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
 import { mtsLog, selectorMT } from '@lynx-js/lynx-ui-common'
 import type { CommonEvent, ScrollEvent } from '@lynx-js/types'
 
-import type { BounceableBasicProps, scrollToBouncesInfo } from '../types'
+import type { BounceableBasicProps, ScrollToBouncesInfo } from '../types'
 import { getNativeBounceMetricsMT } from './nativeBounceUtils'
 
 interface UseNativeBounceOptions {
@@ -74,7 +74,7 @@ export function useNativeBounce(
     }
   }
 
-  function onScrollToBouncesJS(info: scrollToBouncesInfo) {
+  function onScrollToBouncesJS(info: ScrollToBouncesInfo) {
     options.bounceableOptions.onScrollToBounces?.(info)
   }
 

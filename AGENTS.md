@@ -140,6 +140,18 @@ after the full workspace build and commit every affected
 `packages/lynx-ui-*/docs/APIReference*.mdx` files, including generated deletions. CI regenerates
 these files and fails when the committed output is stale.
 
+#### TypeDoc API references
+
+- Keep component function signatures used only to type implementations beside their component
+  exports. Keep implementation-only component aliases out of `src/types/index.docs.ts`.
+- Keep `src/types/index.docs.ts` focused on documented public props, refs, events, and related
+  types.
+- Let the TypeDoc generator emit exactly one `## API Reference` heading with the `#api` anchor for
+  each non-empty reference. Render top-level API entities at H3 with `#api-<entity>` anchors and
+  nested Properties and Events groups at H4 with `#api-<entity>-<group>` anchors.
+- Do not add another API heading in downstream manually authored introduction fragments.
+- Use primitive configuration to select and order entities, not to set heading depth.
+
 The required `Done` check from the `Test` workflow must be reported for every pull request targeting
 `main`, including documentation-only and changeset-only pull requests. Do not add pull request path
 filters that can skip the entire workflow.

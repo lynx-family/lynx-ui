@@ -88,10 +88,10 @@ describe('doGenTplWithData', () => {
 
       const content = readFileSync(outputPath, 'utf8')
       expect(content).toContain(
-        'from "@lynx-ui";\n\n## ExampleProps\n\n<UIApiTable',
+        'from "@lynx-ui";\n\n## API Reference {#api}\n\n### ExampleProps {#api-example-props}\n\n<UIApiTable',
       )
       expect(content).toContain(
-        '/>\n\n## ExampleRef\n\n<UIApiTable',
+        '/>\n\n### ExampleRef {#api-example-ref}\n\n<UIApiTable',
       )
       expect(content).not.toMatch(/\n{3,}/)
     } finally {
@@ -141,6 +141,165 @@ describe('doGenTplWithData', () => {
 
       const content = readFileSync(outputPath, 'utf8')
       expect(content).toContain(example)
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('uses a fixed heading hierarchy for primitive APIs', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+    const tableItem = {
+      name: 'value',
+      type: 'string',
+    }
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            {
+              title: 'ExampleProps',
+              children: [
+                {
+                  title: 'Properties',
+                  children: [tableItem],
+                },
+                {
+                  title: 'Events',
+                  children: [tableItem],
+                },
+              ],
+            },
+            {
+              title: 'ExampleRef',
+              children: [
+                {
+                  children: [tableItem],
+                },
+              ],
+            },
+            {
+              title: 'ExampleOptions',
+              typeAlias: tableItem,
+            },
+          ],
+        }),
+      )
+
+      await doGenTplWithData(
+        dataPath,
+        outputPath,
+        true,
+        ['Example', 'ExampleOptions'],
+        new Set(['Example']),
+      )
+
+      const content = readFileSync(outputPath, 'utf8')
+      expect(
+        content.match(/^#{2,4} .+$/gm),
+      ).toEqual([
+        '## API Reference {#api}',
+        '### Example {#api-example}',
+        '#### Properties {#api-example-properties}',
+        '#### Events {#api-example-events}',
+        '### ExampleOptions {#api-example-options}',
+        '### ExampleRef {#api-example-ref}',
+      ])
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('uses runtime exports for every component Props display title', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+    const properties = [
+      {
+        title: 'Properties',
+        flag: '####',
+        children: [{ name: 'value', type: 'string' }],
+      },
+    ]
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            {
+              title: 'SwiperProps',
+              flag: '###',
+              children: properties,
+            },
+            {
+              title: 'SwiperItemProps',
+              flag: '###',
+              children: properties,
+            },
+            {
+              title: 'RenderFunctionProps',
+              flag: '###',
+              children: properties,
+            },
+            {
+              title: 'BounceableBasicProps',
+              flag: '###',
+              children: properties,
+            },
+            {
+              title: 'RefreshProps',
+              flag: '###',
+              children: properties,
+            },
+          ],
+        }),
+      )
+
+      await doGenTplWithData(
+        dataPath,
+        outputPath,
+        false,
+        undefined,
+        new Set(['Swiper', 'SwiperItem']),
+      )
+
+      const content = readFileSync(outputPath, 'utf8')
+      expect(content.match(/^### .+$/gm)).toEqual([
+        '### Swiper {#api-swiper}',
+        '### SwiperItem {#api-swiper-item}',
+        '### RenderFunctionProps {#api-render-function-props}',
+        '### BounceableBasicProps {#api-bounceable-basic-props}',
+        '### RefreshProps {#api-refresh-props}',
+      ])
+      expect(content).not.toContain('### SwiperProps')
+      expect(content).not.toContain('### SwiperItemProps')
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('omits the API heading when no API sections are generated', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+
+    try {
+      writeFileSync(dataPath, JSON.stringify({ children: [] }))
+
+      await doGenTplWithData(dataPath, outputPath)
+
+      const content = readFileSync(outputPath, 'utf8')
+      expect(content).not.toContain('## API')
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true })
     }

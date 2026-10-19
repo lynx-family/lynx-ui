@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import { InvokeRejectError, useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { KeyboardAwareTriggerContext } from '@lynx-js/lynx-ui-input'
@@ -27,17 +27,14 @@ import type {
 import { clsx } from 'clsx'
 
 import { InputOTPContext } from './InputOTPContext'
-import type {
-  InputOTPProps,
-  InputOTPRef,
-  InputOTPRenderProps,
-  InputOTP as InputOTPType,
-} from './types'
+import type { InputOTPProps, InputOTPRef, InputOTPRenderProps } from './types'
 import {
   nativeInputFilters,
   normalizeInputOTPLength,
   normalizeOTPValue,
 } from './utils'
+
+type InputOTPComponent = (props: InputOTPProps) => ReactElement
 
 const hiddenInputStyle: CSSProperties = {
   position: 'absolute',
@@ -53,7 +50,7 @@ const hiddenInputStyle: CSSProperties = {
   backgroundColor: 'transparent',
 }
 
-export const InputOTP = memo(forwardRef(InputOTPImpl)) as InputOTPType
+export const InputOTP = memo(forwardRef(InputOTPImpl)) as InputOTPComponent
 
 function reportInputError(error: unknown) {
   console.warn(

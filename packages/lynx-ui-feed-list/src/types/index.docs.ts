@@ -9,8 +9,6 @@ import type { ListProps, ListRef } from '@lynx-js/lynx-ui-list'
 
 import type { BounceableBasicProps, RefreshProps } from '../hooks/useRefresh'
 
-export type FeedList = (props: FeedListProps) => ReactElement
-
 export interface FeedListRef extends ListRef {
   /**
    * After the startrefresh event, calling this method will end the refresh state and make the refreshHeader bounces hack.
@@ -100,13 +98,13 @@ export interface RefreshEvent {
   triggeredBy: 'startRefresh' | 'drag'
 }
 
-export interface refreshOffsetEvent {
+export interface RefreshOffsetEvent {
   offset: number
   headerSize: number
   isDragging: boolean
 }
 
-export interface headerReleased {
+export interface HeaderReleased {
   offset: number
   headerSize: number
 }

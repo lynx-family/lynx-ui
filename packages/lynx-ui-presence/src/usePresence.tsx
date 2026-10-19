@@ -11,14 +11,14 @@ import type {
   PresenceAnimationStatus,
   PresenceContextType,
   PresenceProps,
-  usePresenceProps,
-  usePresenceReturnType,
+  UsePresenceProps,
+  UsePresenceReturnType,
 } from './types'
 import { PresenceState } from './utils'
 
 export const PresenceContext = createContext<PresenceContextType>(null!)
 
-export function usePresence(props: usePresenceProps): usePresenceReturnType {
+export function usePresence(props: UsePresenceProps): UsePresenceReturnType {
   const {
     show,
     state,

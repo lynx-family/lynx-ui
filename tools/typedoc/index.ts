@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 
 import { Application } from 'typedoc'
 
+import { collectPublicRuntimeExportNames } from './runtime-exports.js'
 import { doGenDocData } from './tpl-data.js'
 import { doGenTplWithData } from './tpl.js'
 
@@ -95,7 +96,6 @@ const primitivesConfig: Record<string, string[]> = {
     'TabsRoot',
     'TabsBar',
     'TabsItem',
-    'TabItem',
     'TabsPanel',
     'TabsIndicator',
   ],
@@ -210,6 +210,19 @@ export async function genLynxUIDocForPackage(
     subPackageFolder,
     isDocsConfig ? 'src/types/index.docs.ts' : 'types/index.docs.ts',
   )
+  const packageEntryPointPath = ['index.tsx', 'index.ts']
+    .map(fileName => join(subPackageFolder, 'src', fileName))
+    .find(filePath => fs.existsSync(filePath))
+
+  if (!packageEntryPointPath) {
+    throw new Error(`Could not find package entry point for ${packageName}`)
+  }
+
+  // TypeDoc reads the documentation-only type entry, so inspect the package
+  // entry separately before mapping a `FooProps` section to component `Foo`.
+  const publicRuntimeExportNames = collectPublicRuntimeExportNames(
+    packageEntryPointPath,
+  )
 
   const metaJsonPath = join(
     rootPath,
@@ -237,6 +250,7 @@ export async function genLynxUIDocForPackage(
     APIMdxPath,
     hasMultipleProps,
     primitivesConfig[packageName],
+    publicRuntimeExportNames,
   )
 
   // OSS only keeps the default APIReference.mdx output.

@@ -22,10 +22,10 @@ import type {
   BounceConfig,
   CompoundModeConfig,
   OffsetLimitResult,
+  OnBounceParams,
   ResetOptions,
   SwipeToOptions,
   SwiperProps,
-  onBounceParams,
 } from '../types'
 import { useDirection } from './useDirection'
 
@@ -420,7 +420,7 @@ function useOffset(
     runOnMainThread(swipeToMTS)(index, options)
   }
 
-  function handleOnBounce(params: onBounceParams) {
+  function handleOnBounce(params: OnBounceParams) {
     if (params.type === 'start' && onStartBounceItemBounce) {
       onStartBounceItemBounce(params)
     } else if (params.type === 'end' && onEndBounceItemBounce) {

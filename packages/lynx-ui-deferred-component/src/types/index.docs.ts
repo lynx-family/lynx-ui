@@ -6,8 +6,6 @@ import type { ReactElement } from '@lynx-js/react'
 
 import type { CSSProperties } from '@lynx-js/types'
 
-export type DeferredComponent = (props: DeferredComponentProps) => ReactElement
-
 /**
  * Reserved ref interface. No imperative methods are exposed.
  * @zh 预留的引用接口，不提供命令式方法。

@@ -15,9 +15,9 @@ import { useLatest } from '@lynx-js/lynx-ui-common'
 import type { MainThread } from '@lynx-js/types'
 
 import type {
-  basicDirections,
-  directions,
-  useDragOptions,
+  BasicDirections,
+  Directions,
+  UseDragOptions,
 } from './types/index.docs'
 
 export interface useDragInternalOptions {
@@ -95,7 +95,7 @@ function noopOnMainThread() {
 }
 
 export const useDraggable = (
-  options: useDragOptions & useDragInternalOptions,
+  options: UseDragOptions & useDragInternalOptions,
 ): UseDraggableReturnType => {
   const {
     draggableNodeRef,
@@ -125,8 +125,8 @@ export const useDraggable = (
   >(null)
 
   const directionInclude = (
-    direction: basicDirections,
-    givenDirections: directions,
+    direction: BasicDirections,
+    givenDirections: Directions,
   ) => {
     if (Array.isArray(givenDirections)) {
       return givenDirections.includes(direction)

@@ -7,7 +7,7 @@ import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
 import { log, mtsLog, selectorMT } from '@lynx-js/lynx-ui-common'
 import type { CommonEvent, MainThread, ScrollEvent } from '@lynx-js/types'
 
-export interface scrollToBouncesInfo {
+export interface ScrollToBouncesInfo {
   direction: 'upper' | 'lower'
 }
 
@@ -25,7 +25,7 @@ export interface BounceableBasicProps {
   estimatedHeight?: number
   estimatedWidth?: number
   validAnimationVersion?: boolean
-  onScrollToBounces?: (e: scrollToBouncesInfo) => void
+  onScrollToBounces?: (e: ScrollToBouncesInfo) => void
 }
 
 export interface useBounceOptions {
@@ -42,7 +42,7 @@ export interface useBounceOptions {
   scrollOrientation: 'vertical' | 'horizontal'
 }
 
-export interface bounceHandlers {
+export interface BounceHandlers {
   'main-thread:bindtouchstart': (event: MainThread.TouchEvent) => void
   'main-thread:bindtouchend': () => void
   'main-thread:bindtouchmove': (event: MainThread.TouchEvent) => void
@@ -54,7 +54,10 @@ export interface bounceHandlers {
   onLowerDisexposure: (_event: CommonEvent) => void
 }
 
-export function useBounce(options: useBounceOptions): bounceHandlers {
+/** @deprecated Use `BounceHandlers` instead. */
+export type bounceHandlers = BounceHandlers
+
+export function useBounce(options: useBounceOptions): BounceHandlers {
   // Control the damping coefficient during rubber effect. The smaller it is, the harder the spring effect.
   const rubberC = useMainThreadRef(0.55)
   // Control the fling deceleration coefficient during dropdown. The smaller it is, the faster it stops.
@@ -351,7 +354,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
     }
   }
 
-  function onScrollToBouncesJS(info: scrollToBouncesInfo) {
+  function onScrollToBouncesJS(info: ScrollToBouncesInfo) {
     if (enableBounces && onScrollToBounces) {
       onScrollToBounces(info)
     }
@@ -367,7 +370,7 @@ export function useBounce(options: useBounceOptions): bounceHandlers {
       }`,
     )
 
-    const info: scrollToBouncesInfo = {
+    const info: ScrollToBouncesInfo = {
       direction: isUpper ? 'upper' : 'lower',
     }
     runOnBackground(onScrollToBouncesJS)(info)
