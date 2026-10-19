@@ -29,7 +29,6 @@ const primitivesConfig: Record<string, string[]> = {
   'lynx-ui-view-pager': ['ViewPager'],
   'lynx-ui-scroll-coordinator': [
     'ScrollCoordinator',
-    'ScrollCoordinatorUIVariants',
     'ScrollCoordinatorRefreshOptions',
   ],
   'lynx-ui-button': ['Button'],
@@ -83,7 +82,6 @@ const primitivesConfig: Record<string, string[]> = {
     'SliderThumbIndex',
     'SliderValueChangeSource',
     'SliderUpdateValueOptions',
-    'SliderUIVariants',
     'SliderTrack',
     'SliderIndicator',
     'SliderThumb',

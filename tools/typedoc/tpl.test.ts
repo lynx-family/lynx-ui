@@ -286,6 +286,167 @@ describe('doGenTplWithData', () => {
     }
   })
 
+  it('generates one isolated UI variants table per component part', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+    const propsEntity = (
+      title: string,
+      renderState: string,
+    ) => ({
+      title: `${title}Props`,
+      children: [
+        {
+          title: 'Properties',
+          children: [
+            {
+              name: 'children',
+              type: `ReactNode | ((status: { ${renderState} }) => ReactNode)`,
+            },
+          ],
+        },
+      ],
+    })
+    const variantsEntity = (
+      title: string,
+      variants: string[],
+      extendsTitle?: string,
+    ) => ({
+      title: `${title}UIVariants`,
+      extendedTypes: extendsTitle ? [{ name: extendsTitle }] : undefined,
+      children: [
+        {
+          title: 'Properties',
+          children: variants.map(name => ({
+            name,
+            type: 'boolean',
+            summary: [{ text: `${name} description.` }],
+          })),
+        },
+      ],
+    })
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            propsEntity(
+              'Root',
+              'active: boolean; checked: boolean; invalid: boolean',
+            ),
+            {
+              title: 'IndicatorProps',
+              children: [
+                {
+                  title: 'Properties',
+                  children: [{ name: 'children', type: 'ReactNode' }],
+                },
+              ],
+            },
+            {
+              title: 'VariantOnlyProps',
+              children: [
+                {
+                  title: 'Properties',
+                  children: [{ name: 'disabled', type: 'boolean' }],
+                },
+              ],
+            },
+            variantsEntity('Root', ['ui-active']),
+            variantsEntity(
+              'Indicator',
+              ['ui-active', 'ui-invalid'],
+              'RootUIVariants',
+            ),
+            variantsEntity('VariantOnly', ['ui-disabled']),
+          ],
+        }),
+      )
+
+      await doGenTplWithData(
+        dataPath,
+        outputPath,
+        true,
+        ['Root', 'Indicator', 'VariantOnly'],
+        new Set(['Root', 'Indicator', 'VariantOnly']),
+      )
+
+      const content = readFileSync(outputPath, 'utf8')
+      const tables = content.match(
+        /<ClassRenderPropTable source=\{\[[\s\S]*?\]\}\/>/g,
+      )
+      expect(tables).toHaveLength(3)
+      expect(tables?.[0]).toContain('"className": "ui-active"')
+      expect(tables?.[0]).not.toContain('ui-checked')
+      expect(tables?.[0]).not.toContain('ui-invalid')
+      expect(tables?.[1]).toContain('"className": "ui-active"')
+      expect(tables?.[1]).toContain('"className": "ui-invalid"')
+      expect(tables?.[1]).not.toContain('ui-checked')
+      expect(tables?.[2]).toContain('"className": "ui-disabled"')
+      expect(tables?.[2]).toContain('"description": "ui-disabled description."')
+      expect(tables?.[2]).not.toContain('"Render Prop"')
+      expect(content.match(/^### .+$/gm)).toEqual([
+        '### Root {#api-root}',
+        '### Indicator {#api-indicator}',
+        '### VariantOnly {#api-variant-only}',
+      ])
+      expect(content).not.toContain('#### Root')
+      expect(content).not.toContain('#### Indicator')
+      expect(content).not.toContain('#### VariantOnly')
+      expect(content.indexOf(tables?.[0] ?? '')).toBeLessThan(
+        content.indexOf('### Indicator'),
+      )
+      expect(content.indexOf(tables?.[1] ?? '')).toBeGreaterThan(
+        content.indexOf('### Indicator'),
+      )
+      expect(content.indexOf(tables?.[2] ?? '')).toBeGreaterThan(
+        content.indexOf('### VariantOnly'),
+      )
+      expect(content).not.toContain('### RootUIVariants')
+      expect(content).not.toContain('### IndicatorUIVariants')
+      expect(content).not.toContain('### VariantOnlyUIVariants')
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('rejects ambiguous UI variant ownership', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+    const variantsEntity = {
+      title: 'ExampleUIVariants',
+      children: [
+        {
+          title: 'Properties',
+          children: [{ name: 'ui-active', type: 'boolean' }],
+        },
+      ],
+    }
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [variantsEntity, variantsEntity],
+        }),
+      )
+
+      await expect(
+        doGenTplWithData(dataPath, outputPath),
+      ).rejects.toThrow(
+        'Multiple UI variant declarations found for ExampleUIVariants.',
+      )
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
   it('omits the API heading when no API sections are generated', async () => {
     const temporaryDirectory = mkdtempSync(
       join(tmpdir(), 'lynx-ui-typedoc-'),

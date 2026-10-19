@@ -73,7 +73,10 @@ export interface ScrollCoordinatorRef {
 }
 
 export interface ScrollCoordinatorUIVariants {
-  /** Applied to the coordinator and outer refresh wrapper while the header is collapsed. */
+  /**
+   * Applied to the coordinator and outer refresh wrapper while the header is collapsed.
+   * @zh 头部折叠时，应用于协调器和外层刷新容器。
+   */
   'ui-sticky'?: boolean
 }
 

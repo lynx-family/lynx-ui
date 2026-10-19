@@ -473,6 +473,27 @@ pushing the other thumb.
   }
 ]}/>
 
+UI variants applied by `SliderRoot`.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied while the slider is actively being interacted with. On `SliderThumb`, only the active thumb receives this variant.",
+      "description_zh": "滑块处于交互中时生效。在 `SliderThumb` 上，仅当前活动的拇指会获得此状态。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
+  }
+]}/>
+
 ### SliderRangeValue {#api-slider-range-value}
 
 <UIApiTable source={[
@@ -740,74 +761,6 @@ Options used by `SliderRef.updateValue`.
   }
 ]}/>
 
-### SliderUIVariants {#api-slider-ui-variants}
-
-UI variants applied by slider primitives based on interaction state.
-Use them as CSS selectors to style active and disabled states.
-
-<UIApiTable source={[
-  {
-    "name": "ui-active",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Applied while the slider is actively being interacted with. On "
-      },
-      {
-        "kind": "code",
-        "text": "`SliderThumb`"
-      },
-      {
-        "kind": "text",
-        "text": ", only the active thumb receives this variant."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "滑块处于交互中时生效。在 "
-      },
-      {
-        "kind": "code",
-        "text": "`SliderThumb`"
-      },
-      {
-        "kind": "text",
-        "text": " 上，仅当前活动的拇指会获得此状态。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "ui-disabled",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Applied when the slider is disabled."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "滑块被禁用时生效。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  }
-]}/>
-
 ### SliderTrack {#api-slider-track}
 
 Track primitive props.
@@ -915,6 +868,27 @@ Track primitive props.
   }
 ]}/>
 
+UI variants applied by `SliderTrack`.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied while the slider is actively being interacted with. On `SliderThumb`, only the active thumb receives this variant.",
+      "description_zh": "滑块处于交互中时生效。在 `SliderThumb` 上，仅当前活动的拇指会获得此状态。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
+  }
+]}/>
+
 ### SliderIndicator {#api-slider-indicator}
 
 Indicator primitive props.
@@ -965,6 +939,27 @@ Indicator primitive props.
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
+  }
+]}/>
+
+UI variants applied by `SliderIndicator`.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied while the slider is actively being interacted with. On `SliderThumb`, only the active thumb receives this variant.",
+      "description_zh": "滑块处于交互中时生效。在 `SliderThumb` 上，仅当前活动的拇指会获得此状态。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
   }
 ]}/>
 
@@ -1110,6 +1105,27 @@ Thumb primitive props.
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
+  }
+]}/>
+
+UI variants applied by `SliderThumb`.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied while the slider is actively being interacted with. On `SliderThumb`, only the active thumb receives this variant.",
+      "description_zh": "滑块处于交互中时生效。在 `SliderThumb` 上，仅当前活动的拇指会获得此状态。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
   }
 ]}/>
 

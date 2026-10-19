@@ -71,6 +71,30 @@ export interface SliderUIVariants {
 }
 
 /**
+ * UI variants applied by `SliderRoot`.
+ * @zh `SliderRoot` 注入的 ui-variants。
+ */
+export interface SliderRootUIVariants extends SliderUIVariants {}
+
+/**
+ * UI variants applied by `SliderTrack`.
+ * @zh `SliderTrack` 注入的 ui-variants。
+ */
+export interface SliderTrackUIVariants extends SliderUIVariants {}
+
+/**
+ * UI variants applied by `SliderIndicator`.
+ * @zh `SliderIndicator` 注入的 ui-variants。
+ */
+export interface SliderIndicatorUIVariants extends SliderUIVariants {}
+
+/**
+ * UI variants applied by `SliderThumb`.
+ * @zh `SliderThumb` 注入的 ui-variants。
+ */
+export interface SliderThumbUIVariants extends SliderUIVariants {}
+
+/**
  * Options used by `SliderRef.updateValue`.
  * @zh `SliderRef.updateValue` 使用的选项。
  */

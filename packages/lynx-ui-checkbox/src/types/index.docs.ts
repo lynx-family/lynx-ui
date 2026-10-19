@@ -152,6 +152,12 @@ export interface CheckboxUIVariants {
 }
 
 /**
+ * UI variants applied by CheckboxIndicator based on Checkbox state.
+ * @zh CheckboxIndicator 根据 Checkbox 状态注入的 ui-variants。
+ */
+export interface CheckboxIndicatorUIVariants extends CheckboxUIVariants {}
+
+/**
  * @deprecated Use `CheckboxUIVariants` instead.
  */
 export type CheckboxUiVariants = CheckboxUIVariants
