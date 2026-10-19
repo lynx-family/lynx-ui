@@ -138,7 +138,9 @@ export interface PresenceContextType {
 export type UsePresenceReturnType = PresenceContextType
 
 /** @deprecated Use `UsePresenceProps` instead. */
+// eslint-disable-next-line @typescript-eslint/naming-convention -- Preserve the deprecated public alias for compatibility.
 export type usePresenceProps = UsePresenceProps
 
 /** @deprecated Use `UsePresenceReturnType` instead. */
+// eslint-disable-next-line @typescript-eslint/naming-convention -- Preserve the deprecated public alias for compatibility.
 export type usePresenceReturnType = UsePresenceReturnType

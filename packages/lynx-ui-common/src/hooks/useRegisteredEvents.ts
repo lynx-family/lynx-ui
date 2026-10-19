@@ -23,8 +23,8 @@ const useMainThreadifyEvents = (
   mainThreadEvents: Record<string, string>, // e.g.: { 'onScroll': bindscroll } -> { 'main-thread:bindscroll': main-thread:bindscroll }
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic event map
-  type reducedEventsType = Record<string, any>
-  const mainThreadifyEvents: reducedEventsType = {}
+  type ReducedEventsType = Record<string, any>
+  const mainThreadifyEvents: ReducedEventsType = {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- main-thread marker
   const dummyRef = useMainThreadRef()
   for (const event of Object.keys(events)) {
@@ -61,8 +61,8 @@ export const useRegisteredEvents = (
   registeredEventsMapping: Record<string, string>,
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic event map
-  type reducedEventsType = Record<string, any>
-  const reducedEvents: reducedEventsType = {}
+  type ReducedEventsType = Record<string, any>
+  const reducedEvents: ReducedEventsType = {}
   for (const event of Object.keys(events)) {
     if (
       event in registeredEventsMapping

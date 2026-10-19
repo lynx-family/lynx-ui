@@ -17,7 +17,7 @@ import { PresenceState } from './utils'
 
 export const PresenceContext = createContext<PresenceContextType>(null!)
 
-export interface usePresenceGroupProps {
+export interface UsePresenceGroupProps {
   show: boolean
   forceMount: boolean
   setGroupState?: (state: PresenceState) => void
@@ -31,15 +31,15 @@ export interface usePresenceGroupProps {
   debugLog?: boolean
 }
 
-export interface usePresenceGroupReturnType {
+export interface UsePresenceGroupReturnType {
   renderChildren: ReactNode
   mountView: boolean
 }
 // Manage a group of Presence components.
 // Wrap all child nodes with Presence and ensure that the onOpen and onClose events are triggered after all animations are completed.
 export const usePresenceGroup: (
-  props: usePresenceGroupProps,
-) => usePresenceGroupReturnType = (props) => {
+  props: UsePresenceGroupProps,
+) => UsePresenceGroupReturnType = (props) => {
   const {
     show,
     forceMount = false,

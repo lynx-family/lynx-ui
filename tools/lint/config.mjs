@@ -385,6 +385,13 @@ export function createLintConfig({
     {
       files: TYPESCRIPT_FILES,
       rules: {
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: ['interface', 'typeAlias'],
+            format: ['PascalCase'],
+          },
+        ],
         // The core rule does not model all TypeScript declaration semantics.
         '@typescript-eslint/no-unused-vars': 'off',
         '@typescript-eslint/no-unused-expressions': 'off',

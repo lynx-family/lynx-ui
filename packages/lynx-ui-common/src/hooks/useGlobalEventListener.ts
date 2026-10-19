@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useMemo } from '@lynx-js/react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic type definition
-type noop = (...p: any) => void
+type Noop = (...p: any) => void
 
 /**
  * Use this hook to register events
@@ -14,7 +14,7 @@ type noop = (...p: any) => void
  */
 export function useGlobalEventListener(
   eventName: string,
-  handler: noop,
+  handler: Noop,
   deps?: readonly unknown[],
 ) {
   const handlerFunc = useCallback(handler, deps ?? [])

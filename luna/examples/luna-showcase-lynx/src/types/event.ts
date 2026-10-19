@@ -17,6 +17,6 @@ type StudioEvent =
     source?: string
   }
 
-type onStudioEvent = (e: StudioEvent) => void
+type OnStudioEvent = (e: StudioEvent) => void
 
-export type { onStudioEvent, StudioEvent }
+export type { OnStudioEvent, StudioEvent }

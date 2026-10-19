@@ -7,7 +7,7 @@ import { useCallback } from '@lynx-js/react'
 import { parseLunaThemeKey } from '@lynx-js/luna-core'
 
 import type { LunaThemeKey, StudioViewMode } from '../../types'
-import type { onStudioEvent } from '../../types/event.js'
+import type { OnStudioEvent } from '../../types/event.js'
 import { cn } from '../../utils'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
@@ -27,7 +27,7 @@ function ActMoonrise(
   const { variant: lunaVariant, mode } = parseLunaThemeKey(studioThemeKey)
   const lightsOn = mode === 'light'
 
-  const emit = useCallback<onStudioEvent>(
+  const emit = useCallback<OnStudioEvent>(
     (event) => {
       NativeModules?.bridge?.call(
         'emitStudioEvent',

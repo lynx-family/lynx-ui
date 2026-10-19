@@ -26,13 +26,13 @@ import type {
   DialogViewProps,
 } from './types'
 
-type childType<T = PresenceState> = (groupState: T) => ReactNode
-type renderChildrenType<T = PresenceState> = (
-  children: childType<T> | ReactNode,
+type ChildType<T = PresenceState> = (groupState: T) => ReactNode
+type RenderChildrenType<T = PresenceState> = (
+  children: ChildType<T> | ReactNode,
   status: T,
 ) => ReactNode
 
-const renderedChildren: renderChildrenType<PresenceAnimationStatus> = (
+const renderedChildren: RenderChildrenType<PresenceAnimationStatus> = (
   children,
   status,
 ) => {

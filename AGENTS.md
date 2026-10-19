@@ -201,6 +201,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 ### General
 
 - **TypeScript**: Use strict typing. Avoid `any`.
+- **Type Names**: Use PascalCase for interfaces and type aliases, including internal and documentation-source declarations. Public compatibility applies to types re-exported through a package's public index entry point (`src/index.tsx` or `src/index.ts`), including transitive re-exports. Types used only within this repository may be renamed even when their implementation module exports them. Preserve deprecated public lowercase aliases with a declaration-level `@typescript-eslint/naming-convention` suppression explaining the compatibility requirement.
 - **Side Effects**: Component packages must declare `"sideEffects": false` in `package.json`, including packages that import component styles. Do not add CSS glob allowlists to `sideEffects`.
 - **Comments**: All code comments **MUST** be written in English.
 - **Functional Components**: Use React Functional Components with Hooks.

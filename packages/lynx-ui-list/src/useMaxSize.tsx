@@ -6,7 +6,7 @@ import type { MainThreadRef, RefObject } from '@lynx-js/react'
 
 import type { ListLayoutCompleteEvent, MainThread } from '@lynx-js/types'
 
-interface useListMaxSizeType {
+interface UseListMaxSizeType {
   handleLayoutCompleted: (e: ListLayoutCompleteEvent) => void
 }
 
@@ -15,7 +15,7 @@ export const useMaxSize = (
   listSize: RefObject<number>,
   listMaxSize?: number,
   listMainThreadRef?: MainThreadRef<MainThread.Element | null>,
-): useListMaxSizeType | null => {
+): UseListMaxSizeType | null => {
   if (!listMaxSize) return null
   const isVertical = scrollOrientation === 'vertical'
 

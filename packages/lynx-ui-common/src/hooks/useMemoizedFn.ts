@@ -5,9 +5,9 @@
 import { useMemo, useRef } from '@lynx-js/react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic type definition
-type noop = (this: any, ...args: any[]) => any
+type Noop = (this: any, ...args: any[]) => any
 
-type PickFunction<T extends noop> = (
+type PickFunction<T extends Noop> = (
   this: ThisParameterType<T>,
   ...args: Parameters<T>
 ) => ReturnType<T>
@@ -16,7 +16,7 @@ type PickFunction<T extends noop> = (
  * Hooks for persistent functions. In general, useMemoizedFn can be used instead of useCallback.
  * In some scenarios, we need to use useCallback to cache a function, but when the second parameter deps changes, the function will be regenerated, causing the function reference to change.
  */
-function useMemoizedFn<T extends noop>(fn: T) {
+function useMemoizedFn<T extends Noop>(fn: T) {
   const fnRef = useRef<T>(fn)
 
   // why not write `fnRef.current = fn`?

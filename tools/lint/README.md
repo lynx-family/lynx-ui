@@ -6,6 +6,19 @@ rule registration and compatibility plugins in one place. Callers can supply
 their repository root, React package, import grouping, additional ignored paths,
 syntax-rule exclusions, copyright year, and an optional common typed project.
 
+Interfaces and type aliases use PascalCase in all authored TypeScript files,
+including documentation sources, tests, and tooling. The native
+`@typescript-eslint/naming-convention` rule permits acronyms such as `UI` and
+`OTP`; it does not constrain hook names, properties, or generic parameters.
+Hook functions keep names such as `useExample`; associated types still use
+PascalCase, such as `UseExampleOptions` and `UseExampleReturn`.
+The public type surface is the set of types re-exported through each package's
+public index entry point (`src/index.tsx` or `src/index.ts`), including transitive
+re-exports. Types used only within the repository may be renamed even if their
+implementation module exports them.
+Preserve deprecated public lowercase aliases with an explanatory rule suppression
+on each declaration rather than exempting a file or name pattern.
+
 Typed source scopes are configurable with `sourceFiles` and `sourceIgnores`;
 tooling scopes use `toolingFiles` and `toolingIgnores`. The same scopes select
 the type-checked presets and their parser projects. `testFiles` selects files

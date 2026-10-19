@@ -17,7 +17,7 @@ import type { MainThread, NodesRef } from '@lynx-js/types'
 
 import type { DraggableAreaProps, DraggableProps } from './types/index.docs'
 import { useDraggable } from './useDraggable'
-import type { useDraggableEventsHandlers } from './useDraggable'
+import type { UseDraggableEventsHandlers } from './useDraggable'
 
 export const Draggable = forwardRef<NodesRef, DraggableProps>(
   (props, ref) => {
@@ -90,7 +90,7 @@ export const Draggable = forwardRef<NodesRef, DraggableProps>(
 )
 
 const DraggableContext = createContext<
-  { eventHandlers: useDraggableEventsHandlers | Record<string, never> }
+  { eventHandlers: UseDraggableEventsHandlers | Record<string, never> }
 >({ eventHandlers: {} })
 
 export const DraggableRoot = forwardRef<NodesRef, DraggableProps>(
