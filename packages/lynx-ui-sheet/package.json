@@ -18,6 +18,7 @@
   "files": [
     "LICENSE",
     "src/**",
+    "docs/**",
     "README.md",
     "CHANGELOG.md",
     "tsconfig.docs.json",
