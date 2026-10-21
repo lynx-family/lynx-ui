@@ -1,0 +1,73 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    160deg,
+    var(--gradient-a),
+    var(--gradient-b),
+    var(--gradient-c),
+    var(--gradient-d)
+  );
+}
+
+.toast-trigger {
+  width: 240px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-radius: 9999px;
+  background-color: var(--primary);
+  transition: background-color 150ms ease-out;
+}
+
+.toast-trigger.ui-active {
+  background-color: var(--primary-2);
+}
+
+.toast-trigger-text {
+  color: var(--primary-content);
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.toast-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 96px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.toast-item {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background-color: var(--canvas);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.toast-message {
+  color: var(--content);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  text-align: center;
+}

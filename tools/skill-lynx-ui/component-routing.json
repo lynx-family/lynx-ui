@@ -115,6 +115,11 @@
       "useWhen": "The UI needs coordinated tab navigation with selectable items and an animated indicator.",
       "avoidWhen": "The UI needs carousel-style content paging; use Swiper."
     },
+    "toast": {
+      "label": "Toast",
+      "useWhen": "The UI needs lightweight, transient, non-blocking feedback after an action or state change.",
+      "avoidWhen": "The message requires a blocking decision, persistent interaction, or anchored context; use Dialog or Popover."
+    },
     "view-pager": {
       "label": "ViewPager",
       "useWhen": "The UI needs page-snapped horizontal content navigation with optional lazy rendering.",

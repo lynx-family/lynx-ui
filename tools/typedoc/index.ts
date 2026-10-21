@@ -87,6 +87,12 @@ const primitivesConfig: Record<string, string[]> = {
     'SliderIndicator',
     'SliderThumb',
   ],
+  'lynx-ui-toast': [
+    'ToastRoot',
+    'ToastPositioner',
+    'ToastContent',
+    'ToastDraggableContent',
+  ],
   'lynx-ui-input-otp': [
     'InputOTP',
     'InputOTPSlot',
