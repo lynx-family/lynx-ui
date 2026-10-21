@@ -1,0 +1,77 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.luna-gradient-berry {
+  background: linear-gradient(0deg, var(--gradient-b), var(--gradient-c));
+}
+
+.demo-container {
+  width: 100%;
+  height: 100%;
+  padding: 48px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-card {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--canvas);
+  border-radius: 24px;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.video {
+  border-radius: 12px;
+  background-color: var(--canvas-ambient);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+.status {
+  color: var(--content);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.time {
+  color: var(--content-muted);
+  font-size: 13px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings {
+  padding-top: 12px;
+}
+
+.action {
+  padding: 12px 16px;
+  border-radius: 24px;
+  background-color: var(--paper);
+}
+
+.primary {
+  background-color: var(--primary);
+}
+
+.action-label {
+  color: var(--content);
+  font-size: 14px;
+}
+
+.primary .action-label {
+  color: var(--primary-content);
+}

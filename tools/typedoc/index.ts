@@ -25,6 +25,7 @@ const excludedPath = [
 ]
 
 const primitivesConfig: Record<string, string[]> = {
+  'lynx-ui-video': ['Video'],
   'lynx-ui-view-pager': ['ViewPager'],
   'lynx-ui-scroll-coordinator': [
     'ScrollCoordinator',

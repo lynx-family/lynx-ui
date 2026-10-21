@@ -1,0 +1,563 @@
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
+
+
+### Video
+
+A strict subset of VideoEngine, backed by the Lynx 4.1+ experimental video element.
+Use an HTTP(S) source and give the wrapper explicit dimensions.
+
+### Properties
+<UIApiTable source={[
+  {
+    "name": "attached",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Mount the player on demand. Detaching releases the native player."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "true",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "autoPlay",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Start playback after preparing each source."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Base class for the wrapper."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "loop",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Repeat playback."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mute",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Mute audio."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "objectfit",
+    "type": "aspectFit | aspectFill | scaleToFill",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Video and poster scaling.\nVideo scaling applies when "
+      },
+      {
+        "kind": "code",
+        "text": "`playUrl`"
+      },
+      {
+        "kind": "text",
+        "text": " changes or the player mounts,\nincluding reattaching with "
+      },
+      {
+        "kind": "code",
+        "text": "`attached`"
+      },
+      {
+        "kind": "text",
+        "text": ". Poster scaling updates immediately."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "'aspectFit'",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "playbackSpeed",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Playback rate from 0.1 to 2."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "1",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "playUrl",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "HTTP(S) video source. Changing it resets playback and the poster."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "poster",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Image displayed until the first video frame is rendered."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ref",
+    "type": "ForwardedRef<VideoRef>",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Wrapper dimensions and styling."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "videoEngineId",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native element ID. Use a unique value when selecting the element externally."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "volume",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Volume from 0 to 1."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "1",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Events
+<UIApiTable source={[
+  {
+    "name": "onEnded",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Playback reached the end, including each loop iteration."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onError",
+    "type": "(e: {errorCode: number, errorMsg: string}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A native playback error occurred. Error codes are platform-specific."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onFirstFrame",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The first frame rendered for the current source."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPause",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Playback paused."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPlay",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Playback started or resumed."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onPrepared",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The source is ready for playback."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onSeek",
+    "type": "(willPlay: boolean) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A seek completed with the requested playback state."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onSrcChanged",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The source changed, including the initial mount."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onStop",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Playback stopped."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onTimeUpdate",
+    "type": "(e: {detail: {current: number, total: number}}) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Current position and total duration, both in milliseconds."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+
+### Video
+
+<UIApiTable source={[
+  {
+    "name": "Video",
+    "type": "(props: VideoProps) => ReactElement",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+
+
+## VideoRef
+
+Playback controls shared with VideoEngine. All public times are milliseconds.
+
+<UIApiTable source={[
+  {
+    "name": "getDuration",
+    "type": "(callback?: (success: boolean, duration: number, errCode?: number, errMsg?: string) => void) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Read the duration in milliseconds after the source is prepared."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "operatePoster",
+    "type": "(display: boolean) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Show or hide the poster without changing playback."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pause",
+    "type": "(callback?: VideoPlaybackCallback) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Pause playback at the current position."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "play",
+    "type": "(callback?: VideoPlaybackCallback) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Start or resume playback."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "replay",
+    "type": "(play: boolean, callback?: VideoPlaybackCallback) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Return to the first frame, then play or remain paused."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "seek",
+    "type": "(position: number, play: boolean, callback?: VideoPlaybackCallback) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Seek to a position in milliseconds, then play or remain paused."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "stop",
+    "type": "(callback?: VideoPlaybackCallback) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Stop playback and return to the beginning."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
