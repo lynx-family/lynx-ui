@@ -18,19 +18,19 @@ import type { MainThread, ScrollEvent } from '@lynx-js/types'
 export interface RefreshEvent {
   triggeredBy: 'startRefresh' | 'drag'
 }
-export interface refreshOffsetEvent {
+export interface RefreshOffsetEvent {
   offset: number
   headerSize: number
   isDragging: boolean
 }
-export interface headerReleased {
+export interface HeaderReleased {
   offset: number
   headerSize: number
 }
 export interface RefreshStateChange {
   state: RefreshState
 }
-export interface scrollToBouncesInfo {
+export interface ScrollToBouncesInfo {
   direction: 'upper' | 'lower'
 }
 
@@ -85,7 +85,7 @@ export interface useRefreshAndBounceOptions {
   scrollOrientation: 'vertical' | 'horizontal'
 }
 
-export interface useRefreshAndBounceReturn {
+export interface UseRefreshAndBounceReturn {
   refreshAndBounceGesture: NativeGesture
   'main-thread:onLayoutChange': (e: MainThread.LayoutChangeEvent) => void
   'main-thread:onScroll': (e: ScrollEvent) => void
@@ -99,6 +99,9 @@ export interface useRefreshAndBounceReturn {
   startRefreshMethod: () => void
 }
 
+/** @deprecated Use `UseRefreshAndBounceReturn` instead. */
+export type useRefreshAndBounceReturn = UseRefreshAndBounceReturn
+
 interface BouncingPositionInfo {
   [key: string]: unknown
   bouncingOffset?: number
@@ -108,7 +111,7 @@ interface BouncingPositionInfo {
 
 export function useRefreshAndBounce(
   options: useRefreshAndBounceOptions,
-): useRefreshAndBounceReturn {
+): UseRefreshAndBounceReturn {
   // Control the damping coefficient during rubber effect. The smaller it is, the harder the spring effect.
   const rubberC = useMainThreadRef(0.55)
   // Control the fling deceleration coefficient during dropdown. The smaller it is, the faster it stops.
@@ -346,7 +349,7 @@ export function useRefreshAndBounce(
     runOnBackground(onStartRefreshJS)(refreshInfo)
   }
 
-  function onHeaderReleasedJS(info: headerReleased) {
+  function onHeaderReleasedJS(info: HeaderReleased) {
     if (enableRefresh && onHeaderReleased) {
       onHeaderReleased(info)
     }
@@ -370,7 +373,7 @@ export function useRefreshAndBounce(
         debugLogEnabled,
         `[lynx-ui-feed-list][useRefresh] header released, offset: ${currentBounceOffset}, headerSize: ${refreshHeaderSize.current}`,
       )
-      const refreshReleaseInfo: headerReleased = {
+      const refreshReleaseInfo: HeaderReleased = {
         offset: currentBounceOffset,
         headerSize: refreshHeaderSize.current,
       }
@@ -378,7 +381,7 @@ export function useRefreshAndBounce(
     }
   }
 
-  function onRefreshOffsetChangeJS(info: refreshOffsetEvent) {
+  function onRefreshOffsetChangeJS(info: RefreshOffsetEvent) {
     if (enableRefresh && onRefreshOffsetChange) {
       onRefreshOffsetChange(info)
     }
@@ -388,7 +391,7 @@ export function useRefreshAndBounce(
     'main thread'
     const currentBounceOffset = bouncingPositionInfo.current.bouncingOffset ?? 0
     if (currentBounceOffset > 0) {
-      const refreshOffsetChangeInfo: refreshOffsetEvent = {
+      const refreshOffsetChangeInfo: RefreshOffsetEvent = {
         offset: currentBounceOffset,
         headerSize: refreshHeaderSize.current,
         isDragging: startTouchEvent.current !== null,
@@ -580,7 +583,7 @@ export function useRefreshAndBounce(
     }
   }
 
-  function onScrollToBouncesJS(info: scrollToBouncesInfo) {
+  function onScrollToBouncesJS(info: ScrollToBouncesInfo) {
     if (enableBounces && onScrollToBounces) {
       onScrollToBounces(info)
     }
@@ -596,7 +599,7 @@ export function useRefreshAndBounce(
       }`,
     )
 
-    const info: scrollToBouncesInfo = {
+    const info: ScrollToBouncesInfo = {
       direction: isUpper ? 'upper' : 'lower',
     }
     runOnBackground(onScrollToBouncesJS)(info)

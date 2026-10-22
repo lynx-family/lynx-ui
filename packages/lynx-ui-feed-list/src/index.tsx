@@ -26,20 +26,21 @@ import { useRefreshAndBounce as useRefreshAndBounceInternal } from './hooks/useR
 import type {
   BounceableBasicProps,
   RefreshProps,
-  useRefreshAndBounceReturn as useRefreshAndBounceReturnInternal,
+  UseRefreshAndBounceReturn as UseRefreshAndBounceReturnInternal,
 } from './hooks/useRefresh'
-import type {
-  FeedListProps,
-  FeedListRef,
-  FeedList as FeedListType,
-} from './types'
+import type { FeedListProps, FeedListRef } from './types'
 import './styles.css'
 
 export { useRefreshAndBounce } from './hooks/useRefresh'
-export type { useRefreshAndBounceReturn } from './hooks/useRefresh'
+export type {
+  UseRefreshAndBounceReturn,
+  useRefreshAndBounceReturn,
+} from './hooks/useRefresh'
 
 export type { FeedListRef, FeedListProps }
 export type { BounceableBasicProps, RefreshProps } from './hooks/useRefresh'
+
+type FeedListComponent = (props: FeedListProps) => ReactElement
 
 const FeedListExcludedJSXProperties: (keyof FeedListProps)[] = [
   'children',
@@ -50,7 +51,7 @@ const FeedListExcludedJSXProperties: (keyof FeedListProps)[] = [
   'noMoreDataFooter',
 ]
 
-export const FeedList = memo(forwardRef(FeedListImpl)) as FeedListType
+export const FeedList = memo(forwardRef(FeedListImpl)) as FeedListComponent
 
 function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
   const {
@@ -110,7 +111,7 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
     bounceableProps = { singleSidedBounce: 'both', ...bounceableOptions }
   }
 
-  const useRefreshAndBounceProps: useRefreshAndBounceReturnInternal | null =
+  const useRefreshAndBounceProps: UseRefreshAndBounceReturnInternal | null =
     enableBounce || enableHookRefresh
       // eslint-disable-next-line react-hooks/rules-of-hooks -- branch is invariant for the component lifetime
       ? useRefreshAndBounceInternal({

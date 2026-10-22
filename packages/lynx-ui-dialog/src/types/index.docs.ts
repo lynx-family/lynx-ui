@@ -8,6 +8,8 @@ import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { PresenceChildrenType } from '@lynx-js/lynx-ui-presence'
 import type { OverlayProps, ViewProps } from '@lynx-js/types'
 
+export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
+
 /**
  * The backdrop mask of the dialog.
  * @zh 弹窗的背景遮罩。

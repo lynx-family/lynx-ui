@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { forwardRef, memo, useRef } from '@lynx-js/react'
-import type { ForwardedRef, ReactNode } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement, ReactNode } from '@lynx-js/react'
 
 import '@lynx-js/gesture-runtime'
 import type { GestureKind } from '@lynx-js/gesture-runtime'
@@ -28,15 +28,18 @@ import type {
   BounceableBasicProps,
   ScrollViewProps,
   ScrollViewRef,
-  ScrollView as ScrollViewType,
 } from './types'
 
 export type { ScrollViewProps, ScrollViewRef }
 export { useBounce } from './hooks/useBounce'
-export type { bounceHandlers } from './hooks/useBounce'
+export type { BounceHandlers, bounceHandlers } from './hooks/useBounce'
 export type { BounceableBasicProps } from './types'
 
-export const ScrollView = memo(forwardRef(ScrollViewImpl)) as ScrollViewType
+type ScrollViewComponent = (props: ScrollViewProps) => ReactElement
+
+export const ScrollView = memo(
+  forwardRef(ScrollViewImpl),
+) as ScrollViewComponent
 
 const ScrollViewEventMapping: Record<string, string> = {
   onContentSizeChange: 'bindcontentsizechanged',

@@ -14,6 +14,8 @@
 import * as fs from 'node:fs'
 import path from 'node:path'
 
+import type { ApiReferenceConfig } from './api-reference-config.js'
+
 function stringifyCommentContent(
   content?: { text?: string }[],
 ) {
@@ -468,23 +470,83 @@ function joinMdxSections(
     .join('\n\n')
 }
 
+function toApiAnchorSegment(title: string): string {
+  return title
+    .trim()
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase()
+}
+
+/**
+ * Formats a generated API heading with an explicit namespace. Nested entity
+ * anchors include their owning section.
+ * @param marker Markdown heading level.
+ * @param title Visible heading title.
+ * @param parentTitle Owning API entity for a nested group.
+ * @returns A Markdown heading with a stable explicit anchor.
+ */
+function formatApiHeading(
+  marker: '###' | '####',
+  title: string,
+  parentTitle?: string,
+): string {
+  const anchor = ['api', parentTitle, title]
+    .filter((segment): segment is string => Boolean(segment))
+    .map(segment => toApiAnchorSegment(segment))
+    .join('-')
+  return `${marker} ${title} {#${anchor}}`
+}
+
+/**
+ * Uses a component name as the display title for its documented props only
+ * when the package root exports that component as a runtime value. Other
+ * `*Props` declarations retain their source names.
+ * @param data TypeDoc entity to display.
+ * @param publicRuntimeExportNames Runtime values exported by the package root.
+ * @returns The entity with its public component title when applicable.
+ */
+function withApiEntityDisplayTitle(
+  data: any,
+  publicRuntimeExportNames: ReadonlySet<string>,
+) {
+  if (!data || typeof data.title !== 'string') return data
+  if (!data.title.endsWith('Props')) return data
+
+  const runtimeExportName = data.title.slice(0, -'Props'.length)
+  if (!publicRuntimeExportNames.has(runtimeExportName)) return data
+
+  return {
+    ...data,
+    title: runtimeExportName,
+  }
+}
+
 /**
  * Generates one props section and its API tables.
  *
  * Render-function children receive an additional state table and localized
  * preamble, while ordinary props remain in the primary API table.
  */
-function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
+function genProps(
+  data: any,
+  isZh?: boolean,
+  headingMarker: '###' | '####' = '###',
+  parentTitle?: string,
+) {
   const title = data.title
   const children = data.children
   const comments = getCommentText(data.comment, isZh)
 
   if (!children?.length) return ''
 
+  const shouldLabelGroups =
+    children.some((child: any) => child.title === 'Properties')
+    && children.some((child: any) => child.title === 'Events')
   const sections = [
-    hasMultipleProps
-      ? `### ${title.replace(/props$/i, '').trim()}`
-      : `## ${title}`,
+    formatApiHeading(headingMarker, title, parentTitle),
     comments,
   ]
 
@@ -499,9 +561,11 @@ function genProps(data: any, hasMultipleProps?: boolean, isZh?: boolean) {
     })
 
     const sourceString = JSON.stringify(normalItems, null, 2)
+    const titleProp = shouldLabelGroups
+      ? ` title=${JSON.stringify(d.title)}`
+      : ''
     sections.push(
-      children.length > 1 ? `### ${d.title}` : '',
-      `<UIApiTable source={${sourceString}}/>`,
+      `<UIApiTable${titleProp} source={${sourceString}}/>`,
     )
 
     if (renderChildren.length > 0) {
@@ -539,56 +603,29 @@ function genRef(data: any, isZh?: boolean) {
 
   if (!children?.length) return ''
 
-  return joinMdxSections(
-    children.map((d: any, index: number) => {
+  return joinMdxSections([
+    formatApiHeading('###', title),
+    comments,
+    ...children.map((d: any) => {
       const sourceString = JSON.stringify(d.children, null, 2)
-      return joinMdxSections([
-        `## ${title}`,
-        index === 0 ? comments : '',
-        `<UIApiTable source={${sourceString}}/>`,
-      ])
+      return `<UIApiTable source={${sourceString}}/>`
     }),
-  )
+  ])
 }
 
 /** Generates an API table for a documented type alias. */
-function genTypeAlias(data: any) {
+function genTypeAlias(
+  data: any,
+  headingMarker: '###' | '####' = '###',
+  parentTitle?: string,
+) {
   if (!data.typeAlias) return ''
 
   const sourceString = JSON.stringify([data.typeAlias], null, 2)
   return joinMdxSections([
-    `### ${data.title}`,
+    formatApiHeading(headingMarker, data.title, parentTitle),
     `<UIApiTable source={${sourceString}}/>`,
   ])
-}
-
-/**
- * Recursively converts generic TypeDoc groups into headings and API tables.
- */
-const doGenMdx = (data: any, isZh?: boolean) => {
-  if (!data?.[0]?.flag && !data?.[0]?.children) {
-    if (!data) {
-      return ''
-    }
-
-    const sourceString = JSON.stringify(data, null, 2)
-    return `<UIApiTable source={${sourceString}}/>`
-  }
-
-  return joinMdxSections(
-    data.map((d: any) => {
-      if (d.flag && d.title) {
-        const comments = getCommentText(d.comment, isZh)
-        return d.flag === '###'
-          ? joinMdxSections([
-            `${d.flag} ${d.title}`,
-            comments,
-            doGenMdx(d.children, isZh),
-          ])
-          : doGenMdx(d.children, isZh)
-      }
-    }),
-  )
 }
 
 /**
@@ -600,8 +637,8 @@ const doGenMdx = (data: any, isZh?: boolean) => {
 const doGenTplWithData = async (
   dataPath: string,
   savePath: string,
-  multipleProps?: boolean,
-  titleOrder: string[] = ['Props', 'Method'],
+  apiConfig: ApiReferenceConfig,
+  publicRuntimeExportNames: ReadonlySet<string> = new Set(),
 ) => {
   const dataString = fs.readFileSync(dataPath, 'utf-8')
   const data = JSON.parse(dataString)
@@ -615,22 +652,59 @@ const doGenTplWithData = async (
     ? buildTypeDocCandidates(currentPkg, true)
     : []
 
+  // Keep component parts, refs, and supporting types in their configured
+  // groups and display order.
+  const partOrder = new Map(
+    apiConfig.parts.map((name, index) => [`${name}Props`, index]),
+  )
+  const refOrder = new Map(
+    (apiConfig.refs ?? []).map((name, index) => [name, index]),
+  )
+  const supportingTypeOrder = new Map(
+    (apiConfig.supportingTypes ?? [])
+      .map((name, index) => [name, index]),
+  )
+  const missingOrder = Number.MAX_SAFE_INTEGER
+  const getConfiguredOrder = (title: string) => {
+    return partOrder.get(title)
+      ?? refOrder.get(title)
+      ?? supportingTypeOrder.get(title)
+      ?? missingOrder
+  }
+  const getEntityRank = (item: any) => {
+    if (partOrder.has(item.title)) return 0
+    if (refOrder.has(item.title)) return 1
+    return 2
+  }
+
+  const serializedEntityNames = new Set(
+    data.children.map((item: any) => item.title),
+  )
+  const missingConfiguredEntities = [
+    ...(apiConfig.refs ?? []),
+    ...(apiConfig.supportingTypes ?? []),
+    ...(apiConfig.embeddedTypes ?? []),
+  ].filter(title => !serializedEntityNames.has(title))
+  if (missingConfiguredEntities.length > 0) {
+    throw new Error(
+      `Configured API entities were not serialized: ${
+        missingConfiguredEntities.join(', ')
+      }`,
+    )
+  }
+
   const sortedData = data.children.sort((a: any, b: any) => {
-    if (a.title.includes('Ref')) return 1
-    if (b.title.includes('Ref')) return -1
+    const rankDifference = getEntityRank(a) - getEntityRank(b)
+    if (rankDifference !== 0) return rankDifference
 
-    const getOrderIndex = (name: string) => {
-      const normalizedName = name.replace(/(?:Props|Ref)$/, '')
-      const exactIndex = titleOrder.indexOf(normalizedName)
-      if (exactIndex !== -1) return exactIndex
-
-      const index = titleOrder.findIndex(item => name.includes(item))
-      return index === -1 ? titleOrder.length : index
+    const configuredOrderDifference = getConfiguredOrder(a.title)
+      - getConfiguredOrder(b.title)
+    if (configuredOrderDifference !== 0) {
+      return configuredOrderDifference
     }
-    return getOrderIndex(a.title) - getOrderIndex(b.title)
-  })
 
-  let hasProcessedFirstProps = false
+    return 0
+  })
 
   // If a component consumes render-props via `children`, hide the corresponding
   // standalone `*RenderProps` interface section to match Dialog-style docs.
@@ -695,47 +769,59 @@ const doGenTplWithData = async (
   const mdxHeader =
     'import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";'
 
-  // Keep top-level fragments unjoined until every optional entity is filtered.
-  const generatedSections = multipleProps
-    ? sortedData.map((item: any) => {
-      if (renderPropsTitlesToSkip.has(item.title)) return ''
-      if (!titleOrder.includes(item.title.replace(/(?:Props|Ref)$/, ''))) {
-        return
-      }
-      if (item.title.includes('Ref')) {
-        return genRef(item, isZh)
-      }
-      if (item.typeAlias) {
-        return genTypeAlias(item)
-      }
-      if (
-        item.title.includes('Props')
-        || item.title.endsWith('UIVariants')
-        || item.children?.length
-      ) {
-        return genProps(item, multipleProps, isZh)
-      }
-      return
-    })
-    : sortedData.map((item: any) => {
-      if (renderPropsTitlesToSkip.has(item.title)) return ''
-      if (item.title.includes('Props')) {
-        if (!hasProcessedFirstProps) {
-          hasProcessedFirstProps = true
-          return genProps(item, false, isZh)
-        }
-        return doGenMdx([item], isZh)
-      }
-      if (item.title.includes('Ref')) {
-        return genRef(item, isZh)
-      }
-      if (item.typeAlias) {
-        return genTypeAlias(item)
-      }
-      return doGenMdx([item], isZh)
-    })
+  // Keep top-level fragments unjoined until every configured entity is
+  // filtered and supporting types have been nested under their shared section.
+  const primarySections: string[] = []
+  const supportingSections: string[] = []
 
-  let content = joinMdxSections([mdxHeader, ...generatedSections])
+  for (const item of sortedData) {
+    if (renderPropsTitlesToSkip.has(item.title)) continue
+
+    const isPart = partOrder.has(item.title)
+    const isRef = refOrder.has(item.title)
+    const isSupportingType = supportingTypeOrder.has(item.title)
+    if (!isPart && !isRef && !isSupportingType) continue
+
+    const displayItem = withApiEntityDisplayTitle(
+      item,
+      publicRuntimeExportNames,
+    )
+    const headingMarker = '###'
+    const parentTitle = isSupportingType ? 'Supporting Types' : undefined
+    let section = ''
+
+    if (isRef) {
+      section = genRef(displayItem, isZh)
+    } else if (item.typeAlias) {
+      section = genTypeAlias(displayItem, headingMarker, parentTitle)
+    } else if (item.children?.length) {
+      section = genProps(
+        displayItem,
+        isZh,
+        headingMarker,
+        parentTitle,
+      )
+    }
+
+    if (!section) continue
+    if (isSupportingType) {
+      supportingSections.push(section)
+    } else {
+      primarySections.push(section)
+    }
+  }
+
+  const componentApiBody = joinMdxSections(primarySections)
+  const supportingTypesBody = joinMdxSections(supportingSections)
+  let content = joinMdxSections([
+    mdxHeader,
+    componentApiBody ? '## Component API {#api}' : '',
+    componentApiBody,
+    supportingTypesBody
+      ? '## Supporting Types {#api-supporting-types}'
+      : '',
+    supportingTypesBody,
+  ])
 
   // Drop `ClassRenderPropPreamble` from the import statement when the body
   // does not reference it, so components without any render-prop state do

@@ -37,6 +37,23 @@ interface ExternalTypeContext {
 
 const externalTypeContextCache = new Map<string, ExternalTypeContext | null>()
 
+/*
+ * Groups serialized entities without disturbing declaration order within a
+ * group. The template applies package-aware Structure Part ordering later.
+ */
+function compareSerializedApiEntities(
+  a: { name: string },
+  b: { name: string },
+): number {
+  const getRank = (name: string) => {
+    if (name.endsWith('Props')) return 0
+    if (name.endsWith('Ref')) return 2
+    return 1
+  }
+
+  return getRank(a.name) - getRank(b.name)
+}
+
 export function renderArrayType(
   elementType: any,
   isZhContext: boolean,
@@ -286,7 +303,7 @@ const doSingleTypeCalc = (
   t: any,
   isZhContext: boolean,
   currentPkgName?: string,
-) => {
+): string => {
   try {
     const { type, name } = t
 
@@ -305,7 +322,7 @@ const doSingleTypeCalc = (
       case 'array':
         return renderArrayType(t.elementType, isZhContext, currentPkgName)
       case 'literal':
-        return t.value
+        return String(t.value)
       case 'templateLiteral':
         return t.head + t.tail?.map((ti: any) => ti?.[1]).join(',')
       case 'union':
@@ -370,7 +387,7 @@ const doCalcReflectionType = (
   declaration: any,
   isZhContext: boolean,
   currentPkgName?: string,
-) => {
+): string => {
   try {
     if (declaration.signatures) {
       const { parameters, type } = declaration.signatures?.[0]
@@ -584,14 +601,14 @@ const doGetChildren = (
 const doGenDocData = async (
   jsonPath: string,
   savePath: string,
-  hasMultipleProps?: boolean,
+  hasExplicitApiReferenceConfig?: boolean,
   currentPkgName?: string,
 ) => {
   if (fs.existsSync(jsonPath)) {
     try {
       const content = fs.readFileSync(jsonPath, 'utf8')
       const typedocData: any = JSON.parse(content)
-      if (hasMultipleProps) {
+      if (hasExplicitApiReferenceConfig) {
         const checkIndexTargetGroup = typedocData.groups?.filter(
           (g: any) =>
             g.title === '接口' || g.title === 'Interfaces'
@@ -610,19 +627,7 @@ const doGenDocData = async (
           checkArray?.includes(c.id)
         )
 
-        rootArray.sort((a: any, b: any) => {
-          if (a.name.endsWith('Props')) {
-            return -1
-          } else if (b.name.endsWith('Props')) {
-            return 1
-          } else if (a.name.endsWith('Ref')) {
-            return -1
-          } else if (b.name.endsWith('Ref')) {
-            return 1
-          } else {
-            return 0
-          }
-        })
+        rootArray.sort(compareSerializedApiEntities)
 
         const rootFlag = '##'
 
@@ -663,19 +668,7 @@ const doGenDocData = async (
           checkArray?.includes(c.id)
         )
 
-        rootArray.sort((a: any, b: any) => {
-          if (a.name.endsWith('Props')) {
-            return -1
-          } else if (b.name.endsWith('Props')) {
-            return 1
-          } else if (a.name.endsWith('Ref')) {
-            return -1
-          } else if (b.name.endsWith('Ref')) {
-            return 1
-          } else {
-            return 0
-          }
-        })
+        rootArray.sort(compareSerializedApiEntities)
 
         const rootFlag = '##'
 

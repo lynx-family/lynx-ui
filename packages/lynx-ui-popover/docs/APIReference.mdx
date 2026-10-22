@@ -1,6 +1,8 @@
 import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
-### PopoverRoot
+## Component API {#api}
+
+### PopoverRoot {#api-popover-root}
 
 The root component of the Popover, containing all of its child components.
 
@@ -227,7 +229,7 @@ The root component of the Popover, containing all of its child components.
   }
 ]}/>
 
-### PopoverTrigger
+### PopoverTrigger {#api-popover-trigger}
 
 The element that triggers the Popover to show.
 
@@ -366,7 +368,102 @@ The element that triggers the Popover to show.
   }
 ]}/>
 
-### PopoverPositioner
+### PopoverAnchor {#api-popover-anchor}
+
+If this component is used, the Popover will use it rather than PopoverTrigger as the real anchor.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### PopoverPositioner {#api-popover-positioner}
 
 Helps position the Content and Arrow correctly.
 
@@ -632,7 +729,124 @@ Helps position the Content and Arrow correctly.
   }
 ]}/>
 
-### PopoverContent
+### PopoverBackdrop {#api-popover-backdrop}
+
+A transparent backdrop that can be used to close the Popover when clicked.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onClick",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Callback function triggered when the component is clicked"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "组件被点击时触发的回调函数"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### PopoverContent {#api-popover-content}
 
 The content of the Popover.
 
@@ -749,7 +963,7 @@ The content of the Popover.
   }
 ]}/>
 
-### PopoverArrow
+### PopoverArrow {#api-popover-arrow}
 
 The arrow of the Popover.
 
@@ -955,5 +1169,251 @@ The arrow of the Popover.
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
+  }
+]}/>
+
+## Supporting Types {#api-supporting-types}
+
+### PopoverOverlayProps {#api-supporting-types-popover-overlay-props}
+
+The view container of the Popover. Can be overlay or view. Controls the z-index of the popover.
+
+<UIApiTable source={[
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "container",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The parent container of the popover overlay"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Popover 覆盖层的父容器"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "placement",
+    "type": "Placement",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The position of the popover"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Popover 的位置"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "placementOffset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The offset of the popover overlay position"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Popover 覆盖层位置的偏移量"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "popoverOverlayProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "PopoverOverlay supports original view props to be directly spread in this prop."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "PopoverOverlay 支持将原始 view 属性直接展开到这个属性中。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean}) => ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "ReactNode | (status: {open?: boolean, closed?: boolean, leaving?: boolean, entering?: boolean, animating?: boolean}) => ReactNode"
+        }
+      ]
+    }
+  }
+]}/>
+
+<ClassRenderPropPreamble />
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-open",
+    "Render Prop": "open",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is opened.\nApplied when `status.open` is true.",
+      "description_zh": "弹层处于打开状态。\n当 status.open 为 true 时生效，可用于 `.ui-open { ... }`。"
+    }
+  },
+  {
+    "className": "ui-closed",
+    "Render Prop": "closed",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is closed.\nIf it's force mounted, the initial status will be closed.\nApplied when `status.closed` is true.",
+      "description_zh": "弹层处于关闭状态。如果开启了 forceMount，初始状态会是 ui-closed。\n当 status.closed 为 true 时生效，可用于 `.ui-closed { ... }`。"
+    }
+  },
+  {
+    "className": "ui-leaving",
+    "Render Prop": "leaving",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is performing the leaving animation. Takes effect when transition:true.\nApplied when `status.leaving` is true.",
+      "description_zh": "弹层正在执行离开动画。仅在 transition:true 时生效。\n当 status.leaving 为 true 时生效，可用于 `.ui-leaving { ... }`。"
+    }
+  },
+  {
+    "className": "ui-entering",
+    "Render Prop": "entering",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is performing the entering animation. Takes effect when transition:true.\nApplied when `status.entering` is true.",
+      "description_zh": "弹层正在执行进入动画。仅在 transition:true 时生效。\n当 status.entering 为 true 时生效，可用于 `.ui-entering { ... }`。"
+    }
+  },
+  {
+    "className": "ui-animating",
+    "Render Prop": "animating",
+    "item": {
+      "type": "boolean",
+      "description": "The popper is doing the animations. Takes effect when transition:true.\nApplied when `status.animating` is true.",
+      "description_zh": "弹层正在执行动画。仅在 transition:true 时生效。\n当 status.animating 为 true 时生效，可用于 `.ui-animating { ... }`。"
+    }
   }
 ]}/>

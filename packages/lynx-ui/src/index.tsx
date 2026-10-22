@@ -127,6 +127,7 @@ export { FeedList, useRefreshAndBounce } from '@lynx-js/lynx-ui-feed-list'
 export type {
   FeedListProps,
   FeedListRef,
+  UseRefreshAndBounceReturn,
   useRefreshAndBounceReturn,
   RefreshProps,
 } from '@lynx-js/lynx-ui-feed-list'
@@ -235,6 +236,7 @@ export { ScrollView, useBounce } from '@lynx-js/lynx-ui-scroll-view'
 export type {
   ScrollViewProps,
   ScrollViewRef,
+  BounceHandlers,
   bounceHandlers,
   BounceableBasicProps,
 } from '@lynx-js/lynx-ui-scroll-view'
@@ -283,6 +285,7 @@ export {
 } from '@lynx-js/lynx-ui-tab-group'
 export type {
   TabItemProps,
+  TabsItemProps,
   TabsIndicatorAnimation,
   TabsIndicatorProps,
   TabsPanelProps,

@@ -16,7 +16,7 @@ import type {
 } from '@lynx-js/lynx-ui-common'
 import type { CSSProperties, CommonEvent } from '@lynx-js/types'
 
-export type ScrollView = (props: ScrollViewProps) => ReactElement
+export type { BounceHandlers } from '../hooks/useBounce'
 
 type ScrollPropagationBehaviorOption =
   | 'native' // Follows platform default behavior
@@ -327,7 +327,7 @@ export interface ScrollViewProps
   onWheel?: (e: CommonEvent) => void
 }
 
-export interface scrollToBouncesInfo {
+export interface ScrollToBouncesInfo {
   direction: 'upper' | 'lower'
 }
 
@@ -437,7 +437,7 @@ export interface BounceableBasicProps {
    * @Android
    * @Harmony
    */
-  onScrollToBounces?: (e: scrollToBouncesInfo) => void
+  onScrollToBounces?: (e: ScrollToBouncesInfo) => void
 }
 
 export const ScrollEventMapping: Record<string, string> = {

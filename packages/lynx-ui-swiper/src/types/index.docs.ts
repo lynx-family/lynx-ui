@@ -6,6 +6,8 @@ import type { ReactElement } from '@lynx-js/react'
 
 import type { CSSProperties } from '@lynx-js/types'
 
+export type { SwiperItemProps } from '../SwiperItem'
+
 export interface SwiperProps<T> {
   /**
    * Swiper items data set
@@ -387,8 +389,8 @@ export interface BounceConfig {
    * @zh 当startBounceItem处于回弹状态时，释放手指将调用此函数。
    * @docTypeFallback (bounceParams: {offset: number, type: 'start' | 'end'}) => void
    */
-  onStartBounceItemBounce?: (bounceParams: onBounceParams) => void
-  /**                       ·····   ··
+  onStartBounceItemBounce?: (bounceParams: OnBounceParams) => void
+  /**
    * When endBounceItem is in bounce state, releasing finger will call this.
    * @Android
    * @iOS
@@ -396,7 +398,7 @@ export interface BounceConfig {
    * @zh 当endBounceItem处于回弹状态时，释放手指将调用此函数。
    * @docTypeFallback (bounceParams: {offset: number, type: 'start' | 'end'}) => void
    */
-  onEndBounceItemBounce?: (bounceParams: onBounceParams) => void
+  onEndBounceItemBounce?: (bounceParams: OnBounceParams) => void
   /**
    * Width of bounceItem.
    * When overscroll the bounces, you will have larger and larger resistance, to make overscroll not exceed bounceItemWidth
@@ -457,7 +459,7 @@ export interface SwiperRef {
   cancelAnimation: () => void
 }
 
-export interface onBounceParams {
+export interface OnBounceParams {
   type: 'start' | 'end'
   offset: number
 }

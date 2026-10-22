@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 import {
   forwardRef,
   memo,
@@ -17,15 +17,15 @@ import { NativeGesture, useGesture } from '@lynx-js/gesture-runtime'
 import type { NativeGestureChangeEvent } from '@lynx-js/gesture-runtime'
 import { noop, selectorMT } from '@lynx-js/lynx-ui-common'
 
-import type {
-  SwipeActionProps,
-  SwipeActionRef,
-  SwipeAction as swipeActionType,
-} from './types/index'
+import type { SwipeActionProps, SwipeActionRef } from './types/index'
 
 export type { SwipeActionProps, SwipeActionRef }
 
-export const SwipeAction = memo(forwardRef(SwipeActionImpl)) as swipeActionType
+type SwipeActionComponent = (props: SwipeActionProps) => ReactElement
+
+export const SwipeAction = memo(
+  forwardRef(SwipeActionImpl),
+) as SwipeActionComponent
 
 function SwipeActionImpl(
   props: SwipeActionProps,
@@ -115,7 +115,7 @@ function SwipeActionImpl(
 
     return sampleCurveY(solveCurveX(t, ax, bx, cx), ay, by, cy)
   }
-  enum movingDirection {
+  enum MovingDirection {
     left = 0,
     right = 1,
   }
@@ -126,7 +126,7 @@ function SwipeActionImpl(
   const prevTouchPointY = useMainThreadRef<number>(0)
   const [displayAreaSize, setDisplayAreaSize] = useState(0)
 
-  const lastMovingDirection = useMainThreadRef<movingDirection>(0)
+  const lastMovingDirection = useMainThreadRef<MovingDirection>(0)
 
   const currentTransform = useMainThreadRef<number>(0)
   const lastTouchMoveGestureEvent = useMainThreadRef<NativeGestureChangeEvent>()
@@ -283,8 +283,8 @@ function SwipeActionImpl(
     calculateVelocityGesture(event)
     // Record last gesture to determine swipe direction is right to delete or left to undo
     lastMovingDirection.current = deltaX > 0
-      ? movingDirection.left
-      : movingDirection.right
+      ? MovingDirection.left
+      : MovingDirection.right
 
     transformStartPosition.current = currentTransform.current ?? 0
 
@@ -408,7 +408,7 @@ function SwipeActionImpl(
         lastMovingDirection.current,
       )
     }
-    if (lastMovingDirection.current === movingDirection.right) {
+    if (lastMovingDirection.current === MovingDirection.right) {
       swipeRightToAction(false)
     } else {
       swipeLeftToUndo(false)

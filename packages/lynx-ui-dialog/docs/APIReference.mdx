@@ -1,6 +1,8 @@
 import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
-### DialogRoot
+## Component API {#api}
+
+### DialogRoot {#api-dialog-root}
 
 The root component of the Dialog, containing all of its child components.
 
@@ -260,7 +262,172 @@ The root component of the Dialog, containing all of its child components.
   }
 ]}/>
 
-### DialogBackdrop
+### DialogTrigger {#api-dialog-trigger}
+
+The trigger of the dialog. Controls the display of the popper.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | TriggerChildrenType",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The content of the close component. It can be a function that returns a "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " or a "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " itself."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "关闭组件的内容。它可以是一个返回 "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " 的函数，也可以是一个 "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " 本身。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "disabled",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Determines whether the close component is disabled.\nWhen "
+      },
+      {
+        "kind": "code",
+        "text": "`true`"
+      },
+      {
+        "kind": "text",
+        "text": ", the component will be in a disabled state and cannot be interacted with."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "确定关闭组件是否被禁用。当值为 "
+      },
+      {
+        "kind": "code",
+        "text": "`true`"
+      },
+      {
+        "kind": "text",
+        "text": " 时，组件将处于禁用状态，无法进行交互。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### DialogBackdrop {#api-dialog-backdrop}
 
 The backdrop mask of the dialog.
 
@@ -507,7 +674,7 @@ The backdrop mask of the dialog.
   }
 ]}/>
 
-### DialogView
+### DialogView {#api-dialog-view}
 
 View container. When 'container' is set correctly, the underlying layer will be replaced with overlay; otherwise, it will be a regular view. When the underlying layer is overlay, the 'level' property can be used to control the hierarchical relationship. For a regular view, use 'z-index' to control the hierarchical relationship. If this dialog needs to be used outside of LynxView, consider enabling overlay.
 
@@ -773,7 +940,7 @@ View container. When 'container' is set correctly, the underlying layer will be 
   }
 ]}/>
 
-### DialogContent
+### DialogContent {#api-dialog-content}
 
 The main content of the dialog.
 
@@ -860,6 +1027,171 @@ The main content of the dialog.
       }
     ],
     "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### DialogClose {#api-dialog-close}
+
+The close component of the Dialog, used to close the dialog.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | TriggerChildrenType",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The content of the close component. It can be a function that returns a "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " or a "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " itself."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "关闭组件的内容。它可以是一个返回 "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " 的函数，也可以是一个 "
+      },
+      {
+        "kind": "code",
+        "text": "`ReactNode`"
+      },
+      {
+        "kind": "text",
+        "text": " 本身。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "disabled",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Determines whether the close component is disabled.\nWhen "
+      },
+      {
+        "kind": "code",
+        "text": "`true`"
+      },
+      {
+        "kind": "text",
+        "text": ", the component will be in a disabled state and cannot be interacted with."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "确定关闭组件是否被禁用。 当值为 "
+      },
+      {
+        "kind": "code",
+        "text": "`true`"
+      },
+      {
+        "kind": "text",
+        "text": " 时，组件将处于禁用状态，无法进行交互。"
+      }
+    ],
+    "defaultValue": "false",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,

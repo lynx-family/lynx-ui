@@ -1,6 +1,8 @@
 import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
-### InputOTP
+## Component API {#api}
+
+### InputOTP {#api-input-otp}
 
 Props for InputOTP.
 
@@ -379,24 +381,7 @@ Props for InputOTP.
   }
 ]}/>
 
-### InputOTP
-
-<UIApiTable source={[
-  {
-    "name": "InputOTP",
-    "type": "(props: InputOTPProps) => ReactElement",
-    "summary": [],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  }
-]}/>
-
-### InputOTPSlot
+### InputOTPSlot {#api-input-otp-slot}
 
 Props for an individual InputOTP visual slot.
 
@@ -552,24 +537,7 @@ Props for an individual InputOTP visual slot.
   }
 ]}/>
 
-### InputOTPSlot
-
-<UIApiTable source={[
-  {
-    "name": "InputOTPSlot",
-    "type": "(props: InputOTPSlotProps) => ReactElement",
-    "summary": [],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  }
-]}/>
-
-## InputOTPRef
+### InputOTPRef {#api-input-otp-ref}
 
 Imperative methods exposed by InputOTP.
 
@@ -682,6 +650,62 @@ Imperative methods exposed by InputOTP.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+## Supporting Types {#api-supporting-types}
+
+### InputOTPInputType {#api-supporting-types-input-otp-input-type}
+
+<UIApiTable source={[
+  {
+    "name": "InputOTPInputType",
+    "type": "alphabetic | numeric | alphanumeric",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Character set accepted by InputOTP."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "InputOTP 接受的字符集。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### InputOTPLength {#api-supporting-types-input-otp-length}
+
+<UIApiTable source={[
+  {
+    "name": "InputOTPLength",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Positive number of slots managed by InputOTP."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "InputOTP 管理的输入槽数量，必须为正整数。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   }
 ]}/>

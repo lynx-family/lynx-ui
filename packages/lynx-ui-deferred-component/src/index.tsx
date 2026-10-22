@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { forwardRef, memo, useState } from '@lynx-js/react'
-import type { ForwardedRef } from '@lynx-js/react'
+import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
 import { delayFrames as delayFramesUtil } from '@lynx-js/lynx-ui-common'
 import type { LayoutChangeEvent } from '@lynx-js/types'
@@ -13,10 +13,13 @@ import './styles.css'
 import type {
   DeferredComponentProps,
   DeferredComponentRef,
-  DeferredComponent as DeferredComponentType,
 } from './types/index.js'
 
 export type { DeferredComponentRef, DeferredComponentProps }
+
+type DeferredComponentType = (
+  props: DeferredComponentProps,
+) => ReactElement
 
 export const DeferredComponent = memo(
   forwardRef(DeferredComponentImpl),

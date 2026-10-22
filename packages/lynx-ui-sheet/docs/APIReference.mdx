@@ -1,6 +1,8 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
 
-### SheetRoot
+## Component API {#api}
+
+### SheetRoot {#api-sheet-root}
 
 The root component of the Sheet, containing all of its child components.
 
@@ -1143,7 +1145,7 @@ The root component of the Sheet, containing all of its child components.
   }
 ]}/>
 
-### SheetBackdrop
+### SheetBackdrop {#api-sheet-backdrop}
 
 The backdrop mask of the Sheet.
 
@@ -1260,7 +1262,7 @@ The backdrop mask of the Sheet.
   }
 ]}/>
 
-### SheetView
+### SheetView {#api-sheet-view}
 
 The view container of the Sheet. Can be `x-overlay-ng` or `view`.
 Controls the Sheet's overlay layer and stacking order.
@@ -1478,7 +1480,7 @@ Controls the Sheet's overlay layer and stacking order.
   }
 ]}/>
 
-### SheetContent
+### SheetContent {#api-sheet-content}
 
 The main content of the Sheet.
 
@@ -1709,7 +1711,80 @@ The main content of the Sheet.
   }
 ]}/>
 
-## SheetRootRef
+### SheetHandle {#api-sheet-handle}
+
+The handle of the Sheet.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetRootRef {#api-sheet-root-ref}
 
 <UIApiTable source={[
   {
@@ -1811,5 +1886,135 @@ The main content of the Sheet.
         }
       ]
     }
+  }
+]}/>
+
+## Supporting Types {#api-supporting-types}
+
+### SheetSide {#api-supporting-types-sheet-side}
+
+<UIApiTable source={[
+  {
+    "name": "SheetSide",
+    "type": "top | bottom | left | right | start | end",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetTransition {#api-supporting-types-sheet-transition}
+
+<UIApiTable source={[
+  {
+    "name": "SheetTransition",
+    "type": "SheetTransitionSpring | SheetTransitionTween",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetTransitionSpring {#api-supporting-types-sheet-transition-spring}
+
+<UIApiTable source={[
+  {
+    "name": "damping",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mass",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "stiffness",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "type",
+    "type": "unknown",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetTransitionTween {#api-supporting-types-sheet-transition-tween}
+
+<UIApiTable source={[
+  {
+    "name": "duration",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ease",
+    "type": "(t: number) => number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "type",
+    "type": "unknown",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
   }
 ]}/>

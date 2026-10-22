@@ -104,7 +104,7 @@ export interface PresenceProps {
   debugLog?: boolean
 }
 
-export interface usePresenceProps {
+export interface UsePresenceProps {
   show: boolean // The one and only entry for showing the presence content.
   forceMount?: boolean // Force to mount the presence container event the content is not shown.
   state: PresenceState // The core animation state of Presence.
@@ -135,4 +135,10 @@ export interface PresenceContextType {
   }
 }
 
-export type usePresenceReturnType = PresenceContextType
+export type UsePresenceReturnType = PresenceContextType
+
+/** @deprecated Use `UsePresenceProps` instead. */
+export type usePresenceProps = UsePresenceProps
+
+/** @deprecated Use `UsePresenceReturnType` instead. */
+export type usePresenceReturnType = UsePresenceReturnType

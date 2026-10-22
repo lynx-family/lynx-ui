@@ -11,95 +11,14 @@ import { fileURLToPath } from 'node:url'
 
 import { Application } from 'typedoc'
 
+import { apiReferenceConfig } from './api-reference-config.js'
+import { collectPublicRuntimeExportNames } from './runtime-exports.js'
 import { doGenDocData } from './tpl-data.js'
 import { doGenTplWithData } from './tpl.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const rootPath = join(__dirname, '../../')
-// Put the folders start with 'lynx-ui-' yet you don't want to generate typeDoc for them.
-const excludedPath = [
-  'lynx-ui-common',
-  'lynx-ui',
-  'lynx-ui-presence',
-]
-
-const primitivesConfig: Record<string, string[]> = {
-  'lynx-ui-view-pager': ['ViewPager'],
-  'lynx-ui-scroll-coordinator': [
-    'ScrollCoordinator',
-    'ScrollCoordinatorUIVariants',
-    'ScrollCoordinatorRefreshOptions',
-  ],
-  'lynx-ui-button': ['Button'],
-  'lynx-ui-switch': [
-    'Switch',
-    'SwitchTrack',
-    'SwitchThumb',
-  ],
-  'lynx-ui-sheet': [
-    'SheetRoot',
-    'SheetBackdrop',
-    'SheetView',
-    'SheetContent',
-  ],
-  'lynx-ui-dialog': [
-    'DialogRoot',
-    'DialogBackdrop',
-    'DialogView',
-    'DialogContent',
-  ],
-  'lynx-ui-popover': [
-    'PopoverRoot',
-    'PopoverTrigger',
-    'PopoverPositioner',
-    'PopoverContent',
-    'PopoverArrow',
-  ],
-  'lynx-ui-radio-group': [
-    'RadioGroupRoot',
-    'Radio',
-    'RadioIndicator',
-  ],
-  'lynx-ui-draggable': [
-    'Draggable',
-    'DraggableArea',
-  ],
-  'lynx-ui-form': [
-    'FormRoot',
-    'FormField',
-    'FormSubmitButton',
-  ],
-  'lynx-ui-checkbox': [
-    'Checkbox',
-    'CheckboxIndicator',
-  ],
-  'lynx-ui-slider': [
-    'SliderRoot',
-    'Slider',
-    'SliderRangeValue',
-    'SliderValue',
-    'SliderThumbIndex',
-    'SliderValueChangeSource',
-    'SliderUpdateValueOptions',
-    'SliderUIVariants',
-    'SliderTrack',
-    'SliderIndicator',
-    'SliderThumb',
-  ],
-  'lynx-ui-input-otp': [
-    'InputOTP',
-    'InputOTPSlot',
-  ],
-  'lynx-ui-tab-group': [
-    'TabsRoot',
-    'TabsBar',
-    'TabsItem',
-    'TabItem',
-    'TabsPanel',
-    'TabsIndicator',
-  ],
-}
 export async function runTypeDocForPackage(
   entryPoints: string | string[],
   tsconfig: string,
@@ -203,12 +122,28 @@ export async function genLynxUIDocForPackage(
     }
   }
 
-  const hasMultipleProps = packageName in primitivesConfig
+  const packageApiReferenceConfig = apiReferenceConfig[packageName]
+  if (!packageApiReferenceConfig) {
+    throw new Error(`Missing API reference config for ${packageName}`)
+  }
   const { path: tsconfigPath, isDocsConfig } = getTsConfigPath(subPackageFolder)
   const configName = isDocsConfig ? 'tsconfig.docs.json' : 'tsconfig.json'
   const entryPointPath = join(
     subPackageFolder,
     isDocsConfig ? 'src/types/index.docs.ts' : 'types/index.docs.ts',
+  )
+  const packageEntryPointPath = ['index.tsx', 'index.ts']
+    .map(fileName => join(subPackageFolder, 'src', fileName))
+    .find(filePath => fs.existsSync(filePath))
+
+  if (!packageEntryPointPath) {
+    throw new Error(`Could not find package entry point for ${packageName}`)
+  }
+
+  // TypeDoc reads the documentation-only type entry, so inspect the package
+  // entry separately before mapping a `FooProps` section to component `Foo`.
+  const publicRuntimeExportNames = collectPublicRuntimeExportNames(
+    packageEntryPointPath,
   )
 
   const metaJsonPath = join(
@@ -229,14 +164,14 @@ export async function genLynxUIDocForPackage(
   await doGenDocData(
     metaJsonPath,
     APITplJsonPath,
-    hasMultipleProps,
+    true,
     `@lynx-js/${packageName}`,
   )
   await doGenTplWithData(
     APITplJsonPath,
     APIMdxPath,
-    hasMultipleProps,
-    primitivesConfig[packageName],
+    packageApiReferenceConfig,
+    publicRuntimeExportNames,
   )
 
   // OSS only keeps the default APIReference.mdx output.
@@ -252,65 +187,18 @@ async function generateDocsForAllPackages(packageName: string[]) {
   }
 }
 
-function findLynxUiFolders(dirPath: string): string[] {
-  try {
-    // read all files and directories in current path
-    const entries = fs.readdirSync(dirPath, { withFileTypes: true })
-
-    // filter all folders started with 'lynx-ui'
-    const folders = entries
-      .filter(entry =>
-        entry.isDirectory() && entry.name.startsWith('lynx-ui-')
-        && !(excludedPath.includes(entry.name)
-          || entry.name in primitivesConfig)
-      )
-      .map(folder => folder.name)
-
-    return folders
-  } catch (error) {
-    console.error('Error reading directory:', error)
-    return []
-  }
-}
-
 // Process command line arguments
 const args = process.argv.slice(2)
 
-// Default package list
-const defaultPackages = [
-  'lynx-ui-dialog',
-  'lynx-ui-action-sheet',
-  'lynx-ui-tabs',
-  'lynx-ui-scroll-view',
-]
+const packagesToGenerate = args.length > 0
+  ? args
+  : Object.keys(apiReferenceConfig)
 
-// If command line arguments are provided, use them as package names
-// Otherwise use the default list or find all lynx-ui folders
-let packagesToGenerate: string[] = []
-
-if (args.length > 0) {
-  // Use the provided package names
-  packagesToGenerate = args
-
-  console.log(
-    `Generating documentation for specified packages: ${
-      packagesToGenerate.join(', ')
-    }`,
-  )
-} else {
-  // Use default packages if no arguments provided
-  const directoryPath = join(rootPath, 'packages')
-  const lynxUiFolders = findLynxUiFolders(directoryPath)
-  packagesToGenerate = [
-    ...(lynxUiFolders.length > 0 ? lynxUiFolders : defaultPackages),
-    ...Object.keys(primitivesConfig),
-  ]
-  console.log(
-    `Generating documentation for default packages: ${
-      packagesToGenerate.join(', ')
-    }`,
-  )
-}
+console.log(
+  `Generating documentation for ${
+    args.length > 0 ? 'specified' : 'configured'
+  } packages: ${packagesToGenerate.join(', ')}`,
+)
 
 // Generate documentation for the selected packages
 await generateDocsForAllPackages(packagesToGenerate)

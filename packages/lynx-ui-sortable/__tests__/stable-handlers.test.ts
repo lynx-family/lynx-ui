@@ -6,7 +6,7 @@ import { mtsLog } from '@lynx-js/lynx-ui-common'
 import type { MainThread } from '@lynx-js/types'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { useDragOptions } from '../../lynx-ui-draggable/src/types/index.docs'
+import type { UseDragOptions } from '../../lynx-ui-draggable/src/types/index.docs'
 import { useDraggable } from '../../lynx-ui-draggable/src/useDraggable'
 import { commitSortableOrder } from '../src/commitSortableOrder'
 import { useSortable } from '../src/useSortable'
@@ -380,7 +380,7 @@ describe('stable draggable handlers', () => {
 
   it('removes and restores bindings when disabled, and supports trigger changes', () => {
     const { render, options } = setupDraggable()
-    const update = (config: useDragOptions) =>
+    const update = (config: UseDragOptions) =>
       render(() => useDraggable({ ...options, ...config }))
     const enabled = update({})
     const disabled = update({ enableDragging: false })

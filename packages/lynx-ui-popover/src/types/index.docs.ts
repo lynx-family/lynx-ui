@@ -20,6 +20,8 @@ import type {
   Rect,
 } from '../floating'
 
+export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
+
 /**
  * The arrow of the Popover.
  * @zh Popover 的箭头。

@@ -7,10 +7,10 @@ import type { ReactNode, RefObject } from '@lynx-js/react'
 import type { ComponentBasicProps, Point } from '@lynx-js/lynx-ui-common'
 import type { MainThread, ViewProps } from '@lynx-js/types'
 
-export type basicDirections = 'left' | 'right' | 'up' | 'down'
-export type directions = basicDirections | basicDirections[] | 'all' | 'none'
+export type BasicDirections = 'left' | 'right' | 'up' | 'down'
+export type Directions = BasicDirections | BasicDirections[] | 'all' | 'none'
 
-export interface useDragOptions {
+export interface UseDragOptions {
   /**
    * Whether the component is draggable.
    * @defaultValue true
@@ -30,7 +30,7 @@ export interface useDragOptions {
    * @Clay
    * @zh 允许的拖拽方向
    */
-  allowedDirection?: directions
+  allowedDirection?: Directions
   /**
    * The minimum value of the X-axis translation.
    * @iOS
@@ -151,7 +151,7 @@ export interface useDragOptions {
   ) => void
 }
 
-export interface DraggableProps extends ComponentBasicProps, useDragOptions {
+export interface DraggableProps extends ComponentBasicProps, UseDragOptions {
   /**
    * Id
    * @zh id
