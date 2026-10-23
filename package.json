@@ -25,6 +25,7 @@
     "check:sherif": "pnpm dlx sherif@latest",
     "check:skills-eval-definitions": "pnpm --filter @lynx-js/skill-lynx-ui check:eval-definitions",
     "check:skills-references": "pnpm --filter @lynx-js/skill-lynx-ui check:references",
+    "check:test-types": "node tools/scripts/check-test-types.mjs",
     "coverage": "vitest --coverage",
     "ensure:skills-changeset": "node tools/skill-lynx-ui/ensure-changeset.mjs",
     "examples:build": "turbo build --filter='./apps/examples/*'",
@@ -53,6 +54,7 @@
     "test:example-bundle-stats": "node --test tools/scripts/merge-example-bundle-stats.test.mjs",
     "test:new-packages": "node --test tools/scripts/check-new-publishable-packages.test.mjs",
     "test:package-readmes": "node --test tools/scripts/check-package-readmes.test.mjs",
+    "test:test-types": "node --test tools/scripts/check-test-types.test.mjs",
     "version:packages": "pnpm ensure:skills-changeset && changeset version"
   },
   "nano-staged": {

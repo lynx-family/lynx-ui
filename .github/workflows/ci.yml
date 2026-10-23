@@ -131,6 +131,16 @@ jobs:
       runs-on: lynx-ubuntu-24.04-medium
       run: pnpm check:package-types
 
+  check-test-types:
+    name: Check Test Types
+    needs: build
+    uses: ./.github/workflows/common-test.yml
+    with:
+      runs-on: lynx-ubuntu-24.04-medium
+      run: |
+        pnpm test:test-types
+        pnpm check:test-types
+
   generated-documentation:
     name: Generated Documentation
     needs: build
@@ -237,6 +247,7 @@ jobs:
       - luna-vars
       - check-exports
       - check-package-types
+      - check-test-types
       - generated-documentation
       - rslint
       - test-publish

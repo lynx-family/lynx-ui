@@ -132,6 +132,8 @@ sharedDocs/introDocs/lynx-ui-<component-name>/Introduction.mdx
   pnpm test
   ```
 
+  `pnpm test` runs the Vitest runtime suites; its TypeScript transform does not report TypeScript diagnostics. Run `pnpm check:test-types` to type-check TypeScript tests across packages, apps, LUNA, and tooling. The required Test workflow runs both checks. Tests that import another package's `src/` are implementation-level tests, not a supported cross-package API; prefer the package entry for public contracts.
+
 ## Documentation
 
 Publishing docs for a newly developed component is part of the component's delivery process.
