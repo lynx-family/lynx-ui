@@ -1,5 +1,17 @@
 # @lynx-js/lynx-ui-scroll-view
 
+## 3.140.1
+
+### Patch Changes
+
+- Keep implementation-only component signatures out of public documentation ([#355](https://github.com/lynx-family/lynx-ui/pull/355))
+  types.
+
+- Add PascalCase names for public hook types and normalize supporting type names, ([#355](https://github.com/lynx-family/lynx-ui/pull/355))
+  retaining deprecated aliases for existing public names.
+- Updated dependencies [[`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea)]:
+  - @lynx-js/lynx-ui-lazy-component@3.140.1
+
 ## 3.139.0
 
 ### Patch Changes

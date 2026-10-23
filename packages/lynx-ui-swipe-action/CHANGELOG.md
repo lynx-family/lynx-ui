@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui-swipe-action
 
+## 3.140.1
+
+### Patch Changes
+
+- Keep implementation-only component signatures out of public documentation ([#355](https://github.com/lynx-family/lynx-ui/pull/355))
+  types.
+
 ## 3.139.0
 
 ### Patch Changes

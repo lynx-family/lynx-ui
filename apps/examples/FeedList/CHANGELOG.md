@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-feed-list
 
+## 0.0.21
+
+### Patch Changes
+
+- Updated dependencies [[`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea), [`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea)]:
+  - @lynx-js/lynx-ui@3.140.1
+
 ## 0.0.20
 
 ### Patch Changes

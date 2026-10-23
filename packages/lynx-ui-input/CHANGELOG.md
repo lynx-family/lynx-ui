@@ -1,5 +1,14 @@
 # @lynx-js/lynx-ui-input
 
+## 3.140.1
+
+### Patch Changes
+
+- Keep implementation-only component signatures out of public documentation ([#355](https://github.com/lynx-family/lynx-ui/pull/355))
+  types.
+- Updated dependencies [[`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea), [`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea)]:
+  - @lynx-js/lynx-ui-scroll-view@3.140.1
+
 ## 3.139.0
 
 ### Patch Changes
