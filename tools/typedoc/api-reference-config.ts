@@ -100,6 +100,7 @@ export const apiReferenceConfig: Readonly<
   },
   'lynx-ui-form': {
     parts: ['FormRoot', 'FormField', 'FormSubmitButton'],
+    embeddedTypes: ['FormSubmitButtonUIVariants'],
   },
   'lynx-ui-checkbox': {
     parts: ['Checkbox', 'CheckboxIndicator'],

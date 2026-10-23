@@ -156,6 +156,24 @@ export type FormFieldProps =
   | FormFieldAsTextArea
   | FormFieldAsSwitch
 
+/**
+ * UI variants exposed by FormSubmitButton.
+ * @zh FormSubmitButton 暴露的 UI variants。
+ */
+export interface FormSubmitButtonUIVariants {
+  /**
+   * Applied while the submit button is pressed and not disabled.
+   * @zh 提交按钮处于按下态且未被禁用时生效。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when the submit button is disabled.
+   * @zh 提交按钮被禁用时生效。
+   */
+  'ui-disabled'?: boolean
+}
+
 export interface FormSubmitButtonProps extends Omit<ButtonProps, 'onClick'> {
   /**
    * Callback function triggered when the submit button is clicked, after the form's internal submit logic.

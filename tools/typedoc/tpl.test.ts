@@ -279,6 +279,236 @@ describe('doGenTplWithData', () => {
     }
   })
 
+  it('renders state tables only for runtime component parts', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+    const renderChildren = {
+      name: 'children',
+      type: '(status: { open?: boolean }) => ReactNode',
+    }
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            {
+              title: 'ExampleProps',
+              children: [{
+                title: 'Properties',
+                children: [renderChildren],
+              }],
+            },
+            {
+              title: 'SupportProps',
+              children: [{
+                title: 'Properties',
+                children: [renderChildren],
+              }],
+            },
+          ],
+        }),
+      )
+
+      await doGenTplWithData(
+        dataPath,
+        outputPath,
+        {
+          parts: ['Example'],
+          supportingTypes: ['SupportProps'],
+        },
+        new Set(['Example']),
+      )
+
+      const content = readFileSync(outputPath, 'utf8')
+      expect(content.match(/<ClassRenderPropTable/g)).toHaveLength(1)
+      expect(content).toContain('"renderProp": "open"')
+      expect(content).not.toContain('"className": "ui-open"')
+
+      const supportingSection = content.slice(
+        content.indexOf('## Supporting Types'),
+      )
+      expect(supportingSection).toContain('"name": "children"')
+      expect(supportingSection).not.toContain('<ClassRenderPropPreamble')
+      expect(supportingSection).not.toContain('<ClassRenderPropTable')
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('derives part descriptions from render-state inheritance', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+    const activeVariant = {
+      name: 'ui-active',
+      type: 'boolean',
+      summary: [{ text: 'Applied while active.' }],
+    }
+    const classOnlyVariant = {
+      name: 'ui-open',
+      type: 'boolean',
+      summary: [{ text: 'Applied while open.' }],
+    }
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            {
+              title: 'RootProps',
+              children: [{
+                title: 'Properties',
+                children: [{
+                  name: 'children',
+                  type: '(status: { active: boolean }) => ReactNode',
+                }],
+              }],
+            },
+            {
+              title: 'IndicatorProps',
+              children: [{
+                title: 'Properties',
+                children: [{ name: 'children', type: 'ReactNode' }],
+              }],
+            },
+            {
+              title: 'RootUIVariants',
+              comment: {
+                summary: [{ text: 'Stale authored root description.' }],
+              },
+              children: [{
+                title: 'Properties',
+                children: [activeVariant, classOnlyVariant],
+              }],
+            },
+            {
+              title: 'IndicatorUIVariants',
+              comment: {
+                summary: [{ text: 'Stale authored indicator description.' }],
+              },
+              extendedTypes: [{ name: 'RootUIVariants' }],
+              children: [{
+                title: 'Properties',
+                children: [activeVariant, classOnlyVariant],
+              }],
+            },
+          ],
+        }),
+      )
+
+      await doGenTplWithData(
+        dataPath,
+        outputPath,
+        {
+          parts: ['Root', 'Indicator'],
+        },
+        new Set(['Root', 'Indicator']),
+      )
+
+      const content = readFileSync(outputPath, 'utf8')
+      expect(content.match(/<ClassRenderPropPreamble/g)).toHaveLength(1)
+      expect(content.match(/<ClassRenderPropTable/g)).toHaveLength(2)
+      expect(content).toContain(
+        'UI variants applied by Root based on its render state.',
+      )
+      expect(content).toContain('"renderProp": "active"')
+      expect(content).not.toContain('"Render Prop"')
+      expect(content).toContain(
+        'UI variants applied by Indicator.',
+      )
+      expect(content).toContain(
+        '"className": "ui-open",\n    "item":',
+      )
+      const indicatorSection = content.slice(content.indexOf('### Indicator '))
+      expect(indicatorSection).not.toContain('"renderProp": "active"')
+      expect(content).not.toContain('Stale authored')
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('uses declared part variants as the complete package contract', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            {
+              title: 'ProviderProps',
+              children: [{
+                title: 'Properties',
+                children: [{
+                  name: 'children',
+                  type: '(state: { value: string | null }) => ReactNode',
+                }],
+              }],
+            },
+            {
+              title: 'ItemProps',
+              children: [{
+                title: 'Properties',
+                children: [{ name: 'value', type: 'string' }],
+              }],
+            },
+            {
+              title: 'ItemUIVariants',
+              children: [{
+                title: 'Properties',
+                children: [{
+                  name: 'ui-checked',
+                  type: 'boolean',
+                  summary: [{ text: 'Applied while checked.' }],
+                }],
+              }],
+            },
+          ],
+        }),
+      )
+
+      await doGenTplWithData(
+        dataPath,
+        outputPath,
+        {
+          parts: ['Provider', 'Item'],
+        },
+        new Set(['Provider', 'Item']),
+      )
+
+      const content = readFileSync(outputPath, 'utf8')
+      expect(content.match(/<ClassRenderPropPreamble/g)).toHaveLength(1)
+      expect(content.match(/<ClassRenderPropTable/g)).toHaveLength(2)
+      expect(content).toContain(
+        'Provider exposes the following render prop states.',
+      )
+      expect(content).toContain('"renderProp": "value"')
+      expect(content).not.toContain('"className": "ui-value"')
+      expect(content).toContain('UI variants applied by Item.')
+      expect(content).toContain('"className": "ui-checked"')
+      expect(content).not.toContain('"className": "ui-value"')
+
+      const providerSection = content.slice(content.indexOf('### Provider '))
+      expect(providerSection).toContain('<ClassRenderPropPreamble')
+      expect(providerSection).toContain('"renderProp": "value"')
+      const itemSection = content.slice(content.indexOf('### Item '))
+      expect(itemSection).not.toContain('<ClassRenderPropPreamble')
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
   it('rejects configured entities missing from serialized TypeDoc data', async () => {
     const temporaryDirectory = mkdtempSync(
       join(tmpdir(), 'lynx-ui-typedoc-'),
@@ -309,6 +539,52 @@ describe('doGenTplWithData', () => {
         ),
       ).rejects.toThrow(
         'Configured API entities were not serialized: MissingOptions',
+      )
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('rejects unmatched UI variant declarations', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-'),
+    )
+    const dataPath = join(temporaryDirectory, 'api-tpl.json')
+    const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          children: [
+            {
+              title: 'ExampleProps',
+              children: [],
+            },
+            {
+              title: 'ExampleIndicatorUIVariants',
+              children: [{
+                title: 'Properties',
+                children: [{
+                  name: 'ui-active',
+                  type: 'boolean',
+                }],
+              }],
+            },
+          ],
+        }),
+      )
+
+      await expect(
+        doGenTplWithData(
+          dataPath,
+          outputPath,
+          { parts: ['Example'] },
+          new Set(['Example']),
+        ),
+      ).rejects.toThrow(
+        'UI variant declarations are not configured as runtime parts or '
+          + 'embedded types: ExampleIndicatorUIVariants',
       )
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true })

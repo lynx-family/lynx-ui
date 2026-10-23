@@ -91,7 +91,7 @@ export interface ButtonRenderProps {
 /**
  * UI variants applied by Button based on its interactive status.
  * Use them as CSS selectors to style different states.
- * @zh Button 根据交互状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ * @zh Button 根据交互状态注入的 UI variants，可用于 CSS selector 按状态定制样式。
  */
 export interface ButtonUIVariants {
   /**

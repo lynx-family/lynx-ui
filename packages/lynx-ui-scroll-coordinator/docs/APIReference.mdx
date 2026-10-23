@@ -1,4 +1,4 @@
-import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
+import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
 ## Component API {#api}
 
@@ -373,6 +373,21 @@ Coordinates a collapsible header with nested vertical lists or scroll views.
     "isSupportAndroid": true,
     "isSupportHarmony": false,
     "docTypeFallback": null
+  }
+]}/>
+
+<ClassRenderPropPreamble />
+
+UI variants applied by ScrollCoordinator.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-sticky",
+    "item": {
+      "type": "boolean",
+      "description": "Applied to the coordinator and outer refresh wrapper while the header is collapsed.",
+      "description_zh": "头部折叠时，应用于协调器和外层刷新容器。"
+    }
   }
 ]}/>
 

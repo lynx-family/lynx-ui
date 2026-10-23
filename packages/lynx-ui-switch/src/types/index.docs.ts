@@ -7,7 +7,8 @@ import type { ReactNode } from '@lynx-js/react'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { ViewProps } from '@lynx-js/types'
 
-/** Props for the Switch component.
+/**
+ * Props for the Switch component.
  * @zh Switch 组件的属性
  */
 export interface SwitchProps extends ComponentBasicProps {
@@ -69,7 +70,8 @@ export interface SwitchProps extends ComponentBasicProps {
     ) => ReactNode)
 }
 
-/** Render state props passed to custom Switch content.
+/**
+ * Render state props passed to custom Switch content.
  * @zh Switch 自定义渲染的状态属性
  */
 export interface SwitchRenderProps {
@@ -101,7 +103,7 @@ export interface SwitchRenderProps {
 /**
  * UI variants applied by Switch based on render state.
  * Use them as CSS selectors to style different states.
- * @zh Switch 根据状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ * @zh Switch 根据状态注入的 UI variants，可用于 CSS selector 按状态定制样式。
  */
 export interface SwitchUIVariants {
   /**
@@ -122,6 +124,18 @@ export interface SwitchUIVariants {
    */
   'ui-disabled'?: boolean
 }
+
+/**
+ * UI variants exposed by SwitchTrack.
+ * @zh SwitchTrack 暴露的 UI variants。
+ */
+export interface SwitchTrackUIVariants extends SwitchUIVariants {}
+
+/**
+ * UI variants exposed by SwitchThumb.
+ * @zh SwitchThumb 暴露的 UI variants。
+ */
+export interface SwitchThumbUIVariants extends SwitchUIVariants {}
 
 /**
  * @deprecated Use `SwitchUIVariants` instead.

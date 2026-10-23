@@ -1,4 +1,4 @@
-import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
+import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
 ## Component API {#api}
 
@@ -473,6 +473,29 @@ pushing the other thumb.
   }
 ]}/>
 
+<ClassRenderPropPreamble />
+
+UI variants applied by SliderRoot.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied from the start of a pointer or touch interaction until it ends.",
+      "description_zh": "从指针或触摸交互开始到结束期间生效。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
+  }
+]}/>
+
 ### SliderTrack {#api-slider-track}
 
 Track primitive props.
@@ -580,6 +603,27 @@ Track primitive props.
   }
 ]}/>
 
+UI variants applied by SliderTrack.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied from the start of a pointer or touch interaction until it ends.",
+      "description_zh": "从指针或触摸交互开始到结束期间生效。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
+  }
+]}/>
+
 ### SliderIndicator {#api-slider-indicator}
 
 Indicator primitive props.
@@ -630,6 +674,27 @@ Indicator primitive props.
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
+  }
+]}/>
+
+UI variants applied by SliderIndicator.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied from the start of a pointer or touch interaction until it ends.",
+      "description_zh": "从指针或触摸交互开始到结束期间生效。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
   }
 ]}/>
 
@@ -775,6 +840,27 @@ Thumb primitive props.
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
+  }
+]}/>
+
+UI variants applied by SliderThumb.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-active",
+    "item": {
+      "type": "boolean",
+      "description": "Applied only to the thumb selected for the current pointer or touch interaction, from interaction start until it ends.",
+      "description_zh": "从指针或触摸交互开始到结束期间，仅在当前选中的拇指上生效。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when the slider is disabled.",
+      "description_zh": "滑块被禁用时生效。"
+    }
   }
 ]}/>
 

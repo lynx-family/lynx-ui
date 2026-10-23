@@ -219,32 +219,6 @@ function getStatusDescriptionsForKeys(
   return buildDescriptionsFromInterface(iface, isZh)
 }
 
-function getUiVariantDescriptionsForKeys(
-  uiKeys: string[],
-  isZh: boolean,
-): Record<string, string> {
-  const candidates = currentTypeDocCandidatesEn
-  const iface = findBestInterfaceByKeys(uiKeys, candidates)
-  return buildDescriptionsFromInterface(iface, isZh)
-}
-
-function getDeclaredUiVariantKeys(): Set<string> {
-  const currentPackage = currentTypeDocCandidatesEn[0]
-  const keys = new Set<string>()
-  if (!currentPackage) return keys
-
-  for (const node of getAllInterfaceNodes(currentPackage)) {
-    const nodeName = typeof node?.name === 'string' ? node.name : ''
-    if (!nodeName.toLowerCase().endsWith('uivariants')) continue
-
-    for (const name of getPropertyNamesOfInterface(node)) {
-      if (name.startsWith('ui-')) keys.add(name)
-    }
-  }
-
-  return keys
-}
-
 export function getDefaultUiVariantDescription(
   renderPropKey: string,
   propType: unknown,
@@ -258,25 +232,49 @@ export function getDefaultUiVariantDescription(
   return `Applied when \`status.${renderPropKey}\` is true.`
 }
 
-function isRenderFunctionChildrenProp(prop: unknown): boolean {
+function getEffectivePropType(prop: unknown): string {
   const p = prop as { name?: unknown, type?: unknown } | null
-  if (!p || p.name !== 'children') return false
+  if (!p) return ''
   const typeText = typeof (p as any)?.type === 'string' ? (p as any).type : ''
   const fallbackText = (p as any)?.docTypeFallback?.content?.[0]?.text
-  const effectiveType =
+  return (
     typeof fallbackText === 'string' && fallbackText.length > 0
       ? fallbackText
       : typeText
-  if (typeof effectiveType !== 'string' || effectiveType.length === 0) {
-    return false
+  )
+}
+
+interface RenderFunctionParameter {
+  inlineProperties?: string
+  typeName?: string
+}
+
+function getRenderFunctionParameter(
+  prop: unknown,
+): RenderFunctionParameter | null {
+  const p = prop as { name?: unknown } | null
+  if (!p || p.name !== 'children') return null
+
+  const effectiveType = getEffectivePropType(prop)
+  if (effectiveType.length === 0 || !/=>\s*ReactNode/.test(effectiveType)) {
+    return null
   }
 
-  // Only treat "status render props" like:
-  // `ReactNode | (status: SwitchRenderProps) => ReactNode`
-  // `ReactNode | (status: { ... }) => ReactNode`
-  // This avoids mis-classifying other function children (e.g. Sortable).
-  return /\(\s*(?:status|state)\s*:/.test(effectiveType)
-    && /=>\s*ReactNode/.test(effectiveType)
+  const inline = /\(\s*(?:status|state)\s*:\s*\{([^}]*)\}\)\s*=>/.exec(
+    effectiveType,
+  )
+  if (inline) return { inlineProperties: inline[1] }
+
+  const reference = /\(\s*(?:status|state)\s*:\s*([\w$.]+)\s*\)\s*=>/.exec(
+    effectiveType,
+  )
+  if (reference) return { typeName: reference[1] }
+
+  return null
+}
+
+function isRenderFunctionChildrenProp(prop: unknown): boolean {
+  return getRenderFunctionParameter(prop) !== null
 }
 
 function findInterfaceByName(
@@ -310,24 +308,12 @@ function formatTypeFromTypedocType(t: any): string {
 
 function extractRenderFunctionTableSource(
   prop: unknown,
-  isZh?: boolean,
 ): Array<Record<string, unknown>> {
-  const p = prop as { type?: unknown } | null
-  if (!p) return []
-  const typeText = typeof (p as any)?.type === 'string' ? (p as any).type : ''
-  const fallbackText = (p as any)?.docTypeFallback?.content?.[0]?.text
-  const effectiveType =
-    typeof fallbackText === 'string' && fallbackText.length > 0
-      ? fallbackText
-      : typeText
-  if (typeof effectiveType !== 'string' || effectiveType.length === 0) return []
+  const parameter = getRenderFunctionParameter(prop)
+  if (!parameter) return []
 
-  // Inline object literal: `(status: { a: boolean; ... }) => ReactNode`
-  const inline = /\(\s*(?:status|state)\s*:\s*\{([^}]*)\}\)\s*=>/.exec(
-    effectiveType,
-  )
-  if (inline) {
-    const keys = inline[1]
+  if (parameter.inlineProperties) {
+    const keys = parameter.inlineProperties
       .split(/[;,]/)
       .map(item => item.trim())
       .filter(Boolean)
@@ -338,7 +324,7 @@ function extractRenderFunctionTableSource(
     const descriptionsEn = getStatusDescriptionsForKeys(keys, false)
     const descriptionsZh = getStatusDescriptionsForKeys(keys, true)
 
-    const mapped = (inline[1]
+    const mapped = (parameter.inlineProperties
       .split(/[;,]/)
       .map(item => item.trim())
       .filter(Boolean)
@@ -349,7 +335,7 @@ function extractRenderFunctionTableSource(
         const propType = typePart.trim()
         return {
           className: `ui-${propName}`,
-          'Render Prop': propName,
+          renderProp: propName,
           item: {
             type: propType,
             description: descriptionsEn[propName]
@@ -362,15 +348,10 @@ function extractRenderFunctionTableSource(
     return mapped.filter((x): x is Record<string, unknown> => x !== null)
   }
 
-  // Referenced status type: `(status: SwitchRenderProps) => ReactNode`
-  const ref = /\(\s*(?:status|state)\s*:\s*([\w$.]+)\s*\)\s*=>/.exec(
-    effectiveType,
-  )
-  if (!ref) return []
-  const statusTypeName = ref[1]
+  if (!parameter.typeName) return []
 
   const ifaceEn = findInterfaceByName(
-    statusTypeName,
+    parameter.typeName,
     currentTypeDocCandidatesEn,
   )
   const children = Array.isArray(ifaceEn?.children) ? ifaceEn.children : []
@@ -384,7 +365,7 @@ function extractRenderFunctionTableSource(
     const propType = formatTypeFromTypedocType(child?.type)
     return {
       className: `ui-${propName}`,
-      'Render Prop': propName,
+      renderProp: propName,
       item: {
         type: propType,
         description: descriptionsEn[propName]
@@ -397,43 +378,237 @@ function extractRenderFunctionTableSource(
   return mapped.filter((x): x is Record<string, unknown> => x !== null)
 }
 
+function getApiEntityPropertyItems(entity: any): any[] {
+  const groups = Array.isArray(entity?.children) ? entity.children : []
+  const properties = groups.find((group: any) => group?.title === 'Properties')
+  return Array.isArray(properties?.children) ? properties.children : []
+}
+
+function createApiEntityRegistry(
+  entities: any[],
+  allowedUiVariantTitles: ReadonlySet<string>,
+): ReadonlyMap<string, any> {
+  const registry = new Map<string, any>()
+  const unmatchedUiVariants: string[] = []
+
+  for (const entity of entities) {
+    if (typeof entity?.title !== 'string') continue
+    if (entity.title.endsWith('UIVariants')) {
+      if (!allowedUiVariantTitles.has(entity.title)) {
+        unmatchedUiVariants.push(entity.title)
+      }
+      if (registry.has(entity.title)) {
+        throw new Error(
+          `Multiple UI variant declarations found for ${entity.title}.`,
+        )
+      }
+    }
+    registry.set(entity.title, entity)
+  }
+
+  if (unmatchedUiVariants.length > 0) {
+    throw new Error(
+      `UI variant declarations are not configured as runtime parts or `
+        + `embedded types: ${unmatchedUiVariants.join(', ')}`,
+    )
+  }
+
+  return registry
+}
+
+function getExtendedInterfaceNames(
+  interfaceName: string,
+  apiEntityRegistry: ReadonlyMap<string, any>,
+): string[] {
+  const serializedEntity = apiEntityRegistry.get(interfaceName)
+  const serializedExtendedTypes = Array.isArray(
+      serializedEntity?.extendedTypes,
+    )
+    ? serializedEntity.extendedTypes
+    : []
+  const names = serializedExtendedTypes
+    .map((extendedType: any) => extendedType?.name)
+    .filter((name: unknown): name is string => typeof name === 'string')
+
+  const currentPackage = currentTypeDocCandidatesEn[0]
+  if (!currentPackage) return names
+
+  const node = getAllInterfaceNodes(currentPackage).find(
+    candidate => candidate?.name === interfaceName,
+  )
+  const extendedTypes = Array.isArray(node?.extendedTypes)
+    ? node.extendedTypes
+    : []
+  return extendedTypes
+    .map((extendedType: any) => extendedType?.name)
+    .filter((name: unknown): name is string => typeof name === 'string')
+    .concat(names)
+}
+
+function getUiVariantEntityForPart(
+  partName: string,
+  apiEntityRegistry: ReadonlyMap<string, any>,
+): any {
+  return apiEntityRegistry.get(`${partName}UIVariants`)
+}
+
+function getRenderFunctionChildren(entity: any): unknown[] {
+  const groups = Array.isArray(entity?.children) ? entity.children : []
+  return groups.flatMap((group: any) => {
+    const items = Array.isArray(group?.children) ? group.children : []
+    return items.filter((item: unknown) => isRenderFunctionChildrenProp(item))
+  })
+}
+
+interface RenderStateSource {
+  renderChildren: unknown[]
+}
+
+function getInheritedRenderFunctionChildren(
+  uiVariantsEntity: any,
+  apiEntityRegistry: ReadonlyMap<string, any>,
+  visited = new Set<string>(),
+): RenderStateSource | null {
+  if (typeof uiVariantsEntity?.title !== 'string') return null
+  if (visited.has(uiVariantsEntity.title)) return null
+  visited.add(uiVariantsEntity.title)
+
+  const sources = getExtendedInterfaceNames(
+    uiVariantsEntity.title,
+    apiEntityRegistry,
+  ).flatMap((baseTitle) => {
+    if (!baseTitle.endsWith('UIVariants')) return []
+
+    const basePartName = baseTitle.slice(0, -'UIVariants'.length)
+    const propsEntity = apiEntityRegistry.get(`${basePartName}Props`)
+    const renderChildren = getRenderFunctionChildren(propsEntity)
+    if (renderChildren.length > 0) {
+      return [{ renderChildren }]
+    }
+
+    const baseUiVariantsEntity = apiEntityRegistry.get(baseTitle)
+    const inherited = getInheritedRenderFunctionChildren(
+      baseUiVariantsEntity,
+      apiEntityRegistry,
+      visited,
+    )
+    return inherited ? [inherited] : []
+  })
+
+  if (sources.length > 1) {
+    throw new Error(
+      `Multiple render-state sources found for ${uiVariantsEntity.title}.`,
+    )
+  }
+  return sources[0] ?? null
+}
+
+function getUiVariantPartDescription(
+  partName: string,
+  hasRenderState: boolean,
+  isZh?: boolean,
+): string {
+  if (hasRenderState) {
+    return isZh
+      ? `${partName} 根据自身 render state 注入以下 UI variants。`
+      : `UI variants applied by ${partName} based on its render state.`
+  }
+
+  return isZh
+    ? `${partName} 注入以下 UI variants。`
+    : `UI variants applied by ${partName}.`
+}
+
+function getRenderPropPartDescription(
+  partName: string,
+  isZh?: boolean,
+): string {
+  return isZh
+    ? `${partName} 暴露以下 render prop 状态。`
+    : `${partName} exposes the following render prop states.`
+}
+
+function extractUiVariantTableSource(
+  uiVariantsEntity: any,
+): Array<Record<string, unknown>> {
+  return getApiEntityPropertyItems(uiVariantsEntity).flatMap(
+    (uiVariant: Record<string, unknown>) => {
+      if (typeof uiVariant?.name !== 'string') return []
+
+      const description = stringifyCommentContent(
+        uiVariant.summary as Array<{ text?: string }> | undefined,
+      )
+      const descriptionZh = stringifyCommentContent(
+        uiVariant.summary_zh as Array<{ text?: string }> | undefined,
+      )
+
+      return [{
+        className: uiVariant.name,
+        item: {
+          type: typeof uiVariant.type === 'string'
+            ? uiVariant.type
+            : formatTypeFromTypedocType(uiVariant.type),
+          description,
+          description_zh: descriptionZh || description,
+        },
+      }]
+    },
+  )
+}
+
 function mergeRenderPropsAndUiVariants(
   renderPropItems: Array<Record<string, unknown>>,
+  uiVariantsEntity: any,
+  includeRenderProp = true,
 ): Array<Record<string, unknown>> {
-  const declaredUiVariantKeys = getDeclaredUiVariantKeys()
-  const variantItems = declaredUiVariantKeys.size > 0
-    ? renderPropItems.filter((item: Record<string, unknown>) => {
-      const className = item?.className
-      return typeof className === 'string'
-        && declaredUiVariantKeys.has(className)
-    })
-    : renderPropItems
-  const uiKeys = variantItems
-    .map((item: Record<string, unknown>) => item?.className)
-    .filter((c: unknown): c is string => typeof c === 'string')
+  const uiVariantsByClassName = new Map(
+    getApiEntityPropertyItems(uiVariantsEntity).flatMap(
+      (uiVariant: Record<string, unknown>) => {
+        const className = uiVariant?.name
+        return typeof className === 'string' ? [[className, uiVariant]] : []
+      },
+    ),
+  )
 
-  const uiVariantDescriptionsEn = getUiVariantDescriptionsForKeys(uiKeys, false)
-  const uiVariantDescriptionsZh = getUiVariantDescriptionsForKeys(uiKeys, true)
-  return variantItems.map((item: Record<string, unknown>) => {
-    const className = item?.className
-    const classNameStr = typeof className === 'string' ? className : ''
-    const renderPropKey = typeof item?.['Render Prop'] === 'string'
-      ? item['Render Prop']
+  const renderPropsByClassName = new Map(
+    renderPropItems.flatMap((item: Record<string, unknown>) => {
+      const className = item?.className
+      return typeof className === 'string' ? [[className, item]] : []
+    }),
+  )
+  const directVariantsByClassName = new Map(
+    extractUiVariantTableSource(uiVariantsEntity).map(item => [
+      item.className,
+      item,
+    ]),
+  )
+
+  return [...uiVariantsByClassName].flatMap(([className, uiVariant]) => {
+    const item = renderPropsByClassName.get(className)
+    if (!item) {
+      const directVariant = directVariantsByClassName.get(className)
+      return directVariant ? [directVariant] : []
+    }
+    const renderPropKey = typeof item?.renderProp === 'string'
+      ? item.renderProp
       : null
     const renderPropType = (item as any)?.item?.type
 
-    const uiDescEn = classNameStr.length > 0
-      ? (uiVariantDescriptionsEn[classNameStr]
-        ?? (renderPropKey
-          ? getDefaultUiVariantDescription(renderPropKey, renderPropType)
-          : undefined))
-      : undefined
-    const uiDescZh = classNameStr.length > 0
-      ? uiVariantDescriptionsZh[classNameStr]
-      : undefined
+    const uiDescEn = stringifyCommentContent(
+      uiVariant?.summary as Array<{ text?: string }> | undefined,
+    ) || (
+      renderPropKey
+        ? getDefaultUiVariantDescription(renderPropKey, renderPropType)
+        : undefined
+    )
+    const uiDescZh = stringifyCommentContent(
+      uiVariant?.summary_zh as Array<{ text?: string }> | undefined,
+    ) || undefined
 
     const baseDescEn = (item as any)?.item?.description as string | undefined
-    const baseDescZh = (item as any)?.item?.description_zh as string | undefined
+    const baseDescZh = (item as any)?.item?.description_zh as
+      | string
+      | undefined
 
     const mergedDescEn = uiDescEn
       ? `${baseDescEn ?? ''}\n${uiDescEn}`.trim()
@@ -442,7 +617,7 @@ function mergeRenderPropsAndUiVariants(
       ? `${baseDescZh ?? ''}\n${uiDescZh}`.trim()
       : baseDescZh
 
-    return {
+    const mergedItem: Record<string, unknown> = {
       ...item,
       item: {
         ...(item as any).item,
@@ -450,6 +625,18 @@ function mergeRenderPropsAndUiVariants(
         description_zh: mergedDescZh ?? undefined,
       },
     }
+    if (!includeRenderProp) delete mergedItem.renderProp
+    return mergedItem
+  }) as Array<Record<string, unknown>>
+}
+
+function getRenderPropTableSource(
+  renderPropItems: Array<Record<string, unknown>>,
+): Array<Record<string, unknown>> {
+  return renderPropItems.map(item => {
+    const tableItem: Record<string, unknown> = { ...item }
+    delete tableItem.className
+    return tableItem
   })
 }
 
@@ -532,13 +719,23 @@ function withApiEntityDisplayTitle(
  */
 function genProps(
   data: any,
+  sourceTitle: string,
+  apiEntityRegistry: ReadonlyMap<string, any>,
   isZh?: boolean,
   headingMarker: '###' | '####' = '###',
   parentTitle?: string,
+  includeStateTable = true,
+  usePartScopedUiVariants = false,
+  includeStatePreamble = false,
 ) {
   const title = data.title
   const children = data.children
   const comments = getCommentText(data.comment, isZh)
+  const partName = sourceTitle.replace(/Props$/, '')
+  const uiVariantsEntity = getUiVariantEntityForPart(
+    partName,
+    apiEntityRegistry,
+  )
 
   if (!children?.length) return ''
 
@@ -552,13 +749,12 @@ function genProps(
 
   children.map((d: any) => {
     const rawItems = Array.isArray(d.children) ? d.children : []
-    const renderChildren = rawItems.filter((item: unknown) =>
-      isRenderFunctionChildrenProp(item)
-    )
-    const normalItems = rawItems.filter((item: unknown) => {
-      if (isRenderFunctionChildrenProp(item)) return false
-      return true
-    })
+    const renderChildren = includeStateTable
+      ? rawItems.filter((item: unknown) => isRenderFunctionChildrenProp(item))
+      : []
+    const normalItems = includeStateTable
+      ? rawItems.filter((item: unknown) => !isRenderFunctionChildrenProp(item))
+      : rawItems
 
     const sourceString = JSON.stringify(normalItems, null, 2)
     const titleProp = shouldLabelGroups
@@ -570,28 +766,86 @@ function genProps(
 
     if (renderChildren.length > 0) {
       const renderSourceString = JSON.stringify(renderChildren, null, 2)
-      const renderPropItemsRaw = renderChildren.flatMap((item: unknown) =>
-        extractRenderFunctionTableSource(item, isZh)
-      )
-      const mergedTableSource = JSON.stringify(
-        mergeRenderPropsAndUiVariants(renderPropItemsRaw),
-        null,
-        2,
-      )
-
-      // Inject a single-tag reference to <ClassRenderPropPreamble />. The actual
-      // component (which picks the current locale via Rspress's `useLang()` hook
-      // and renders the corresponding copy) is defined once at the top of every
-      // generated APIReference.mdx that contains at least one ClassRenderPropTable.
-      const classRenderPropPreamble = `<ClassRenderPropPreamble />`
 
       sections.push(
         `<UIApiTable source={${renderSourceString}}/>`,
-        classRenderPropPreamble,
-        `<ClassRenderPropTable source={${mergedTableSource}}/>`,
+      )
+
+      const stateSections = renderChildren.map((item: unknown) => {
+        const renderPropItems = extractRenderFunctionTableSource(item)
+        const tableSource = uiVariantsEntity
+          ? mergeRenderPropsAndUiVariants(
+            renderPropItems,
+            uiVariantsEntity,
+          )
+          : getRenderPropTableSource(renderPropItems)
+        return `<ClassRenderPropTable source={${
+          JSON.stringify(tableSource, null, 2)
+        }}/>`
+      })
+      let statePreamble = ''
+      if (!usePartScopedUiVariants || includeStatePreamble) {
+        statePreamble = '<ClassRenderPropPreamble />'
+      }
+      sections.push(
+        statePreamble,
+        usePartScopedUiVariants
+          ? (
+            uiVariantsEntity
+              ? getUiVariantPartDescription(partName, true, isZh)
+              : getRenderPropPartDescription(partName, isZh)
+          )
+          : '',
+        ...stateSections,
       )
     }
   })
+
+  const ownRenderChildren = getRenderFunctionChildren(data)
+  if (
+    includeStateTable
+    && ownRenderChildren.length === 0
+    && uiVariantsEntity
+  ) {
+    const inheritedRenderChildren = getInheritedRenderFunctionChildren(
+      uiVariantsEntity,
+      apiEntityRegistry,
+    )
+    if (inheritedRenderChildren) {
+      sections.push(
+        usePartScopedUiVariants && includeStatePreamble
+          ? '<ClassRenderPropPreamble />'
+          : '',
+        usePartScopedUiVariants
+          ? getUiVariantPartDescription(partName, false, isZh)
+          : getCommentText(uiVariantsEntity.comment, isZh),
+        ...inheritedRenderChildren.renderChildren.map((item: unknown) => {
+          const tableSource = mergeRenderPropsAndUiVariants(
+            extractRenderFunctionTableSource(item),
+            uiVariantsEntity,
+            false,
+          )
+          return `<ClassRenderPropTable source={${
+            JSON.stringify(tableSource, null, 2)
+          }}/>`
+        }),
+      )
+    } else {
+      const tableSource = extractUiVariantTableSource(uiVariantsEntity)
+      sections.push(
+        usePartScopedUiVariants && includeStatePreamble
+          ? '<ClassRenderPropPreamble />'
+          : '',
+        usePartScopedUiVariants
+          ? getUiVariantPartDescription(partName, false, isZh)
+          : getCommentText(uiVariantsEntity.comment, isZh),
+        `<ClassRenderPropTable source={${
+          JSON.stringify(tableSource, null, 2)
+        }}/>`,
+      )
+    }
+  }
+
   return joinMdxSections(sections)
 }
 
@@ -677,14 +931,36 @@ const doGenTplWithData = async (
     return 2
   }
 
-  const serializedEntityNames = new Set(
-    data.children.map((item: any) => item.title),
+  const allowedUiVariantTitles = new Set([
+    ...apiConfig.parts.map(partName => `${partName}UIVariants`),
+    ...(apiConfig.embeddedTypes ?? []).filter(title =>
+      title.endsWith('UIVariants')
+    ),
+  ])
+  const apiEntityRegistry = createApiEntityRegistry(
+    data.children,
+    allowedUiVariantTitles,
   )
+  const usePartScopedUiVariants = apiConfig.parts.some(partName =>
+    apiEntityRegistry.has(`${partName}UIVariants`)
+  )
+  const firstStateTablePart = apiConfig.parts.find((partName) => {
+    const propsEntity = apiEntityRegistry.get(`${partName}Props`)
+    const uiVariantsEntity = getUiVariantEntityForPart(
+      partName,
+      apiEntityRegistry,
+    )
+    const hasOwnRenderState = getRenderFunctionChildren(propsEntity).length > 0
+
+    return usePartScopedUiVariants
+      ? Boolean(uiVariantsEntity) || hasOwnRenderState
+      : hasOwnRenderState
+  })
   const missingConfiguredEntities = [
     ...(apiConfig.refs ?? []),
     ...(apiConfig.supportingTypes ?? []),
     ...(apiConfig.embeddedTypes ?? []),
-  ].filter(title => !serializedEntityNames.has(title))
+  ].filter(title => !apiEntityRegistry.has(title))
   if (missingConfiguredEntities.length > 0) {
     throw new Error(
       `Configured API entities were not serialized: ${
@@ -710,19 +986,11 @@ const doGenTplWithData = async (
   // standalone `*RenderProps` interface section to match Dialog-style docs.
   const renderPropsTitlesToSkip = new Set<string>()
   if (Array.isArray(sortedData)) {
-    const getInterfacePropItems = (ifaceItem: any): any[] => {
-      const groups = Array.isArray(ifaceItem?.children)
-        ? ifaceItem.children
-        : []
-      const propsGroup = groups.find((g: any) => g?.title === 'Properties')
-      return Array.isArray(propsGroup?.children) ? propsGroup.children : []
-    }
-
-    const extractRenderPropKeysFromChildrenProp = (prop: any): string[] => {
-      if (!prop || typeof prop.type !== 'string') return []
-      const match = /\(\s*status\s*:\s*\{([^}]*)\}\)\s*=>/.exec(prop.type)
-      if (!match) return []
-      return match[1]
+    const extractInlineRenderPropKeys = (
+      parameter: RenderFunctionParameter,
+    ): string[] => {
+      if (!parameter.inlineProperties) return []
+      return parameter.inlineProperties
         .split(';')
         .map((s: string) => s.trim())
         .filter(Boolean)
@@ -733,22 +1001,29 @@ const doGenTplWithData = async (
     for (const item of sortedData) {
       if (typeof item?.title !== 'string') continue
       if (!item.title.endsWith('Props')) continue
-      const props = getInterfacePropItems(item)
+      const props = getApiEntityPropertyItems(item)
       const childrenProp = props.find((p: any) => p?.name === 'children')
-      if (!isRenderFunctionChildrenProp(childrenProp)) continue
-      const keys = extractRenderPropKeysFromChildrenProp(childrenProp)
+      const parameter = getRenderFunctionParameter(childrenProp)
+      if (!parameter) continue
+
+      if (parameter.typeName) {
+        renderPropsTitlesToSkip.add(parameter.typeName)
+        continue
+      }
+
+      const keys = extractInlineRenderPropKeys(parameter)
       if (keys.length === 0) continue
 
-      for (const candidate of sortedData) {
-        if (typeof candidate?.title !== 'string') continue
-        if (!candidate.title.endsWith('RenderProps')) continue
-        const candidateProps = getInterfacePropItems(candidate)
-        const candidateKeys = candidateProps
-          .map((p: any) => p?.name)
-          .filter((n: any) => typeof n === 'string')
-        const candidateKeySet = new Set(candidateKeys)
-        const ok = keys.every((k) => candidateKeySet.has(k))
-        if (ok) renderPropsTitlesToSkip.add(candidate.title)
+      const partName = item.title.replace(/Props$/, '')
+      const candidateTitle = `${partName}RenderProps`
+      const candidate = apiEntityRegistry.get(candidateTitle)
+      const candidateKeys = new Set(
+        getApiEntityPropertyItems(candidate)
+          .map((property: any) => property?.name)
+          .filter((name: unknown): name is string => typeof name === 'string'),
+      )
+      if (keys.every(key => candidateKeys.has(key))) {
+        renderPropsTitlesToSkip.add(candidateTitle)
       }
     }
   }
@@ -797,9 +1072,14 @@ const doGenTplWithData = async (
     } else if (item.children?.length) {
       section = genProps(
         displayItem,
+        item.title,
+        apiEntityRegistry,
         isZh,
         headingMarker,
         parentTitle,
+        isPart,
+        usePartScopedUiVariants,
+        isPart && item.title === `${firstStateTablePart}Props`,
       )
     }
 

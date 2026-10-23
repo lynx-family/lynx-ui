@@ -48,12 +48,12 @@ export type SliderThumbIndex = 0 | 1
 /**
  * UI variants applied by slider primitives based on interaction state.
  * Use them as CSS selectors to style active and disabled states.
- * @zh 滑块原语根据交互状态注入的 ui-variants，可用于 CSS selector 定制激活态和禁用态。
+ * @zh 滑块原语根据交互状态注入的 UI variants，可用于 CSS selector 定制激活态和禁用态。
  */
 export interface SliderUIVariants {
   /**
-   * Applied while the slider is actively being interacted with. On `SliderThumb`, only the active thumb receives this variant.
-   * @zh 滑块处于交互中时生效。在 `SliderThumb` 上，仅当前活动的拇指会获得此状态。
+   * Applied from the start of a pointer or touch interaction until it ends.
+   * @zh 从指针或触摸交互开始到结束期间生效。
    * @iOS
    * @Android
    * @Harmony
@@ -68,6 +68,39 @@ export interface SliderUIVariants {
    * @Harmony
    */
   'ui-disabled'?: boolean
+}
+
+/**
+ * UI variants applied by `SliderRoot`.
+ * @zh `SliderRoot` 注入的 UI variants。
+ */
+export interface SliderRootUIVariants extends SliderUIVariants {}
+
+/**
+ * UI variants applied by `SliderTrack`.
+ * @zh `SliderTrack` 注入的 UI variants。
+ */
+export interface SliderTrackUIVariants extends SliderUIVariants {}
+
+/**
+ * UI variants applied by `SliderIndicator`.
+ * @zh `SliderIndicator` 注入的 UI variants。
+ */
+export interface SliderIndicatorUIVariants extends SliderUIVariants {}
+
+/**
+ * UI variants applied by `SliderThumb`.
+ * @zh `SliderThumb` 注入的 UI variants。
+ */
+export interface SliderThumbUIVariants extends SliderUIVariants {
+  /**
+   * Applied only to the thumb selected for the current pointer or touch interaction, from interaction start until it ends.
+   * @zh 从指针或触摸交互开始到结束期间，仅在当前选中的拇指上生效。
+   * @iOS
+   * @Android
+   * @Harmony
+   */
+  'ui-active'?: boolean
 }
 
 /**
