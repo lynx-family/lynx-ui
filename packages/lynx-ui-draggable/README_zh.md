@@ -25,11 +25,26 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-draggable` 单独�
 
 ## 组件结构
 
+当整个组件都需要响应拖拽时，使用 `Draggable`。
+
 ```tsx
 <Draggable>
   {/* Your content */}
 </Draggable>
 ```
+
+当只有特定区域需要响应拖拽时，使用 `DraggableRoot` 和 `DraggableArea`。
+
+```tsx
+<DraggableRoot>
+  <DraggableArea>{/* Your draggable area content */}</DraggableArea>
+</DraggableRoot>
+```
+
+- **`Draggable`**：独立的可拖拽组件。
+- **`DraggableRoot`**：提供拖拽上下文并管理拖拽逻辑。
+- **`DraggableArea`**：消费拖拽上下文，并将拖拽行为应用到指定区域。
+- **`useDraggable`**：用于自定义拖拽实现的 Hook。
 
 ## 关于 @lynx-js/lynx-ui
 

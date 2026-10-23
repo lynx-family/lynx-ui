@@ -27,19 +27,24 @@ The `lynx-ui-draggable` follows a headless composition pattern.
 
 ## Component Structure
 
-The `Draggable` component is composed of several specialized sub-components to give you full control over the layout and styling.
+Use `Draggable` when the whole component should respond to dragging.
+
+```tsx
+<Draggable>{/* Your content */}</Draggable>
+```
+
+Use `DraggableRoot` and `DraggableArea` when only a specific area should
+respond to dragging.
 
 ```tsx
 <DraggableRoot>
-  <DraggableArea>
-    <Draggable />
-  </DraggableArea>
+  <DraggableArea>{/* Your draggable area content */}</DraggableArea>
 </DraggableRoot>
 ```
 
-- **`DraggableRoot`**: The root container that manages the state and logic.
-- **`DraggableArea`**: The defined area where items can be dragged.
-- **`Draggable`**: The actual draggable item.
+- **`Draggable`**: A standalone draggable component.
+- **`DraggableRoot`**: Provides the drag context and manages the drag logic.
+- **`DraggableArea`**: Consumes the drag context and applies it to a specific area.
 - **`useDraggable`**: A hook for custom draggable implementations.
 
 ## About @lynx-js/lynx-ui
