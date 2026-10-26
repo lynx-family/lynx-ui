@@ -245,13 +245,12 @@ function FeedListImpl(props: FeedListProps, ref: ForwardedRef<FeedListRef>) {
       void runOnMainThread(useRefreshAndBounceProps.finishRefresh)()
     }
   }
+  // Resolve the nullable member before worklet capture, which reads members eagerly.
+  const hookStartRefresh = useRefreshAndBounceProps?.startRefreshMethod
   const startRefreshMainThreadMethod = () => {
     'main thread'
-    if (
-      enableHookRefresh
-      && useRefreshAndBounceProps?.startRefreshMethod
-    ) {
-      useRefreshAndBounceProps.startRefreshMethod()
+    if (enableHookRefresh) {
+      hookStartRefresh?.()
     }
   }
 
