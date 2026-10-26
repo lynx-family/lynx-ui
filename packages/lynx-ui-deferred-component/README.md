@@ -15,10 +15,8 @@ The standalone package is also available as `@lynx-js/lynx-ui-deferred-component
 ## Component Structure
 
 ```tsx
-import { DeferredComponent } from '@lynx-js/lynx-ui'
-
-<DeferredComponent estimatedStyle={{ width: '100%', minHeight: '120px' }}>
-  <text>Deferred content</text>
+<DeferredComponent>
+  {/* Your content */}
 </DeferredComponent>
 ```
 

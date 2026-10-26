@@ -23,18 +23,35 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-slider` 单独安�
 
 [查看完整示例](https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/Slider)
 
-## 组件结构
+### 原语组合
 
 ```tsx
-<SliderRoot>
-  <SliderTrack>
-    <SliderIndicator />
-    <SliderThumb>
-      <view />
-    </SliderThumb>
-  </SliderTrack>
-</SliderRoot>
+import {
+  SliderRoot,
+  SliderTrack,
+  SliderIndicator,
+  SliderThumb,
+} from '@lynx-js/lynx-ui'
+
+export function SliderPrimitiveDemo() {
+  return (
+    <SliderRoot
+      defaultValue={0.35}
+      onValueChange={(value, source) => console.log(value, source)}
+      onValueCommit={(value) => console.log('commit', value)}
+    >
+      <SliderTrack className='slider-track'>
+        <SliderIndicator className='slider-indicator' />
+        <SliderThumb className='slider-thumb-wrapper'>
+          <view className='slider-thumb-dot' />
+        </SliderThumb>
+      </SliderTrack>
+    </SliderRoot>
+  )
+}
 ```
+
+### 区间组合
 
 区间模式通过 `value` 或 `defaultValue` 传入有序二元组，并使用两个带索引的 `SliderThumb`：
 
@@ -51,6 +68,17 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-slider` 单独安�
 `index={0}` 表示下限，`index={1}` 表示上限。区间值会按升序归一化、限制在 `[0, 1]` 内，并在设置 `step` 时吸附到对应步进。区间拇指明确采用禁止交叉的碰撞策略：两个拇指可以重合，但活动拇指会停在另一个值处，不会交换身份或推动另一个拇指。这是稳定的默认行为。`SliderIndicator` 在区间模式下渲染两个拇指之间的选中范围。
 
 两种值形态共用泛型 `SliderRootProps<Value>` 与 `SliderRef<Value>`。泛型默认为 `number`；需要显式标注区间时使用 `SliderRangeValue`。
+
+## 组件结构
+
+```tsx
+<SliderRoot>
+  <SliderTrack>
+    <SliderIndicator />
+    <SliderThumb />
+  </SliderTrack>
+</SliderRoot>
+```
 
 ## 关于 @lynx-js/lynx-ui
 

@@ -26,9 +26,16 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-popover` 单独安
 ## 组件结构
 
 ```tsx
-<Popover>
-  {/* Your content */}
-</Popover>
+<PopoverRoot>
+  <PopoverTrigger />
+  <PopoverAnchor />
+  <PopoverPositioner>
+    <PopoverBackdrop />
+    <PopoverContent>
+      <PopoverArrow />
+    </PopoverContent>
+  </PopoverPositioner>
+</PopoverRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

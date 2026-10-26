@@ -25,10 +25,23 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-input` 单独安�
 
 ## 组件结构
 
+`Input` 和 `TextArea` 可以独立使用：
+
 ```tsx
-<Input>
-  {/* Your content */}
-</Input>
+<Input />
+<TextArea />
+```
+
+当输入框需要在键盘上方保持可见时，使用键盘感知组件：
+
+```tsx
+<KeyboardAwareRoot>
+  <KeyboardAwareResponder>
+    <KeyboardAwareTrigger>
+      <Input />
+    </KeyboardAwareTrigger>
+  </KeyboardAwareResponder>
+</KeyboardAwareRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

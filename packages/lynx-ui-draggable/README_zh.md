@@ -37,7 +37,7 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-draggable` 单独�
 
 ```tsx
 <DraggableRoot>
-  <DraggableArea>{/* Your draggable area content */}</DraggableArea>
+  <DraggableArea />
 </DraggableRoot>
 ```
 

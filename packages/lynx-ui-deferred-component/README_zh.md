@@ -15,10 +15,8 @@ pnpm add @lynx-js/lynx-ui
 ## 组件结构
 
 ```tsx
-import { DeferredComponent } from '@lynx-js/lynx-ui'
-
-<DeferredComponent estimatedStyle={{ width: '100%', minHeight: '120px' }}>
-  <text>延迟显示的内容</text>
+<DeferredComponent>
+  {/* Your content */}
 </DeferredComponent>
 ```
 

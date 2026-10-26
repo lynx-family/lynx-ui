@@ -391,6 +391,7 @@ Documentation should be treated as code. While AI can draft updates, humans must
    - Do not add component-specific usage, prop documentation, examples, or design guidance to `AGENTS.md`; put that information in the component README, typedoc comments, examples, or component `SKILL.md`.
 4. **Package README Scope**:
    - Keep package `README.md` files high-level. They should describe purpose, installation, component structure, and point readers to examples or API docs.
+   - Treat component structure snippets as anatomy diagrams, not runnable examples. Show public parts, nesting, render-prop shape, required intrinsic structural nodes, and required node-valued props that represent distinct structural slots. Omit concrete example content, optional extension slots, and props that only provide arbitrary instance values, state, callbacks, behavior, layout, styling, or accessibility setup, even when those props are required by the type. Use `{/* Your content */}` only to expose the children slot of a single-part component; multi-part anatomy should rely on its component topology. Retain a prop when it determines the composition topology, repeated-part count, or child-to-parent identity binding being shown.
    - Do not turn package READMEs into step-by-step usage manuals by appending narrow usage rules or behavioral footnotes for every change.
    - Put detailed behavior guidance, caveats, and prompt-oriented instructions in typed API docs, examples, component `SKILL.md`, or `AGENTS.md` when that context is the better fit.
 5. **Code Review**:

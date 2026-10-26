@@ -35,7 +35,7 @@ The `OverlayView` component is the main overlay container:
 
 ```tsx
 <OverlayView>
-  {children}
+  {/* Your content */}
 </OverlayView>
 ```
 

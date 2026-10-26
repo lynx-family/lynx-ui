@@ -26,9 +26,11 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-radio-group` 单�
 ## 组件结构
 
 ```tsx
-<RadioGroup>
-  {/* Your content */}
-</RadioGroup>
+<RadioGroupRoot>
+  <Radio>
+    <RadioIndicator />
+  </Radio>
+</RadioGroupRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

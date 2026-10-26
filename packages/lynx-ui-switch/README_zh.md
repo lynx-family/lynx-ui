@@ -27,7 +27,8 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-switch` 单独安�
 
 ```tsx
 <Switch>
-  {/* Your content */}
+  <SwitchTrack />
+  <SwitchThumb />
 </Switch>
 ```
 

@@ -27,7 +27,7 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-swiper` 单独安�
 
 ```tsx
 <Swiper>
-  {/* Your content */}
+  {({ index }) => <SwiperItem />}
 </Swiper>
 ```
 

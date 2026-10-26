@@ -33,12 +33,10 @@ The `Sortable` component is composed of the following sub-components:
 <SortableRoot>
   {(item) => (
     <SortableItem
-      key={item.getSortingKey()}
+      as='DraggableRoot'
       sortingKey={item.getSortingKey()}
     >
-      <SortableItemArea>
-        {/* Your item content */}
-      </SortableItemArea>
+      <SortableItemArea />
     </SortableItem>
   )}
 </SortableRoot>

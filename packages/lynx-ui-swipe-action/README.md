@@ -27,10 +27,13 @@ The `lynx-ui-swipe-action` follows a headless composition pattern.
 
 ## Component Structure
 
-The `SwipeAction` component is composed of the following sub-components:
+`SwipeAction` exposes `displayArea` and `actionArea` as structural slots.
 
 ```tsx
-<SwipeAction displayArea={<view />} actionArea={<view />} />
+<SwipeAction
+  displayArea={displayArea}
+  actionArea={actionArea}
+/>
 ```
 
 - **`SwipeAction`**: The main swipe action container.

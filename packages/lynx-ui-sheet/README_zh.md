@@ -26,9 +26,14 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-sheet` 单独安�
 ## 组件结构
 
 ```tsx
-<Sheet>
-  {/* Your content */}
-</Sheet>
+<SheetRoot>
+  <SheetView>
+    <SheetBackdrop />
+    <SheetContent>
+      <SheetHandle />
+    </SheetContent>
+  </SheetView>
+</SheetRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

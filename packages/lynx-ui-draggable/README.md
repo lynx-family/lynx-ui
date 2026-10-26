@@ -30,7 +30,9 @@ The `lynx-ui-draggable` follows a headless composition pattern.
 Use `Draggable` when the whole component should respond to dragging.
 
 ```tsx
-<Draggable>{/* Your content */}</Draggable>
+<Draggable>
+  {/* Your content */}
+</Draggable>
 ```
 
 Use `DraggableRoot` and `DraggableArea` when only a specific area should
@@ -38,7 +40,7 @@ respond to dragging.
 
 ```tsx
 <DraggableRoot>
-  <DraggableArea>{/* Your draggable area content */}</DraggableArea>
+  <DraggableArea />
 </DraggableRoot>
 ```
 
