@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-feed-list
 
+## 3.140.2
+
+### Patch Changes
+
+- Fix FeedList crashing during render when refresh and bounce are disabled or native refresh is used without bounce. ([#369](https://github.com/lynx-family/lynx-ui/pull/369))
+
 ## 3.140.1
 
 ### Patch Changes

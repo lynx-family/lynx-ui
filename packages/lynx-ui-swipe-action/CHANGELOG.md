@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-swipe-action
 
+## 3.140.2
+
+### Patch Changes
+
+- Remove the unused `children` prop from `SwipeActionProps` and its API reference. Use `displayArea` for visible content and `actionArea` for swipe actions. ([#371](https://github.com/lynx-family/lynx-ui/pull/371))
+
 ## 3.140.1
 
 ### Patch Changes
