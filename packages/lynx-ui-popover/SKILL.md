@@ -158,3 +158,37 @@ A: Yes, and it is often smoother for simple fades because transitions interpolat
 - **PopoverContent**: The visual box for your content.
 - **PopoverArrow**: The triangle pointing to the trigger.
 - **PopoverBackdrop**: An overlay behind the popover (often used for dimming or click-outside).
+
+## Custom Rectangular Arrows
+
+Use a downward-pointing custom child and describe its original dimensions:
+
+```tsx
+<PopoverContent className='bubble'>
+  <view>{children}</view>
+  <PopoverArrow size={{ width: 32, height: 11 }} offset={16}>
+    <svg className='arrow-artwork' content={downwardArrowSvg} overlap={false} />
+  </PopoverArrow>
+</PopoverContent>
+```
+
+Set `.arrow-artwork` to 32px wide and 11px high. The positioning box is
+32 × 11 for top/bottom and 11 × 32 for left/right; protrusion stays 11px.
+Do not swap the input dimensions or rotate the child for horizontal placement.
+The caller's `placementOffset` is additional to this protrusion.
+
+Keep the arrow a direct child of `PopoverContent`. Its coordinates are
+relative to the bubble, so a centered inner wrapper can introduce an offset.
+For an accurately sized arrow, set `offset` to the larger adjacent corner
+radius in pixels. Padding is an edge constraint, not a fixed shift from the
+anchor. Small bubbles may clamp it; the design system must choose a fallback
+when the arrow cannot fit between the corners. The primitive preserves the
+bubble's radius.
+
+Numeric `size` retains its square box and protrusion. Without children, object
+sizes still use the larger dimension for the default border triangle. With
+children, object sizes now use the actual rectangle instead of the former
+maximum-dimension square. Custom children do not receive triangle borders.
+
+See [the arrow alignment example](../../apps/examples/Popover/ArrowAlignment/README.md)
+for native comparisons and design-system integration guidance.

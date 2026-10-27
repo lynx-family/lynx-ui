@@ -29,16 +29,16 @@ export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
  */
 export interface PopoverArrowProps extends ComponentBasicProps {
   /**
-   * children. Only use it when you don't want to use the default arrow. Notice when this prop is set, other props like the size and color props will be ignored and the default transform will be different.
-   * @zh 子元素。仅当你不想使用默认箭头时才使用它。注意，当设置此属性时，size 和 color 等属性将被忽略，默认的 transform 也会不同。
+   * Custom arrow artwork, pointing down before rotation. Its layout size must match `size`; `color` only affects the default triangle. Keep PopoverArrow a direct child of PopoverContent so coordinates use the bubble as their origin.
+   * @zh 自定义箭头，旋转前朝下，布局尺寸应与 size 一致。color 仅作用于默认三角形。PopoverArrow 应作为 PopoverContent 的直接子节点，确保定位以气泡为参照。
    * @Android
    * @iOS
    * @Harmony
    */
   children?: ReactNode
   /**
-   * Arrow size. Supports `number` (equal width/height) or `{ width, height }` (unequal width/height). When using a custom child, ensure `size` matches the child’s visual size.
-   * @zh 箭头尺寸。支持 `number`（宽高一致）或 `{ width, height }`（宽高不一致）。使用自定义子节点时，需要确保 `size` 与子节点的视觉尺寸一致。
+   * Arrow size. A number retains the square positioning box and protrusion of that size. With custom children, `{ width, height }` describes the original artwork: width is the base and height is the protrusion for every placement. Left/right placements rotate the box automatically. Without children, object sizes retain the default triangle’s legacy behavior using the larger dimension.
+   * @zh 箭头尺寸。数字保持原有正方形定位盒及同等突出距离。自定义箭头的 `{ width, height }` 表示旋转前的底边宽度和突出高度；左右方向由底层自动旋转。未传 children 时，对象尺寸仍取最大值绘制默认三角形。
    * @Android
    * @iOS
    * @Harmony
@@ -54,8 +54,8 @@ export interface PopoverArrowProps extends ComponentBasicProps {
    */
   color?: string
   /**
-   * The offset of the arrow. This prop is useful when the PopoverContent has a rounded corner and should be set to the radius of the rounded corner. Otherwise, the arrow may be placed beside the rounded corner, showing a gap between them.
-   * @zh 箭头的偏移量。当 PopoverContent 有圆角时，应将其设置为圆角的半径。否则，箭头可能会放置在圆角旁边，导致两者之间出现间隙。
+   * Adjusts the positioning of the arrow along the edge of PopoverContent. For example, this can be used to keep the arrow clear of rounded corners.
+   * @zh 调整箭头在 PopoverContent 边缘上的定位偏移，例如可用于避让圆角。
    * @defaultValue 0
    * @Android
    * @iOS
@@ -410,7 +410,10 @@ export type UpdateRectsAction =
     type: 'updateArrowCoords'
     coords: { x: number | null, y: number | null }
   }
-  | { type: 'updateArrowInfo', info: { offset: number, size: number } }
+  | {
+    type: 'updateArrowInfo'
+    info: { offset: number, size: number, dimensions?: Dimensions }
+  }
   | { type: 'updateFloatingCoords', coords: Coords }
   | { type: 'updateMaxContentSize', dimension: Dimensions }
 

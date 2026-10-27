@@ -25,6 +25,7 @@ import {
 import type { CSSProperties, LayoutChangeEvent } from '@lynx-js/types'
 import { clsx } from 'clsx'
 
+import { getArrowDimensions, resolveArrowSize } from './arrowGeometry'
 import {
   arrow,
   computeFloating,
@@ -142,18 +143,19 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
   )
   const { reference, floating, alternativeReference, maxContentSize } =
     sharedInfo
-  const { offset: arrowOffset, size: arrowSize } = sharedInfo.arrow
+  const { offset: arrowOffset, size: arrowSize, dimensions } = sharedInfo.arrow
+  const arrowDimensions = dimensions ?? { width: arrowSize, height: arrowSize }
+  const arrowMainAxisSize = arrowDimensions.height
   const platform = popoverPlatform(floating, reference, {
     x: 0,
     y: 0,
-    width: arrowSize,
-    height: arrowSize,
+    ...getArrowDimensions(arrowDimensions, placement),
   }, alternativeReference)
 
   const middleware: Middleware[] = autoAdjust === 'shift'
     ? [
       offset({
-        mainAxis: arrowSize + placementOffset,
+        mainAxis: arrowMainAxisSize + placementOffset,
         crossAxis: crossAxisOffset,
       }),
       shift({ crossAxis: true }),
@@ -162,7 +164,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
     : (autoAdjust === 'size'
       ? [
         offset({
-          mainAxis: arrowSize + placementOffset,
+          mainAxis: arrowMainAxisSize + placementOffset,
           crossAxis: crossAxisOffset,
         }),
         size({
@@ -183,14 +185,14 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
           limiter: limitShift({
             crossAxis: true,
             mainAxis: true,
-            offset: arrowSize + placementOffset,
+            offset: arrowMainAxisSize + placementOffset,
           }),
         }),
         arrow({ padding: arrowOffset }),
       ]
       : [
         offset({
-          mainAxis: arrowSize + placementOffset,
+          mainAxis: arrowMainAxisSize + placementOffset,
           crossAxis: crossAxisOffset,
         }),
         arrow({ padding: arrowOffset }),
@@ -554,18 +556,21 @@ export const PopoverArrow = (props: PopoverArrowProps) => {
     className,
     transition,
   })
-  // Normalize arrow size: if `size` is a number, use it directly;
-  // if it's an object `{ width, height }`, use the larger one or the content may be clipped.
-  const arrowSize = typeof size === 'number'
-    ? size
-    : Math.max(0, Number(size?.width ?? 0), Number(size?.height ?? 0))
+  const dimensions = resolveArrowSize(size, custom)
+  const { width, height } = dimensions
+  const rectangular = custom && typeof size !== 'number'
 
   useEffect(() => {
-    updateRects({ type: 'updateArrowInfo', info: { offset, size: arrowSize } })
+    updateRects({
+      type: 'updateArrowInfo',
+      info: { offset, size: height, dimensions },
+    })
   }, [])
 
   const { x, y } = sharedInfo.arrow.coords
-  const side = getSide(useContext(PopoverPositionerContext).placement)
+  const placement = useContext(PopoverPositionerContext).placement
+  const side = getSide(placement)
+  const positionedDimensions = getArrowDimensions(dimensions, placement)
 
   const TRANSFORMS: Record<string, CSSProperties['transform']> = {
     top: `rotate(180deg) ${custom ? '' : 'translateX(50%)'}`,
@@ -589,29 +594,43 @@ export const PopoverArrow = (props: PopoverArrowProps) => {
       style={{
         left: x == null ? '' : `${x}px`,
         top: y == null ? '' : `${y}px`,
-        [oppositeSide]: `-${arrowSize}px`,
+        [oppositeSide]: `-${height}px`,
         position: 'absolute',
-        transform: TRANSFORMS[effectiveSide],
+        transform: rectangular ? undefined : TRANSFORMS[effectiveSide],
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         ...(custom
           ? {
-            width: `${arrowSize}px`,
-            height: `${arrowSize}px`,
+            width: `${positionedDimensions.width}px`,
+            height: `${positionedDimensions.height}px`,
           }
           : {
             width: '0px',
             height: '0px',
-            borderLeft: `${arrowSize / 2}px solid transparent`,
-            borderRight: `${arrowSize / 2}px solid transparent`,
-            borderBottom: `${arrowSize}px solid ${color}`,
+            borderLeft: `${width / 2}px solid transparent`,
+            borderRight: `${width / 2}px solid transparent`,
+            borderBottom: `${height}px solid ${color}`,
           }),
         ...style,
       }}
     >
-      {children}
+      {rectangular
+        ? (
+          <view
+            className='lynx-ui-popover__arrow-content'
+            overlap={false}
+            style={{
+              width: `${width}px`,
+              height: `${height}px`,
+              transform: TRANSFORMS[effectiveSide],
+            }}
+          >
+            {children}
+          </view>
+        )
+        : children}
     </view>
   )
 }

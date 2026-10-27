@@ -1,0 +1,124 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 56px 20px 40px;
+  background-color: var(--canvas);
+}
+
+.title {
+  color: var(--content);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.hint {
+  color: var(--content-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.control {
+  padding: 8px 12px;
+  border-radius: 20px;
+  background-color: var(--neutral-ambient);
+}
+
+.control-label {
+  color: var(--content);
+  font-size: 12px;
+}
+
+.stage {
+  flex: 1;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-corner {
+  align-items: flex-start;
+  padding-left: 16px;
+}
+
+.trigger,
+.anchor-marker {
+  width: 24px;
+  height: 24px;
+}
+
+.trigger-small {
+  width: 16px;
+  height: 16px;
+}
+
+.anchor-marker {
+  border-radius: 12px;
+  background-color: var(--content);
+}
+
+.popover-positioner {
+  width: max-content;
+  height: max-content;
+}
+
+/* Fixed diagnostic color matches the SVG fill across theme changes. */
+.bubble {
+  width: 240px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #69d8c9;
+}
+
+.bubble-horizontal {
+  width: 120px;
+  height: 180px;
+}
+
+.bubble-tooltip {
+  width: 216px;
+}
+
+.inner-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner-narrow {
+  width: 120px;
+}
+
+.inner-short {
+  height: 80px;
+}
+
+.bubble-label {
+  color: #102f2b;
+  font-size: 16px;
+}
+
+.arrow-svg {
+  width: 32px;
+  height: 11px;
+  flex-shrink: 0;
+}

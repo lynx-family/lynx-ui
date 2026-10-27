@@ -3,3 +3,12 @@
   width: 100vw;
   height: 100vh;
 }
+
+/* Center the original artwork in the box used by the positioning middleware. */
+.lynx-ui-popover__arrow-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}

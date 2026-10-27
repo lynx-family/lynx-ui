@@ -76,6 +76,7 @@ export interface ElementInfo extends ElementRects {
     coords: { x: number | null, y: number | null }
     offset: number
     size: number
+    dimensions?: Dimensions
   }
   floatingCoords: Coords
   maxContentSize?: MaxSizes
