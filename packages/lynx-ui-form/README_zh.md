@@ -26,9 +26,10 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-form` 单独安装
 ## 组件结构
 
 ```tsx
-<Form>
-  {/* Your content */}
-</Form>
+<FormRoot>
+  <FormField />
+  <FormSubmitButton />
+</FormRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

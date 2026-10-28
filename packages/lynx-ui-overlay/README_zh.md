@@ -26,9 +26,9 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-overlay` 单独安
 ## 组件结构
 
 ```tsx
-<Overlay>
+<OverlayView>
   {/* Your content */}
-</Overlay>
+</OverlayView>
 ```
 
 ## 关于 @lynx-js/lynx-ui

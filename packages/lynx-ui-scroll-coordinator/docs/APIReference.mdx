@@ -1,6 +1,6 @@
-import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
+import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui";
 
-## API Reference {#api}
+## Component API {#api}
 
 ### ScrollCoordinator {#api-scroll-coordinator}
 
@@ -376,6 +376,10 @@ Coordinates a collapsible header with nested vertical lists or scroll views.
   }
 ]}/>
 
+<ClassRenderPropPreamble />
+
+UI variants applied by ScrollCoordinator.
+
 <ClassRenderPropTable source={[
   {
     "className": "ui-sticky",
@@ -494,7 +498,48 @@ Coordinates a collapsible header with nested vertical lists or scroll views.
   }
 ]}/>
 
-### ScrollCoordinatorRefreshOptions {#api-scroll-coordinator-refresh-options}
+## Supporting Types {#api-supporting-types}
+
+### ScrollCoordinatorOffset {#api-supporting-types-scroll-coordinator-offset}
+
+<UIApiTable source={[
+  {
+    "name": "height",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The absolute value of the scrollable distance (header height - toolbar height), in px"
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "offset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The absolute value of the header scroll offset, in px"
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### ScrollCoordinatorRefreshOptions {#api-supporting-types-scroll-coordinator-refresh-options}
 
 Native refresh options with the same callback shapes as FeedList.
 

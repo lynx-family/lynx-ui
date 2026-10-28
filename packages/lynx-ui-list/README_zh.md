@@ -27,7 +27,7 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-list` 单独安装
 
 ```tsx
 <List>
-  {/* Your content */}
+  <list-item />
 </List>
 ```
 

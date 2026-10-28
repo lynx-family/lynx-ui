@@ -1,9 +1,72 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+
 import { describe, expect, it } from 'vitest'
 
-import { doTypeCalc, renderArrayType } from './tpl-data'
+import { doGenDocData, doTypeCalc, renderArrayType } from './tpl-data'
+
+describe('doGenDocData', () => {
+  it.each([false, true])(
+    'stably groups Props, supporting entities, and Ref types with explicit config %s',
+    async (hasExplicitConfig) => {
+      const temporaryDirectory = mkdtempSync(
+        join(tmpdir(), 'lynx-ui-typedoc-data-'),
+      )
+      const dataPath = join(temporaryDirectory, 'typedoc.json')
+      const outputPath = join(temporaryDirectory, 'api-tpl.json')
+      const names = [
+        'FirstRef',
+        'RefreshEvent',
+        'SecondProps',
+        'SupportInfo',
+        'FirstProps',
+        'SecondRef',
+      ]
+
+      try {
+        writeFileSync(
+          dataPath,
+          JSON.stringify({
+            groups: [{
+              title: 'Interfaces',
+              children: names.map((_, index) => index + 1),
+            }],
+            children: names.map((name, index) => ({
+              id: index + 1,
+              name,
+              groups: [],
+              children: [],
+            })),
+          }),
+        )
+
+        await doGenDocData(
+          dataPath,
+          outputPath,
+          hasExplicitConfig,
+          '@lynx-js/lynx-ui-example',
+        )
+
+        const output = JSON.parse(readFileSync(outputPath, 'utf8'))
+        expect(output.children.map((item: { title: string }) => item.title))
+          .toEqual([
+            'SecondProps',
+            'FirstProps',
+            'RefreshEvent',
+            'SupportInfo',
+            'FirstRef',
+            'SecondRef',
+          ])
+      } finally {
+        rmSync(temporaryDirectory, { recursive: true, force: true })
+      }
+    },
+  )
+})
 
 describe('renderArrayType', () => {
   it('parenthesizes union elements', () => {

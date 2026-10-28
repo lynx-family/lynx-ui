@@ -58,7 +58,8 @@ export interface RadioGroupRootProps {
   onValueChange?: (value: string) => void
 }
 
-/** Render state props passed to custom RadioGroup content.
+/**
+ * Render state props passed to custom RadioGroup content.
  * @zh RadioGroup 自定义渲染的状态属性
  */
 export interface RadioGroupRenderProps {
@@ -140,3 +141,33 @@ export interface RadioIndicatorProps extends ComponentBasicProps {
    */
   forceMount?: boolean
 }
+
+/**
+ * UI variants exposed by Radio.
+ * @zh Radio 暴露的 UI variants。
+ */
+export interface RadioUIVariants {
+  /**
+   * Applied while the Radio is pressed and not disabled.
+   * @zh Radio 处于按下态且未被禁用时生效，可用于 `.ui-active { ... }`。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when the Radio is checked.
+   * @zh Radio 处于选中态时生效，可用于 `.ui-checked { ... }`。
+   */
+  'ui-checked'?: boolean
+
+  /**
+   * Applied when the Radio is disabled.
+   * @zh Radio 被禁用时生效，可用于 `.ui-disabled { ... }`。
+   */
+  'ui-disabled'?: boolean
+}
+
+/**
+ * UI variants exposed by RadioIndicator.
+ * @zh RadioIndicator 暴露的 UI variants。
+ */
+export interface RadioIndicatorUIVariants extends RadioUIVariants {}

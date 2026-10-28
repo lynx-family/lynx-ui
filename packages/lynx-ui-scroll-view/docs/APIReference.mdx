@@ -1,12 +1,10 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
 
-## API Reference {#api}
+## Component API {#api}
 
 ### ScrollView {#api-scroll-view}
 
-#### Properties {#api-scroll-view-properties}
-
-<UIApiTable source={[
+<UIApiTable title="Properties" source={[
   {
     "name": "androidTouchSlop",
     "type": "default | paging",
@@ -977,9 +975,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
   }
 ]}/>
 
-#### Events {#api-scroll-view-events}
-
-<UIApiTable source={[
+<UIApiTable title="Events" source={[
   {
     "name": "catchLongPress",
     "type": "(e: EventHandler<BaseTouchEvent<Target>> | undefined) => void",
@@ -1378,9 +1374,11 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
   }
 ]}/>
 
-### BounceableBasicProps {#api-bounceable-basic-props}
+## Supporting Types {#api-supporting-types}
 
-<UIApiTable source={[
+### BounceableBasicProps {#api-supporting-types-bounceable-basic-props}
+
+<UIApiTable title="Properties" source={[
   {
     "name": "alwaysBouncing",
     "type": "boolean",
@@ -1661,7 +1659,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
   }
 ]}/>
 
-<UIApiTable source={[
+<UIApiTable title="Events" source={[
   {
     "name": "onScrollToBounces",
     "type": "(e: ScrollToBouncesInfo) => void",
@@ -1710,12 +1708,125 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
   }
 ]}/>
 
-### ScrollToBouncesInfo {#api-scroll-to-bounces-info}
+### ScrollToBouncesInfo {#api-supporting-types-scroll-to-bounces-info}
 
 <UIApiTable source={[
   {
     "name": "direction",
     "type": "upper | lower",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### BounceHandlers {#api-supporting-types-bounce-handlers}
+
+<UIApiTable source={[
+  {
+    "name": "main-thread:bindlayoutchange",
+    "type": "(event: CommonEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:bindscroll",
+    "type": "(event: ScrollEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:bindtouchend",
+    "type": "() => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:bindtouchmove",
+    "type": "(event: TouchEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:bindtouchstart",
+    "type": "(event: TouchEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onLowerDisexposure",
+    "type": "(_event: CommonEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onLowerExposure",
+    "type": "(_event: CommonEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onUpperDisexposure",
+    "type": "(_event: CommonEvent) => void",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onUpperExposure",
+    "type": "(_event: CommonEvent) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",

@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui-presence
 
+## 3.140.1
+
+### Patch Changes
+
+- Add PascalCase names for public hook types and normalize supporting type names, ([#355](https://github.com/lynx-family/lynx-ui/pull/355))
+  retaining deprecated aliases for existing public names.
+
 ## 3.139.0
 
 ### Minor Changes

@@ -31,11 +31,7 @@ The `Swiper` component is composed of the following sub-components:
 
 ```tsx
 <Swiper>
-  {({ index }) => (
-    <SwiperItem>
-      {/* Your item content */}
-    </SwiperItem>
-  )}
+  {({ index }) => <SwiperItem />}
 </Swiper>
 ```
 

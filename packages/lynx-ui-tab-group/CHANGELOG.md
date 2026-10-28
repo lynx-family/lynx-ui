@@ -1,5 +1,21 @@
 # @lynx-js/lynx-ui-tab-group
 
+## 3.140.2
+
+### Patch Changes
+
+- Use `ComponentBasicProps` instead of native `StandardProps` for `TabsItemProps` and its deprecated `TabItemProps` alias. Keep tab content available through an explicit `children` prop. ([#372](https://github.com/lynx-family/lynx-ui/pull/372))
+
+## 3.140.1
+
+### Patch Changes
+
+- Export `TabsItemProps` as the canonical props type for `TabsItem` and retain ([#355](https://github.com/lynx-family/lynx-ui/pull/355))
+  `TabItemProps` as a deprecated compatibility alias.
+- Updated dependencies [[`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea), [`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea)]:
+  - @lynx-js/lynx-ui-scroll-view@3.140.1
+  - @lynx-js/lynx-ui-view-pager@3.140.1
+
 ## 3.139.0
 
 ### Minor Changes

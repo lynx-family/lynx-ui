@@ -304,9 +304,9 @@ export interface InputOTPProps extends ComponentBasicProps {
   disabled?: boolean
 
   /**
-   * Expose the invalid state to render props and the ui-invalid variant.
+   * Expose the invalid state to render props and the `ui-invalid` UI variant.
    * @defaultValue false
-   * @zh 通过渲染属性和 ui-invalid variant 暴露无效状态。
+   * @zh 通过渲染属性和 `ui-invalid` UI variant 暴露无效状态。
    * @Android
    * @iOS
    * @Harmony

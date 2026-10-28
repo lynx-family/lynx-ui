@@ -48,7 +48,7 @@ export interface PresenceAnimationStatus {
 /**
  * UI variants applied by Presence based on animation status.
  * Use them as CSS selectors to style different states.
- * @zh Presence 根据状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ * @zh Presence 根据状态注入的 UI variants，可用于 CSS selector 按状态定制样式。
  */
 export interface PresenceUIVariants {
   /**

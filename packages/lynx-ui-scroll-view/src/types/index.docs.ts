@@ -16,6 +16,8 @@ import type {
 } from '@lynx-js/lynx-ui-common'
 import type { CSSProperties, CommonEvent } from '@lynx-js/types'
 
+export type { BounceHandlers } from '../hooks/useBounce'
+
 type ScrollPropagationBehaviorOption =
   | 'native' // Follows platform default behavior
   | 'propagate' // Always allow scroll propagation

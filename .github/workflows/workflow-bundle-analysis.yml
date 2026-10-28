@@ -43,8 +43,14 @@ jobs:
           RSPEEDY_BUNDLE_ANALYSIS: 1
       - name: Merge bundle statistics
         run: pnpm merge:example-bundle-stats
+      - name: Prepare bundle statistics artifact
+        run: |
+          artifact_dir="$RUNNER_TEMP/examples-relative-ci-artifacts"
+          mkdir -p "$artifact_dir"
+          cp artifacts/example-bundle-stats.json "$artifact_dir/webpack-stats.json"
       - name: Upload bundle statistics
-        uses: relative-ci/agent-upload-artifact-action@a2b5741b4f7e6a989c84ec1a3059696b23c152e5 # v2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          artifactName: examples-relative-ci-artifacts
-          webpackStatsFile: artifacts/example-bundle-stats.json
+          name: examples-relative-ci-artifacts
+          path: ${{ runner.temp }}/examples-relative-ci-artifacts
+          retention-days: 90

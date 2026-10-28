@@ -25,10 +25,13 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-swipe-action` 单�
 
 ## 组件结构
 
+`SwipeAction` 通过 `displayArea` 和 `actionArea` 暴露展示区和操作区这两个结构插槽。
+
 ```tsx
-<SwipeAction>
-  {/* Your content */}
-</SwipeAction>
+<SwipeAction
+  displayArea={displayArea}
+  actionArea={actionArea}
+/>
 ```
 
 ## 关于 @lynx-js/lynx-ui

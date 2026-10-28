@@ -9,6 +9,7 @@ import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 import type {
   PresenceChildrenType,
   PresenceState,
+  PresenceUIVariants,
 } from '@lynx-js/lynx-ui-presence'
 import type { OverlayProps, ViewProps } from '@lynx-js/types'
 
@@ -19,6 +20,8 @@ import type {
   Placement,
   Rect,
 } from '../floating'
+
+export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
 
 /**
  * The arrow of the Popover.
@@ -410,3 +413,69 @@ export type UpdateRectsAction =
   | { type: 'updateArrowInfo', info: { offset: number, size: number } }
   | { type: 'updateFloatingCoords', coords: Coords }
   | { type: 'updateMaxContentSize', dimension: Dimensions }
+
+/**
+ * UI variants exposed by PopoverTrigger.
+ * @zh PopoverTrigger 暴露的 UI variants。
+ */
+export interface PopoverTriggerUIVariants extends PresenceUIVariants {
+  /**
+   * Applied while the composed trigger button is pressed and not disabled.
+   * @zh 组合的触发按钮处于按下态且未被禁用时生效。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when the trigger is explicitly disabled or the popover is busy.
+   * @zh 触发器被显式禁用或 Popover 处于忙碌状态时生效。
+   */
+  'ui-disabled'?: boolean
+
+  /**
+   * Applied while the popover is entering or leaving.
+   * @zh Popover 正在进入或离开时生效。
+   */
+  'ui-busy'?: boolean
+}
+
+/**
+ * UI variants exposed by PopoverBackdrop.
+ * @zh PopoverBackdrop 暴露的 UI variants。
+ */
+export interface PopoverBackdropUIVariants extends PresenceUIVariants {
+  /**
+   * Applied while the composed backdrop button is pressed and not disabled.
+   * @zh 组合的背景按钮处于按下态且未被禁用时生效。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied while the popover is entering or leaving.
+   * @zh Popover 正在进入或离开时生效。
+   */
+  'ui-disabled'?: boolean
+}
+
+/**
+ * UI variants exposed by PopoverAnchor.
+ * @zh PopoverAnchor 暴露的 UI variants。
+ */
+export interface PopoverAnchorUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by PopoverPositioner.
+ * @zh PopoverPositioner 暴露的 UI variants。
+ */
+export interface PopoverPositionerUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by PopoverContent.
+ * @zh PopoverContent 暴露的 UI variants。
+ */
+export interface PopoverContentUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by PopoverArrow.
+ * @zh PopoverArrow 暴露的 UI variants。
+ */
+export interface PopoverArrowUIVariants extends PresenceUIVariants {}

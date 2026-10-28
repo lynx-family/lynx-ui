@@ -33,6 +33,7 @@ It is not expected to be consumed directly in application code, and its API may 
 
 ```tsx
 <Presence>
+  {/* Your content */}
 </Presence>
 ```
 

@@ -27,7 +27,7 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-feed-list` 单独�
 
 ```tsx
 <FeedList>
-  {/* Your content */}
+  <list-item />
 </FeedList>
 ```
 

@@ -5,8 +5,13 @@
 import type { ReactNode } from '@lynx-js/react'
 
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
-import type { PresenceChildrenType } from '@lynx-js/lynx-ui-presence'
+import type {
+  PresenceChildrenType,
+  PresenceUIVariants,
+} from '@lynx-js/lynx-ui-presence'
 import type { OverlayProps, ViewProps } from '@lynx-js/types'
+
+export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
 
 /**
  * The backdrop mask of the dialog.
@@ -116,6 +121,7 @@ export interface DialogTriggerProps extends ComponentBasicProps {
    * @iOS
    * @Harmony
    * @zh 关闭组件的内容。它可以是一个返回 `ReactNode` 的函数，也可以是一个 `ReactNode` 本身。
+   * @docTypeFallback ReactNode | (status: {active: boolean, busy: boolean}) => ReactNode
    */
   children:
     | TriggerChildrenType
@@ -151,6 +157,7 @@ export interface DialogCloseProps extends ComponentBasicProps {
    * @iOS
    * @Harmony
    * @zh 关闭组件的内容。它可以是一个返回 `ReactNode` 的函数，也可以是一个 `ReactNode` 本身。
+   * @docTypeFallback ReactNode | (status: {active: boolean, busy: boolean}) => ReactNode
    */
   children:
     | TriggerChildrenType
@@ -313,3 +320,51 @@ export interface DialogViewProps extends ComponentBasicProps {
    */
   dialogViewProps?: OverlayProps | ViewProps
 }
+
+/**
+ * UI variants exposed by DialogTrigger.
+ * @zh DialogTrigger 暴露的 UI variants。
+ */
+export interface DialogTriggerUIVariants extends PresenceUIVariants {
+  /**
+   * Applied while the composed dialog button is pressed and not disabled.
+   * @zh 组合的弹窗按钮处于按下态且未被禁用时生效。
+   */
+  'ui-active'?: boolean
+
+  /**
+   * Applied when the dialog button is explicitly disabled or the dialog is busy.
+   * @zh 弹窗按钮被显式禁用或弹窗处于忙碌状态时生效。
+   */
+  'ui-disabled'?: boolean
+
+  /**
+   * Applied while the dialog is entering or leaving.
+   * @zh 弹窗正在进入或离开时生效。
+   */
+  'ui-busy'?: boolean
+}
+
+/**
+ * UI variants exposed by DialogBackdrop.
+ * @zh DialogBackdrop 暴露的 UI variants。
+ */
+export interface DialogBackdropUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by DialogView.
+ * @zh DialogView 暴露的 UI variants。
+ */
+export interface DialogViewUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by DialogContent.
+ * @zh DialogContent 暴露的 UI variants。
+ */
+export interface DialogContentUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by DialogClose.
+ * @zh DialogClose 暴露的 UI variants。
+ */
+export interface DialogCloseUIVariants extends DialogTriggerUIVariants {}

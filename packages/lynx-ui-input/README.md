@@ -31,16 +31,21 @@ The `lynx-ui-input` follows a headless composition pattern.
 
 ## Component Structure
 
-The `Input` component is composed of several specialized sub-components to give you full control over the layout and styling.
+`Input` and `TextArea` can be used independently:
+
+```tsx
+<Input />
+<TextArea />
+```
+
+Use the keyboard-aware parts when an input should remain visible above the
+keyboard:
 
 ```tsx
 <KeyboardAwareRoot>
   <KeyboardAwareResponder>
     <KeyboardAwareTrigger>
       <Input />
-    </KeyboardAwareTrigger>
-    <KeyboardAwareTrigger>
-      <TextArea />
     </KeyboardAwareTrigger>
   </KeyboardAwareResponder>
 </KeyboardAwareRoot>

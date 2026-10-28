@@ -88,9 +88,7 @@ Both value shapes use the generic `SliderRootProps<Value>` and
 <SliderRoot>
   <SliderTrack>
     <SliderIndicator />
-    <SliderThumb>
-      <view />
-    </SliderThumb>
+    <SliderThumb />
   </SliderTrack>
 </SliderRoot>
 ```

@@ -26,9 +26,16 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-sortable` 单独�
 ## 组件结构
 
 ```tsx
-<Sortable>
-  {/* Your content */}
-</Sortable>
+<SortableRoot>
+  {(item) => (
+    <SortableItem
+      as='DraggableRoot'
+      sortingKey={item.getSortingKey()}
+    >
+      <SortableItemArea />
+    </SortableItem>
+  )}
+</SortableRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui

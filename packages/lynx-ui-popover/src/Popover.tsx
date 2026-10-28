@@ -587,27 +587,27 @@ export const PopoverArrow = (props: PopoverArrowProps) => {
     <view
       className={presenceClassName}
       style={{
-        width: '0px',
-        height: '0px',
         left: x == null ? '' : `${x}px`,
         top: y == null ? '' : `${y}px`,
         [oppositeSide]: `-${arrowSize}px`,
         position: 'absolute',
         transform: TRANSFORMS[effectiveSide],
-        borderLeft: `${arrowSize / 2}px solid transparent`,
-        borderRight: `${arrowSize / 2}px solid transparent`,
-        borderBottom: `${arrowSize}px solid ${color}`,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         ...(custom
           ? {
-            border: 'none',
             width: `${arrowSize}px`,
             height: `${arrowSize}px`,
           }
-          : {}),
+          : {
+            width: '0px',
+            height: '0px',
+            borderLeft: `${arrowSize / 2}px solid transparent`,
+            borderRight: `${arrowSize / 2}px solid transparent`,
+            borderBottom: `${arrowSize}px solid ${color}`,
+          }),
         ...style,
       }}
     >

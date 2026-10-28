@@ -1,5 +1,18 @@
 # @lynx-js/lynx-ui-popover
 
+## 3.140.2
+
+### Patch Changes
+
+- Keep default triangle border styles out of custom PopoverArrow containers while preserving arrow positioning and consumer style overrides. ([#374](https://github.com/lynx-family/lynx-ui/pull/374))
+
+## 3.140.1
+
+### Patch Changes
+
+- Updated dependencies [[`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea)]:
+  - @lynx-js/lynx-ui-presence@3.140.1
+
 ## 3.139.0
 
 ### Patch Changes

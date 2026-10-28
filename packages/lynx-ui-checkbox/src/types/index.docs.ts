@@ -123,7 +123,7 @@ export interface CheckboxRenderProps {
 /**
  * UI variants applied by Checkbox based on its interactive status.
  * Use them as CSS selectors to style different states.
- * @zh Checkbox 根据交互状态注入的 ui-variants，可用于 CSS selector 按状态定制样式。
+ * @zh Checkbox 根据交互状态注入的 UI variants，可用于 CSS selector 按状态定制样式。
  */
 export interface CheckboxUIVariants {
   /**
@@ -152,8 +152,8 @@ export interface CheckboxUIVariants {
 }
 
 /**
- * UI variants applied by CheckboxIndicator based on Checkbox state.
- * @zh CheckboxIndicator 根据 Checkbox 状态注入的 ui-variants。
+ * UI variants exposed by CheckboxIndicator.
+ * @zh CheckboxIndicator 暴露的 UI variants。
  */
 export interface CheckboxIndicatorUIVariants extends CheckboxUIVariants {}
 

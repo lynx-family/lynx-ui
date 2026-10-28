@@ -8,7 +8,10 @@ import { join } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-import { collectPublicRuntimeExportNames } from './runtime-exports'
+import {
+  collectPublicRuntimeExportNames,
+  collectPublicTypeExportNames,
+} from './runtime-exports'
 
 describe('collectPublicRuntimeExportNames', () => {
   it('collects direct value exports and excludes type-only exports', () => {
@@ -77,6 +80,82 @@ describe('collectPublicRuntimeExportNames', () => {
 
       expect(collectPublicRuntimeExportNames(entryPoint)).toEqual(
         new Set(['PublicComponent']),
+      )
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+})
+
+describe('collectPublicTypeExportNames', () => {
+  it('collects direct declarations and type-only aliases', () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-type-exports-'),
+    )
+    const entryPoint = join(temporaryDirectory, 'index.ts')
+
+    try {
+      writeFileSync(
+        join(temporaryDirectory, 'package.json'),
+        '{"type":"module"}',
+      )
+      writeFileSync(
+        entryPoint,
+        [
+          'export function Example() {}',
+          'export interface ExampleProps {}',
+          'class TypeOnlyClass {}',
+          'export type { ExampleProps as PublicExampleProps }',
+          'export type { TypeOnlyClass }',
+        ].join('\n'),
+      )
+
+      expect(collectPublicTypeExportNames(entryPoint)).toEqual(
+        new Set([
+          'ExampleProps',
+          'PublicExampleProps',
+          'TypeOnlyClass',
+        ]),
+      )
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
+
+  it('resolves type-only re-exports across alias chains', () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-type-exports-'),
+    )
+    const sourceDirectory = join(temporaryDirectory, 'source')
+    const entryPoint = join(temporaryDirectory, 'index.ts')
+
+    try {
+      mkdirSync(sourceDirectory)
+      writeFileSync(
+        join(temporaryDirectory, 'package.json'),
+        '{"type":"module"}',
+      )
+      writeFileSync(
+        join(sourceDirectory, 'types.ts'),
+        [
+          'export class InternalClass {}',
+          'export interface InternalProps {}',
+        ].join('\n'),
+      )
+      writeFileSync(
+        join(sourceDirectory, 'reexports.ts'),
+        'export type { InternalClass } from \'./types\'',
+      )
+      writeFileSync(
+        entryPoint,
+        [
+          'export type { InternalClass as PublicClass } from \'./source/reexports\'',
+          'export type { InternalProps as PublicProps } from \'./source/types\'',
+        ].join('\n'),
+      )
+
+      expect(collectPublicTypeExportNames(entryPoint)).toEqual(
+        new Set(['PublicClass', 'PublicProps']),
       )
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true })

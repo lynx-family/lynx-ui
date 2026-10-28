@@ -9,6 +9,12 @@ import type { ListProps, ListRef } from '@lynx-js/lynx-ui-list'
 
 import type { BounceableBasicProps, RefreshProps } from '../hooks/useRefresh'
 
+export type {
+  BounceableBasicProps,
+  RefreshProps,
+  UseRefreshAndBounceReturn,
+} from '../hooks/useRefresh'
+
 export interface FeedListRef extends ListRef {
   /**
    * After the startrefresh event, calling this method will end the refresh state and make the refreshHeader bounces hack.
@@ -92,37 +98,4 @@ export interface FeedListProps extends Omit<ListProps, 'ref'> {
    * @zh 如果您想使用手势，请在此处传递。
    */
   'main-thread:gesture'?: BaseGesture
-}
-
-export interface RefreshEvent {
-  triggeredBy: 'startRefresh' | 'drag'
-}
-
-export interface RefreshOffsetEvent {
-  offset: number
-  headerSize: number
-  isDragging: boolean
-}
-
-export interface HeaderReleased {
-  offset: number
-  headerSize: number
-}
-
-export enum RefreshState {
-  IDLE = 0, // Hide
-  OVER_DRAG_RELEASE = 1, // Drag over refresh header size and release
-  REFRESHING = 2, // During refresh
-  DRAGGING = 3, // Dragging
-}
-
-export interface RefreshStateChange {
-  /**
-   * Status of refreshHeader
-   * @zh 刷新头的状态
-   * @Android
-   * @iOS
-   * @Harmony
-   */
-  state: RefreshState
 }

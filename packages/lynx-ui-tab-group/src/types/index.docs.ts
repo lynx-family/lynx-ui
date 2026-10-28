@@ -182,12 +182,15 @@ export interface TabsBarProps<T>
   renderTabItem?: (tabItem: T, index: number) => ReactNode
 }
 
-export interface TabsItemProps extends
-  Omit<
-    StandardProps,
-    'bindtap' | 'main-thread:bindlayoutchange' | 'main-thread:ref'
-  >
-{
+export interface TabsItemProps extends ComponentBasicProps {
+  /**
+   * The content of the tab item.
+   * @zh 标签项的内容。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  children?: ReactNode
   /**
    * TabsBar supplies this automatically to items rendered by renderTabItem.
    * Set it for manually rendered items, matching the key derived from data.

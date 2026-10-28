@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui-view-pager
 
+## 3.140.1
+
+### Patch Changes
+
+- Updated dependencies [[`20f5316`](https://github.com/lynx-family/lynx-ui/commit/20f531645f7c0e6766269d15129de93f53d9c8ea)]:
+  - @lynx-js/lynx-ui-lazy-component@3.140.1
+
 ## 3.139.0
 
 ### Minor Changes

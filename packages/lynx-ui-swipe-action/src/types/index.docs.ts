@@ -46,13 +46,6 @@ export interface SwipeActionProps extends ComponentBasicProps {
    */
   estimatedActionAreaSize?: number
   /**
-   * The content of the SwipeAction. The content will be displayed on the left side of the SwipeAction.
-   * @zh SwipeAction 的内容. 内容会显示在 SwipeAction 的左侧.
-   * @Android
-   * @iOS
-   */
-  children?: ReactElement
-  /**
    * Force touch event to send to SwipeAction.
    * @zh 制触摸事件发送到 SwipeAction.
    * @defaultValue true

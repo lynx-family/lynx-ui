@@ -6,6 +6,8 @@ import type { ReactElement } from '@lynx-js/react'
 
 import type { CSSProperties } from '@lynx-js/types'
 
+export type { SwiperItemProps } from '../SwiperItem'
+
 export interface SwiperProps<T> {
   /**
    * Swiper items data set

@@ -26,9 +26,15 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-dialog` 单独安�
 ## 组件结构
 
 ```tsx
-<Dialog>
-  {/* Your content */}
-</Dialog>
+<DialogRoot>
+  <DialogTrigger />
+  <DialogView>
+    <DialogBackdrop />
+    <DialogContent>
+      <DialogClose />
+    </DialogContent>
+  </DialogView>
+</DialogRoot>
 ```
 
 ## 关于 @lynx-js/lynx-ui
