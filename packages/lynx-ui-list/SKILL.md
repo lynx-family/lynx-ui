@@ -4,13 +4,18 @@
 
 - **Virtual Scrolling**: **List** and **FeedList** is the **only two** scroll container that can only renders visible items, ensuring smooth scrolling performance even with **massive** amounts of data. If the count of children has more than 10 items, you **MUST** use **List** or **FeedList**.
 - **Multiple Layouts**: Supports three layout modes: `single` (single-column list), `flow` (multi-column grid layout), and `waterfall` (multi-column waterfall layout). **FeedList** is the **only** scroll container that supports multi-column layout.
-- **MAX HEIGHT**: The css `max-height` of a `List` **MUST** be set thru the `listMaxHeight` prop.
+- **Required Height**: `List` **MUST** have an explicit measurable height on the component itself. Both CSS `height` applied through `className` and inline `style.height` are supported. When using a percentage height, ensure the parent has a definite height. Do not rely on `flex: 1` alone.
 
 ## 2. AI Coding Guide
 
 ### Minimal Usable Example
 
 When using `List`, you must provide a unique `listId`, specify the `listType`, and use `<list-item>` as the direct child. Each `<list-item>` **MUST** have a unique `item-key` and **MUST** also set a `key` prop. These two keys serve different purposes and both are required.
+
+Runtime constraints:
+
+- Provide an explicit, measurable height for `List`, either with CSS `height` applied through `className` or with inline `style.height`. When using a percentage height, ensure the parent has a definite height.
+- Do not use `flex: 1` as the only boundary for `List`.
 
 ```tsx
 import { List } from '@lynx-js/lynx-ui'
@@ -55,11 +60,12 @@ The most basic list form.
 
 ```tsx
 import { List } from '@lynx-js/lynx-ui';
+import './index.css';
 
 function SingleColumnList() {
   const data = [...];
   return (
-    <List listId="single-list" listType="single">
+    <List listId="single-list" listType="single" className="lynx-ui-list__viewport">
       {data.map(item => (
         <list-item item-key={item.id} key={item.id}>
           <MyListItem data={item} />
@@ -69,6 +75,16 @@ function SingleColumnList() {
   );
 }
 ```
+
+The height in this example comes from the CSS class in `index.css`:
+
+```css
+.lynx-ui-list__viewport {
+  height: 400px;
+}
+```
+
+`BasicList` above uses inline `style.height`. Both approaches define the List height.
 
 **Example Path**: `apps/examples/src/List/Layouts/index.tsx`
 
@@ -88,6 +104,7 @@ function GridLayout() {
       spanCount={3} // 3 columns
       mainAxisGap={10} // Vertical gap
       crossAxisGap={10} // Horizontal gap
+      style={{ height: '400px' }}
     >
       {/* ... list-items ... */}
     </List>
@@ -111,6 +128,7 @@ function WaterfallList() {
       listId="waterfall-list"
       listType="waterfall"
       spanCount={2} // 2 columns
+      style={{ height: '400px' }}
     >
       {/* ... list-items ... */}
     </List>
@@ -119,6 +137,10 @@ function WaterfallList() {
 ```
 
 **Example Path**: `apps/examples/src/List/Layouts/index.tsx`
+
+### Content-adaptive Size Limits
+
+Use an explicit height for a normal `List` viewport. When short content should shrink the container and long content should stop at a limit, use `listMaxSize` (a number in px). It limits height for vertical lists and width for horizontal lists. Define the horizontal list's height separately through CSS `height` or `style.height`.
 
 ### 4. FAQ
 
@@ -136,7 +158,7 @@ A: Yes. `item-key` is consumed by the native virtualization engine to identify a
 
 **Q: Why can’t my `List` scroll or render correctly?**
 
-A: `List` needs a determined boundary to calculate visible items. Provide a fixed `height` (e.g., via `style={{ height: '400px' }}`) or place it inside a Flex container and set `flex: 1`.
+A: `List` needs an explicit measurable height on the component itself to calculate visible items. Provide CSS `height` applied through `className` or inline `style.height`, using fixed or viewport units, or a percentage when the parent has a definite height. `flex: 1` alone is not sufficient.
 
 **Q: How do `listType` and `spanCount` relate?**
 
@@ -156,7 +178,7 @@ A: Avoid expensive work in `onScroll`. Throttle the handler, move heavy logic of
 
 **Q: Can I set CSS `max-height` directly?**
 
-A: Use the `listMaxHeight` prop to set max height. Do not rely on CSS `max-height` alone, as the native measuring logic reads from the prop.
+A: For a normal `List` viewport, set an explicit CSS `height` or `style.height`; CSS `max-height` alone does not define the viewport height. For content-adaptive sizing with a maximum limit, use `listMaxSize` as described in Content-adaptive Size Limits above.
 
 **Q: When should I use `FeedList` instead of `List`?**
 
@@ -164,7 +186,7 @@ A: Use `FeedList` if you need refresh or loadmore footer. Otherwise, use `List` 
 
 **Q: How do I make `List` fill remaining space in a flex layout?**
 
-A: Place `List` inside a flex container and set `flex: 1` on `List` (or its wrapper) so it has a determined boundary.
+A: Give the parent a definite height, then set CSS `height: 100%` or `style={{ height: '100%' }}` on `List`. Do not rely on `flex: 1` on `List` or its wrapper as the only boundary.
 
 ## 5. Sub components
 
