@@ -12,6 +12,7 @@ import {
 
 function createMockSystemInfo(lynxSdkVersion: string): typeof SystemInfo {
   return {
+    engineVersion: 'test',
     lynxSdkVersion,
     osVersion: '1.0',
     pixelHeight: 100,

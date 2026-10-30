@@ -179,8 +179,9 @@ describe('RadioGroupRoot.onValueChange', () => {
       createGroup({ defaultValue: 'premium', onValueChange }),
     )
 
-    fireEvent.tap(getByText('Basic'))
-    fireEvent.tap(getByText('Basic'))
+    const basicText = getByText('Basic') as Element
+    fireEvent.tap(basicText)
+    fireEvent.tap(basicText)
 
     expect(onValueChange.mock.calls).toEqual([['basic']])
     expect(container.querySelector('.basic')!.classList.contains('ui-checked'))

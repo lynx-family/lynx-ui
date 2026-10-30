@@ -22,8 +22,8 @@ const mockSelect = vi.fn().mockReturnThis()
 const mockSetNativeProps = vi.fn().mockReturnThis()
 const mockInvoke = vi.fn().mockReturnThis()
 
+// @ts-expect-error node's global type omits the native Lynx bridge
 global.lynx = {
-  // @ts-expect-error expected
   createSelectorQuery: () => ({
     select: mockSelect,
     setNativeProps: mockSetNativeProps,
