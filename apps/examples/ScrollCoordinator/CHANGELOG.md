@@ -1,5 +1,12 @@
 # @lynx-example/lynx-ui-scroll-coordinator
 
+## 0.0.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.141.0
+
 ## 0.0.22
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @lynx-example/lynx-ui-popover
 
+## 0.0.23
+
+### Patch Changes
+
+- Add a native arrow alignment example comparing rectangular and legacy numeric ([#375](https://github.com/lynx-family/lynx-ui/pull/375))
+  sizes, rounded corners, and positioning parents, with design-system integration
+  guidance.
+- Updated dependencies []:
+  - @lynx-js/lynx-ui@3.141.0
+
 ## 0.0.22
 
 ### Patch Changes

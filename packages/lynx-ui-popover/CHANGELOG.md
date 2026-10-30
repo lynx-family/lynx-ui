@@ -1,5 +1,13 @@
 # @lynx-js/lynx-ui-popover
 
+## 3.141.0
+
+### Minor Changes
+
+- Use the actual width and height of custom arrow object sizes when positioning ([#375](https://github.com/lynx-family/lynx-ui/pull/375))
+  and rotating popover arrows. Preserve numeric sizes and default triangle
+  geometry, and document corner padding and composition for design systems.
+
 ## 3.140.2
 
 ### Patch Changes

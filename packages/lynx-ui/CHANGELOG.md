@@ -1,5 +1,16 @@
 # @lynx-js/lynx-ui
 
+## 3.141.0
+
+### Patch Changes
+
+- Updated dependencies [[`cdc9505`](https://github.com/lynx-family/lynx-ui/commit/cdc9505d04caed4f3fa7d60802eab0540e71ab60), [`9514378`](https://github.com/lynx-family/lynx-ui/commit/951437848e19c60cf7ac21210aef26d137009e4e), [`f7a6a15`](https://github.com/lynx-family/lynx-ui/commit/f7a6a15b875ca7e640e688d1b62160df9b80c4cd), [`d26f176`](https://github.com/lynx-family/lynx-ui/commit/d26f176b1334222a7ee9ce02d2743ee29e5b7169)]:
+  - @lynx-js/lynx-ui-list@3.141.0
+  - @lynx-js/lynx-ui-popover@3.141.0
+  - @lynx-js/lynx-ui-slider@3.141.0
+  - @lynx-js/lynx-ui-swiper@3.141.0
+  - @lynx-js/lynx-ui-feed-list@3.141.0
+
 ## 3.140.2
 
 ### Patch Changes

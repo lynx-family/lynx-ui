@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-list
 
+## 3.141.0
+
+### Patch Changes
+
+- Clarify that a normal List viewport needs an explicit CSS or style height. Replace obsolete listMaxHeight guidance with a separate explanation of listMaxSize for content-adaptive limits along the scroll axis. ([#376](https://github.com/lynx-family/lynx-ui/pull/376))
+
 ## 3.140.1
 
 ### Patch Changes

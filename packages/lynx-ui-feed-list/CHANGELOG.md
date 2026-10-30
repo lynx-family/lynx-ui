@@ -1,5 +1,12 @@
 # @lynx-js/lynx-ui-feed-list
 
+## 3.141.0
+
+### Patch Changes
+
+- Updated dependencies [[`cdc9505`](https://github.com/lynx-family/lynx-ui/commit/cdc9505d04caed4f3fa7d60802eab0540e71ab60)]:
+  - @lynx-js/lynx-ui-list@3.141.0
+
 ## 3.140.2
 
 ### Patch Changes
