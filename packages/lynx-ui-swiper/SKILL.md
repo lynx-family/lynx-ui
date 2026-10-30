@@ -13,15 +13,15 @@
 - RTL support via `RTL` (`true` or `'lynx-rtl'`)
 - Fine-grained touch-angle control via `consumeSlideEvent`, and event coordination via `blockNativeEvent`
 - Imperative control with `SwiperRef` (`swipeNext`, `swipePrev`, `swipeTo`, `cancelAnimation`)
-- Container sizing through numeric `containerWidth` in px; explicitly provide the available viewport width for padded or nested layouts
+- Explicit viewport sizing through numeric `containerWidth` in px
 
 ## 2. AI Coding Guide
 
 ### Minimal Usable Example
 
-Each `<Swiper>` must provide `data`, `itemWidth`, and render children via a function that returns a `<SwiperItem>`.
+Each `<Swiper>` must provide `data`, `itemWidth`, and `containerWidth`, and render children via a function that returns a `<SwiperItem>`.
 
-Provide `containerWidth` explicitly to match the available width. This example uses a 320px-wide wrapper and 300px-wide items.
+This example uses a 320px-wide wrapper and 300px-wide items.
 
 ```tsx
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
@@ -55,9 +55,8 @@ function Example() {
 
 ### Container Width
 
-- `containerWidth` is the Swiper viewport width in px, while `itemWidth` is the width of each slide. They may differ to show neighboring slides.
-- Set `containerWidth` to the available width inside the parent. For a parent spanning the screen with 16px padding on each side, use `containerWidth={screenWidth - 32}`. For a card or column, use its available width. Measure dynamically sized containers and update this value when their layout changes.
-- `containerWidth` accepts a number in px and determines the root width, alignment, and offset calculations. Its default is `lynx.__globalProps.screenWidth`, falling back to `SystemInfo.pixelWidth / SystemInfo.pixelRatio`, which suits a viewport spanning the screen.
+- Always pass `containerWidth` explicitly as a number in px matching the available viewport width. `itemWidth` is the width of each slide; the two widths may differ to show neighboring slides.
+- For a parent spanning the screen with 16px padding on each side, use `containerWidth={screenWidth - 32}`. For a card or column, use its available width. Measure dynamically sized containers and update this value when their layout changes.
 - Use the same viewport width for custom animation centering and any `offsetLimit` calculation. The snippets below use a 320px viewport; adapt it to the actual layout.
 
 ### Styling
@@ -228,7 +227,7 @@ function customAnimationFirstScreen(value: number) {
 - `data`: array of items to render; consumed by children render function
 - `itemWidth`: per-item width in px; required
 - `itemHeight`: optional per-item height; omit for natural/content-driven height
-- `containerWidth`: numeric viewport width in px; set it to the available width for padded or nested layouts. Defaults to screen width.
+- `containerWidth`: numeric viewport width in px; always pass the available width explicitly.
 - `style`: styles for the root viewport; apply CSS classes to a wrapper or slide content.
 - `mode`: `'normal' | 'custom'`; affects item placement
 - `modeConfig`: `{ align?: 'start' | 'center' | 'end'; spaceBetween?: number }` for normal mode

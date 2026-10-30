@@ -58,13 +58,15 @@ export interface SwiperProps<T> {
    */
   children: (prop: RenderFunctionProps<T>) => ReactElement
   /**
-   * Width of the Swiper viewport in px, used for root sizing, alignment, and offsets.
-   * Set this to the available width inside the parent for padded or nested layouts.
+   * Width of the Swiper viewport in px. Always pass this prop explicitly.
+   * Use the width available inside the parent.
+   * For example, inside a screen-width parent with 16px padding on each side,
+   * set containerWidth to screenWidth - 32.
    * @defaultValue lynx.__globalProps.screenWidth ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio
    * @Android
    * @iOS
    * @Harmony
-   * @zh 轮播图视口的宽度，单位为px，用于根元素尺寸、对齐和偏移计算。有内边距或嵌套布局时，将其设置为父容器内的可用宽度。
+   * @zh 轮播图视口的宽度，单位为px。使用时必须显式传入父容器内的可用宽度。例如，父容器与屏幕等宽且左右各有16px内边距时，将containerWidth设置为screenWidth - 32。
    */
   containerWidth?: number
   /**
