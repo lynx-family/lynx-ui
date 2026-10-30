@@ -53,21 +53,18 @@ function Example() {
 }
 ```
 
-### Container Width Contract
+### Container Width
 
 - `containerWidth` is the Swiper viewport width in px, while `itemWidth` is the width of each slide. They may differ to show neighboring slides.
-- **For a padded, nested, or otherwise narrower layout, you MUST pass `containerWidth` matching the available width inside the parent.** Swiper does not measure its parent. The default is `lynx.__globalProps.screenWidth`, falling back to `SystemInfo.pixelWidth / SystemInfo.pixelRatio`; use that default only when the viewport actually spans the screen width.
-- For a parent spanning the screen with 16px padding on each side, pass `containerWidth={screenWidth - 32}`, where `screenWidth` is the actual screen width in px. For a narrower card or column, use that container's available width instead of screen width. If layout determines the width dynamically, measure the containing view and pass the resulting numeric width, updating it when the layout changes.
-- CSS width on a wrapper, `flex: 1`, and `style={{ width: '100%' }}` on Swiper do not substitute for `containerWidth`. Swiper writes its root width from this prop after applying `style`, and uses it for alignment and offset calculations. Do not pass CSS strings such as `'100%'` or `'320px'` to `containerWidth`.
+- Set `containerWidth` to the available width inside the parent. For a parent spanning the screen with 16px padding on each side, use `containerWidth={screenWidth - 32}`. For a card or column, use its available width. Measure dynamically sized containers and update this value when their layout changes.
+- `containerWidth` accepts a number in px and determines the root width, alignment, and offset calculations. Its default is `lynx.__globalProps.screenWidth`, falling back to `SystemInfo.pixelWidth / SystemInfo.pixelRatio`, which suits a viewport spanning the screen.
 - Use the same viewport width for custom animation centering and any `offsetLimit` calculation. The snippets below use a 320px viewport; adapt it to the actual layout.
 
-### Styling Contract
+### Styling
 
-- Neither `Swiper` nor `SwiperItem` supports `className` or `class`, and neither forwards arbitrary element props. Apply CSS classes to a surrounding `<view>` or to content inside `SwiperItem`.
-- Use `Swiper.style` for root visuals such as background, borders, border radius, and overflow. `containerWidth`, `itemHeight`, and `RTL` override root `style.width`, `style.height`, and `style.direction`; configure those through their dedicated props. Prefer a wrapper for outer padding so the viewport width remains explicit.
-- `trackStyle` targets the inner sliding track. Swiper owns its geometry and transform. It applies track styles when initializing normal mode or resetting layout; changing `trackStyle` alone does not update the track, and custom mode does not apply it on the first render. Put persistent visuals on the root or slide content instead.
-- `SwiperItem.style` is declared in the current type but is not applied by the implementation. Style a child `<view>` instead, and set slide dimensions through `Swiper.itemWidth` and `Swiper.itemHeight`.
-- For opacity rendering issues, use `<SwiperItem overlap>` to apply `overlap` to the item view itself.
+- Use `Swiper.style` for root visuals such as background, borders, border radius, and overflow.
+- Set viewport and slide dimensions through `containerWidth`, `itemWidth`, and `itemHeight`, and direction through `RTL`.
+- Apply CSS classes and outer padding to a surrounding `<view>`. Style slide content on a child `<view>` inside `SwiperItem`.
 
 ### Render Props Mechanics
 
@@ -94,7 +91,7 @@ Examples:
 - RTL: set `RTL={true}` or `RTL={'lynx-rtl'}`. The latter applies Lynx’s `direction: lynx-rtl` explicitly.
 - In Scroll Containers: when inside `scroll-view` or other vertical scrollers, set `experimentalHorizontalSwipeOnly={true}` and, if native events are being swallowed, set `blockNativeEvent={true}`; tune `consumeSlideEvent` if needed.
 - Indicators & Controls: derive `current` from `onChange`, render an external indicator, and use `SwiperRef` to control navigation.
-- Container Sizing: follow the Container Width Contract above; use `style={{ overflow: 'visible' }}` if centered items need to bleed.
+- Container Sizing: use the available viewport width as described in Container Width above; use `style={{ overflow: 'visible' }}` if centered items need to bleed.
 
 ### Loop + Auto Play Example
 
@@ -231,8 +228,8 @@ function customAnimationFirstScreen(value: number) {
 - `data`: array of items to render; consumed by children render function
 - `itemWidth`: per-item width in px; required
 - `itemHeight`: optional per-item height; omit for natural/content-driven height
-- `containerWidth`: numeric viewport width in px; defaults to screen width, not parent width. Explicitly pass the available width for padded or nested layouts (see Container Width Contract).
-- `style` / `trackStyle`: root and inner track styles, respectively; see Styling Contract for sizing overrides and track update limitations. `className` and `class` are unsupported.
+- `containerWidth`: numeric viewport width in px; set it to the available width for padded or nested layouts. Defaults to screen width.
+- `style`: styles for the root viewport; apply CSS classes to a wrapper or slide content.
 - `mode`: `'normal' | 'custom'`; affects item placement
 - `modeConfig`: `{ align?: 'start' | 'center' | 'end'; spaceBetween?: number }` for normal mode
 - `loop` / `loopDuplicateCount`: enable loop and control cloned head/tail count
@@ -262,7 +259,6 @@ interface SwiperRef {
 ## 6. FAQ
 
 - Do children have to be a function? Yes. It receives `{ item, index }` and must return `<SwiperItem>`.
-- Why does Swiper overflow its parent or center slides incorrectly? Pass the parent's available viewport width in px through `containerWidth`. The screen-width default does not account for parent padding or narrower containers, and CSS width alone does not update Swiper's geometry. See Container Width Contract.
 - Why doesn’t `initialIndex` update after mount? It is only applied at first screen; later updates are ignored. Use `swiperKey` or `resetOnReuse` to reset.
 - My last item leaves a blank area when `align='start'`. Provide `offsetLimit={[0, containerWidth - itemWidth]}` to clamp the range.
 - Bounces don’t trigger when `loop=true`. Correct—bounce is ignored in looping.

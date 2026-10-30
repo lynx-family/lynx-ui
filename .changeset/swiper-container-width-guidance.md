@@ -3,4 +3,4 @@
 "@lynx-js/skill-lynx-ui": patch
 ---
 
-Clarify Swiper viewport sizing through numeric `containerWidth` and align skill examples and custom animation offsets with the available container width. Document supported styling props, current item and track styling limitations, and the correct `overlap` target in the skill and API references.
+Clarify Swiper viewport sizing and styling guidance, and use consistent dimensions in skill examples and custom animations.
