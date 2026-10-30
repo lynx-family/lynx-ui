@@ -57,12 +57,16 @@ jobs:
           pnpm test:changeset-files
           pnpm test:changesets-coverage
           pnpm test:changesets-private
+          pnpm test:changeset-target-coverage
       - name: Lint Infrastructure Tests
         run: node --test tools/lint/*.test.mjs
       - name: Changeset Validation
         run: |
           pnpm check:changesets
           pnpm check:changesets-private
+      - name: Changeset Target Coverage
+        if: github.event_name == 'pull_request'
+        run: pnpm check:changeset-target-coverage
       - name: Release Changeset Coverage
         if: github.head_ref == 'changeset-release/main'
         env:

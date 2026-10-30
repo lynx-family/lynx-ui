@@ -375,6 +375,9 @@ factory and include those files in their lint project. Run
    changesets to `main` and let the release workflow regenerate the release PR.
    The check covers only the current release window; it does not carry uncovered
    changes forward from earlier releases or maintain no-release exemptions.
+   Pull-request CI runs `pnpm check:changeset-target-coverage` to validate explicit
+   changeset targets against package-local release changes. Run
+   `pnpm test:changeset-target-coverage` for this check's unit tests.
 2. **Toolchain Updates**: Keep `.nvmrc`, `package.json` `engines`/`packageManager`, `pnpm-lock.yaml`, and GitHub Actions `actions/setup-node` versions aligned when changing Node.js or pnpm.
 3. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
    Do not prepend labels like `[codex]` before the release type, because the semantic PR check parses the type from the beginning of the title.

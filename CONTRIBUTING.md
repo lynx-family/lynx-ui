@@ -212,6 +212,8 @@ The lynx-website build depends on the **latest `main` branch** of this repositor
   pnpm changeset
   ```
 
+  CI verifies that each explicit changeset target has a relevant change in that package. A historical backfill must be a changeset-only PR and reference the original PR or commit in the changeset summary or PR description. Request the exception with the `changeset-backfill` label or a `Changeset-Backfill: true` line in the PR description. After adding the label or marker, push an empty commit (for example, `git commit --allow-empty -m "chore: refresh changeset backfill metadata"`) or close and reopen the PR to start a new check with current PR metadata. The PR must remain changeset-only, so a commit that changes files will invalidate the backfill exception; rerunning the existing check uses its original event payload.
+
 ### Versioning
 
 - **Snapshot Versions**

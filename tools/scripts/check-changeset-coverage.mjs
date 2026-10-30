@@ -39,7 +39,7 @@ export function getLastRelease(cwd, ref) {
   ]).trim()
 }
 
-function isReleaseFile(file) {
+export function isReleaseFile(file) {
   return !/(?:^|\/)(?:docs|__tests__|__snapshots__|tests)(?:\/|$)/u.test(file)
     && !/\.(?:test|spec)\.[^/]+$/u.test(file)
     && (!/\.mdx?$/iu.test(file) || path.posix.basename(file) === 'SKILL.md')
