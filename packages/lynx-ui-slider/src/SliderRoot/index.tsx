@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-// cspell:ignore catchmousemove catchmousedown catchmouseup
+// cspell:ignore catchmousemove catchmousedown catchmouseup bindmousemove
 
 import {
   forwardRef,
@@ -42,6 +42,7 @@ import {
   getSliderThumbValue,
   getTouchX,
   getVisualRatio,
+  getWebPointerX,
   isSliderValueCollapsed,
   normalizeSliderValue,
   resolveSliderDrag,
@@ -427,6 +428,8 @@ function SliderRootImpl(
   }
 
   const getMouseX = (event: unknown): number => {
+    if (isWebPlatform.current) return getWebPointerX(event)
+
     const xInTouches = Number(
       (
         event as
@@ -458,6 +461,16 @@ function SliderRootImpl(
     }
 
     handleInteractionStart(getTouchX(event))
+  }
+
+  const handleWebMove = (event: unknown): void => {
+    if (!isWebPlatform.current || !isWebMouseDown.current) return
+    handleMouseX(event)
+  }
+
+  const handleInteractionEnd = (): void => {
+    isWebMouseDown.current = false
+    handleEnd()
   }
 
   const handleThumbInteractionStart = (index: SliderThumbIndex): void => {
@@ -511,45 +524,43 @@ function SliderRootImpl(
           'ui-disabled': disabled,
         })}
         flatten={false}
-        style={style}
+        style={isWebPlatform.current
+          ? { touchAction: 'pan-y', userSelect: 'none', ...style }
+          : style}
         // block-native-event={true}
         // native-interaction-enabled={true}
         consume-slide-event={[[-180, 180]]}
         catchmousemove={(event: unknown) => {
-          if (isWebPlatform.current && !isWebMouseDown.current) return
-          handleMouseX(event)
+          if (isWebPlatform.current) handleWebMove(event)
+          else handleMouseX(event)
         }}
+        global-bindmousemove={isWebPlatform.current ? handleWebMove : undefined}
         catchmousedown={(event: unknown) => {
           isWebMouseDown.current = true
           handleMouseStart(event)
         }}
-        catchmouseup={() => {
-          isWebMouseDown.current = false
-          handleEnd()
-        }}
-        global-bindmouseup={() => {
-          isWebMouseDown.current = false
-          handleEnd()
-        }}
+        catchmouseup={handleInteractionEnd}
+        global-bindmouseup={handleInteractionEnd}
         catchtouchmove={(event: unknown) => {
           if (isWebPlatform.current) {
-            handleMouseX(event)
+            handleWebMove(event)
           } else {
             handleMoveX(getTouchX(event))
           }
         }}
+        global-bindtouchmove={isWebPlatform.current ? handleWebMove : undefined}
         catchtouchstart={(event: unknown) => {
           isWebMouseDown.current = true
           handleTouchStart(event)
         }}
-        catchtouchend={() => {
-          isWebMouseDown.current = false
-          handleEnd()
-        }}
-        catchtouchcancel={() => {
-          isWebMouseDown.current = false
-          handleEnd()
-        }}
+        catchtouchend={handleInteractionEnd}
+        global-bindtouchend={isWebPlatform.current
+          ? handleInteractionEnd
+          : undefined}
+        catchtouchcancel={handleInteractionEnd}
+        global-bindtouchcancel={isWebPlatform.current
+          ? handleInteractionEnd
+          : undefined}
       >
         {children}
       </view>

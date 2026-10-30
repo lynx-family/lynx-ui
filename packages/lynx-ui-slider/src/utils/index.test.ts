@@ -17,6 +17,7 @@ import {
   getSliderThumbValue,
   getTouchX,
   getVisualRatio,
+  getWebPointerX,
   isSliderRangeValue,
   isSliderValueCollapsed,
   normalizeSliderRangeValue,
@@ -25,6 +26,52 @@ import {
   snapToStep,
   updateSliderValue,
 } from '.'
+
+describe('Web pointer coordinates', () => {
+  it.each([0, 160])(
+    'matches local bounds with a lynx-view viewport offset of %s',
+    offset => {
+      const localX = 320
+      const mouse = { x: localX, clientX: localX + offset }
+      const touch = { touches: [mouse], detail: { x: localX } }
+      for (const event of [mouse, touch]) {
+        expect((getWebPointerX(event) - 40) / 560).toBe(0.5)
+      }
+    },
+  )
+
+  it('uses the same scaled coordinates as boundingClientRect', () => {
+    const scale = 0.8
+    const x = getWebPointerX({ x: 320 * scale, clientX: 160 + 320 * scale })
+    expect((x - 40 * scale) / (560 * scale)).toBe(0.5)
+  })
+
+  it.each([
+    { x: 0, clientX: 160 },
+    { touches: [{ x: 0, clientX: 160 }] },
+    { detail: { x: 0 }, clientX: 160 },
+    { clientX: 0 },
+    { touches: [{ clientX: 0 }] },
+  ])('preserves zero coordinates: %j', event => {
+    expect(getWebPointerX(event)).toBe(0)
+  })
+
+  it('falls back to viewport coordinates for older Web runtimes', () => {
+    expect(getWebPointerX({ clientX: 320 })).toBe(320)
+    expect(getWebPointerX({ touches: [{ clientX: 320 }] })).toBe(320)
+  })
+
+  it('skips invalid candidates without treating missing values as zero', () => {
+    expect(getWebPointerX({ x: Number.NaN, detail: { x: 42 } })).toBe(42)
+    expect(getWebPointerX({ x: null, clientX: 24 })).toBe(24)
+    expect(getWebPointerX({ touches: [], clientX: 24 })).toBe(24)
+    for (
+      const event of [null, undefined, {}, { x: Number.POSITIVE_INFINITY }]
+    ) {
+      expect(getWebPointerX(event)).toBeNaN()
+    }
+  })
+})
 
 describe('single-value slider utilities', () => {
   it('clamps finite and non-finite values to the normalized range', () => {

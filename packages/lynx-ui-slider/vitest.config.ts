@@ -5,6 +5,10 @@
 import { defineConfig } from 'vitest/config'
 
 const config = defineConfig({
+  esbuild: {
+    jsx: 'automatic',
+    jsxImportSource: '@lynx-js/react',
+  },
   test: {
     name: 'lynx-ui-slider',
   },

@@ -287,3 +287,30 @@ export const getTouchX = (event: unknown): number => {
     : undefined
   return Number(x)
 }
+
+export const getWebPointerX = (event: unknown): number => {
+  const pointer = event as
+    | {
+      x?: unknown
+      clientX?: unknown
+      detail?: { x?: unknown }
+      touches?: Array<{ x?: unknown, clientX?: unknown }>
+    }
+    | null
+    | undefined
+
+  // Modern Web events and boundingClientRect use lynx-view coordinates.
+  // Older Web runtimes expose only viewport coordinates for both APIs.
+  const candidates = [
+    pointer?.touches?.[0]?.x,
+    pointer?.x,
+    pointer?.detail?.x,
+    pointer?.touches?.[0]?.clientX,
+    pointer?.clientX,
+  ]
+  for (const candidate of candidates) {
+    if (typeof candidate !== 'number') continue
+    if (Number.isFinite(candidate)) return candidate
+  }
+  return Number.NaN
+}

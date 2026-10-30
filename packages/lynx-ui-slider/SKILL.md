@@ -124,6 +124,21 @@ is constrained by the other thumb and cannot cross it.
 </SliderRoot>
 ```
 
+### Web Embedding
+
+`SliderRoot` supports both direct `lynx-view` embedding and iframe previews.
+On Web, pointer coordinates must use the same `lynx-view` coordinate space as
+`boundingClientRect`; do not substitute viewport `clientX` when a local `x`
+is available. The component retains a viewport-coordinate fallback for older
+Web runtimes.
+
+Web dragging continues outside the slider while the pointer stays inside its
+`lynx-view`. In Web runtime 0.26.2, global mouse/touch bindings are scoped to
+that view's ShadowRoot; an embedding host must handle capture and release
+outside the entire view or iframe if required. Web-only `touchAction: 'pan-y'`
+and `userSelect: 'none'` defaults can be overridden through `style`. Native
+touch handling and styles are unchanged.
+
 ### Recommended Prompt Formula
 
 > **State mode** + **Visual structure** + **Interaction callbacks** + **Styling hooks**
