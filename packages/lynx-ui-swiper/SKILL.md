@@ -13,34 +13,57 @@
 - RTL support via `RTL` (`true` or `'lynx-rtl'`)
 - Fine-grained touch-angle control via `consumeSlideEvent`, and event coordination via `blockNativeEvent`
 - Imperative control with `SwiperRef` (`swipeNext`, `swipePrev`, `swipeTo`, `cancelAnimation`)
+- Explicit viewport sizing through numeric `containerWidth` in px
 
 ## 2. AI Coding Guide
 
 ### Minimal Usable Example
 
-Each `<Swiper>` must provide `data`, `itemWidth`, and render children via a function that returns a `<SwiperItem>`.
+Each `<Swiper>` must provide `data`, `itemWidth`, and `containerWidth`, and render children via a function that returns a `<SwiperItem>`.
+
+This example uses a 320px-wide wrapper and 300px-wide items.
 
 ```tsx
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 
 const data = ['red', 'green', 'blue']
+const CONTAINER_WIDTH = 320
 
 function Example() {
   return (
-    <Swiper data={data} itemWidth={300}>
-      {({ item, index }) => (
-        <SwiperItem>
-          <view
-            style={{ width: '100%', height: '200px', backgroundColor: item }}
-          >
-            <text>Item {index}</text>
-          </view>
-        </SwiperItem>
-      )}
-    </Swiper>
+    <view style={{ width: `${CONTAINER_WIDTH}px` }}>
+      <Swiper
+        data={data}
+        itemWidth={300}
+        containerWidth={CONTAINER_WIDTH}
+        style={{ borderRadius: '12px' }}
+      >
+        {({ item, index }) => (
+          <SwiperItem>
+            <view
+              style={{ width: '100%', height: '200px', backgroundColor: item }}
+            >
+              <text>Item {index}</text>
+            </view>
+          </SwiperItem>
+        )}
+      </Swiper>
+    </view>
   )
 }
 ```
+
+### Container Width
+
+- Always pass `containerWidth` explicitly as a number in px matching the available viewport width. `itemWidth` is the width of each slide; the two widths may differ to show neighboring slides.
+- For a parent spanning the screen with 16px padding on each side, use `containerWidth={screenWidth - 32}`. For a card or column, use its available width. Measure dynamically sized containers and update this value when their layout changes.
+- Use the same viewport width for custom animation centering and any `offsetLimit` calculation. The snippets below use a 320px viewport; adapt it to the actual layout.
+
+### Styling
+
+- Use `Swiper.style` for root visuals such as background, borders, border radius, and overflow.
+- Set viewport and slide dimensions through `containerWidth`, `itemWidth`, and `itemHeight`, and direction through `RTL`.
+- Apply CSS classes and outer padding to a surrounding `<view>`. Style slide content on a child `<view>` inside `SwiperItem`.
 
 ### Render Props Mechanics
 
@@ -54,7 +77,7 @@ function Example() {
 
 Examples:
 
-- “Create a centered carousel with `spaceBetween=16`, 5 items, `itemWidth=350`, an indicator, and Prev/Next buttons.”
+- “Create a carousel with `modeConfig={{ align: 'center', spaceBetween: 16 }}`, 5 items, `itemWidth=300`, `containerWidth=320`, an indicator, and Prev/Next buttons.”
 - “Implement looped auto-play Swiper (`autoPlayInterval=2500`), align `start`, and an end bounce for ‘Show More’.”
 - “Build a `mode='custom'` Swiper with scale and translateX animation using `main-thread:customAnimation`.”
 
@@ -67,7 +90,7 @@ Examples:
 - RTL: set `RTL={true}` or `RTL={'lynx-rtl'}`. The latter applies Lynx’s `direction: lynx-rtl` explicitly.
 - In Scroll Containers: when inside `scroll-view` or other vertical scrollers, set `experimentalHorizontalSwipeOnly={true}` and, if native events are being swallowed, set `blockNativeEvent={true}`; tune `consumeSlideEvent` if needed.
 - Indicators & Controls: derive `current` from `onChange`, render an external indicator, and use `SwiperRef` to control navigation.
-- Container Sizing: set `containerWidth` explicitly (screen width minus paddings) to avoid mis-measure; use `style={{ overflow: 'visible' }}` if centered items need to bleed.
+- Container Sizing: use the available viewport width as described in Container Width above; use `style={{ overflow: 'visible' }}` if centered items need to bleed.
 
 ### Loop + Auto Play Example
 
@@ -76,7 +99,7 @@ Examples:
   data={['red', 'green', 'yellow', 'purple']}
   itemWidth={315}
   itemHeight={220}
-  containerWidth={(lynx.__globalProps.screenWidth || 375) - 16}
+  containerWidth={320}
   loop
   autoPlay
   autoPlayInterval={2000}
@@ -102,6 +125,7 @@ Note: `startBounceItemWidth` / `endBounceItemWidth` default to `50`. This exampl
   data={colors}
   itemWidth={250}
   itemHeight={200}
+  containerWidth={320}
   mode='normal'
   bounceConfig={{
     enable: true,
@@ -130,11 +154,12 @@ Note: `startBounceItemWidth` / `endBounceItemWidth` default to `50`. This exampl
 import { interpolate, interpolateJS } from '@lynx-js/lynx-ui'
 
 const ITEM_WIDTH = 250
+const CONTAINER_WIDTH = 320
 
 function customAnimation(value: number) {
   'main thread'
   const scale = interpolate(value, [-1, 0, 1], [0.8, 1, 0.8])
-  const centerOffset = (lynx.__globalProps.screenWidth - ITEM_WIDTH) / 2
+  const centerOffset = (CONTAINER_WIDTH - ITEM_WIDTH) / 2
   const translateX = interpolate(value, [-1, 0, 1], [
     -ITEM_WIDTH + centerOffset,
     centerOffset,
@@ -148,7 +173,7 @@ function customAnimation(value: number) {
 
 function customAnimationFirstScreen(value: number) {
   const scale = interpolateJS(value, [-1, 0, 1], [0.8, 1, 0.8])
-  const centerOffset = (lynx.__globalProps.screenWidth - ITEM_WIDTH) / 2
+  const centerOffset = (CONTAINER_WIDTH - ITEM_WIDTH) / 2
   const translateX = interpolateJS(value, [-1, 0, 1], [
     -ITEM_WIDTH + centerOffset,
     centerOffset,
@@ -164,6 +189,7 @@ function customAnimationFirstScreen(value: number) {
   data={colors}
   itemWidth={ITEM_WIDTH}
   itemHeight={200}
+  containerWidth={CONTAINER_WIDTH}
   mode='custom'
   main-thread:customAnimation={customAnimation}
   customAnimationFirstScreen={customAnimationFirstScreen}
@@ -181,8 +207,9 @@ function customAnimationFirstScreen(value: number) {
 ```tsx
 <Swiper
   data={items}
-  itemWidth={350}
+  itemWidth={300}
   itemHeight={200}
+  containerWidth={320}
   mode='normal'
   modeConfig={{ align: 'start', spaceBetween: 8 }}
   RTL={true}
@@ -200,7 +227,8 @@ function customAnimationFirstScreen(value: number) {
 - `data`: array of items to render; consumed by children render function
 - `itemWidth`: per-item width in px; required
 - `itemHeight`: optional per-item height; omit for natural/content-driven height
-- `containerWidth`: Swiper container width; default to `lynx.__globalProps.screenWidth`
+- `containerWidth`: numeric viewport width in px; always pass the available width explicitly.
+- `style`: styles for the root viewport; apply CSS classes to a wrapper or slide content.
 - `mode`: `'normal' | 'custom'`; affects item placement
 - `modeConfig`: `{ align?: 'start' | 'center' | 'end'; spaceBetween?: number }` for normal mode
 - `loop` / `loopDuplicateCount`: enable loop and control cloned head/tail count
@@ -235,4 +263,4 @@ interface SwiperRef {
 - Bounces don’t trigger when `loop=true`. Correct—bounce is ignored in looping.
 - I’m in a vertical `scroll-view`, swipes feel conflicted. Set `experimentalHorizontalSwipeOnly={true}` and consider `blockNativeEvent={true}`; adjust `consumeSlideEvent` if needed.
 - Why duplicate `customAnimationFirstScreen`? It mirrors `main-thread:customAnimation` for first-screen rendering until main-thread first-screen support arrives.
-- Opacity rendering glitches? Set `overlap` on `<SwiperItem>`’s direct child as needed.
+- Opacity rendering glitches? Set `<SwiperItem overlap>` as needed; it applies the attribute to the item view.

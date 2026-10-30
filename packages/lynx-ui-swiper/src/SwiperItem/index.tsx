@@ -49,12 +49,13 @@ export interface SwiperItemProps {
    */
   realIndex?: number
   /**
-   * `overlap` attribute passed to SwiperItem's direct child.
+   * `overlap` attribute applied to the view rendered by SwiperItem.
    * This property is used only when opacity has issues.
    * Refer to {@link https://lynxjs.org/api/css/properties/opacity#opacity}
    * @Android
    * @iOS
    * @Harmony
+   * @zh 应用到SwiperItem自身渲染的view上的overlap属性，用于处理透明度渲染问题。
    */
   overlap?: boolean
 }

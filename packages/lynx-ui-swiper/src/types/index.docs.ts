@@ -44,6 +44,7 @@ export interface SwiperProps<T> {
    * <Swiper
    *    data={items}
    *   itemWidth={350}
+   *   containerWidth={375}
    *  >
    *    {({ index, item }) => (
    *      <SwiperItem>
@@ -57,12 +58,15 @@ export interface SwiperProps<T> {
    */
   children: (prop: RenderFunctionProps<T>) => ReactElement
   /**
-   * Width of swiper item
-   * @defaultValue lynx.__globalProps.screenWidth
+   * Width of the Swiper viewport in px. Always pass this prop explicitly.
+   * Use the width available inside the parent.
+   * For example, inside a screen-width parent with 16px padding on each side,
+   * set containerWidth to screenWidth - 32.
+   * @defaultValue lynx.__globalProps.screenWidth ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio
    * @Android
    * @iOS
    * @Harmony
-   * @zh 轮播图容器的宽度
+   * @zh 轮播图视口的宽度，单位为px。使用时必须显式传入父容器内的可用宽度。例如，父容器与屏幕等宽且左右各有16px内边距时，将containerWidth设置为screenWidth - 32。
    */
   containerWidth?: number
   /**
@@ -228,11 +232,13 @@ export interface SwiperProps<T> {
   /**
    * Style for the root element of the Swiper component.
    * This controls the visible viewport/frame that contains the swiper.
-   * Use this for: background, borders, padding, dimensions, overflow, etc.
+   * Use this for background, borders, border radius, and overflow.
+   * Configure dimensions through containerWidth and itemHeight, and direction through RTL.
+   * Apply outer padding and CSS classes to a surrounding view.
    * @Android
    * @iOS
    * @Harmony
-   * @zh Swiper组件根元素的样式。控制包含轮播图的可见视口/框架。用于：背景、边框、内边距、尺寸、溢出等。
+   * @zh Swiper组件根元素的样式，用于背景、边框、圆角和溢出等。尺寸通过containerWidth和itemHeight配置，方向通过RTL配置。外层内边距和CSS类放在包裹view上。
    */
   style?: CSSProperties
 
