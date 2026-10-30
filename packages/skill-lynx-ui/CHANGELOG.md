@@ -1,5 +1,13 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.11
+
+### Patch Changes
+
+- Clarify that a normal List viewport needs an explicit CSS or style height. Replace obsolete listMaxHeight guidance with a separate explanation of listMaxSize for content-adaptive limits along the scroll axis. ([#376](https://github.com/lynx-family/lynx-ui/pull/376))
+
+- Clarify Swiper viewport sizing and styling guidance, and use consistent dimensions in skill examples and custom animations. ([#380](https://github.com/lynx-family/lynx-ui/pull/380))
+
 ## 3.133.10
 
 ### Patch Changes
