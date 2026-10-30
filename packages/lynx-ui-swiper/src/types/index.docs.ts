@@ -44,6 +44,7 @@ export interface SwiperProps<T> {
    * <Swiper
    *    data={items}
    *   itemWidth={350}
+   *   containerWidth={375}
    *  >
    *    {({ index, item }) => (
    *      <SwiperItem>
@@ -57,12 +58,14 @@ export interface SwiperProps<T> {
    */
   children: (prop: RenderFunctionProps<T>) => ReactElement
   /**
-   * Width of swiper item
-   * @defaultValue lynx.__globalProps.screenWidth
+   * Width of the Swiper viewport in px, not the width of an individual item.
+   * Swiper does not measure its parent. Pass the available width explicitly
+   * for padded or nested layouts; CSS width alone does not configure its geometry.
+   * @defaultValue lynx.__globalProps.screenWidth ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio
    * @Android
    * @iOS
    * @Harmony
-   * @zh 轮播图容器的宽度
+   * @zh 轮播图视口的宽度，单位为px，并非单个轮播项的宽度。Swiper不会测量父容器；有内边距或嵌套布局时，需显式传入可用宽度，仅设置CSS宽度不会配置轮播布局。
    */
   containerWidth?: number
   /**
@@ -228,21 +231,28 @@ export interface SwiperProps<T> {
   /**
    * Style for the root element of the Swiper component.
    * This controls the visible viewport/frame that contains the swiper.
-   * Use this for: background, borders, padding, dimensions, overflow, etc.
+   * Use this for background, borders, border radius, and overflow.
+   * Swiper does not support className or class, or forward arbitrary element props.
+   * containerWidth, itemHeight, and RTL override width, height, and direction in this style.
+   * Prefer a surrounding view for outer padding and CSS classes.
    * @Android
    * @iOS
    * @Harmony
-   * @zh Swiper组件根元素的样式。控制包含轮播图的可见视口/框架。用于：背景、边框、内边距、尺寸、溢出等。
+   * @zh Swiper组件根元素的样式，用于背景、边框、圆角和溢出等。Swiper不支持className或class，也不会透传任意元素属性。containerWidth、itemHeight和RTL会覆盖此样式中的width、height和direction。外层内边距和CSS类建议放在包裹view上。
    */
   style?: CSSProperties
 
   /**
    * Style for the inner sliding track that holds all swiper items.
    * This is the element that actually moves/slides.
+   * Applied when normal-mode track layout is initialized, or when layout is reset.
+   * Changing trackStyle alone does not update the track. Custom mode does not apply
+   * it on the first render. Swiper owns track geometry and transform; prefer root
+   * or slide content styles for persistent visuals.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 包含所有轮播项的内部滑动轨道的样式。这是实际移动/滑动的元素。
+   * @zh 包含所有轮播项的内部滑动轨道的样式，在普通模式初始化轨道布局或重置布局时应用。仅修改trackStyle不会更新轨道，自定义模式首屏也不会应用此样式。轨道几何布局和变换由Swiper管理，持续显示的视觉样式建议放在根元素或轮播内容上。
    */
   trackStyle?: CSSProperties
   /**

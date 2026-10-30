@@ -33,10 +33,13 @@ export interface SwiperItemProps {
    */
   children: ReactElement | ReactElement[]
   /**
-   * Style of SwiperItem
+   * Currently not applied to the rendered item.
+   * Style a child view instead. SwiperItem does not support className or class.
+   * Configure item dimensions through Swiper's itemWidth and itemHeight props.
    * @Android
    * @iOS
    * @Harmony
+   * @zh 当前实现不会将此属性应用到轮播项。请设置子view的样式；SwiperItem不支持className或class。轮播项尺寸通过Swiper的itemWidth和itemHeight配置。
    */
   style?: CSSProperties
   /**
@@ -49,12 +52,13 @@ export interface SwiperItemProps {
    */
   realIndex?: number
   /**
-   * `overlap` attribute passed to SwiperItem's direct child.
+   * `overlap` attribute applied to the view rendered by SwiperItem itself.
    * This property is used only when opacity has issues.
    * Refer to {@link https://lynxjs.org/api/css/properties/opacity#opacity}
    * @Android
    * @iOS
    * @Harmony
+   * @zh 应用到SwiperItem自身渲染的view上的overlap属性，用于处理透明度渲染问题。
    */
   overlap?: boolean
 }

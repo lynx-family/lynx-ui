@@ -32,7 +32,12 @@ const CONTAINER_WIDTH = 320
 function Example() {
   return (
     <view style={{ width: `${CONTAINER_WIDTH}px` }}>
-      <Swiper data={data} itemWidth={300} containerWidth={CONTAINER_WIDTH}>
+      <Swiper
+        data={data}
+        itemWidth={300}
+        containerWidth={CONTAINER_WIDTH}
+        style={{ borderRadius: '12px' }}
+      >
         {({ item, index }) => (
           <SwiperItem>
             <view
@@ -56,6 +61,14 @@ function Example() {
 - CSS width on a wrapper, `flex: 1`, and `style={{ width: '100%' }}` on Swiper do not substitute for `containerWidth`. Swiper writes its root width from this prop after applying `style`, and uses it for alignment and offset calculations. Do not pass CSS strings such as `'100%'` or `'320px'` to `containerWidth`.
 - Use the same viewport width for custom animation centering and any `offsetLimit` calculation. The snippets below use a 320px viewport; adapt it to the actual layout.
 
+### Styling Contract
+
+- Neither `Swiper` nor `SwiperItem` supports `className` or `class`, and neither forwards arbitrary element props. Apply CSS classes to a surrounding `<view>` or to content inside `SwiperItem`.
+- Use `Swiper.style` for root visuals such as background, borders, border radius, and overflow. `containerWidth`, `itemHeight`, and `RTL` override root `style.width`, `style.height`, and `style.direction`; configure those through their dedicated props. Prefer a wrapper for outer padding so the viewport width remains explicit.
+- `trackStyle` targets the inner sliding track. Swiper owns its geometry and transform. It applies track styles when initializing normal mode or resetting layout; changing `trackStyle` alone does not update the track, and custom mode does not apply it on the first render. Put persistent visuals on the root or slide content instead.
+- `SwiperItem.style` is declared in the current type but is not applied by the implementation. Style a child `<view>` instead, and set slide dimensions through `Swiper.itemWidth` and `Swiper.itemHeight`.
+- For opacity rendering issues, use `<SwiperItem overlap>` to apply `overlap` to the item view itself.
+
 ### Render Props Mechanics
 
 - `<Swiper>` calls your children function once per item with `{ item, index }`.
@@ -68,7 +81,7 @@ function Example() {
 
 Examples:
 
-- “Create a centered carousel with `spaceBetween=16`, 5 items, `itemWidth=350`, an indicator, and Prev/Next buttons.”
+- “Create a carousel with `modeConfig={{ align: 'center', spaceBetween: 16 }}`, 5 items, `itemWidth=300`, `containerWidth=320`, an indicator, and Prev/Next buttons.”
 - “Implement looped auto-play Swiper (`autoPlayInterval=2500`), align `start`, and an end bounce for ‘Show More’.”
 - “Build a `mode='custom'` Swiper with scale and translateX animation using `main-thread:customAnimation`.”
 
@@ -219,6 +232,7 @@ function customAnimationFirstScreen(value: number) {
 - `itemWidth`: per-item width in px; required
 - `itemHeight`: optional per-item height; omit for natural/content-driven height
 - `containerWidth`: numeric viewport width in px; defaults to screen width, not parent width. Explicitly pass the available width for padded or nested layouts (see Container Width Contract).
+- `style` / `trackStyle`: root and inner track styles, respectively; see Styling Contract for sizing overrides and track update limitations. `className` and `class` are unsupported.
 - `mode`: `'normal' | 'custom'`; affects item placement
 - `modeConfig`: `{ align?: 'start' | 'center' | 'end'; spaceBetween?: number }` for normal mode
 - `loop` / `loopDuplicateCount`: enable loop and control cloned head/tail count
@@ -254,4 +268,4 @@ interface SwiperRef {
 - Bounces don’t trigger when `loop=true`. Correct—bounce is ignored in looping.
 - I’m in a vertical `scroll-view`, swipes feel conflicted. Set `experimentalHorizontalSwipeOnly={true}` and consider `blockNativeEvent={true}`; adjust `consumeSlideEvent` if needed.
 - Why duplicate `customAnimationFirstScreen`? It mirrors `main-thread:customAnimation` for first-screen rendering until main-thread first-screen support arrives.
-- Opacity rendering glitches? Set `overlap` on `<SwiperItem>`’s direct child as needed.
+- Opacity rendering glitches? Set `<SwiperItem overlap>` as needed; it applies the attribute to the item view.

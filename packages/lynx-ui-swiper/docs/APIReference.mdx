@@ -151,16 +151,16 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
     "summary": [
       {
         "kind": "text",
-        "text": "Width of swiper item"
+        "text": "Width of the Swiper viewport in px, not the width of an individual item.\nSwiper does not measure its parent. Pass the available width explicitly\nfor padded or nested layouts; CSS width alone does not configure its geometry."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "轮播图容器的宽度"
+        "text": "轮播图视口的宽度，单位为px，并非单个轮播项的宽度。Swiper不会测量父容器；有内边距或嵌套布局时，需显式传入可用宽度，仅设置CSS宽度不会配置轮播布局。"
       }
     ],
-    "defaultValue": "lynx.__globalProps.screenWidth",
+    "defaultValue": "lynx.__globalProps.screenWidth ?? SystemInfo.pixelWidth / SystemInfo.pixelRatio",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
@@ -579,13 +579,13 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
     "summary": [
       {
         "kind": "text",
-        "text": "Style for the root element of the Swiper component.\nThis controls the visible viewport/frame that contains the swiper.\nUse this for: background, borders, padding, dimensions, overflow, etc."
+        "text": "Style for the root element of the Swiper component.\nThis controls the visible viewport/frame that contains the swiper.\nUse this for background, borders, border radius, and overflow.\nSwiper does not support className or class, or forward arbitrary element props.\ncontainerWidth, itemHeight, and RTL override width, height, and direction in this style.\nPrefer a surrounding view for outer padding and CSS classes."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "Swiper组件根元素的样式。控制包含轮播图的可见视口/框架。用于：背景、边框、内边距、尺寸、溢出等。"
+        "text": "Swiper组件根元素的样式，用于背景、边框、圆角和溢出等。Swiper不支持className或class，也不会透传任意元素属性。containerWidth、itemHeight和RTL会覆盖此样式中的width、height和direction。外层内边距和CSS类建议放在包裹view上。"
       }
     ],
     "defaultValue": "",
@@ -639,13 +639,13 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
     "summary": [
       {
         "kind": "text",
-        "text": "Style for the inner sliding track that holds all swiper items.\nThis is the element that actually moves/slides."
+        "text": "Style for the inner sliding track that holds all swiper items.\nThis is the element that actually moves/slides.\nApplied when normal-mode track layout is initialized, or when layout is reset.\nChanging trackStyle alone does not update the track. Custom mode does not apply\nit on the first render. Swiper owns track geometry and transform; prefer root\nor slide content styles for persistent visuals."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "包含所有轮播项的内部滑动轨道的样式。这是实际移动/滑动的元素。"
+        "text": "包含所有轮播项的内部滑动轨道的样式，在普通模式初始化轨道布局或重置布局时应用。仅修改trackStyle不会更新轨道，自定义模式首屏也不会应用此样式。轨道几何布局和变换由Swiper管理，持续显示的视觉样式建议放在根元素或轮播内容上。"
       }
     ],
     "defaultValue": "",
@@ -704,7 +704,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
       },
       {
         "kind": "text",
-        "text": " attribute passed to SwiperItem's direct child.\nThis property is used only when opacity has issues.\nRefer to "
+        "text": " attribute applied to the view rendered by SwiperItem itself.\nThis property is used only when opacity has issues.\nRefer to "
       },
       {
         "kind": "inline-tag",
@@ -713,7 +713,12 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
         "target": "https://lynxjs.org/api/css/properties/opacity#opacity"
       }
     ],
-    "summary_zh": [],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "应用到SwiperItem自身渲染的view上的overlap属性，用于处理透明度渲染问题。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,
@@ -744,10 +749,15 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
     "summary": [
       {
         "kind": "text",
-        "text": "Style of SwiperItem"
+        "text": "Currently not applied to the rendered item.\nStyle a child view instead. SwiperItem does not support className or class.\nConfigure item dimensions through Swiper's itemWidth and itemHeight props."
       }
     ],
-    "summary_zh": [],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当前实现不会将此属性应用到轮播项。请设置子view的样式；SwiperItem不支持className或class。轮播项尺寸通过Swiper的itemWidth和itemHeight配置。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,
