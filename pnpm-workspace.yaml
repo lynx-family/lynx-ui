@@ -22,7 +22,7 @@ catalog:
   "@rsbuild/plugin-react": 2.1.0
   "@rslib/core": 0.23.2
   "@lynx-js/react-use": 0.2.2
-  "@lynx-js/motion": 0.0.3
+  "@lynx-js/motion": 0.0.8
   "@testing-library/jest-dom": 6.9.1
   "@testing-library/react": 16.3.2
   "@types/react": "^18.3.8"
