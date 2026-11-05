@@ -41,7 +41,7 @@
   "peerDependencies": {
     "@lynx-js/react": ">=0.100.0",
     "@lynx-js/types": "*",
-    "@types/react": "^18"
+    "@types/react": ">=18"
   },
   "publishConfig": {
     "access": "public"
