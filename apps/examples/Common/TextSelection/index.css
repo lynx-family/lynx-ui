@@ -1,0 +1,58 @@
+/* Copyright 2026 The Lynx Authors. All rights reserved.
+ * Licensed under the Apache License Version 2.0 that can be found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 64px 24px 48px;
+  background-color: var(--canvas);
+}
+
+.demo-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.sample {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.label {
+  color: var(--content-muted);
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--content-muted);
+  font-size: 14px;
+}
+
+.selectable {
+  width: 100%;
+  color: var(--content);
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.custom-selection::selection {
+  background-color: rgba(255, 255, 0, 0.15);
+  -x-handle-color: orange;
+  -x-handle-size: 12px;
+}
+
+.large-handles::selection {
+  -x-handle-size: 24px;
+}

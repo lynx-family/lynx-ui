@@ -1,0 +1,116 @@
+/* Copyright 2026 The Lynx Authors. All rights reserved.
+ * Licensed under the Apache License Version 2.0 that can be found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 64px 24px 48px;
+  background-color: var(--canvas);
+}
+
+.hint {
+  color: var(--content-muted);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.scroll-view {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.scroll-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 0 24px;
+}
+
+.sample {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.label {
+  color: var(--content-muted);
+  font-size: 13px;
+}
+
+.selectable {
+  width: 100%;
+  color: var(--content);
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.custom-selection::selection {
+  -x-handle-color: blue;
+  -x-handle-size: 12px;
+}
+
+.alpha-0::selection {
+  background-color: rgba(255, 255, 0, 0);
+}
+
+.alpha-005::selection {
+  background-color: rgba(255, 255, 0, 0.05);
+}
+
+.alpha-01::selection {
+  background-color: rgba(255, 255, 0, 0.1);
+}
+
+.alpha-02::selection {
+  background-color: rgba(255, 255, 0, 0.2);
+}
+
+.alpha-03::selection {
+  background-color: rgba(255, 255, 0, 0.3);
+}
+
+.alpha-04::selection {
+  background-color: rgba(255, 255, 0, 0.4);
+}
+
+.alpha-05::selection {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+
+.alpha-06::selection {
+  background-color: rgba(255, 255, 0, 0.6);
+}
+
+.alpha-07::selection {
+  background-color: rgba(255, 255, 0, 0.7);
+}
+
+.alpha-08::selection {
+  background-color: rgba(255, 255, 0, 0.8);
+}
+
+.alpha-09::selection {
+  background-color: rgba(255, 255, 0, 0.9);
+}
+
+.alpha-095::selection {
+  background-color: rgba(255, 255, 0, 0.95);
+}
+
+.alpha-099::selection {
+  background-color: rgba(255, 255, 0, 0.99);
+}
+
+.alpha-1::selection {
+  background-color: rgba(255, 255, 0, 1);
+}
