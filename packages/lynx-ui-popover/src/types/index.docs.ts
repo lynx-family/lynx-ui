@@ -176,7 +176,7 @@ export interface PopoverOverlayProps extends ComponentBasicProps {
    */
   children?: ReactNode | PresenceChildrenType
   /**
-   * The position of the popover
+   * The position of the popover.
    * @zh Popover 的位置
    * @Android
    * @iOS
@@ -249,6 +249,119 @@ export interface PopoverContentProps extends ComponentBasicProps {
 }
 
 /**
+ * Numeric visual properties supported by PopoverMotionContent.
+ */
+export interface PopoverMotionValues {
+  /**
+   * Opacity.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  opacity?: number
+  /**
+   * Uniform scale.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  scale?: number
+  /**
+   * Horizontal scale.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  scaleX?: number
+  /**
+   * Vertical scale.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  scaleY?: number
+  /**
+   * Horizontal translation in logical pixels.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  x?: number
+  /**
+   * Vertical translation in logical pixels.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  y?: number
+  /**
+   * Rotation in degrees.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  rotate?: number
+}
+
+/**
+ * Spring physics or tween timing. Durations are in seconds.
+ * @Android
+ * @iOS
+ * @Harmony
+ */
+export type PopoverMotionTransition = {
+  type: 'spring'
+  stiffness?: number
+  damping?: number
+  mass?: number
+  velocity?: number
+} | {
+  type: 'tween'
+  /** Zero applies the target immediately. */
+  duration?: number
+  ease?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut'
+}
+
+/** A visual target and its transition settings. */
+export interface PopoverMotionTarget extends PopoverMotionValues {
+  /**
+   * Defaults to a spring with stiffness 300, damping 30 and mass 1.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  transition?: PopoverMotionTransition
+}
+
+/**
+ * Motion-driven content. It owns transform and opacity and stays mounted until
+ * all exit properties complete. Use one motion content per popover root.
+ */
+export interface PopoverMotionContentProps extends PopoverContentProps {
+  /**
+   * Applied on each fresh mount. Omitted properties use visual identity.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  initialMotion?: PopoverMotionValues
+  /**
+   * Opening target. Omitted properties retain their current values.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  openMotion?: PopoverMotionTarget
+  /**
+   * Closing target. Omitted properties retain their current values.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  closeMotion?: PopoverMotionTarget
+}
+
+/**
  * Helps position the Content and Arrow correctly.
  * @zh 帮助正确定位内容和箭头。
  */
@@ -263,13 +376,13 @@ export interface PopoverPositionerProps extends ComponentBasicProps {
    */
   children?: ReactNode | PresenceChildrenType
   /**
-   * The position of the popover
+   * The position of the popover. Defaults to 'top'.
    * @zh Popover 的位置
    * @Android
    * @iOS
    * @Harmony
    */
-  placement: Placement
+  placement?: Placement
   /**
    * The offset of the popover position
    * @zh Popover 位置的偏移量
@@ -476,6 +589,11 @@ export interface PopoverPositionerUIVariants extends PresenceUIVariants {}
  * @zh PopoverContent 暴露的 UI variants。
  */
 export interface PopoverContentUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by PopoverMotionContent.
+ */
+export interface PopoverMotionContentUIVariants extends PresenceUIVariants {}
 
 /**
  * UI variants exposed by PopoverArrow.

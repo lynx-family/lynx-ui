@@ -192,3 +192,27 @@ maximum-dimension square. Custom children do not receive triangle borders.
 
 See [the arrow alignment example](../../apps/examples/Popover/ArrowAlignment/README.md)
 for native comparisons and design-system integration guidance.
+
+## Motion-driven Content
+
+Use `PopoverMotionContent` in place of `PopoverContent` when motion should
+control entry and exit. Keep the positioner and content mounted and toggle
+`PopoverRoot` visibility so the exit can finish.
+
+```tsx
+<PopoverMotionContent
+  initialMotion={{ opacity: 0, scale: 0.8 }}
+  openMotion={{ opacity: 1, scale: 1 }}
+  closeMotion={{ opacity: 0, scale: 0.8 }}
+>
+  {content}
+  <PopoverArrow size={8} />
+</PopoverMotionContent>
+```
+
+Motion owns the content's `transform` and `opacity`; do not animate those
+properties with CSS on the same node. Its default transform origin is the arrow
+tip, or the corresponding content edge when no arrow is present. Use one
+motion content per root. Omitted target values retain their current values.
+Set `transition` on each target to configure a spring or a tween; tween duration
+is in seconds. See the Motion example for a complete composition.
