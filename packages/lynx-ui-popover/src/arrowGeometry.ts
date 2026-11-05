@@ -34,3 +34,25 @@ export function getArrowDimensions(
     ? { width: height, height: width }
     : { width, height }
 }
+
+export function getTransformOrigin(
+  placement: Placement,
+  floating: Dimensions,
+  arrow: {
+    coords: { x: number | null, y: number | null }
+    dimensions: Dimensions
+  },
+): string {
+  const side = getSide(placement)
+  const vertical = side === 'top' || side === 'bottom'
+  const { width, height } = arrow.dimensions
+  const crossSize = vertical ? floating.width : floating.height
+  const coordinate = vertical ? arrow.coords.x : arrow.coords.y
+  const cross = width === 0
+    ? crossSize / 2
+    : (coordinate ?? (crossSize - width) / 2) + width / 2
+  const main = side === 'top'
+    ? floating.height + height
+    : (side === 'left' ? floating.width + height : -height)
+  return vertical ? `${cross}px ${main}px` : `${main}px ${cross}px`
+}

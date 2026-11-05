@@ -14,6 +14,8 @@ export {
   PopoverRoot,
 } from './Popover'
 
+export { PopoverMotionContent } from './PopoverMotionContent'
+
 export type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-presence'
 
 export type {
@@ -22,6 +24,10 @@ export type {
   PopoverAnchorProps,
   PopoverBackdropProps,
   PopoverContentProps,
+  PopoverMotionContentProps,
+  PopoverMotionValues,
+  PopoverMotionTarget,
+  PopoverMotionTransition,
   PopoverPositionerProps,
   PopoverRootProps,
   PopoverTriggerProps,

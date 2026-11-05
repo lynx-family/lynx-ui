@@ -38,6 +38,8 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-popover` 单独安
 </PopoverRoot>
 ```
 
+`PopoverMotionContent` 可替代 `PopoverContent`，为内容提供进入和退出动效。
+
 ## 关于 @lynx-js/lynx-ui
 
 该包是 `@lynx-js/lynx-ui` 的一部分。`@lynx-js/lynx-ui` 是 Lynx 团队维护的无样式 UI 组件库，用于构建灵活、通用且高性能的 ReactLynx 组件。

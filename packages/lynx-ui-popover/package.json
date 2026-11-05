@@ -34,6 +34,7 @@
     "@lynx-js/lynx-ui-common": "workspace:*",
     "@lynx-js/lynx-ui-overlay": "workspace:*",
     "@lynx-js/lynx-ui-presence": "workspace:*",
+    "@lynx-js/motion": "catalog:",
     "clsx": "catalog:"
   },
   "devDependencies": {
