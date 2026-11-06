@@ -396,6 +396,7 @@ export function useSnap({
   ) {
     'main thread'
 
+    const previousFit = getResolvedSnapOffsets()[currentSnapIndex.current]
     const bodySize = getMainAxisLayoutSize(resolvedSide, e)
     bodySizeMTRef.current = bodySize
     const layoutSize = !hasFitSnapPoint && !isHorizontalSide(resolvedSide)
@@ -425,24 +426,12 @@ export function useSnap({
       )
       // Resolve any pending snap operation
       controller.resolvePendingSnapMT()
-    } else if (contentSizeMTRef.current !== maxSnapSize) {
-      updateContentSizeMT(maxSnapSize)
-    }
-  }
-
-  function updateFooterHeightMT(height: number) {
-    'main thread'
-    const previousFit = getResolvedSnapOffsets()[currentSnapIndex.current]
-    const previousHeight = footerHeightMTRef.current
-    footerHeightMTRef.current = height
-    updateFooterPositionMT(yRef.current.get())
-    if (hasFitSnapPoint && bodySizeMTRef.current >= 0) {
-      handleSheetLayoutChangeMT(
-        { detail: { height: bodySizeMTRef.current } },
-        previousHeight > 0 && height === 0 && bodySizeMTRef.current === 0,
-      )
-      // Reconcile a fit snap when intrinsic footer content changes after opening.
-      if (snapPointValues[currentSnapIndex.current] === -1) {
+      // Intrinsic body and footer changes must resize an idle fit panel too.
+      if (
+        snapPointValues[currentSnapIndex.current] === -1
+        && previousFit !== undefined && previousFit >= 0
+        && Math.abs(fitSize - previousFit) >= 0.5
+      ) {
         const state = controller.presenceStateMTRef.current
         if (
           state === PresenceState.Entered && !yRef.current.isAnimating()
@@ -455,6 +444,21 @@ export function useSnap({
           controller.snapToMT(currentSnapIndex.current, { isEntry: true })
         }
       }
+    } else if (contentSizeMTRef.current !== maxSnapSize) {
+      updateContentSizeMT(maxSnapSize)
+    }
+  }
+
+  function updateFooterHeightMT(height: number) {
+    'main thread'
+    const previousHeight = footerHeightMTRef.current
+    footerHeightMTRef.current = height
+    updateFooterPositionMT(yRef.current.get())
+    if (hasFitSnapPoint && bodySizeMTRef.current >= 0) {
+      handleSheetLayoutChangeMT(
+        { detail: { height: bodySizeMTRef.current } },
+        previousHeight > 0 && height === 0 && bodySizeMTRef.current === 0,
+      )
     }
   }
 

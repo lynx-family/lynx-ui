@@ -1,3 +1,4 @@
+@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
 
 .composite-layout {
@@ -27,7 +28,7 @@
 
 .fold-like-content {
   width: 100%;
-  height: calc(100% - 56px);
+  height: calc(100% - 112px);
 }
 
 .fold-toolbar {

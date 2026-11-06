@@ -269,7 +269,9 @@ export function useSheetPanGesture({
       const velocity = yRef.current.getVelocity()
       const min = Math.min(...valid)
       const dismissLine = Math.max(min - dismissThreshold * viewportSize, 0)
-      if (enableDragToClose && current <= dismissLine) {
+      const isOpeningFling = flingEnabled && velocity >= flingMinVelocity
+      // Match raw-touch recovery when an opening fling starts in the dismiss zone.
+      if (enableDragToClose && current <= dismissLine && !isOpeningFling) {
         onDragEndCloseMT()
         return
       }
@@ -281,12 +283,19 @@ export function useSheetPanGesture({
           Math.max(sheetSizeMTRef.current, ...valid),
         )
       }
+      const candidates = isOpeningFling && valid.some(offset => offset > 0)
+        ? offsets.filter(offset => offset > 0)
+        : offsets
       const nearest = findNearestSnap(
         target,
-        offsets,
+        candidates,
         Math.max(sheetSizeMTRef.current, ...valid),
       )
-      onDragEndSnapMT(nearest.index)
+      onDragEndSnapMT(
+        isOpeningFling
+          ? offsets.indexOf(candidates[nearest.index])
+          : nearest.index,
+      )
     })
     .onTouchesUp(finishInteractionMT)
     .onTouchesCancel(() => {

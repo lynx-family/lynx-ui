@@ -316,6 +316,8 @@ export interface SheetRootProps extends ComponentBasicProps {
    * This fires for drag releases and programmatic snaps, including snaps back
    * to the same point and release after handing off to a nested scroll at the
    * maximum point. It does not fire for opening or closing the Sheet.
+   * Resizing an idle 'fit' panel to changed intrinsic content also requests an
+   * immediate snap, with `animated` set to false.
    * Use the `main thread` directive in the callback.
    */
   'main-thread:onSnapStart'?: (

@@ -70,7 +70,7 @@ function setup(snapPoints: Array<number | string> = ['fit']) {
   return { snap, state, entered, styles }
 }
 
-describe('Sheet footer fit sizing', () => {
+describe('Sheet intrinsic and footer fit sizing', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     vi.stubGlobal(
@@ -90,6 +90,60 @@ describe('Sheet footer fit sizing', () => {
     expect(snap.yRef.current.get()).toBe(300)
     expect(state.current).toBe(PresenceState.Entered)
     expect(entered).toHaveBeenCalledTimes(1)
+  })
+
+  it('resizes an open fit panel when intrinsic body content grows and shrinks', () => {
+    const { snap } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(snap.yRef.current.get()).toBe(420)
+    snap.handleSheetLayoutChangeMT({ detail: { height: 240 } })
+    expect(snap.yRef.current.get()).toBe(240)
+  })
+
+  it('preserves a numeric destination while intrinsic body content changes', () => {
+    const { snap } = setup(['fit', 600])
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.snapToMT(1, { animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([420, 600])
+    expect(snap.yRef.current.get()).toBe(600)
+  })
+
+  it('preserves a dragged position when intrinsic body content changes', () => {
+    const { snap } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.yRef.current.set(250)
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([420])
+    expect(snap.yRef.current.get()).toBe(250)
+  })
+
+  it('updates an opening fit animation target when intrinsic body content changes', () => {
+    const { snap, state, entered } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.showMT()
+    vi.advanceTimersByTime(32)
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    vi.advanceTimersByTime(3000)
+    expect(snap.yRef.current.get()).toBe(420)
+    expect(state.current).toBe(PresenceState.Entered)
+    expect(entered).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps a closing panel closed when intrinsic body content changes', () => {
+    const { snap, state } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.closeMT()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(state.current).toBe(PresenceState.Leaving)
+    vi.advanceTimersByTime(3000)
+    expect(snap.yRef.current.get()).toBe(0)
+    expect(state.current).toBe(PresenceState.Left)
   })
 
   it.each([true, false])(

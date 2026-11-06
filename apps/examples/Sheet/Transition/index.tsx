@@ -5,64 +5,82 @@
 import { root, runOnBackground, useRef, useState } from '@lynx-js/react'
 
 import {
+  Button,
   SheetBackdrop,
   SheetHandle,
   SheetNestedScrollContent,
   SheetRoot,
   SheetView,
+  screenHeight,
+  screenWidth,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 import clsx from 'clsx'
 
-import { ActionButton, TriggerButton } from '../shared/index.js'
+import { TriggerButton } from '../shared/index.js'
+import { SurfaceRows } from '../shared/SurfaceRows.js'
 import './index.css'
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const [panel, setPanel] = useState({ expanded: false, animated: false })
-  const screenWidth = lynx.__globalProps.screenWidth || 375
-  const narrowWidth = Math.min(screenWidth - 32, 300)
-  const wideWidth = screenWidth
-  const width = panel.expanded ? wideWidth : narrowWidth
+  const [panel, setPanel] = useState({ fullscreen: false, animated: false })
+  const [viewport, setViewport] = useState({
+    width: screenWidth,
+    height: screenHeight,
+  })
+  const fullscreenHeight = viewport.height
+  const floatingWidth = Math.min(viewport.width - 48, 664)
+  const width = panel.fullscreen ? viewport.width : floatingWidth
 
-  function updatePanel(index: number, animated: boolean) {
-    setPanel({ expanded: index === 1, animated })
+  function updatePanel(fullscreen: boolean, animated: boolean) {
+    setPanel({ fullscreen, animated })
   }
 
-  function onSnapStart(index: number, _value: number, animated: boolean) {
+  function onSnapStart(_index: number, value: number, animated: boolean) {
     'main thread'
-    runOnBackground(updatePanel)(index, animated)
+    // Fullscreen is a product policy, not the index of the largest snap point.
+    runOnBackground(updatePanel)(value >= fullscreenHeight, animated)
   }
 
   return (
-    <view className='demo-container lunaris-dark'>
-      <text className='title-text'>Coordinated Sheet Transition</text>
-      <text className='subtitle-text'>
-        Release the Sheet to animate its width with its snap.
-      </text>
-      <TriggerButton
-        text='Open Sheet'
-        onClick={() => sheetRef.current?.open()}
-      />
+    <view
+      className='demo-container surface-stage lunaris-dark'
+      bindlayoutchange={event =>
+        setViewport({ width: event.detail.width, height: event.detail.height })}
+    >
+      <view className='surface-launcher'>
+        <text className='surface-title'>Room to read</text>
+        <text className='surface-copy'>
+          Release at fullscreen to widen the panel. Text keeps its natural size.
+        </text>
+        <TriggerButton
+          text='Open reader'
+          onClick={() => {
+            setPanel({ fullscreen: false, animated: false })
+            sheetRef.current?.open()
+          }}
+        />
+      </view>
       <SheetRoot
         ref={sheetRef}
-        snapPoints={['45%', '100%']}
+        screenHeight={fullscreenHeight}
+        snapPoints={['45%', '70%', '100%']}
         main-thread:onSnapStart={onSnapStart}
-        onClose={() => setPanel({ expanded: false, animated: false })}
       >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            detached={!panel.expanded}
-            bottomInset={panel.expanded ? 0 : 8}
+            detached={!panel.fullscreen}
+            bottomInset={panel.fullscreen ? 0 : 8}
             className={clsx(
               'sheet-content',
-              !panel.expanded && 'floating-surface',
+              !panel.fullscreen && 'surface-card',
             )}
-            innerClassName='transition-inner'
+            innerClassName='surface-layout'
             style={{
               width: `${width}px`,
-              left: `${(screenWidth - width) / 2}px`,
+              left: `${(viewport.width - width) / 2}px`,
+              // This CSS transition has its own clock; it does not follow the snap spring.
               transition: panel.animated
                 ? 'width 280ms ease-out, left 280ms ease-out'
                 : 'none',
@@ -71,32 +89,50 @@ function App() {
             {({ scrollGesture }) => (
               <>
                 <SheetHandle className='sheet-handle' />
-                <view className='transition-actions'>
-                  <ActionButton
-                    text='Collapse'
-                    onClick={() => sheetRef.current?.collapse()}
-                  />
-                  <ActionButton
-                    text='Expand'
-                    onClick={() => sheetRef.current?.expand()}
-                  />
+                <view className='surface-body'>
+                  <view className='surface-controls'>
+                    <Button
+                      className='surface-action'
+                      onClick={() => sheetRef.current?.collapse()}
+                    >
+                      <text className='surface-action-text'>45%</text>
+                    </Button>
+                    <Button
+                      className='surface-action'
+                      onClick={() => sheetRef.current?.snapTo(1)}
+                    >
+                      <text className='surface-action-text'>70%</text>
+                    </Button>
+                    <Button
+                      className='surface-action'
+                      onClick={() => sheetRef.current?.expand()}
+                    >
+                      <text className='surface-action-text'>Fullscreen</text>
+                    </Button>
+                    <Button
+                      className='surface-action'
+                      onClick={() =>
+                        sheetRef.current?.expand({ animate: false })}
+                    >
+                      <text className='surface-action-text'>
+                        Instant fullscreen
+                      </text>
+                    </Button>
+                    <Button
+                      className='surface-action'
+                      onClick={() => sheetRef.current?.close()}
+                    >
+                      <text className='surface-action-text'>Close</text>
+                    </Button>
+                  </view>
                 </view>
                 <scroll-view
-                  className='transition-scroll'
+                  className='surface-scroll'
                   scroll-orientation='vertical'
                   bounces={false}
                   main-thread:gesture={scrollGesture}
                 >
-                  {Array.from(
-                    { length: 12 },
-                    (_, index) => (
-                      <view className='transition-item' key={index}>
-                        <text className='transition-item-text'>
-                          {`Item ${index + 1}`}
-                        </text>
-                      </view>
-                    ),
-                  )}
+                  <SurfaceRows />
                 </scroll-view>
               </>
             )}

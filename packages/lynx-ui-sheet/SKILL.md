@@ -33,7 +33,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - Use `main-thread:onSnapStart(index, value, animated)` on `SheetRoot` to react to the selected target before Sheet starts moving. It fires on drag release and imperative snaps, including same-point releases and handoff to nested scrolling at the maximum snap.
 - The callback does not fire for opening or closing. `animated` is false for an immediate snap. It reports a target, not per-frame animation progress or completed arrival.
+- Intrinsic content changes resize an idle `'fit'` panel with an immediate snap; this also notifies `onSnapStart` with `animated={false}`. Active drags, numeric destinations, and closing panels retain their current motion.
+- Fullscreen is a consumer policy. Compare the resolved target with the consumer's fullscreen size; the largest snap need not be fullscreen.
 - Use `className` / `style` to style the painted surface and `innerClassName` / `innerStyle` for content layout. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
+- A background-thread state update followed by a CSS transition has its own clock. It does not synchronize with the Sheet spring. Keep live text and controls unscaled; animating actual width can reflow text and still incurs layout work. Do not expose or mutate the movement ref to implement companion styles.
 
 ## Surface Coverage Rules
 
@@ -45,6 +48,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Put background, corners, width, and companion width transitions on `className` / `style`. The private movement transform and the surface coverage height belong to Sheet. Previous vertical `style.top` positioning should migrate to `bottomInset`.
 - Put content padding, intrinsic fit sizing, and layout on `innerClassName` / `innerStyle`. Intrinsic fit measurement is independent of the animated viewport height.
 - A floating card does not require a nonzero inset: `detached` selects bounded coverage, while `bottomInset` selects placement.
+- See the `Attached`, `Floating`, `FloatingFit`, and `Transition` entries under `apps/examples/Sheet` for extended coverage, independent gap/mode changes, intrinsic sizing, and release-triggered fullscreen styling.
 
 ## Footer Rules
 
