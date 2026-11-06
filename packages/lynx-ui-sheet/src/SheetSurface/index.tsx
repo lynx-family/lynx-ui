@@ -146,7 +146,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
             justifyContent: 'flex-end',
           }
           : { top: '100%' }),
-        width: '100vw',
+        width: '100%',
         height: '150vh',
         overflow: 'visible',
         pointerEvents: 'none',

@@ -73,7 +73,11 @@ describe('Sheet surface composition', () => {
     const { surface, panel, gesture } = renderSurface({
       innerStyle: { width: '300px', left: '20px' },
     })
-    expect(surface.props.style.pointerEvents).toBe('none')
+    expect(surface.props.style).toMatchObject({
+      pointerEvents: 'none',
+      overflow: 'visible',
+      width: '100%',
+    })
     expect(surface.props['main-thread:gesture']).toBeUndefined()
     expect(panel.props.style).toMatchObject({
       width: '300px',

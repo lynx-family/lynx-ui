@@ -5,7 +5,6 @@
 import { useMainThreadRef } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
-import { noop } from '@lynx-js/lynx-ui-common'
 import { animate } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 
@@ -13,7 +12,7 @@ import type { SheetTransition } from '../types'
 
 interface SheetAnimation {
   value: number
-  complete: () => void
+  complete?: () => void
   config: SheetTransition
   interrupted: boolean
   startedAt: number
@@ -38,7 +37,7 @@ export function useSheetAnimation(
     options?: SheetTransition,
   ) {
     'main thread'
-    const complete = onArrival ?? noop
+    const complete = onArrival
     const config = options ?? defaultConfig
     stopAnimationMT()
     const animation: SheetAnimation = {
@@ -53,7 +52,7 @@ export function useSheetAnimation(
       'main thread'
       if (animationMTRef.current !== animation || animation.interrupted) return
       animationMTRef.current = null
-      complete()
+      complete?.()
     }
     // mini animate's then() also runs on stop. Only arrival completes a snap.
     animate(
