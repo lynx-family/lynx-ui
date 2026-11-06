@@ -230,7 +230,7 @@ export function useSnapTouches({
   }
 }
 
-function getRubberBandConfig(
+export function getRubberBandConfig(
   rubberBand: SnapTouchOptions['rubberBand'],
   viewportSize: number,
   sheetSize: number,
