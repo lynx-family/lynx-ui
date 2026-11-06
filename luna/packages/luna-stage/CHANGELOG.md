@@ -1,5 +1,12 @@
 # @lynx-js/luna-stage
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/luna-core@0.2.3
+
 ## 0.1.1
 
 ### Patch Changes

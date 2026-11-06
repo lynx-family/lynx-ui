@@ -1,5 +1,13 @@
 # @lynx-js/luna-studio
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/luna-core@0.2.3
+  - @lynx-js/luna-stage@0.1.2
+
 ## 0.1.2
 
 ### Patch Changes

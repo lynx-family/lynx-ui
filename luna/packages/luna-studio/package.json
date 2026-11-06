@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/luna-studio",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Reusable multi-stage choreography layer for the L.U.N.A project",
   "keywords": [
     "luna",
