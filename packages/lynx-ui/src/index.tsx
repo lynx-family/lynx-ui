@@ -195,6 +195,7 @@ export {
   PopoverBackdrop,
   PopoverTrigger,
   PopoverContent,
+  PopoverMotionContent,
   PopoverPositioner,
   PopoverRoot,
 } from '@lynx-js/lynx-ui-popover'
@@ -204,6 +205,10 @@ export type {
   PopoverAnchorProps,
   PopoverBackdropProps,
   PopoverContentProps,
+  PopoverMotionContentProps,
+  PopoverMotionValues,
+  PopoverMotionTarget,
+  PopoverMotionTransition,
   PopoverPositionerProps,
   PopoverRootProps,
   PopoverTriggerProps,

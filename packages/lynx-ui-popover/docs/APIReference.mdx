@@ -656,7 +656,7 @@ Helps position the Content and Arrow correctly.
     "summary": [
       {
         "kind": "text",
-        "text": "The position of the popover"
+        "text": "The position of the popover. Defaults to 'top'."
       }
     ],
     "summary_zh": [
@@ -666,7 +666,7 @@ Helps position the Content and Arrow correctly.
       }
     ],
     "defaultValue": "",
-    "isOption": false,
+    "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
@@ -1185,6 +1185,220 @@ UI variants applied by PopoverContent.
   }
 ]}/>
 
+### PopoverMotionContent {#api-popover-motion-content}
+
+Motion-driven content. It owns transform and opacity and stays mounted until
+all exit properties complete. Use one motion content per popover root.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "children"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子元素"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "closeMotion",
+    "type": "PopoverMotionTarget",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Closing target. Omitted properties retain their current values."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialMotion",
+    "type": "PopoverMotionValues",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Applied on each fresh mount. Omitted properties use visual identity."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "openMotion",
+    "type": "PopoverMotionTarget",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opening target. Omitted properties retain their current values."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "popoverContentProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "PopoverContent supports original view props to be directly spread in this prop."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "PopoverContent 支持将原始 view 属性直接展开到这个属性中。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+UI variants applied by PopoverMotionContent.
+
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-animating",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when `status.animating` is true.",
+      "description_zh": "当 status.animating 为 true 时生效，可用于 `.ui-animating { ... }`。"
+    }
+  },
+  {
+    "className": "ui-closed",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when `status.closed` is true.",
+      "description_zh": "当 status.closed 为 true 时生效，可用于 `.ui-closed { ... }`。"
+    }
+  },
+  {
+    "className": "ui-entering",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when `status.entering` is true.",
+      "description_zh": "当 status.entering 为 true 时生效，可用于 `.ui-entering { ... }`。"
+    }
+  },
+  {
+    "className": "ui-leaving",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when `status.leaving` is true.",
+      "description_zh": "当 status.leaving 为 true 时生效，可用于 `.ui-leaving { ... }`。"
+    }
+  },
+  {
+    "className": "ui-open",
+    "item": {
+      "type": "boolean",
+      "description": "Applied when `status.open` is true.",
+      "description_zh": "当 status.open 为 true 时生效，可用于 `.ui-open { ... }`。"
+    }
+  }
+]}/>
+
 ### PopoverArrow {#api-popover-arrow}
 
 The arrow of the Popover.
@@ -1510,7 +1724,7 @@ The view container of the Popover. Can be overlay or view. Controls the z-index 
     "summary": [
       {
         "kind": "text",
-        "text": "The position of the popover"
+        "text": "The position of the popover."
       }
     ],
     "summary_zh": [
@@ -1607,6 +1821,297 @@ The view container of the Popover. Can be overlay or view. Controls the z-index 
         "text": "如果设置为 true，则 className 会包含 'ui-entering', 'ui-leaving', 'ui-animating' 等动画相关类名"
       }
     ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### PopoverMotionValues {#api-supporting-types-popover-motion-values}
+
+Numeric visual properties supported by PopoverMotionContent.
+
+<UIApiTable source={[
+  {
+    "name": "opacity",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opacity."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "rotate",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Rotation in degrees."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scale",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Uniform scale."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scaleX",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal scale."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scaleY",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical scale."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "x",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal translation in logical pixels."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "y",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical translation in logical pixels."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### PopoverMotionTarget {#api-supporting-types-popover-motion-target}
+
+A visual target and its transition settings.
+
+<UIApiTable source={[
+  {
+    "name": "opacity",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opacity."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "rotate",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Rotation in degrees."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scale",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Uniform scale."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scaleX",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal scale."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scaleY",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical scale."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "PopoverMotionTransition",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Defaults to a spring with stiffness 300, damping 30 and mass 1."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "x",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal translation in logical pixels."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "y",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical translation in logical pixels."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### PopoverMotionTransition {#api-supporting-types-popover-motion-transition}
+
+<UIApiTable source={[
+  {
+    "name": "PopoverMotionTransition",
+    "type": "{damping?: number, mass?: number, stiffness?: number, type: unknown, velocity?: number} | {duration?: number, ease?: linear | easeIn | easeOut | easeInOut, type: unknown}",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Spring physics or tween timing. Durations are in seconds."
+      }
+    ],
+    "summary_zh": [],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": true,

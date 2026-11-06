@@ -1926,6 +1926,9 @@ importers:
       '@lynx-js/lynx-ui-presence':
         specifier: workspace:*
         version: link:../lynx-ui-presence
+      '@lynx-js/motion':
+        specifier: 'catalog:'
+        version: 0.0.8(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
