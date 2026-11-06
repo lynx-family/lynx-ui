@@ -354,7 +354,7 @@ factory and include those files in their lint project. Run
 
 - Use **Vitest** for unit testing.
 - Test files should be located alongside source files or in a `__tests__` directory (follow existing pattern).
-- Run tests: `pnpm test`. The root command uses `vitest.workspace.json` to collect package-level Vitest configs.
+- Run tests: `pnpm test`. The root command uses `vitest.workspace.json` to collect package-level Vitest configs. Vitest does not report TypeScript diagnostics; use `pnpm check:test-types` for TypeScript test-source checking. The required Test workflow runs `pnpm test:test-types` and `pnpm check:test-types`.
 - When adding tests for a package, add or update that package's `vitest.config.ts` so root `pnpm test` includes it.
 - Add a package-level `test` script only when that package has tests or intentionally delegates to an external test config.
 
