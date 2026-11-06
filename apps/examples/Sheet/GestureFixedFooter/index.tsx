@@ -15,7 +15,7 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { ActionButton, TriggerButton } from '../shared/index.js'
+import { ActionButton, SnapButton, TriggerButton } from '../shared/index.js'
 import './index.css'
 
 const paymentMethods = Array.from(
@@ -75,6 +75,16 @@ function App() {
               <text className='payment-heading-copy'>
                 Only this middle region scrolls.
               </text>
+            </view>
+            <view className='gesture-controls'>
+              <SnapButton
+                text='55%'
+                onClick={() => sheetRef.current?.collapse()}
+              />
+              <SnapButton
+                text='90%'
+                onClick={() => sheetRef.current?.expand()}
+              />
             </view>
             <PaymentMethodList footerHeight={footerHeight} />
             <SheetFooter

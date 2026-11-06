@@ -11,6 +11,7 @@ import type {
 } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
+import type { ViewProps } from '@lynx-js/types'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
 
@@ -101,6 +102,28 @@ export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
  */
 export interface SheetContentProps extends ComponentBasicProps {
   /**
+   * Keep a bottom sheet's painted surface bounded to the visible panel instead
+   * of extending its background beyond the screen edge. Switching this option
+   * preserves the content and native scroll node. Other sides ignore it.
+   * Style the surface with `className` and `style`; put content padding and
+   * layout on `innerClassName` and `innerStyle`.
+   * @defaultValue false
+   * @zh 将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。
+   * 切换时保留内容和原生滚动节点。其他方向忽略此属性。
+   */
+  detached?: boolean
+  /**
+   * External gap below a bottom sheet, in logical pixels. This is separate
+   * from content padding and safe-area padding. Numeric and percentage snap
+   * sizes exclude this gap; percentages still use `screenHeight`.
+   * Changes use `snapAnimation` and animate from the current rendered inset.
+   * Other sides ignore it. Negative and non-finite values resolve to zero.
+   * @defaultValue 0
+   * @zh 底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，
+   * 也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。
+   */
+  bottomInset?: number
+  /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。
    */
@@ -130,20 +153,33 @@ export interface SheetContentProps extends ComponentBasicProps {
   innerClassName?: string
   /**
    * Inline styles for the inner layer.
-   * Use this for content layout and sizing styles.
-   * Note: Visual styles (background, borderRadius, etc.) should be set via
-   * the main `style` prop which applies to the moving surface layer.
+   * Use this for content layout and sizing styles. Visual styles can also be
+   * applied here for a separately styled inner panel. The outer `style` prop
+   * styles the painted surface; Sheet owns its coverage height and movement.
+   * A narrower inner panel needs Lynx SDK 3.5 or newer for outside taps to
+   * pass through the transparent moving surface to the backdrop.
    * In horizontal drawer mode, set drawer width here so `'fit'` can resolve
    * from the measured drawer width.
    * @zh 内层容器的内联样式。
    * 用于设置内容区域的布局和尺寸样式。
-   * 注意：背景、圆角等视觉样式应通过主 `style` 属性设置，该属性会应用到移动的 surface 层。
+   * 内层面板与外层宽度不同时，也可以在此设置背景和圆角。主 `style` 属性作用于背景面板，Sheet 管理覆盖高度和位移。
    * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS
    * @Harmony
    */
   innerStyle?: ComponentBasicProps['style']
+  /**
+   * Native view properties for the inner panel. Sheet owns its ref, layout
+   * measurement, gesture handlers, class name, and style; use `innerClassName`
+   * and `innerStyle` for styling.
+   * @zh 内层面板的原生 view 属性。Sheet 管理引用、布局测量、手势、类名和样式；
+   * 请使用 `innerClassName` 和 `innerStyle` 设置样式。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  innerViewProps?: ViewProps
   /**
    * children
    * @zh 子元素
@@ -272,6 +308,23 @@ export interface SheetRootProps extends ComponentBasicProps {
    * `value` 表示换算后的像素值。
    */
   onSnapChange?: (index: number, value: number) => void
+  /**
+   * Called on the main thread after a snap target is selected and before the
+   * Sheet starts moving to it. `value` is the resolved size in pixels, and
+   * `animated` is false when the snap was requested without animation.
+   *
+   * This fires for drag releases and programmatic snaps, including snaps back
+   * to the same point and release after handing off to a nested scroll at the
+   * maximum point. It does not fire for opening or closing the Sheet.
+   * Resizing an idle 'fit' panel to changed intrinsic content also requests an
+   * immediate snap, with `animated` set to false.
+   * Use the `main thread` directive in the callback.
+   */
+  'main-thread:onSnapStart'?: (
+    index: number,
+    value: number,
+    animated: boolean,
+  ) => void
   /**
    * The height of the Sheet container (screen height).
    * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points

@@ -14,7 +14,7 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { TriggerButton } from '../shared/index.js'
+import { SnapButton, TriggerButton } from '../shared/index.js'
 import './index.css'
 
 function NestedList() {
@@ -33,7 +33,7 @@ function NestedList() {
         (_, index) => (
           <list-item item-key={`item-${index}`} key={index}>
             <view className='list-item'>
-              <text>{`List item ${index + 1}`}</text>
+              <text className='list-item-text'>{`List item ${index + 1}`}</text>
             </view>
           </list-item>
         ),
@@ -71,6 +71,16 @@ function App() {
               <text className='example-copy'>
                 Up: Sheet then List · Down: List then Sheet
               </text>
+            </view>
+            <view className='gesture-controls'>
+              <SnapButton
+                text='35%'
+                onClick={() => sheetRef.current?.collapse()}
+              />
+              <SnapButton
+                text='90%'
+                onClick={() => sheetRef.current?.expand()}
+              />
             </view>
             <NestedList />
           </SheetNestedScrollContent>

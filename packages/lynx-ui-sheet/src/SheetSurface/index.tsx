@@ -17,6 +17,9 @@ export interface SheetSurfaceProps extends SheetContentProps {
   snapPoints: Array<number | string>
   maxSnapSize: number
   footerContext: SheetFooterContextValue
+  setClipMTRef: (element: MainThread.Element) => void
+  setSurfaceMTRef: (element: MainThread.Element) => void
+  setViewportMTRef: (element: MainThread.Element) => void
   setSheetMTRef: (element: MainThread.Element) => void
   setContentMTRef: (element: MainThread.Element) => void
   handleSheetLayoutChangeMT: (event: {
@@ -32,9 +35,12 @@ export function SheetSurface(props: SheetSurfaceProps) {
     style,
     innerClassName,
     innerStyle,
+    innerViewProps,
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
+    detached: _detached,
+    bottomInset: _bottomInset,
     dragHandlers,
     sheetGesture,
     resolvedSide,
@@ -42,6 +48,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapPoints,
     maxSnapSize,
     footerContext,
+    setClipMTRef,
+    setSurfaceMTRef,
+    setViewportMTRef,
     setSheetMTRef,
     setContentMTRef,
     handleSheetLayoutChangeMT,
@@ -53,7 +62,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
 
   const content = (
     <view
-      {...nativeProps}
+      {...(isHorizontal ? nativeProps : {})}
+      {...innerViewProps}
       className={innerClassName}
       style={isHorizontal
         ? {
@@ -68,23 +78,22 @@ export function SheetSurface(props: SheetSurfaceProps) {
         : {
           width: '100%',
           position: 'relative',
+          pointerEvents: 'auto',
           ...innerStyle,
-          ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
+          ...(hasFitSnapPoint ? {} : { height: '100%' }),
         }}
       event-through={false}
       main-thread:ref={setContentMTRef}
-      main-thread:gesture={isHorizontal && !handleOnly
-        ? sheetGesture
-        : undefined}
-      main-thread:bindtouchstart={isHorizontal && !handleOnly
-        ? dragHandlers.handleTouchStartMT
-        : undefined}
-      main-thread:bindtouchmove={isHorizontal && !handleOnly
-        ? dragHandlers.handleTouchMoveMT
-        : undefined}
-      main-thread:bindtouchend={isHorizontal && !handleOnly
-        ? dragHandlers.handleTouchEndMT
-        : undefined}
+      main-thread:gesture={handleOnly ? undefined : sheetGesture}
+      main-thread:bindtouchstart={handleOnly
+        ? undefined
+        : dragHandlers.handleTouchStartMT}
+      main-thread:bindtouchmove={handleOnly
+        ? undefined
+        : dragHandlers.handleTouchMoveMT}
+      main-thread:bindtouchend={handleOnly
+        ? undefined
+        : dragHandlers.handleTouchEndMT}
       main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
     >
       <SheetDragContext.Provider
@@ -114,7 +123,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
           width: '150vw',
           height: '100vh',
           overflow: 'hidden',
-          transform: 'translate(0px, 0px)',
           ...style,
           transition: 'none',
         }}
@@ -129,40 +137,75 @@ export function SheetSurface(props: SheetSurfaceProps) {
 
   return (
     <view
-      className={className}
       style={{
         position: 'absolute',
         left: 0,
-        ...(isTop
-          ? {
-            bottom: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          }
-          : { top: '100%' }),
-        width: '100vw',
-        height: '150vh',
+        top: 0,
+        bottom: 0,
+        width: '100%',
         overflow: 'hidden',
-        transform: 'translate(0px, 0px)',
-        ...style,
-        transition: 'none',
+        pointerEvents: 'none',
       }}
-      main-thread:ref={setSheetMTRef}
+      main-thread:ref={setClipMTRef}
       implicit-animation='false'
-      event-through={false}
-      main-thread:gesture={handleOnly ? undefined : sheetGesture}
-      main-thread:bindtouchstart={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchStartMT}
-      main-thread:bindtouchmove={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchMoveMT}
-      main-thread:bindtouchend={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchEndMT}
+      event-through={true}
     >
-      {content}
+      <view
+        style={{
+          position: 'absolute',
+          left: 0,
+          ...(isTop
+            ? {
+              bottom: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+            }
+            : { top: '100%' }),
+          width: '100%',
+          height: '150vh',
+          overflow: 'visible',
+          pointerEvents: 'none',
+          transition: 'none',
+        }}
+        main-thread:ref={setSheetMTRef}
+        implicit-animation='false'
+        event-through={true}
+      >
+        <view
+          {...nativeProps}
+          className={className}
+          style={{
+            position: 'relative',
+            width: '100%',
+            ...(isTop
+              ? {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+              }
+              : {}),
+            ...style,
+            height: '150vh',
+            overflow: 'hidden',
+            pointerEvents: 'auto',
+          }}
+          main-thread:ref={setSurfaceMTRef}
+          enable-new-animator={true}
+          event-through={false}
+        >
+          <view
+            style={{
+              width: '100%',
+              ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
+            }}
+            main-thread:ref={setViewportMTRef}
+            event-through={true}
+          >
+            {content}
+          </view>
+        </view>
+      </view>
     </view>
   )
 }
