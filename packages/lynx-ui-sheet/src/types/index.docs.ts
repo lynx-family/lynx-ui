@@ -154,15 +154,15 @@ export interface SheetContentProps extends ComponentBasicProps {
   /**
    * Inline styles for the inner layer.
    * Use this for content layout and sizing styles. Visual styles can also be
-   * applied here when the inner panel has a different width from the moving
-   * surface. The outer `style` prop continues to style the moving surface.
+   * applied here for a separately styled inner panel. The outer `style` prop
+   * styles the painted surface; Sheet owns its coverage height and movement.
    * A narrower inner panel needs Lynx SDK 3.5 or newer for outside taps to
    * pass through the transparent moving surface to the backdrop.
    * In horizontal drawer mode, set drawer width here so `'fit'` can resolve
    * from the measured drawer width.
    * @zh 内层容器的内联样式。
    * 用于设置内容区域的布局和尺寸样式。
-   * 内层面板与外层宽度不同时，也可以在此设置背景和圆角。主 `style` 属性仍作用于移动的外层。
+   * 内层面板与外层宽度不同时，也可以在此设置背景和圆角。主 `style` 属性作用于背景面板，Sheet 管理覆盖高度和位移。
    * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS

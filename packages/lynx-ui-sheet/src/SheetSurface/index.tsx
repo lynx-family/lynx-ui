@@ -148,7 +148,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
           : { top: '100%' }),
         width: '100vw',
         height: '150vh',
-        overflow: 'hidden',
+        overflow: 'visible',
         pointerEvents: 'none',
         transition: 'none',
       }}
