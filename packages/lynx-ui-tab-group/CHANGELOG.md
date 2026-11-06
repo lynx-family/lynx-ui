@@ -1,5 +1,18 @@
 # @lynx-js/lynx-ui-tab-group
 
+## 3.141.1
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
+- Upgrade @lynx-js/motion to 0.0.8. ([#381](https://github.com/lynx-family/lynx-ui/pull/381))
+
+- Updated dependencies [[`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d)]:
+  - @lynx-js/lynx-ui-common@3.141.1
+  - @lynx-js/lynx-ui-scroll-view@3.141.1
+  - @lynx-js/lynx-ui-view-pager@3.141.1
+
 ## 3.140.2
 
 ### Patch Changes

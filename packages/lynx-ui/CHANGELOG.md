@@ -1,5 +1,38 @@
 # @lynx-js/lynx-ui
 
+## 3.141.1
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
+- Updated dependencies [[`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d), [`9730b3a`](https://github.com/lynx-family/lynx-ui/commit/9730b3a939313ced907c5c40274d123f4f20f925)]:
+  - @lynx-js/lynx-ui-button@3.141.1
+  - @lynx-js/lynx-ui-checkbox@3.141.1
+  - @lynx-js/lynx-ui-common@3.141.1
+  - @lynx-js/lynx-ui-deferred-component@3.141.1
+  - @lynx-js/lynx-ui-dialog@3.141.1
+  - @lynx-js/lynx-ui-draggable@3.141.1
+  - @lynx-js/lynx-ui-feed-list@3.141.1
+  - @lynx-js/lynx-ui-form@3.141.1
+  - @lynx-js/lynx-ui-input@3.141.1
+  - @lynx-js/lynx-ui-input-otp@3.141.1
+  - @lynx-js/lynx-ui-lazy-component@3.141.1
+  - @lynx-js/lynx-ui-list@3.141.1
+  - @lynx-js/lynx-ui-popover@3.141.1
+  - @lynx-js/lynx-ui-presence@3.141.1
+  - @lynx-js/lynx-ui-radio-group@3.141.1
+  - @lynx-js/lynx-ui-scroll-coordinator@3.141.1
+  - @lynx-js/lynx-ui-scroll-view@3.141.1
+  - @lynx-js/lynx-ui-sheet@3.141.1
+  - @lynx-js/lynx-ui-slider@3.141.1
+  - @lynx-js/lynx-ui-sortable@3.141.1
+  - @lynx-js/lynx-ui-swipe-action@3.141.1
+  - @lynx-js/lynx-ui-swiper@3.141.1
+  - @lynx-js/lynx-ui-switch@3.141.1
+  - @lynx-js/lynx-ui-tab-group@3.141.1
+  - @lynx-js/lynx-ui-view-pager@3.141.1
+
 ## 3.141.0
 
 ### Patch Changes
