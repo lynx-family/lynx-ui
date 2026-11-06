@@ -17,6 +17,7 @@ export function SheetHandle(props: SheetHandleProps) {
       main-thread:bindtouchstart={dragHandlers.handleTouchStartMT}
       main-thread:bindtouchmove={dragHandlers.handleTouchMoveMT}
       main-thread:bindtouchend={dragHandlers.handleTouchEndMT}
+      main-thread:gesture={dragHandlers.gesture}
     >
       {children}
     </view>
