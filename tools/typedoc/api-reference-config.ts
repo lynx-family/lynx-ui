@@ -57,6 +57,8 @@ export const apiReferenceConfig: Readonly<
       'SheetBackdrop',
       'SheetView',
       'SheetContent',
+      'SheetNestedScrollContent',
+      'SheetFooter',
       'SheetHandle',
     ],
     refs: ['SheetRootRef'],
@@ -65,6 +67,9 @@ export const apiReferenceConfig: Readonly<
       'SheetTransition',
       'SheetTransitionSpring',
       'SheetTransitionTween',
+      'SheetGestureConfig',
+      'SheetGestureRelations',
+      'SheetNestedScrollRenderProps',
     ],
   },
   'lynx-ui-dialog': {

@@ -22,6 +22,7 @@ export interface SheetControllerOptions {
 
 export interface SheetControllerAnimationDeps {
   yRef: MainThreadRef<MotionValue<number>>
+  stopAnimationMT: () => void
   animateToMT: (
     value: number,
     cb?: () => void,
@@ -55,6 +56,7 @@ export function useSheetController(
 
   const {
     yRef,
+    stopAnimationMT,
     animateToMT,
     getTargetForSnap,
     getResolvedSnapPointValues,
@@ -135,7 +137,7 @@ export function useSheetController(
       enter()
     }
 
-    yRef.current.stop()
+    stopAnimationMT()
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined
 
     const clampedIndex = Math.max(0, Math.min(index, values.length - 1))
@@ -195,7 +197,7 @@ export function useSheetController(
       return
     }
 
-    yRef.current.stop()
+    stopAnimationMT()
     leave()
     const target = 0
 
@@ -228,7 +230,7 @@ export function useSheetController(
       return
     }
 
-    yRef.current.stop()
+    stopAnimationMT()
     enter()
 
     // Notify background to sync React show state
@@ -262,7 +264,7 @@ export function useSheetController(
       resurrectMT()
     } else {
       // Just stop any running animation
-      yRef.current.stop()
+      stopAnimationMT()
     }
   }
 

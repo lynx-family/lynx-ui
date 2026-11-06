@@ -14,8 +14,16 @@ const config = defineConfig({
       ),
     },
   },
+  define: {
+    __MAIN_THREAD__: 'true',
+  },
   test: {
     name: 'lynx-ui-sheet',
+    server: {
+      deps: {
+        inline: ['@lynx-js/motion'],
+      },
+    },
   },
 })
 

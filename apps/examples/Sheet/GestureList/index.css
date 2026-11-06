@@ -1,0 +1,44 @@
+@import "../shared/base.css";
+
+.gesture-sheet-inner {
+  height: 100%;
+  display: linear;
+  linear-orientation: vertical;
+  background: var(--canvas);
+}
+
+.nested-list {
+  width: 100%;
+  height: calc(100% - 88px);
+}
+
+.list-item {
+  width: 100%;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--rule);
+}
+
+.example-description {
+  width: 100%;
+  height: 56px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid var(--rule);
+}
+
+.example-label {
+  color: var(--content);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.example-copy {
+  color: var(--content-muted);
+  font-size: 12px;
+}
