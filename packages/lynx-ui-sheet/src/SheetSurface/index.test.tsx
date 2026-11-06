@@ -49,16 +49,18 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       unregisterFooter: vi.fn(),
     },
     setSheetMTRef: vi.fn(),
+    setClipMTRef: vi.fn(),
     setSurfaceMTRef: vi.fn(),
     setViewportMTRef: vi.fn(),
     setContentMTRef: measure,
     handleSheetLayoutChangeMT: vi.fn(),
     ...overrides,
   }) as unknown as { props: ViewProps }
-  const painted = surface.props.children as { props: ViewProps }
+  const movement = surface.props.children as { props: ViewProps }
+  const painted = movement.props.children as { props: ViewProps }
   const viewport = painted.props.children as { props: ViewProps }
   const panel = viewport.props.children as { props: ViewProps }
-  return { surface, painted, viewport, panel, measure, gesture }
+  return { surface, movement, painted, viewport, panel, measure, gesture }
 }
 
 describe('Sheet surface composition', () => {
@@ -70,14 +72,16 @@ describe('Sheet surface composition', () => {
   })
 
   it('attaches dragging to the styled panel and lets the outer layer pass taps', () => {
-    const { surface, panel, gesture } = renderSurface({
+    const { surface, movement, panel, gesture } = renderSurface({
       innerStyle: { width: '300px', left: '20px' },
     })
     expect(surface.props.style).toMatchObject({
       pointerEvents: 'none',
-      overflow: 'visible',
+      overflow: 'hidden',
       width: '100%',
     })
+    expect(movement.props.style.overflow).toBe('visible')
+    expect(movement.props.style.overflow).toBe('visible')
     expect(surface.props['main-thread:gesture']).toBeUndefined()
     expect(panel.props.style).toMatchObject({
       width: '300px',

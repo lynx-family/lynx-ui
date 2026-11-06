@@ -62,8 +62,12 @@ function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
   const position = { current: createMotionValue(400) }
   const presence = { current: PresenceState.Entered }
   const animateChanges = { current: true }
+  const clipStyle: Record<string, string> = {}
   const surfaceStyle: Record<string, string> = {}
   const viewportStyle: Record<string, string> = {}
+  const clip = {
+    setStyleProperties: (style: object) => Object.assign(clipStyle, style),
+  } as unknown as MainThread.Element
   const surface = {
     setStyleProperties: (style: object) => Object.assign(surfaceStyle, style),
   } as unknown as MainThread.Element
@@ -89,6 +93,7 @@ function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
       initialSnap: 0,
       snapAnimation: { type: 'tween', duration: 200 },
     })
+    layout.setClipMTRef(clip)
     layout.setSurfaceMTRef(surface)
     layout.setViewportMTRef(viewport)
     hooks.effects[0]()
@@ -101,6 +106,7 @@ function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
     position,
     presence,
     animateChanges,
+    clipStyle,
     surfaceStyle,
     viewportStyle,
   }
@@ -128,6 +134,12 @@ describe('Sheet surface geometry', () => {
     expect(viewportStyle.height).toBe('800px')
     position.current.set(850)
     expect(surfaceStyle.height).toBe('1500px')
+  })
+
+  it('clips attached background coverage before the external bottom gap', () => {
+    const { clipStyle, surfaceStyle } = setup(false, 8)
+    expect(clipStyle.bottom).toBe('8px')
+    expect(surfaceStyle).toEqual({ top: '0px', height: '1500px' })
   })
 
   it('keeps the external gap at a smaller snap and through rubber banding', () => {

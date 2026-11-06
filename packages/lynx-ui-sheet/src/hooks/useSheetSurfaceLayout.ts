@@ -48,6 +48,7 @@ export function useSheetSurfaceLayout({
     ? Math.max(0, bottomInset)
     : 0
   const coverage = isBottom && detached ? 0 : 1
+  const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const viewportMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const panelHeightMTRef = useMainThreadRef(0)
@@ -83,8 +84,11 @@ export function useSheetSurfaceLayout({
     const visibleFraction = entering || leaving
       ? (height > 0 ? Math.min(1, value / height) : 0)
       : 1
+    const effectiveInset = isBottom ? appearance.inset * visibleFraction : 0
+    const clipInset = effectiveInset * appearance.coverage
+    clipMTRef.current?.setStyleProperties({ bottom: `${clipInset}px` })
     surfaceMTRef.current?.setStyleProperties({
-      top: isBottom ? `${-appearance.inset * visibleFraction}px` : '0px',
+      top: `${-(effectiveInset - clipInset)}px`,
       height: `${Math.max(height, screenHeight * 1.5 * appearance.coverage)}px`,
     })
     if (!hasFitSnapPoint) {
@@ -157,5 +161,11 @@ export function useSheetSurfaceLayout({
     updateSurfaceMT()
   }
 
-  return { setSurfaceMTRef, setViewportMTRef }
+  function setClipMTRef(element: MainThread.Element) {
+    'main thread'
+    clipMTRef.current = element
+    updateSurfaceMT()
+  }
+
+  return { setClipMTRef, setSurfaceMTRef, setViewportMTRef }
 }

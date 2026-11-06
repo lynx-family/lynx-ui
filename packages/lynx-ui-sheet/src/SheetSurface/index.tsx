@@ -17,6 +17,7 @@ export interface SheetSurfaceProps extends SheetContentProps {
   snapPoints: Array<number | string>
   maxSnapSize: number
   footerContext: SheetFooterContextValue
+  setClipMTRef: (element: MainThread.Element) => void
   setSurfaceMTRef: (element: MainThread.Element) => void
   setViewportMTRef: (element: MainThread.Element) => void
   setSheetMTRef: (element: MainThread.Element) => void
@@ -47,6 +48,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapPoints,
     maxSnapSize,
     footerContext,
+    setClipMTRef,
     setSurfaceMTRef,
     setViewportMTRef,
     setSheetMTRef,
@@ -138,55 +140,70 @@ export function SheetSurface(props: SheetSurfaceProps) {
       style={{
         position: 'absolute',
         left: 0,
-        ...(isTop
-          ? {
-            bottom: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          }
-          : { top: '100%' }),
+        top: 0,
+        bottom: 0,
         width: '100%',
-        height: '150vh',
-        overflow: 'visible',
+        overflow: 'hidden',
         pointerEvents: 'none',
-        transition: 'none',
       }}
-      main-thread:ref={setSheetMTRef}
+      main-thread:ref={setClipMTRef}
       implicit-animation='false'
       event-through={true}
     >
       <view
-        {...nativeProps}
-        className={className}
         style={{
-          position: 'relative',
-          width: '100%',
+          position: 'absolute',
+          left: 0,
           ...(isTop
             ? {
+              bottom: '100%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-end',
             }
-            : {}),
-          ...style,
+            : { top: '100%' }),
+          width: '100%',
           height: '150vh',
-          overflow: 'hidden',
-          pointerEvents: 'auto',
+          overflow: 'visible',
+          pointerEvents: 'none',
+          transition: 'none',
         }}
-        main-thread:ref={setSurfaceMTRef}
-        enable-new-animator={true}
-        event-through={false}
+        main-thread:ref={setSheetMTRef}
+        implicit-animation='false'
+        event-through={true}
       >
         <view
+          {...nativeProps}
+          className={className}
           style={{
+            position: 'relative',
             width: '100%',
-            ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
+            ...(isTop
+              ? {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+              }
+              : {}),
+            ...style,
+            height: '150vh',
+            overflow: 'hidden',
+            pointerEvents: 'auto',
           }}
-          main-thread:ref={setViewportMTRef}
-          event-through={true}
+          main-thread:ref={setSurfaceMTRef}
+          enable-new-animator={true}
+          event-through={false}
         >
-          {content}
+          <view
+            style={{
+              width: '100%',
+              ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
+            }}
+            main-thread:ref={setViewportMTRef}
+            event-through={true}
+          >
+            {content}
+          </view>
         </view>
       </view>
     </view>
