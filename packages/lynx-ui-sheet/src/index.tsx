@@ -23,6 +23,7 @@ export type {
   SheetHandleProps,
   SheetFooterProps,
   SheetTransition,
+  SheetTransitionEvent,
   SheetRootRef,
   SheetSide,
 } from './types'

@@ -51,6 +51,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     onDragStartMT: snap.onDragStartMT,
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
+    onReleaseAtMaxMT: snap.releaseAtMaxSnapMT,
   })
   const scrollGesture = useSheetNativeScrollGesture({
     sheetGesture,

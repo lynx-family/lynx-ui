@@ -6,8 +6,8 @@ import { runOnBackground, useMainThreadRef } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
-import type { MotionValue } from '@lynx-js/motion/mini'
 
+import type { SheetTransitionTarget } from './useSheetAnimation'
 import { useSheetPresence } from './useSheetPresence'
 import type { SheetTransition } from '../types'
 
@@ -21,13 +21,14 @@ export interface SheetControllerOptions {
 }
 
 export interface SheetControllerAnimationDeps {
-  yRef: MainThreadRef<MotionValue<number>>
   stopAnimationMT: () => void
   animateToMT: (
     value: number,
     cb?: () => void,
     config?: SheetTransition,
+    transition?: SheetTransitionTarget,
   ) => void
+  jumpToMT: (value: number, transition: SheetTransitionTarget) => void
   getTargetForSnap: (index: number) => number
   getResolvedSnapPointValues: () => number[]
   onSnapChangeMT: (index: number, value: number) => void
@@ -55,9 +56,9 @@ export function useSheetController(
   } = options
 
   const {
-    yRef,
     stopAnimationMT,
     animateToMT,
+    jumpToMT,
     getTargetForSnap,
     getResolvedSnapPointValues,
     onSnapChangeMT,
@@ -87,6 +88,7 @@ export function useSheetController(
     {
       index: number
       isEntry: boolean
+      animate?: boolean
       animationConfig?: SheetTransition
     } | null
   >(null)
@@ -127,10 +129,15 @@ export function useSheetController(
       pendingSnapMTRef.current = {
         index,
         isEntry: opts?.isEntry ?? false,
+        animate: opts?.animate,
         animationConfig: opts?.animationConfig,
       }
       return
     }
+
+    const isEntry = opts?.isEntry === true
+      || presenceStateMTRef.current === PresenceState.Left
+      || presenceStateMTRef.current === PresenceState.Entering
 
     // If called when Left, transition to Entering first
     if (presenceStateMTRef.current === PresenceState.Left) {
@@ -141,9 +148,13 @@ export function useSheetController(
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined
 
     const clampedIndex = Math.max(0, Math.min(index, values.length - 1))
+    const transition: SheetTransitionTarget = {
+      kind: isEntry ? 'open' : 'snap',
+      target: { index: clampedIndex, value: values[clampedIndex] },
+    }
 
     if (opts?.animate === false) {
-      yRef.current.jump(target)
+      jumpToMT(target, transition)
       completeSnapTransition(index, values[clampedIndex])
     } else {
       animateToMT(
@@ -153,6 +164,7 @@ export function useSheetController(
           completeSnapTransition(index, values[clampedIndex])
         },
         opts?.animationConfig ?? defaultConfig,
+        transition,
       )
     }
   }
@@ -202,7 +214,7 @@ export function useSheetController(
     const target = 0
 
     if (opts?.animate === false) {
-      yRef.current.jump(target)
+      jumpToMT(target, { kind: 'close', target: null })
       left()
     } else {
       const config = opts?.animationConfig ?? exitAnimation
@@ -216,6 +228,7 @@ export function useSheetController(
           }
         },
         config,
+        { kind: 'close', target: null },
       )
     }
   }
@@ -250,6 +263,7 @@ export function useSheetController(
     pendingSnapMTRef.current = null
     snapToMT(pending.index, {
       isEntry: pending.isEntry,
+      animate: pending.animate,
       animationConfig: pending.animationConfig,
     })
   }
@@ -302,6 +316,7 @@ export function useSheetController(
         }
       },
       opts?.animationConfig ?? exitAnimation,
+      { kind: 'close', target: null },
     )
   }
 

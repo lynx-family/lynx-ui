@@ -131,6 +131,7 @@ function makePan(offsets = [450, 900], overrides = {}) {
     onDragStartMT: vi.fn(),
     onDragEndSnapMT: vi.fn(),
     onDragEndCloseMT: vi.fn(),
+    onReleaseAtMaxMT: vi.fn(),
     ...overrides,
   }
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
@@ -197,7 +198,30 @@ describe('native scroll coordination', () => {
     gesture.callbacks.end(event(-20), manager)
     expect(options.onSnapChangeMT).toHaveBeenCalledWith(1, 900)
     expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    expect(options.onReleaseAtMaxMT).toHaveBeenCalledWith(1)
   })
+  it('does not emit a max-snap release when the content alone moved', () => {
+    const { gesture, motion, options } = makePan()
+    const manager = makeManager()
+    motion.set(900)
+    options.activeScrollMTRef.current.atStart = false
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(450), manager)
+    gesture.callbacks.end(event(450), manager)
+    expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+  })
+
+  it('does not emit a max-snap release after touch cancellation', () => {
+    const { gesture, options } = makePan()
+    const manager = makeManager()
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(0), manager)
+    gesture.callbacks.update(event(-20), manager)
+    gesture.callbacks.cancel(event(-20), manager)
+    gesture.callbacks.end(event(-20), manager)
+    expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+  })
+
   it('does not repeat a native consumption command while the owner stays Sheet', () => {
     const { gesture, scrollManager } = makePan()
     const manager = makeManager()

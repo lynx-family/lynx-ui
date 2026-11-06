@@ -1,0 +1,31 @@
+@import "@lynx-js/luna-styles/index.css";
+@import "../shared/base.css";
+
+.transition-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas);
+}
+
+.transition-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.transition-scroll {
+  width: 100%;
+  flex: 1;
+}
+
+.transition-item {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--content);
+  border-bottom: 1px solid var(--rule);
+}

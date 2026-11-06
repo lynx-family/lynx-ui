@@ -392,6 +392,95 @@ The root component of the Sheet, containing all of its child components.
     "docTypeFallback": null
   },
   {
+    "name": "main-thread:onTransition",
+    "type": "(event: SheetTransitionEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Observe Sheet transitions on the main thread. Pass a function with the\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main thread`"
+      },
+      {
+        "kind": "text",
+        "text": " directive. A snap starts after its target is selected, before\nthe Sheet moves towards it. Frame progress follows the Sheet's animation.\nA cancelled transition does not emit an end event. A resumed transition\nstarts again from its current position.\n\n"
+      },
+      {
+        "kind": "code",
+        "text": "`kind`"
+      },
+      {
+        "kind": "text",
+        "text": " identifies opening, snapping, and closing. "
+      },
+      {
+        "kind": "code",
+        "text": "`target`"
+      },
+      {
+        "kind": "text",
+        "text": " contains the\nsnap index and resolved pixel value, or null for a close. "
+      },
+      {
+        "kind": "code",
+        "text": "`phase`"
+      },
+      {
+        "kind": "text",
+        "text": " is\n"
+      },
+      {
+        "kind": "code",
+        "text": "`start`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`frame`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`end`"
+      },
+      {
+        "kind": "text",
+        "text": ", or "
+      },
+      {
+        "kind": "code",
+        "text": "`cancel`"
+      },
+      {
+        "kind": "text",
+        "text": ". Progress starts at zero and ends at\none; spring frames can overshoot. "
+      },
+      {
+        "kind": "code",
+        "text": "`animated`"
+      },
+      {
+        "kind": "text",
+        "text": " is false for immediate changes.\n\nReaching the maximum snap while handing a gesture to nested scrolling\nstarts a snap transition on release, even if the Sheet is already there.\nProgress for that zero-distance transition uses the snap animation."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "onClose",
     "type": "() => void",
     "summary": [
