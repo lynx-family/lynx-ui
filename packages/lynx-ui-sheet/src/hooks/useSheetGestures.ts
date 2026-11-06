@@ -67,6 +67,7 @@ interface UseSheetPanGestureOptions {
   onDragEndCloseMT: (
     opts?: { animationConfig?: SnappingOptions['animationConfig'] },
   ) => void
+  onReleaseAtMaxMT?: (index: number) => void
 }
 
 interface UseSheetNativeScrollGestureOptions {
@@ -117,12 +118,14 @@ export function useSheetPanGesture({
   onDragStartMT,
   onDragEndSnapMT,
   onDragEndCloseMT,
+  onReleaseAtMaxMT,
 }: UseSheetPanGestureOptions): PanGesture {
   const pan = useGesture(PanGesture)
   const resolvedSide = resolveSheetSide(side, enableRTL)
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const lastCoordinateMTRef = useMainThreadRef(0)
   const draggingMTRef = useMainThreadRef(false)
+  const handedOffAtMaxMTRef = useMainThreadRef(false)
   const interactionStartedMTRef = useMainThreadRef(false)
   const originMTRef = useMainThreadRef({ pageX: 0, pageY: 0 })
   const dragEnabled = !dragDisabled && (gestureConfig?.enabled ?? true)
@@ -149,6 +152,7 @@ export function useSheetPanGesture({
         event.params,
       )
       draggingMTRef.current = false
+      handedOffAtMaxMTRef.current = false
       interactionStartedMTRef.current = false
     })
     .onUpdate((event: PanGestureChangeEvent, manager: StateManager) => {
@@ -200,6 +204,7 @@ export function useSheetPanGesture({
           // Report the reached snap without starting a release animation.
           if (draggingMTRef.current && current === maximumPosition) {
             onSnapChangeMT(offsets.indexOf(maximumPosition), maximumPosition)
+            handedOffAtMaxMTRef.current = true
           }
           draggingMTRef.current = false
           if (scroll.consuming !== true) {
@@ -218,6 +223,7 @@ export function useSheetPanGesture({
 
       if (!draggingMTRef.current) {
         draggingMTRef.current = true
+        handedOffAtMaxMTRef.current = false
         onDragStartMT()
       }
       const valid = offsets.filter(offset => offset !== -1)
@@ -246,7 +252,15 @@ export function useSheetPanGesture({
     .onEnd(() => {
       'main thread'
       finishInteractionMT()
-      if (!draggingMTRef.current) return
+      if (!draggingMTRef.current) {
+        if (handedOffAtMaxMTRef.current) {
+          const offsets = getResolvedSnapOffsets()
+          const maximumPosition = resolveMaximumPosition(offsets)
+          onReleaseAtMaxMT?.(offsets.indexOf(maximumPosition))
+          handedOffAtMaxMTRef.current = false
+        }
+        return
+      }
       draggingMTRef.current = false
       const offsets = getResolvedSnapOffsets()
       const valid = offsets.filter(offset => offset !== -1)
@@ -275,7 +289,11 @@ export function useSheetPanGesture({
       onDragEndSnapMT(nearest.index)
     })
     .onTouchesUp(finishInteractionMT)
-    .onTouchesCancel(finishInteractionMT)
+    .onTouchesCancel(() => {
+      'main thread'
+      handedOffAtMaxMTRef.current = false
+      finishInteractionMT()
+    })
 
   reconcileSheetGestureRelations(pan, gestureRelations)
   return pan

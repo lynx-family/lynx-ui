@@ -29,6 +29,13 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - To isolate a same-axis native scrolling region, bind its own `NativeGesture`, call `manager.consumeGesture(true)` in its `onBegin` callback, and include it in `SheetNestedScrollContent.gestureRelations.waitFor`. An unbound region still participates in the ancestor pan.
 - Use `gestureConfig` and `gestureRelations` on `SheetNestedScrollContent` only for recognition thresholds and external gesture relationships. Do not replace the Sheet pan or add per-scroll ownership policies.
 
+## Transition Rules
+
+- Use `main-thread:onTransition` on `SheetRoot` to coordinate consumer-owned visual styles with Sheet transitions. Pass a worklet and update a separate wrapper instead of the Sheet's transform.
+- A `snap` start reports the resolved target after release or an imperative command. Frame progress follows the Sheet motion, can overshoot for springs, and restarts from zero after interruption.
+- Initialize opening styles from the initial snap. Preserve the current companion style during `close`, and handle `cancel` without reporting arrival.
+- If a drag hands off to scrolling at the maximum snap, a snap transition is emitted after release even when the Sheet has no remaining distance to travel.
+
 ## Footer Rules
 
 - `SheetFooter` supports `side="bottom"`; use ordinary layout content for other sides.

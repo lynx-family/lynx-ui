@@ -305,6 +305,7 @@ export type {
   SheetHandleProps,
   SheetFooterProps,
   SheetTransition,
+  SheetTransitionEvent,
 } from '@lynx-js/lynx-ui-sheet'
 
 // slider

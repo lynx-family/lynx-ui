@@ -81,6 +81,15 @@ describe('Sheet footer fit sizing', () => {
     vi.unstubAllGlobals()
   })
 
+  it('preserves an immediate open while waiting for fit measurement', () => {
+    const { snap, state, entered } = setup()
+    snap.show({ animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    expect(snap.yRef.current.get()).toBe(300)
+    expect(state.current).toBe(PresenceState.Entered)
+    expect(entered).toHaveBeenCalledTimes(1)
+  })
+
   it.each([true, false])(
     'resolves measurements with footer first: %s',
     footerFirst => {
