@@ -19,7 +19,7 @@ import type { MainThread } from '@lynx-js/types'
 
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
-import type { SheetSide, SheetTransition } from '../types'
+import type { SheetSide, SheetTransition, SheetTransitionEvent } from '../types'
 import {
   clamp,
   findNearestSnap,
@@ -49,6 +49,7 @@ export interface SnapOptions {
   screenWidth?: number
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
+  onTransitionMT?: (event: SheetTransitionEvent) => void
   onDismiss?: () => void
   enterAnimation?: SheetTransition
   exitAnimation?: SheetTransition
@@ -70,6 +71,7 @@ export function useSnap({
   screenWidth: userScreenWidth,
   rubberBand,
   onSnapChange = noop,
+  onTransitionMT,
   onDismiss,
   enterAnimation = {
     type: 'spring',
@@ -113,10 +115,11 @@ export function useSnap({
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
   const {
     animateToMT,
+    jumpToMT,
     stopAnimationMT,
     interruptAnimationMT,
     resumeAnimationMT,
-  } = useSheetAnimation(yRef, snapAnimation)
+  } = useSheetAnimation(yRef, snapAnimation, onTransitionMT)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const screenHeight: number = userScreenHeight
@@ -280,8 +283,8 @@ export function useSnap({
       presenceStateMTRef: presenceStateMTRefProp,
     },
     {
-      yRef,
       animateToMT,
+      jumpToMT,
       stopAnimationMT,
       getTargetForSnap,
       getResolvedSnapPointValues,
@@ -315,6 +318,14 @@ export function useSnap({
     if (idx !== -1) {
       controller.snapToMT(idx, opts)
     }
+  }
+
+  function releaseAtMaxSnapMT(index: number) {
+    'main thread'
+    if (!onTransitionMT) return
+    // The content owns the gesture, so the Sheet has no release velocity.
+    yRef.current.updateVelocity(0)
+    controller.snapToMT(index)
   }
 
   // Background wrappers
@@ -492,5 +503,6 @@ export function useSnap({
     onDragStartMT: controller.onDragStartMT,
     onDragEndSnapMT: controller.onDragEndSnapMT,
     onDragEndCloseMT: controller.onDragEndCloseMT,
+    releaseAtMaxSnapMT,
   }
 }

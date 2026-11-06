@@ -67,6 +67,7 @@ export const apiReferenceConfig: Readonly<
       'SheetTransition',
       'SheetTransitionSpring',
       'SheetTransitionTween',
+      'SheetTransitionEvent',
       'SheetGestureConfig',
       'SheetGestureRelations',
       'SheetNestedScrollRenderProps',

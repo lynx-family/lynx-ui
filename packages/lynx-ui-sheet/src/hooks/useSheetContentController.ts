@@ -11,6 +11,19 @@ import type { SheetContentProps, SheetTransition } from '../types'
 import { getDefaultRubberBand } from '../utils'
 import { useSnap } from './useSnap'
 
+function toSnappingOptions(opts?: {
+  animate?: boolean
+  snapAnimation?: SheetTransition
+  isEntry?: boolean
+}) {
+  if (!opts) return undefined
+  return {
+    animate: opts.animate,
+    animationConfig: opts.snapAnimation,
+    isEntry: opts.isEntry,
+  }
+}
+
 const DEFAULT_SNAP_POINTS: Array<number | string> = ['fit']
 const DEFAULT_TRANSITION: SheetTransition = {
   type: 'spring',
@@ -37,6 +50,7 @@ export function useSheetContentController(props: SheetContentProps) {
     screenHeight,
     screenWidth,
     onSnapChange,
+    onTransitionMT,
     onShowChange,
     presenceStateMTRef,
     onUnmount,
@@ -67,6 +81,7 @@ export function useSheetContentController(props: SheetContentProps) {
     screenHeight,
     screenWidth,
     onSnapChange,
+    onTransitionMT,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,
     onEntered: handleEntered,
@@ -94,11 +109,11 @@ export function useSheetContentController(props: SheetContentProps) {
 
   useEffect(() => {
     registerMethods({
-      snapTo: snap.snapTo,
-      expand: snap.expand,
-      collapse: snap.collapse,
-      close: snap.close,
-      show: snap.show,
+      snapTo: (index, opts) => snap.snapTo(index, toSnappingOptions(opts)),
+      expand: opts => snap.expand(toSnappingOptions(opts)),
+      collapse: opts => snap.collapse(toSnappingOptions(opts)),
+      close: opts => snap.close(toSnappingOptions(opts)),
+      show: opts => snap.show(toSnappingOptions(opts)),
     })
     return () => registerMethods(null)
   }, [

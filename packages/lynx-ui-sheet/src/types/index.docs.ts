@@ -95,6 +95,20 @@ export interface SheetTransitionTween {
 
 export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
 
+/** A main-thread notification for a Sheet transition. */
+export interface SheetTransitionEvent {
+  /** Opening, snapping between points, or closing. */
+  kind: 'open' | 'snap' | 'close'
+  /** Start, animation frame, successful arrival, or interruption. */
+  phase: 'start' | 'frame' | 'end' | 'cancel'
+  /** Resolved target in pixels, or null when closing. */
+  target: { index: number, value: number } | null
+  /** Progress from the transition's starting position. Springs may overshoot. */
+  progress: number
+  /** Whether the transition animates instead of applying its target immediately. */
+  animated: boolean
+}
+
 /**
  * The main content of the Sheet.
  * @zh Sheet 的主要内容。
@@ -272,6 +286,23 @@ export interface SheetRootProps extends ComponentBasicProps {
    * `value` 表示换算后的像素值。
    */
   onSnapChange?: (index: number, value: number) => void
+  /**
+   * Observe Sheet transitions on the main thread. Pass a function with the
+   * `main thread` directive. A snap starts after its target is selected, before
+   * the Sheet moves towards it. Frame progress follows the Sheet's animation.
+   * A cancelled transition does not emit an end event. A resumed transition
+   * starts again from its current position.
+   *
+   * `kind` identifies opening, snapping, and closing. `target` contains the
+   * snap index and resolved pixel value, or null for a close. `phase` is
+   * `start`, `frame`, `end`, or `cancel`. Progress starts at zero and ends at
+   * one; spring frames can overshoot. `animated` is false for immediate changes.
+   *
+   * Reaching the maximum snap while handing a gesture to nested scrolling
+   * starts a snap transition on release, even if the Sheet is already there.
+   * Progress for that zero-distance transition uses the snap animation.
+   */
+  'main-thread:onTransition'?: (event: SheetTransitionEvent) => void
   /**
    * The height of the Sheet container (screen height).
    * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points

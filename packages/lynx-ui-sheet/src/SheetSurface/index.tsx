@@ -114,7 +114,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
           width: '150vw',
           height: '100vh',
           overflow: 'hidden',
-          transform: 'translate(0px, 0px)',
           ...style,
           transition: 'none',
         }}
@@ -144,7 +143,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
         width: '100vw',
         height: '150vh',
         overflow: 'hidden',
-        transform: 'translate(0px, 0px)',
         ...style,
         transition: 'none',
       }}
