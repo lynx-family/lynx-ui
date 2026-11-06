@@ -3,4 +3,4 @@
 "@lynx-example/lynx-ui-sheet": patch
 ---
 
-Expose main-thread Sheet transition progress for coordinated companion styles and preserve Sheet positioning across re-renders.
+Expose a main-thread snap-start callback and support independently styled inner panels and native view properties.

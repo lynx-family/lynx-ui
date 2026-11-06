@@ -11,6 +11,7 @@ import type {
 } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
+import type { ViewProps } from '@lynx-js/types'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
 
@@ -95,20 +96,6 @@ export interface SheetTransitionTween {
 
 export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
 
-/** A main-thread notification for a Sheet transition. */
-export interface SheetTransitionEvent {
-  /** Opening, snapping between points, or closing. */
-  kind: 'open' | 'snap' | 'close'
-  /** Start, animation frame, successful arrival, or interruption. */
-  phase: 'start' | 'frame' | 'end' | 'cancel'
-  /** Resolved target in pixels, or null when closing. */
-  target: { index: number, value: number } | null
-  /** Progress from the transition's starting position. Springs may overshoot. */
-  progress: number
-  /** Whether the transition animates instead of applying its target immediately. */
-  animated: boolean
-}
-
 /**
  * The main content of the Sheet.
  * @zh Sheet 的主要内容。
@@ -144,20 +131,33 @@ export interface SheetContentProps extends ComponentBasicProps {
   innerClassName?: string
   /**
    * Inline styles for the inner layer.
-   * Use this for content layout and sizing styles.
-   * Note: Visual styles (background, borderRadius, etc.) should be set via
-   * the main `style` prop which applies to the moving surface layer.
+   * Use this for content layout and sizing styles. Visual styles can also be
+   * applied here when the inner panel has a different width from the moving
+   * surface. The outer `style` prop continues to style the moving surface.
+   * A narrower inner panel needs Lynx SDK 3.5 or newer for outside taps to
+   * pass through the transparent moving surface to the backdrop.
    * In horizontal drawer mode, set drawer width here so `'fit'` can resolve
    * from the measured drawer width.
    * @zh 内层容器的内联样式。
    * 用于设置内容区域的布局和尺寸样式。
-   * 注意：背景、圆角等视觉样式应通过主 `style` 属性设置，该属性会应用到移动的 surface 层。
+   * 内层面板与外层宽度不同时，也可以在此设置背景和圆角。主 `style` 属性仍作用于移动的外层。
    * 在水平抽屉模式下，应在这里设置抽屉宽度，这样 `'fit'` 才能根据测量得到的抽屉宽度完成解析。
    * @Android
    * @iOS
    * @Harmony
    */
   innerStyle?: ComponentBasicProps['style']
+  /**
+   * Native view properties for the inner panel. Sheet owns its ref, layout
+   * measurement, gesture handlers, class name, and style; use `innerClassName`
+   * and `innerStyle` for styling.
+   * @zh 内层面板的原生 view 属性。Sheet 管理引用、布局测量、手势、类名和样式；
+   * 请使用 `innerClassName` 和 `innerStyle` 设置样式。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  innerViewProps?: ViewProps
   /**
    * children
    * @zh 子元素
@@ -287,22 +287,20 @@ export interface SheetRootProps extends ComponentBasicProps {
    */
   onSnapChange?: (index: number, value: number) => void
   /**
-   * Observe Sheet transitions on the main thread. Pass a function with the
-   * `main thread` directive. A snap starts after its target is selected, before
-   * the Sheet moves towards it. Frame progress follows the Sheet's animation.
-   * A cancelled transition does not emit an end event. A resumed transition
-   * starts again from its current position.
+   * Called on the main thread after a snap target is selected and before the
+   * Sheet starts moving to it. `value` is the resolved size in pixels, and
+   * `animated` is false when the snap was requested without animation.
    *
-   * `kind` identifies opening, snapping, and closing. `target` contains the
-   * snap index and resolved pixel value, or null for a close. `phase` is
-   * `start`, `frame`, `end`, or `cancel`. Progress starts at zero and ends at
-   * one; spring frames can overshoot. `animated` is false for immediate changes.
-   *
-   * Reaching the maximum snap while handing a gesture to nested scrolling
-   * starts a snap transition on release, even if the Sheet is already there.
-   * Progress for that zero-distance transition uses the snap animation.
+   * This fires for drag releases and programmatic snaps, including snaps back
+   * to the same point and release after handing off to a nested scroll at the
+   * maximum point. It does not fire for opening or closing the Sheet.
+   * Use the `main thread` directive in the callback.
    */
-  'main-thread:onTransition'?: (event: SheetTransitionEvent) => void
+  'main-thread:onSnapStart'?: (
+    index: number,
+    value: number,
+    animated: boolean,
+  ) => void
   /**
    * The height of the Sheet container (screen height).
    * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points

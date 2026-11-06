@@ -29,12 +29,11 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - To isolate a same-axis native scrolling region, bind its own `NativeGesture`, call `manager.consumeGesture(true)` in its `onBegin` callback, and include it in `SheetNestedScrollContent.gestureRelations.waitFor`. An unbound region still participates in the ancestor pan.
 - Use `gestureConfig` and `gestureRelations` on `SheetNestedScrollContent` only for recognition thresholds and external gesture relationships. Do not replace the Sheet pan or add per-scroll ownership policies.
 
-## Transition Rules
+## Snap Start Rules
 
-- Use `main-thread:onTransition` on `SheetRoot` to coordinate consumer-owned visual styles with Sheet transitions. Pass a worklet and update a separate wrapper instead of the Sheet's transform.
-- A `snap` start reports the resolved target after release or an imperative command. Frame progress follows the Sheet motion, can overshoot for springs, and restarts from zero after interruption.
-- Initialize opening styles from the initial snap. Preserve the current companion style during `close`, and handle `cancel` without reporting arrival.
-- If a drag hands off to scrolling at the maximum snap, a snap transition is emitted after release even when the Sheet has no remaining distance to travel.
+- Use `main-thread:onSnapStart(index, value, animated)` on `SheetRoot` to react to the selected target before Sheet starts moving. It fires on drag release and imperative snaps, including same-point releases and handoff to nested scrolling at the maximum snap.
+- The callback does not fire for opening or closing. `animated` is false for an immediate snap. It reports a target, not per-frame animation progress or completed arrival.
+- Use `innerClassName` / `innerStyle` to style the existing panel. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
 
 ## Footer Rules
 
@@ -69,8 +68,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 ## Styling Rules
 
 - Keep `Sheet` headless: do not add default visual classes or styles in the component package.
-- Put visual surface styles such as background, radius, and shadow on `SheetContent`.
-- Use `innerClassName` / `innerStyle` for content layout, padding, and panel sizing.
+- Put visual surface styles such as background, radius, and shadow on `SheetContent`, or use `innerClassName` / `innerStyle` when the inner panel needs independent styling or width.
+- Use `innerViewProps` for native inner-panel view attributes. Sheet retains its measurement, gestures, class name, and style; use `innerStyle` and `innerClassName` for styling.
+- The Sheet controls the inner panel size on the snap axis.
+- A narrower inner panel needs Lynx SDK 3.5 or newer for taps outside it to reach the backdrop. On older SDKs, constrain the outer surface instead.
 - For horizontal drawers, set the drawer width with `innerClassName` / `innerStyle` so `'fit'` can resolve from the measured drawer width.
 - Horizontal drawers should usually be full height and use inner padding for safe-area or visual breathing room.
 - Put custom handle visuals inside `SheetHandle` instead of layering a separate invisible hit target over a visual handle.

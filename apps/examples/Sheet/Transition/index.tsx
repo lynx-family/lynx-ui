@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useMainThreadRef, useRef } from '@lynx-js/react'
+import { root, runOnBackground, useRef, useState } from '@lynx-js/react'
 
 import {
   SheetBackdrop,
@@ -11,38 +11,26 @@ import {
   SheetRoot,
   SheetView,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef, SheetTransitionEvent } from '@lynx-js/lynx-ui'
-import type { MainThread } from '@lynx-js/types'
+import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
 import { ActionButton, TriggerButton } from '../shared/index.js'
 import './index.css'
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const containerRef = useMainThreadRef<MainThread.Element | null>(null)
-  const currentWidth = useMainThreadRef(0)
-  const startWidth = useMainThreadRef(0)
-  const targetWidth = useMainThreadRef(0)
+  const [panel, setPanel] = useState({ expanded: false, animated: false })
   const screenWidth = lynx.__globalProps.screenWidth || 375
   const narrowWidth = Math.min(screenWidth - 32, 300)
   const wideWidth = screenWidth - 32
+  const width = panel.expanded ? wideWidth : narrowWidth
 
-  function onTransition(event: SheetTransitionEvent) {
+  function updatePanel(index: number, animated: boolean) {
+    setPanel({ expanded: index === 1, animated })
+  }
+
+  function onSnapStart(index: number, _value: number, animated: boolean) {
     'main thread'
-    if (event.kind !== 'snap' || !event.target) return
-    if (event.phase === 'start') {
-      startWidth.current = currentWidth.current || narrowWidth
-      targetWidth.current = event.target.index === 1 ? wideWidth : narrowWidth
-    }
-    if (event.phase === 'frame') {
-      const width = startWidth.current
-        + (targetWidth.current - startWidth.current) * event.progress
-      currentWidth.current = width
-      containerRef.current?.setStyleProperties({
-        width: `${width}px`,
-        left: `${(screenWidth - width) / 2}px`,
-      })
-    }
+    runOnBackground(updatePanel)(index, animated)
   }
 
   return (
@@ -58,56 +46,53 @@ function App() {
       <SheetRoot
         ref={sheetRef}
         snapPoints={['45%', '90%']}
-        main-thread:onTransition={onTransition}
+        main-thread:onSnapStart={onSnapStart}
+        onClose={() => setPanel({ expanded: false, animated: false })}
       >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
-          <view
-            main-thread:ref={containerRef}
-            style={{
-              position: 'absolute',
-              top: '0px',
-              height: '100%',
-              width: `${narrowWidth}px`,
-              left: `${(screenWidth - narrowWidth) / 2}px`,
+          <SheetNestedScrollContent
+            // A narrower inner panel needs Lynx SDK 3.5+ for outside taps.
+            innerClassName='sheet-content transition-inner'
+            innerStyle={{
+              width: `${width}px`,
+              left: `${(screenWidth - width) / 2}px`,
+              transition: panel.animated
+                ? 'width 280ms ease-out, left 280ms ease-out'
+                : 'none',
             }}
           >
-            <SheetNestedScrollContent
-              className='sheet-content'
-              innerClassName='transition-inner'
-            >
-              {({ scrollGesture }) => (
-                <>
-                  <SheetHandle className='sheet-handle' />
-                  <view className='transition-actions'>
-                    <ActionButton
-                      text='Collapse'
-                      onClick={() => sheetRef.current?.collapse()}
-                    />
-                    <ActionButton
-                      text='Expand'
-                      onClick={() => sheetRef.current?.expand()}
-                    />
-                  </view>
-                  <scroll-view
-                    className='transition-scroll'
-                    scroll-orientation='vertical'
-                    bounces={false}
-                    main-thread:gesture={scrollGesture}
-                  >
-                    {Array.from(
-                      { length: 12 },
-                      (_, index) => (
-                        <view className='transition-item' key={index}>
-                          <text>{`Item ${index + 1}`}</text>
-                        </view>
-                      ),
-                    )}
-                  </scroll-view>
-                </>
-              )}
-            </SheetNestedScrollContent>
-          </view>
+            {({ scrollGesture }) => (
+              <>
+                <SheetHandle className='sheet-handle' />
+                <view className='transition-actions'>
+                  <ActionButton
+                    text='Collapse'
+                    onClick={() => sheetRef.current?.collapse()}
+                  />
+                  <ActionButton
+                    text='Expand'
+                    onClick={() => sheetRef.current?.expand()}
+                  />
+                </view>
+                <scroll-view
+                  className='transition-scroll'
+                  scroll-orientation='vertical'
+                  bounces={false}
+                  main-thread:gesture={scrollGesture}
+                >
+                  {Array.from(
+                    { length: 12 },
+                    (_, index) => (
+                      <view className='transition-item' key={index}>
+                        <text>{`Item ${index + 1}`}</text>
+                      </view>
+                    ),
+                  )}
+                </scroll-view>
+              </>
+            )}
+          </SheetNestedScrollContent>
         </SheetView>
       </SheetRoot>
     </view>

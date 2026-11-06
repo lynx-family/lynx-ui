@@ -32,6 +32,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     style,
     innerClassName,
     innerStyle,
+    innerViewProps,
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
@@ -54,6 +55,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
   const content = (
     <view
       {...nativeProps}
+      {...innerViewProps}
       className={innerClassName}
       style={isHorizontal
         ? {
@@ -68,23 +70,22 @@ export function SheetSurface(props: SheetSurfaceProps) {
         : {
           width: '100%',
           position: 'relative',
+          pointerEvents: 'auto',
           ...innerStyle,
           ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
         }}
       event-through={false}
       main-thread:ref={setContentMTRef}
-      main-thread:gesture={isHorizontal && !handleOnly
-        ? sheetGesture
-        : undefined}
-      main-thread:bindtouchstart={isHorizontal && !handleOnly
-        ? dragHandlers.handleTouchStartMT
-        : undefined}
-      main-thread:bindtouchmove={isHorizontal && !handleOnly
-        ? dragHandlers.handleTouchMoveMT
-        : undefined}
-      main-thread:bindtouchend={isHorizontal && !handleOnly
-        ? dragHandlers.handleTouchEndMT
-        : undefined}
+      main-thread:gesture={handleOnly ? undefined : sheetGesture}
+      main-thread:bindtouchstart={handleOnly
+        ? undefined
+        : dragHandlers.handleTouchStartMT}
+      main-thread:bindtouchmove={handleOnly
+        ? undefined
+        : dragHandlers.handleTouchMoveMT}
+      main-thread:bindtouchend={handleOnly
+        ? undefined
+        : dragHandlers.handleTouchEndMT}
       main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
     >
       <SheetDragContext.Provider
@@ -143,22 +144,13 @@ export function SheetSurface(props: SheetSurfaceProps) {
         width: '100vw',
         height: '150vh',
         overflow: 'hidden',
+        pointerEvents: 'none',
         ...style,
         transition: 'none',
       }}
       main-thread:ref={setSheetMTRef}
       implicit-animation='false'
-      event-through={false}
-      main-thread:gesture={handleOnly ? undefined : sheetGesture}
-      main-thread:bindtouchstart={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchStartMT}
-      main-thread:bindtouchmove={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchMoveMT}
-      main-thread:bindtouchend={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchEndMT}
+      event-through={true}
     >
       {content}
     </view>

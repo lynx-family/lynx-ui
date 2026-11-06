@@ -19,7 +19,7 @@ import type { MainThread } from '@lynx-js/types'
 
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
-import type { SheetSide, SheetTransition, SheetTransitionEvent } from '../types'
+import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
 import {
   clamp,
   findNearestSnap,
@@ -49,7 +49,7 @@ export interface SnapOptions {
   screenWidth?: number
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
-  onTransitionMT?: (event: SheetTransitionEvent) => void
+  onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDismiss?: () => void
   enterAnimation?: SheetTransition
   exitAnimation?: SheetTransition
@@ -71,7 +71,7 @@ export function useSnap({
   screenWidth: userScreenWidth,
   rubberBand,
   onSnapChange = noop,
-  onTransitionMT,
+  onSnapStartMT,
   onDismiss,
   enterAnimation = {
     type: 'spring',
@@ -115,11 +115,10 @@ export function useSnap({
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
   const {
     animateToMT,
-    jumpToMT,
     stopAnimationMT,
     interruptAnimationMT,
     resumeAnimationMT,
-  } = useSheetAnimation(yRef, snapAnimation, onTransitionMT)
+  } = useSheetAnimation(yRef, snapAnimation)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const screenHeight: number = userScreenHeight
@@ -284,11 +283,12 @@ export function useSnap({
     },
     {
       animateToMT,
-      jumpToMT,
+      yRef,
       stopAnimationMT,
       getTargetForSnap,
       getResolvedSnapPointValues,
       onSnapChangeMT,
+      onSnapStartMT,
       enterAnimation,
       exitAnimation,
       initialSnap,
@@ -322,7 +322,7 @@ export function useSnap({
 
   function releaseAtMaxSnapMT(index: number) {
     'main thread'
-    if (!onTransitionMT) return
+    if (!onSnapStartMT) return
     // The content owns the gesture, so the Sheet has no release velocity.
     yRef.current.updateVelocity(0)
     controller.snapToMT(index)
