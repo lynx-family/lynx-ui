@@ -36,6 +36,8 @@ export function useSheetContentController(props: SheetContentProps) {
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
+    detached,
+    bottomInset,
   } = props
   const context = useSheetContext()
   const {
@@ -75,6 +77,8 @@ export function useSheetContentController(props: SheetContentProps) {
   const snap = useSnap({
     snapPoints,
     initialSnap,
+    detached,
+    bottomInset,
     snapAnimation,
     side,
     enableRTL,

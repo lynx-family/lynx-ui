@@ -12,6 +12,7 @@ import {
   SheetView,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
+import clsx from 'clsx'
 
 import { ActionButton, TriggerButton } from '../shared/index.js'
 import './index.css'
@@ -21,7 +22,7 @@ function App() {
   const [panel, setPanel] = useState({ expanded: false, animated: false })
   const screenWidth = lynx.__globalProps.screenWidth || 375
   const narrowWidth = Math.min(screenWidth - 32, 300)
-  const wideWidth = screenWidth - 32
+  const wideWidth = screenWidth
   const width = panel.expanded ? wideWidth : narrowWidth
 
   function updatePanel(index: number, animated: boolean) {
@@ -45,16 +46,21 @@ function App() {
       />
       <SheetRoot
         ref={sheetRef}
-        snapPoints={['45%', '90%']}
+        snapPoints={['45%', '100%']}
         main-thread:onSnapStart={onSnapStart}
         onClose={() => setPanel({ expanded: false, animated: false })}
       >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            // A narrower inner panel needs Lynx SDK 3.5+ for outside taps.
-            innerClassName='sheet-content transition-inner'
-            innerStyle={{
+            detached={!panel.expanded}
+            bottomInset={panel.expanded ? 0 : 8}
+            className={clsx(
+              'sheet-content',
+              !panel.expanded && 'floating-surface',
+            )}
+            innerClassName='transition-inner'
+            style={{
               width: `${width}px`,
               left: `${(screenWidth - width) / 2}px`,
               transition: panel.animated
@@ -85,7 +91,9 @@ function App() {
                     { length: 12 },
                     (_, index) => (
                       <view className='transition-item' key={index}>
-                        <text>{`Item ${index + 1}`}</text>
+                        <text className='transition-item-text'>
+                          {`Item ${index + 1}`}
+                        </text>
                       </view>
                     ),
                   )}

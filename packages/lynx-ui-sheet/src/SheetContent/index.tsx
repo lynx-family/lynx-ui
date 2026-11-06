@@ -57,6 +57,8 @@ export function SheetContent(props: SheetContentProps) {
       snapPoints={snapPoints}
       maxSnapSize={snap.maxSnapSize}
       footerContext={snap.footerContext}
+      setSurfaceMTRef={snap.setSurfaceMTRef}
+      setViewportMTRef={snap.setViewportMTRef}
       setSheetMTRef={snap.setSheetMTRef}
       setContentMTRef={snap.setContentMTRef}
       handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}

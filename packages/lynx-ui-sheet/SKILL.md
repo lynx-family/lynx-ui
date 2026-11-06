@@ -33,7 +33,18 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - Use `main-thread:onSnapStart(index, value, animated)` on `SheetRoot` to react to the selected target before Sheet starts moving. It fires on drag release and imperative snaps, including same-point releases and handoff to nested scrolling at the maximum snap.
 - The callback does not fire for opening or closing. `animated` is false for an immediate snap. It reports a target, not per-frame animation progress or completed arrival.
-- Use `innerClassName` / `innerStyle` to style the existing panel. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
+- Use `className` / `style` to style the painted surface and `innerClassName` / `innerStyle` for content layout. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
+
+## Surface Coverage Rules
+
+- Attached bottom sheets (`detached={false}`, the default) extend their painted background beyond the viewport to cover upward rubber-banding.
+- Use `detached` for a bounded floating bottom sheet. Its painted lower edge stays anchored during snapping and rubber-banding; the library resizes coverage and the numeric-snap content viewport on the main thread.
+- Set `bottomInset` for an external gap below the panel. It defaults to zero, is independent of `detached`, and excludes content padding and safe areas. It does not change numeric or percentage snap sizes.
+- These two options apply only to `side="bottom"`. Other sides retain their existing behavior.
+- Switching `detached` and `bottomInset` updates the current appearance using `snapAnimation`, without remounting children or replacing the coordinated native scroll node. Appearance changes after an immediate snap are immediate too.
+- Put background, corners, width, and companion width transitions on `className` / `style`. The private movement transform and the surface coverage height belong to Sheet. Previous vertical `style.top` positioning should migrate to `bottomInset`.
+- Put content padding, intrinsic fit sizing, and layout on `innerClassName` / `innerStyle`. Intrinsic fit measurement is independent of the animated viewport height.
+- A floating card does not require a nonzero inset: `detached` selects bounded coverage, while `bottomInset` selects placement.
 
 ## Footer Rules
 

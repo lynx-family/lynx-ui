@@ -1527,6 +1527,44 @@ The main content of the Sheet.
 
 <UIApiTable source={[
   {
+    "name": "bottomInset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages still use "
+      },
+      {
+        "kind": "code",
+        "text": "`screenHeight`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nChanges use "
+      },
+      {
+        "kind": "code",
+        "text": "`snapAnimation`"
+      },
+      {
+        "kind": "text",
+        "text": " and animate from the current rendered inset.\nOther sides ignore it. Negative and non-finite values resolve to zero."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "children",
     "type": "ReactNode",
     "summary": [
@@ -1568,6 +1606,60 @@ The main content of the Sheet.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "detached",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Keep a bottom sheet's painted surface bounded to the visible panel instead\nof extending its background beyond the screen edge. Switching this option\npreserves the content and native scroll node. Other sides ignore it.\nStyle the surface with "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": "; put content padding and\nlayout on "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。\n切换时保留内容和原生滚动节点。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -1814,6 +1906,44 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
 
 <UIApiTable source={[
   {
+    "name": "bottomInset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages still use "
+      },
+      {
+        "kind": "code",
+        "text": "`screenHeight`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nChanges use "
+      },
+      {
+        "kind": "code",
+        "text": "`snapAnimation`"
+      },
+      {
+        "kind": "text",
+        "text": " and animate from the current rendered inset.\nOther sides ignore it. Negative and non-finite values resolve to zero."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "children",
     "type": "ReactNode | (props: SheetNestedScrollRenderProps) => ReactNode",
     "summary": [
@@ -1850,6 +1980,60 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "detached",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Keep a bottom sheet's painted surface bounded to the visible panel instead\nof extending its background beyond the screen edge. Switching this option\npreserves the content and native scroll node. Other sides ignore it.\nStyle the surface with "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": "; put content padding and\nlayout on "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。\n切换时保留内容和原生滚动节点。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {

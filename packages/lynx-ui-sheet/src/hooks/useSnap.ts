@@ -19,6 +19,7 @@ import type { MainThread } from '@lynx-js/types'
 
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
+import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
 import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
 import {
   clamp,
@@ -42,6 +43,8 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
+  detached?: boolean
+  bottomInset?: number
   snapAnimation?: SheetTransition
   side?: SheetSide
   enableRTL?: boolean
@@ -64,6 +67,8 @@ export interface SnapOptions {
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
+  detached = false,
+  bottomInset = 0,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
   enableRTL = false,
@@ -113,6 +118,7 @@ export function useSnap({
   const contentSizeMTRef = useMainThreadRef<number>(0)
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
+  const animateSurfaceChangesMTRef = useMainThreadRef(true)
   const {
     animateToMT,
     stopAnimationMT,
@@ -201,7 +207,7 @@ export function useSnap({
       })
     } else {
       el.setStyleProperties({
-        height: `${size}px`,
+        height: hasFitSnapPoint ? `${size}px` : '100%',
       })
     }
   }
@@ -288,12 +294,31 @@ export function useSnap({
       getTargetForSnap,
       getResolvedSnapPointValues,
       onSnapChangeMT,
-      onSnapStartMT,
+      onSnapStartMT: (index, value, animated) => {
+        'main thread'
+        animateSurfaceChangesMTRef.current = animated
+        onSnapStartMT?.(index, value, animated)
+      },
       enterAnimation,
       exitAnimation,
       initialSnap,
     },
   )
+
+  const surfaceLayout = useSheetSurfaceLayout({
+    position: yRef,
+    animateChanges: animateSurfaceChangesMTRef,
+    presence: controller.presenceStateMTRef,
+    resolvedSide,
+    detached,
+    bottomInset,
+    screenHeight,
+    maxSnapSize,
+    hasFitSnapPoint,
+    initialSize: getTargetForSnap,
+    initialSnap,
+    snapAnimation,
+  })
 
   // Controller-delegated MT functions
   function expandMT(opts?: SnappingOptions) {
@@ -373,9 +398,11 @@ export function useSnap({
 
     const bodySize = getMainAxisLayoutSize(resolvedSide, e)
     bodySizeMTRef.current = bodySize
-    const layoutSize = bodySize + (hasFitSnapPoint && resolvedSide === 'bottom'
-      ? Math.max(0, footerHeightMTRef.current)
-      : 0)
+    const layoutSize = !hasFitSnapPoint && !isHorizontalSide(resolvedSide)
+      ? maxSnapSize
+      : bodySize + (hasFitSnapPoint && resolvedSide === 'bottom'
+        ? Math.max(0, footerHeightMTRef.current)
+        : 0)
     sheetSizeMTRef.current = layoutSize
 
     // The rename is required, to prevent from xx.map is not a function
@@ -463,6 +490,7 @@ export function useSnap({
     },
     setSheetMTRef,
     setContentMTRef,
+    ...surfaceLayout,
     snapTo,
     expand,
     collapse,

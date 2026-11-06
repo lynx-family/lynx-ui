@@ -49,12 +49,16 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       unregisterFooter: vi.fn(),
     },
     setSheetMTRef: vi.fn(),
+    setSurfaceMTRef: vi.fn(),
+    setViewportMTRef: vi.fn(),
     setContentMTRef: measure,
     handleSheetLayoutChangeMT: vi.fn(),
     ...overrides,
   }) as unknown as { props: ViewProps }
-  const panel = surface.props.children as { props: ViewProps }
-  return { surface, panel, measure, gesture }
+  const painted = surface.props.children as { props: ViewProps }
+  const viewport = painted.props.children as { props: ViewProps }
+  const panel = viewport.props.children as { props: ViewProps }
+  return { surface, painted, viewport, panel, measure, gesture }
 }
 
 describe('Sheet surface composition', () => {
@@ -74,7 +78,7 @@ describe('Sheet surface composition', () => {
     expect(panel.props.style).toMatchObject({
       width: '300px',
       left: '20px',
-      height: '800px',
+      height: '100%',
       pointerEvents: 'auto',
     })
     expect(panel.props['main-thread:gesture']).toBe(gesture)
@@ -93,4 +97,20 @@ describe('Sheet surface composition', () => {
     const { panel } = renderSurface({ handleOnly: true })
     expect(panel.props['main-thread:gesture']).toBeUndefined()
   })
+})
+
+it('keeps one content tree when switching detached coverage', () => {
+  const child = { type: 'scroll-view' }
+  const attached = renderSurface({ children: child })
+  const floating = renderSurface({
+    detached: true,
+    bottomInset: 8,
+    children: child,
+  })
+  expect(floating.surface.props).not.toHaveProperty('detached')
+  expect(floating.painted.props).not.toHaveProperty('bottomInset')
+  expect(floating.painted.props.style.height).toBe(
+    attached.painted.props.style.height,
+  )
+  expect(floating.viewport.props.style.height).toBe('800px')
 })

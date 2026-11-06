@@ -102,6 +102,28 @@ export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
  */
 export interface SheetContentProps extends ComponentBasicProps {
   /**
+   * Keep a bottom sheet's painted surface bounded to the visible panel instead
+   * of extending its background beyond the screen edge. Switching this option
+   * preserves the content and native scroll node. Other sides ignore it.
+   * Style the surface with `className` and `style`; put content padding and
+   * layout on `innerClassName` and `innerStyle`.
+   * @defaultValue false
+   * @zh 将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。
+   * 切换时保留内容和原生滚动节点。其他方向忽略此属性。
+   */
+  detached?: boolean
+  /**
+   * External gap below a bottom sheet, in logical pixels. This is separate
+   * from content padding and safe-area padding. Numeric and percentage snap
+   * sizes exclude this gap; percentages still use `screenHeight`.
+   * Changes use `snapAnimation` and animate from the current rendered inset.
+   * Other sides ignore it. Negative and non-finite values resolve to zero.
+   * @defaultValue 0
+   * @zh 底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，
+   * 也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。
+   */
+  bottomInset?: number
+  /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。
    */
