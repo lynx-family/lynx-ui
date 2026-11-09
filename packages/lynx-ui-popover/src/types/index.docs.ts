@@ -337,13 +337,33 @@ export interface PopoverMotionTarget extends PopoverMotionValues {
 
 /** Motion targets and their shared default transition. */
 export interface PopoverMotionOptions {
-  /** Visual values applied on each fresh mount. */
+  /**
+   * Visual values applied on each fresh mount.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
   initial?: PopoverMotionValues
-  /** Target values when opening. Its transition overrides the shared default. */
+  /**
+   * Target values when opening. Its transition overrides the shared default.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
   open?: PopoverMotionTarget
-  /** Target values when closing. Its transition overrides the shared default. */
+  /**
+   * Target values when closing. Its transition overrides the shared default.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
   close?: PopoverMotionTarget
-  /** Default transition for targets without their own transition. */
+  /**
+   * Default transition for targets without their own transition.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
   transition?: PopoverMotionTransition
 }
 
