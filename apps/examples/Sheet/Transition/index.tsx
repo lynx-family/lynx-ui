@@ -2,7 +2,14 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, runOnBackground, useRef, useState } from '@lynx-js/react'
+import {
+  root,
+  runOnBackground,
+  runOnMainThread,
+  useMainThreadRef,
+  useRef,
+  useState,
+} from '@lynx-js/react'
 
 import {
   Button,
@@ -24,6 +31,7 @@ import './index.css'
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
   const [panel, setPanel] = useState({ fullscreen: false, animated: false })
+  const panelTarget = useMainThreadRef({ fullscreen: false, animated: false })
   const [viewport, setViewport] = useState({
     width: screenWidth,
     height: screenHeight,
@@ -36,10 +44,21 @@ function App() {
     setPanel({ fullscreen, animated })
   }
 
+  function resetPanelTarget() {
+    'main thread'
+    panelTarget.current = { fullscreen: false, animated: false }
+  }
+
   function onSnapStart(_index: number, value: number, animated: boolean) {
     'main thread'
     // Fullscreen is a product policy, not the index of the largest snap point.
-    runOnBackground(updatePanel)(value >= fullscreenHeight, animated)
+    const fullscreen = value >= fullscreenHeight
+    const previous = panelTarget.current
+    if (previous.fullscreen === fullscreen && previous.animated === animated) {
+      return
+    }
+    panelTarget.current = { fullscreen, animated }
+    runOnBackground(updatePanel)(fullscreen, animated)
   }
 
   return (
@@ -56,6 +75,7 @@ function App() {
         <TriggerButton
           text='Open reader'
           onClick={() => {
+            runOnMainThread(resetPanelTarget)()
             setPanel({ fullscreen: false, animated: false })
             sheetRef.current?.open()
           }}
