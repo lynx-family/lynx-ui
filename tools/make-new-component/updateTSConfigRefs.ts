@@ -5,6 +5,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
+
 // Get root directory (assuming script is in tools/)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -33,18 +35,11 @@ export async function updateTSConfigRefs() {
     references.push({ path: './tsconfig.node.json' })
   }
 
-  const entries = await fs.promises.readdir(packagesDir, {
-    withFileTypes: true,
-  })
+  for (const packagePath of getComponentPackageDirectories(rootDir)) {
+    const tsconfigPkgPath = path.join(packagePath, 'tsconfig.json')
 
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      const packagePath = path.join(packagesDir, entry.name)
-      const tsconfigPkgPath = path.join(packagePath, 'tsconfig.json')
-
-      if (fs.existsSync(tsconfigPkgPath)) {
-        references.push({ path: `./packages/${entry.name}` })
-      }
+    if (fs.existsSync(tsconfigPkgPath)) {
+      references.push({ path: `./${path.relative(rootDir, packagePath)}` })
     }
   }
 
@@ -57,6 +52,15 @@ export async function updateTSConfigRefs() {
       existingConfig = JSON.parse(content)
     } catch (e) {
       console.warn('Could not parse existing tsconfig.json, starting fresh.')
+    }
+  }
+
+  for (const reference of (existingConfig as TSConfig).references ?? []) {
+    if (
+      !/^\.\/(?:packages|receipes)\//.test(reference.path)
+      && !references.some(item => item.path === reference.path)
+    ) {
+      references.push(reference)
     }
   }
 

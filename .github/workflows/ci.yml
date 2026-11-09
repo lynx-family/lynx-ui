@@ -144,6 +144,7 @@ jobs:
         # pnpm genDoc. Unlike git diff, git status also reports new files.
         generated_documentation_outputs=(
           ":(glob)packages/lynx-ui-*/docs/APIReference*.mdx"
+          ":(glob)receipes/lynx-ui-*/docs/APIReference*.mdx"
         )
         changes="$(git status --porcelain=v1 --untracked-files=all -- "${generated_documentation_outputs[@]}")"
         if [ -n "$changes" ]; then

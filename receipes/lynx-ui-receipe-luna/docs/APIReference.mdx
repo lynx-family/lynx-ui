@@ -1,0 +1,5481 @@
+import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
+
+## Component API {#api}
+
+### Box {#api-box}
+
+A plain view with shared layout props and no forced display mode.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Flex {#api-flex}
+
+A flex container with explicit native-compatible defaults.
+
+<UIApiTable source={[
+  {
+    "name": "align",
+    "type": "start | center | end | baseline | stretch",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Cross-axis alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "交叉轴对齐。"
+      }
+    ],
+    "defaultValue": "\"stretch\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "direction",
+    "type": "row | column | row-reverse | column-reverse",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-axis direction."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主轴方向。"
+      }
+    ],
+    "defaultValue": "\"row\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gap",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Space between items on both axes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "两个轴的子项间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapX",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal gap, overriding gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平间距，覆盖 gap。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapY",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical gap, overriding gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直间距，覆盖 gap。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "justify",
+    "type": "start | center | end | between | around | evenly",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-axis alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主轴对齐。"
+      }
+    ],
+    "defaultValue": "\"start\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "wrap",
+    "type": "nowrap | wrap | wrap-reverse",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Wrapping behavior."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "换行行为。"
+      }
+    ],
+    "defaultValue": "\"nowrap\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Row {#api-row}
+
+Horizontal flex layout.
+
+<UIApiTable source={[
+  {
+    "name": "align",
+    "type": "start | center | end | baseline | stretch",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Cross-axis alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "交叉轴对齐。"
+      }
+    ],
+    "defaultValue": "\"stretch\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gap",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Space between items on both axes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "两个轴的子项间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapX",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal gap, overriding gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平间距，覆盖 gap。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapY",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical gap, overriding gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直间距，覆盖 gap。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "justify",
+    "type": "start | center | end | between | around | evenly",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-axis alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主轴对齐。"
+      }
+    ],
+    "defaultValue": "\"start\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "wrap",
+    "type": "nowrap | wrap | wrap-reverse",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Wrapping behavior."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "换行行为。"
+      }
+    ],
+    "defaultValue": "\"nowrap\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Column {#api-column}
+
+Vertical flex layout.
+
+<UIApiTable source={[
+  {
+    "name": "align",
+    "type": "start | center | end | baseline | stretch",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Cross-axis alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "交叉轴对齐。"
+      }
+    ],
+    "defaultValue": "\"stretch\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gap",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Space between items on both axes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "两个轴的子项间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapX",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal gap, overriding gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平间距，覆盖 gap。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapY",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical gap, overriding gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直间距，覆盖 gap。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "justify",
+    "type": "start | center | end | between | around | evenly",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-axis alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主轴对齐。"
+      }
+    ],
+    "defaultValue": "\"start\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "wrap",
+    "type": "nowrap | wrap | wrap-reverse",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Wrapping behavior."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "换行行为。"
+      }
+    ],
+    "defaultValue": "\"nowrap\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Grid {#api-grid}
+
+A native CSS grid. Positive integer counts produce equal tracks; strings
+may also specify supported track lists such as "100px 1fr".
+
+<UIApiTable source={[
+  {
+    "name": "align",
+    "type": "start | center | end | baseline | stretch",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical item alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子项垂直对齐。"
+      }
+    ],
+    "defaultValue": "\"stretch\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "columns",
+    "type": "string | number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Column count or track list."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "列数或列轨道列表。"
+      }
+    ],
+    "defaultValue": "\"1\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flow",
+    "type": "row | column | dense | row dense | column dense",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Auto placement direction."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "自动排列方向。"
+      }
+    ],
+    "defaultValue": "\"row\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gap",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Space between tracks."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "轨道间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapX",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal track gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平轨道间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "gapY",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical track gap."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直轨道间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "justify",
+    "type": "start | center | end | stretch",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal item alignment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子项水平对齐。"
+      }
+    ],
+    "defaultValue": "\"stretch\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "rows",
+    "type": "string | number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Row count or track list. Numeric counts use equal fractional tracks."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "行数或行轨道列表。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Container {#api-container}
+
+A centered, full-width content region with a maximum width.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "size",
+    "type": "1 | 2 | 3 | 4",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width preset: 448, 688, 880, or 1136px."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度档位。"
+      }
+    ],
+    "defaultValue": "\"4\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Section {#api-section}
+
+A section with vertical breathing room.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "size",
+    "type": "1 | 2 | 3",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding preset: 16, 32, or 64px."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距档位。"
+      }
+    ],
+    "defaultValue": "\"2\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+## Supporting Types {#api-supporting-types}
+
+### LayoutProps {#api-supporting-types-layout-props}
+
+Shared sizing and spacing for recipe layout components.
+Axis spacing overrides shorthand spacing; individual sides override axes.
+Explicit style values override recipe props.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content. Text must be wrapped in a text element."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "子节点，文字必须使用 text 元素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexBasis",
+    "type": "FlexBasis<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex basis when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的基础尺寸。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexGrow",
+    "type": "FlexGrow",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex grow factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的放大比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "flexShrink",
+    "type": "FlexShrink",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Flex shrink factor when this node is a flex item."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作为 flex 子项时的缩小比例。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "Height<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Height in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "高度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "m",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Margin on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxHeight",
+    "type": "MaxHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "MaxWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最大宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minHeight",
+    "type": "MinHeight<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum height."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小高度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "minWidth",
+    "type": "MinWidth<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "最小宽度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "ml",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "mx",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "my",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical margin."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直外边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "p",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Padding on all sides."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "四周内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pb",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Bottom padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pl",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Left padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "左侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pr",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Right padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "右侧内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "pt",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Top padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "顶部内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "px",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "水平内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "py",
+    "type": "Space",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Vertical padding."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "垂直内边距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Explicit overrides applied after layout props."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "覆盖布局属性的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "viewProps",
+    "type": "Omit<ViewProps, children | className | style>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view attributes and events."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "原生 view 属性与事件。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "Width<string | number>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Width in Lynx CSS units; numeric values are pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### Space {#api-supporting-types-space}
+
+<UIApiTable source={[
+  {
+    "name": "Space",
+    "type": "number | string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Numeric strings \"0\" through \"9\" select spacing steps: 0, 4, 8, 12, 16,\n24, 32, 40, 48, and 64px. Numbers are literal pixels; other strings are\nLynx CSS lengths, such as \"4vw\" or \"var(--app-space)\"."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "字符串 \"0\" 到 \"9\" 选择间距档位；数字表示像素，其他字符串表示 Lynx CSS 长度。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>

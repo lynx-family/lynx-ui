@@ -1,0 +1,35 @@
+{
+  "name": "@lynx-example/lynx-ui-receipe-luna",
+  "version": "0.0.23",
+  "description": "Luna recipe layout examples",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "The Lynx Authors"
+  },
+  "type": "module",
+  "files": [
+    "dist/",
+    "**/*.tsx",
+    "**/*.css",
+    "lynx.config.mjs"
+  ],
+  "scripts": {
+    "build": "rspeedy build",
+    "dev": "rspeedy dev"
+  },
+  "dependencies": {
+    "@lynx-js/luna-styles": "workspace:*",
+    "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/react": "catalog:"
+  },
+  "devDependencies": {
+    "@lynx-js/qrcode-rsbuild-plugin": "catalog:",
+    "@lynx-js/react-rsbuild-plugin": "catalog:",
+    "@lynx-js/rspeedy": "catalog:",
+    "@lynx-js/types": "catalog:",
+    "@types/react": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

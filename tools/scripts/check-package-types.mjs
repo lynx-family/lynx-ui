@@ -6,6 +6,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
+
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../..',
@@ -25,11 +27,9 @@ const assetImportRE =
 const resolutionDiagnosticCodes = new Set([2307, 2834, 2835, 7016])
 
 function getPackageEntries() {
-  return fs.readdirSync(packagesRoot, { withFileTypes: true }).flatMap(
-    (entry) => {
-      if (!entry.isDirectory() || !entry.name.startsWith('lynx-ui')) return []
-
-      const packageRoot = path.join(packagesRoot, entry.name)
+  return getComponentPackageDirectories(repoRoot).flatMap(
+    (packageRoot) => {
+      if (!path.basename(packageRoot).startsWith('lynx-ui')) return []
       const packageJsonPath = path.join(packageRoot, 'package.json')
       if (!fs.existsSync(packageJsonPath)) return []
 

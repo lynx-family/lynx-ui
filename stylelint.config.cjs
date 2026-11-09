@@ -7,7 +7,10 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['packages/lynx-ui-*/src/**/*.css'],
+      files: [
+        'packages/lynx-ui-*/src/**/*.css',
+        'receipes/lynx-ui-*/src/**/*.css',
+      ],
       rules: {
         'selector-class-pattern': [
           '^lynx-ui-[a-z0-9-]+(?:__(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:--(?:[a-z0-9]+(?:-[a-z0-9]+)*))?)?$',
