@@ -1861,6 +1861,44 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
+    "name": "main-thread:surfaceRef",
+    "type": "MainThreadRef<Element | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A main-thread ref to the painted view styled by "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nIts value is set while the view is mounted and cleared on unmount.\nUse it to animate appearance, such as width on a bottom sheet. Give each\nanimated property one owner: avoid updating it through React styles or a\nCSS transition while writing it imperatively.\nSheet owns movement, coverage height, inset positioning, and clipping.\nFor horizontal drawers, Sheet writes the movement transform on this view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "背景面板的主线程引用，与 className 和 style 作用在同一个节点。\n可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
     "name": "snapAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -2259,6 +2297,44 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       {
         "kind": "text",
         "text": " 设置样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:surfaceRef",
+    "type": "MainThreadRef<Element | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A main-thread ref to the painted view styled by "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nIts value is set while the view is mounted and cleared on unmount.\nUse it to animate appearance, such as width on a bottom sheet. Give each\nanimated property one owner: avoid updating it through React styles or a\nCSS transition while writing it imperatively.\nSheet owns movement, coverage height, inset positioning, and clipping.\nFor horizontal drawers, Sheet writes the movement transform on this view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "背景面板的主线程引用，与 className 和 style 作用在同一个节点。\n可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。"
       }
     ],
     "defaultValue": "",

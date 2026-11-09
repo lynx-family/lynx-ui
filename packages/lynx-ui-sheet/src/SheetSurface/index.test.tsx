@@ -2,6 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import type { MainThread } from '@lynx-js/types'
 import { describe, expect, it, vi } from 'vitest'
 
 import { SheetSurface } from './index'
@@ -64,6 +65,30 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
 }
 
 describe('Sheet surface composition', () => {
+  it('shares the painted element without replacing the Sheet ref and clears it on detach', () => {
+    const surfaceRef = { current: null as MainThread.Element | null }
+    const setSurfaceMTRef = vi.fn()
+    const setSheetMTRef = vi.fn()
+    const { painted, movement } = renderSurface({
+      'main-thread:surfaceRef': surfaceRef,
+      setSurfaceMTRef,
+      setSheetMTRef,
+    })
+    const movementElement = { setStyleProperties: vi.fn() }
+    const element = { setStyleProperties: vi.fn() }
+
+    movement.props['main-thread:ref'](movementElement)
+    painted.props['main-thread:ref'](element)
+    expect(setSheetMTRef).toHaveBeenCalledWith(movementElement)
+    expect(setSurfaceMTRef).toHaveBeenCalledWith(element)
+    expect(surfaceRef.current).toBe(element)
+    expect(painted.props).not.toHaveProperty('main-thread:surfaceRef')
+
+    painted.props['main-thread:ref'](null)
+    expect(setSurfaceMTRef).toHaveBeenLastCalledWith(null)
+    expect(surfaceRef.current).toBeNull()
+  })
+
   it('keeps the Sheet measurement ref on the inner panel', () => {
     const { panel, measure } = renderSurface()
     const element = { setStyleProperties: vi.fn() }

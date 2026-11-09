@@ -17,6 +17,7 @@ const defaultConfig = exampleConfig(
     SheetFloatingFit: './FloatingFit/index.tsx',
     SheetGestureScrollView: './GestureScrollView/index.tsx',
     SheetTransition: './Transition/index.tsx',
+    SheetSurfaceRef: './SurfaceRef/index.tsx',
     SheetGestureList: './GestureList/index.tsx',
     SheetGestureFixedFooter: './GestureFixedFooter/index.tsx',
     SheetGestureComposite: './GestureComposite/index.tsx',

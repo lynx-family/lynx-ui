@@ -18,9 +18,9 @@ export interface SheetSurfaceProps extends SheetContentProps {
   maxSnapSize: number
   footerContext: SheetFooterContextValue
   setClipMTRef: (element: MainThread.Element) => void
-  setSurfaceMTRef: (element: MainThread.Element) => void
+  setSurfaceMTRef: (element: MainThread.Element | null) => void
   setViewportMTRef: (element: MainThread.Element) => void
-  setSheetMTRef: (element: MainThread.Element) => void
+  setSheetMTRef: (element: MainThread.Element | null) => void
   setContentMTRef: (element: MainThread.Element) => void
   handleSheetLayoutChangeMT: (event: {
     detail?: { height?: number, width?: number }
@@ -36,6 +36,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     innerClassName,
     innerStyle,
     innerViewProps,
+    'main-thread:surfaceRef': surfaceRef,
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
@@ -59,6 +60,13 @@ export function SheetSurface(props: SheetSurfaceProps) {
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
   const hasFitSnapPoint = snapPoints.some(p => String(p).trim() === 'fit')
+  const registerSurfaceMT = isHorizontal ? setSheetMTRef : setSurfaceMTRef
+
+  function setPaintedViewRefMT(element: MainThread.Element | null) {
+    'main thread'
+    registerSurfaceMT(element)
+    if (surfaceRef) surfaceRef.current = element
+  }
 
   const content = (
     <view
@@ -126,7 +134,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
           ...style,
           transition: 'none',
         }}
-        main-thread:ref={setSheetMTRef}
+        main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSheetMTRef}
         implicit-animation='false'
         event-through={true}
       >
@@ -190,7 +198,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
             overflow: 'hidden',
             pointerEvents: 'auto',
           }}
-          main-thread:ref={setSurfaceMTRef}
+          main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSurfaceMTRef}
           enable-new-animator={true}
           event-through={false}
         >

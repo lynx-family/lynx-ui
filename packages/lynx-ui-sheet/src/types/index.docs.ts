@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ReactNode } from '@lynx-js/react'
+import type { MainThreadRef, ReactNode } from '@lynx-js/react'
 
 import type {
   GestureKind,
@@ -11,7 +11,7 @@ import type {
 } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
-import type { ViewProps } from '@lynx-js/types'
+import type { MainThread, ViewProps } from '@lynx-js/types'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
 
@@ -101,6 +101,21 @@ export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
  * @zh Sheet 的主要内容。
  */
 export interface SheetContentProps extends ComponentBasicProps {
+  /**
+   * A main-thread ref to the painted view styled by `className` and `style`.
+   * Its value is set while the view is mounted and cleared on unmount.
+   * Use it to animate appearance, such as width on a bottom sheet. Give each
+   * animated property one owner: avoid updating it through React styles or a
+   * CSS transition while writing it imperatively.
+   * Sheet owns movement, coverage height, inset positioning, and clipping.
+   * For horizontal drawers, Sheet writes the movement transform on this view.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 背景面板的主线程引用，与 className 和 style 作用在同一个节点。
+   * 可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。
+   */
+  'main-thread:surfaceRef'?: MainThreadRef<MainThread.Element | null>
   /**
    * Keep a bottom sheet's painted surface bounded to the visible panel instead
    * of extending its background beyond the screen edge. Switching this option

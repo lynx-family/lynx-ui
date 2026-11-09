@@ -149,10 +149,10 @@ export function useSheetSurfaceLayout({
     })()
   }, [])
 
-  function setSurfaceMTRef(element: MainThread.Element) {
+  function setSurfaceMTRef(element: MainThread.Element | null) {
     'main thread'
     surfaceMTRef.current = element
-    updateSurfaceMT()
+    if (element) updateSurfaceMT()
   }
 
   function setViewportMTRef(element: MainThread.Element) {

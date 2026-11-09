@@ -186,7 +186,7 @@ export function useSnap({
     return clamp(targetY, Math.max(sheetSizeMTRef.current, maxSnap))
   }
 
-  function setSheetMTRef(el: MainThread.Element) {
+  function setSheetMTRef(el: MainThread.Element | null) {
     'main thread'
     sheetMTRef.current = el
   }

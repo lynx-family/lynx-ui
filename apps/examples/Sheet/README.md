@@ -14,6 +14,7 @@ This directory contains examples for the Sheet component.
 - **Attached**: Default extended background coverage during upward rubber-banding.
 - **Floating**: Bounded coverage, independent 0px/8px bottom gap, and live coverage changes without replacing the scroll node.
 - **FloatingFit**: A content-sized floating panel that responds to content changes.
+- **SurfaceRef**: A custom Motion spring animates the painted surface width on the main thread.
 - **Transition**: Floating-to-fullscreen styling after snap selection, including an intermediate snap and an immediate snap.
 - **Tablet**: Tablet-friendly Sheet layout.
 - **GestureScrollView**: Default same-finger handoff between Sheet and ScrollView.
