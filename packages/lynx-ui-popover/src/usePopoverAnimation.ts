@@ -60,9 +60,19 @@ export function usePopoverAnimation(
 
   const markPositioned = useCallback(() => setPositioned(true), [])
   const updatePresence: typeof setPresenceState = useCallback(next => {
-    const resolved = typeof next === 'function'
-      ? next(currentState.current)
-      : next
+    if (typeof next === 'function') {
+      setPresenceState(previous => {
+        const resolved = next(previous)
+        if (
+          latest.current.animation
+          && (resolved === PresenceState.Entered
+            || resolved === PresenceState.Left)
+        ) return previous
+        return resolved
+      })
+      return
+    }
+    const resolved = next
     // Motion, rather than the CSS fallback timer, completes this lifecycle.
     if (
       latest.current.animation

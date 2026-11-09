@@ -545,8 +545,8 @@ export interface PopoverTriggerUIVariants extends PresenceUIVariants {
   'ui-active'?: boolean
 
   /**
-   * Applied when the trigger is explicitly disabled or the popover is busy.
-   * @zh 触发器被显式禁用或 Popover 处于忙碌状态时生效。
+   * Applied when the trigger is disabled.
+   * @zh 触发器被禁用时生效。
    */
   'ui-disabled'?: boolean
 
@@ -569,8 +569,8 @@ export interface PopoverBackdropUIVariants extends PresenceUIVariants {
   'ui-active'?: boolean
 
   /**
-   * Applied while the popover is entering or leaving.
-   * @zh Popover 正在进入或离开时生效。
+   * Applied while the popover is entering or leaving without motion content.
+   * @zh 未使用动画内容且 Popover 正在进入或离开时生效。
    */
   'ui-disabled'?: boolean
 }

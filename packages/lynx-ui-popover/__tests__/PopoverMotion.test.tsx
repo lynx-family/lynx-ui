@@ -4,6 +4,7 @@
 
 import { useContext, useEffect, useRef } from '@lynx-js/react'
 
+import { PresenceState } from '@lynx-js/lynx-ui-presence'
 import {
   act,
   cleanup,
@@ -145,6 +146,38 @@ function TestContent(
 }
 
 describe('Popover custom animation with existing Popover and Presence', () => {
+  it('preserves queued functional updates on the public context', () => {
+    function ContextConsumer() {
+      const { state, setPresenceState } = useContext(PopoverContext)
+      return (
+        <view
+          id='phase'
+          bindtap={() => {
+            setPresenceState(previous =>
+              previous === PresenceState.Initial
+                ? PresenceState.Entering
+                : previous
+            )
+            setPresenceState(previous =>
+              previous === PresenceState.Entering
+                ? PresenceState.DelayedEntering
+                : previous
+            )
+          }}
+        >
+          {state}
+        </view>
+      )
+    }
+    const { container } = render(
+      <PopoverRoot>
+        <ContextConsumer />
+      </PopoverRoot>,
+    )
+    const phase = container.querySelector('#phase')!
+    act(() => fireEvent.tap(phase))
+    expect(phase.textContent).toBe(`${PresenceState.DelayedEntering}`)
+  })
   it('transfers an in-progress entry to replacement content', async () => {
     const transitions: PopoverAnimation[] = []
     const cancel = vi.fn()
