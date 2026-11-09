@@ -15,37 +15,41 @@ import {
 
 import {
   animate,
+  createMotionValue,
   easeIn,
   easeInOut,
   easeOut,
   linear,
-  useMotionValueRef,
 } from '@lynx-js/motion/mini'
 import type { AnimationOptions, MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import {
-  PopoverAnimationContext,
-  PopoverGeometryContext,
-} from './motionContext'
+import { PopoverMotionContext, PopoverPositionerContext } from './motionContext'
 import { PopoverContent } from './Popover'
 import type { PopoverMotionContentProps, PopoverMotionTarget } from './types'
 
 // Content with declarative targets and automatic Presence completion.
 export function PopoverMotionContent(props: PopoverMotionContentProps) {
   const {
-    initialMotion,
-    openMotion = {},
-    closeMotion = {},
+    motion: motionOptions,
     style,
     popoverContentProps,
     ...rest
   } = props
-  const register = useContext(PopoverAnimationContext)
-  const transformOrigin = useContext(PopoverGeometryContext)
+  const { register } = useContext(PopoverMotionContext)
+  const { transformOrigin } = useContext(PopoverPositionerContext)
   if (!register) {
     throw new Error('PopoverMotionContent must be inside PopoverRoot')
   }
+  const initialMotion = motionOptions?.initial
+  const openTarget = motionOptions?.open ?? {}
+  const closeTarget = motionOptions?.close ?? {}
+  const openMotion = openTarget.transition || !motionOptions?.transition
+    ? openTarget
+    : { ...openTarget, transition: motionOptions.transition }
+  const closeMotion = closeTarget.transition || !motionOptions?.transition
+    ? closeTarget
+    : { ...closeTarget, transition: motionOptions.transition }
   const initial = useRef({
     opacity: initialMotion?.opacity ?? 1,
     scale: initialMotion?.scale ?? 1,
@@ -75,21 +79,17 @@ export function PopoverMotionContent(props: PopoverMotionContentProps) {
         `translate(${initial.x}px, ${initial.y}px) rotate(${initial.rotate}deg) scale(${initial.scale}) scaleX(${initial.scaleX}) scaleY(${initial.scaleY})`,
     }),
   }), [initial, ownedStyles])
-  const opacity = useMotionValueRef(initial.opacity)
-  const scale = useMotionValueRef(initial.scale)
-  const scaleX = useMotionValueRef(initial.scaleX)
-  const scaleY = useMotionValueRef(initial.scaleY)
-  const x = useMotionValueRef(initial.x)
-  const y = useMotionValueRef(initial.y)
-  const rotate = useMotionValueRef(initial.rotate)
-  const elementRef = useMainThreadRef<MainThread.Element | null>(null)
-  const motionRef = useMainThreadRef<PopoverMotionController | null>(null)
-  const requestRef = useMainThreadRef(0)
-  const ownedStylesRef = useMainThreadRef(ownedStyles)
+  const mainThread = useMainThreadRef<MotionRuntime>({
+    element: null,
+    controller: null,
+    request: 0,
+    ownedStyles,
+  })
   // Keep the imported functions in the main-thread bundle, including when they
   // are only invoked from a background-scheduled animation.
   useMainThreadRef({
     animate,
+    createMotionValue,
     linear,
     easeIn,
     easeOut,
@@ -103,15 +103,14 @@ export function PopoverMotionContent(props: PopoverMotionContentProps) {
 
   const applyStyles = () => {
     'main thread'
-    const element = elementRef.current
-    const motion = motionRef.current
+    const { element, controller: motion, ownedStyles } = mainThread.current
     if (element && motion) {
-      element.setStyleProperties(motion.styles(ownedStylesRef.current))
+      element.setStyleProperties(motion.styles(ownedStyles))
     }
   }
   const bindElement = useCallback((element: MainThread.Element | null) => {
     'main thread'
-    elementRef.current = element
+    mainThread.current.element = element
     let externalCleanup: unknown
     if (externalRef) {
       if (typeof externalRef === 'function') {
@@ -123,8 +122,8 @@ export function PopoverMotionContent(props: PopoverMotionContentProps) {
     }
     if (!element) return
 
-    ownedStylesRef.current = ownedStyles
-    const motion = motionRef.current
+    mainThread.current.ownedStyles = ownedStyles
+    const motion = mainThread.current.controller
     element.setStyleProperties(
       motion ? motion.styles(ownedStyles) : initialStyles,
     )
@@ -132,17 +131,15 @@ export function PopoverMotionContent(props: PopoverMotionContentProps) {
       const cleanup = externalCleanup as () => void
       return () => {
         'main thread'
-        elementRef.current = null
+        mainThread.current.element = null
         cleanup()
       }
     }
   }, [
-    elementRef,
     externalRef,
     initialStyles,
-    motionRef,
+    mainThread,
     ownedStyles,
-    ownedStylesRef,
   ])
   const finish = (id: number) => {
     if (completion.current?.id === id) completion.current.complete()
@@ -154,29 +151,22 @@ export function PopoverMotionContent(props: PopoverMotionContentProps) {
     styles: MotionStyleOwners,
   ) => {
     'main thread'
-    requestRef.current = id
-    ownedStylesRef.current = styles
-    // Motion hooks initialize their refs on the main thread after mount.
-    // Entry starts only after Popover's positioning pass, so the values exist.
-    if (!motionRef.current) {
-      const motion = createPopoverMotion({
-        opacity: opacity.current,
-        scale: scale.current,
-        scaleX: scaleX.current,
-        scaleY: scaleY.current,
-        x: x.current,
-        y: y.current,
-        rotate: rotate.current,
-      }, (value, to, options) => {
+    mainThread.current.request = id
+    mainThread.current.ownedStyles = styles
+    if (!mainThread.current.controller) {
+      const motion = createPopoverMotion(initial, (value, to, options) => {
         'main thread'
         return animate(value, to, options)
+      }, (value) => {
+        'main thread'
+        return createMotionValue(value)
       })
-      motionRef.current = motion
+      mainThread.current.controller = motion
       for (const value of Object.values(motion.values)) {
         value.on('change', applyStyles)
       }
     }
-    const motion = motionRef.current
+    const motion = mainThread.current.controller
     applyStyles()
     const transition = target.transition
     const easings = { linear, easeIn, easeOut, easeInOut }
@@ -194,14 +184,14 @@ export function PopoverMotionContent(props: PopoverMotionContentProps) {
       }
     motion.start(target, options, () => {
       'main thread'
-      if (requestRef.current === id) runOnBackground(finish)(id)
+      if (mainThread.current.request === id) runOnBackground(finish)(id)
     }, immediate)
   }
   const stop = (id: number) => {
     'main thread'
-    if (requestRef.current !== id) return
-    requestRef.current = 0
-    const motion = motionRef.current
+    if (mainThread.current.request !== id) return
+    mainThread.current.request = 0
+    const motion = mainThread.current.controller
     if (motion) motion.cancel()
   }
   useEffect(() =>
@@ -251,6 +241,13 @@ interface MotionStyleOwners {
   transform: boolean
 }
 
+interface MotionRuntime {
+  element: MainThread.Element | null
+  controller: PopoverMotionController | null
+  request: number
+  ownedStyles: MotionStyleOwners
+}
+
 export interface PopoverMotionController {
   values: Record<Property, MotionValue<number>>
   cancel: () => void
@@ -267,10 +264,15 @@ export interface PopoverMotionController {
 
 // A controller exists only for the mounted content, on the main thread.
 export function createPopoverMotion(
-  values: PopoverMotionController['values'],
+  initial: Record<Property, number>,
   animateValue: typeof animate,
+  createValue: (initial: number) => MotionValue<number>,
 ): PopoverMotionController {
   'main thread'
+  const values = {} as PopoverMotionController['values']
+  for (const property of Object.keys(IDENTITY) as Property[]) {
+    values[property] = createValue(initial[property])
+  }
   let generation = 0
   let controls: ReturnType<typeof animate>[] = []
   const cancel = () => {

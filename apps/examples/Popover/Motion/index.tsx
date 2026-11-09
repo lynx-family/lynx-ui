@@ -30,9 +30,11 @@ function App() {
           >
             <PopoverMotionContent
               className='motion-content'
-              initialMotion={{ opacity: 0, scale: 0.6 }}
-              openMotion={{ opacity: 1, scale: 1, transition: spring }}
-              closeMotion={{ opacity: 0, scale: 0.6, transition: exit }}
+              motion={{
+                initial: { opacity: 0, scale: 0.6 },
+                open: { opacity: 1, scale: 1, transition: spring },
+                close: { opacity: 0, scale: 0.6, transition: exit },
+              }}
             >
               <text className='motion-text'>A little more detail.</text>
               <PopoverArrow size={8} />

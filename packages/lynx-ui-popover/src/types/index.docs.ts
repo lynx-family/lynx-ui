@@ -335,6 +335,18 @@ export interface PopoverMotionTarget extends PopoverMotionValues {
   transition?: PopoverMotionTransition
 }
 
+/** Motion targets and their shared default transition. */
+export interface PopoverMotionOptions {
+  /** Visual values applied on each fresh mount. */
+  initial?: PopoverMotionValues
+  /** Target values when opening. Its transition overrides the shared default. */
+  open?: PopoverMotionTarget
+  /** Target values when closing. Its transition overrides the shared default. */
+  close?: PopoverMotionTarget
+  /** Default transition for targets without their own transition. */
+  transition?: PopoverMotionTransition
+}
+
 /**
  * Motion-driven content. It owns opacity when an opacity target is specified,
  * and transform when a transform target is specified. It stays mounted until
@@ -342,26 +354,12 @@ export interface PopoverMotionTarget extends PopoverMotionValues {
  */
 export interface PopoverMotionContentProps extends PopoverContentProps {
   /**
-   * Applied on each fresh mount. Omitted properties use visual identity.
+   * Initial, opening and closing values, with an optional shared transition.
    * @Android
    * @iOS
    * @Harmony
    */
-  initialMotion?: PopoverMotionValues
-  /**
-   * Opening target. Omitted properties retain their current values.
-   * @Android
-   * @iOS
-   * @Harmony
-   */
-  openMotion?: PopoverMotionTarget
-  /**
-   * Closing target. Omitted properties retain their current values.
-   * @Android
-   * @iOS
-   * @Harmony
-   */
-  closeMotion?: PopoverMotionTarget
+  motion?: PopoverMotionOptions
 }
 
 /**

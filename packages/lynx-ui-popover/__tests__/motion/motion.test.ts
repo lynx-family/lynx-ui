@@ -2,6 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import { useEffect } from '@lynx-js/react'
+
 import { animate, createMotionValue } from '@lynx-js/motion/mini'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -12,15 +14,19 @@ import {
 import type { PopoverMotionTarget, PopoverMotionValues } from '../../src/types'
 
 function createPopoverMotion(initial: PopoverMotionValues = {}) {
-  const controller = createController({
-    opacity: createMotionValue(initial.opacity ?? 1),
-    scale: createMotionValue(initial.scale ?? 1),
-    scaleX: createMotionValue(initial.scaleX ?? 1),
-    scaleY: createMotionValue(initial.scaleY ?? 1),
-    x: createMotionValue(initial.x ?? 0),
-    y: createMotionValue(initial.y ?? 0),
-    rotate: createMotionValue(initial.rotate ?? 0),
-  }, animate)
+  const controller = createController(
+    {
+      opacity: initial.opacity ?? 1,
+      scale: initial.scale ?? 1,
+      scaleX: initial.scaleX ?? 1,
+      scaleY: initial.scaleY ?? 1,
+      x: initial.x ?? 0,
+      y: initial.y ?? 0,
+      rotate: initial.rotate ?? 0,
+    },
+    animate,
+    createMotionValue,
+  )
   return {
     ...controller,
     start: (
@@ -37,22 +43,27 @@ function createPopoverMotion(initial: PopoverMotionValues = {}) {
   }
 }
 
-const { animations } = vi.hoisted(() => ({
+const { animations, register } = vi.hoisted(() => ({
   animations: [] as {
     value: { set: (v: number) => void }
     to: number
     options: { onComplete: () => void, duration?: number, stiffness?: number }
     stop: ReturnType<typeof vi.fn>
   }[],
+  register: vi.fn(),
 }))
 vi.mock('@lynx-js/react', () => ({
   useCallback: (callback: unknown) => callback,
   useContext: (context: string) =>
-    context === 'geometry' ? '120px 48px' : vi.fn(),
+    context === 'positioner'
+      ? { transformOrigin: '120px 48px' }
+      : { register, active: true },
   useRef: (current: unknown) => ({ current }),
   useMainThreadRef: (current: unknown) => ({ current }),
   useMemo: (factory: () => unknown) => factory(),
   useEffect: vi.fn(),
+  runOnMainThread: (callback: unknown) => callback,
+  runOnBackground: (callback: unknown) => callback,
 }))
 vi.mock('../../src/Popover', () => ({
   PopoverContent: 'popover-content',
@@ -60,13 +71,11 @@ vi.mock('../../src/Popover', () => ({
 vi.mock(
   '../../src/motionContext',
   () => ({
-    PopoverAnimationContext: 'animation',
-    PopoverGeometryContext: 'geometry',
+    PopoverMotionContext: 'motion',
+    PopoverPositionerContext: 'positioner',
   }),
 )
 vi.mock('@lynx-js/motion/mini', () => ({
-  // Reproduce the first native render, before Motion's main-thread refs exist.
-  useMotionValueRef: () => ({ current: undefined }),
   createMotionValue: (initial: number) => {
     let current = initial
     return {
@@ -77,6 +86,7 @@ vi.mock('@lynx-js/motion/mini', () => ({
       jump: (v: number) => {
         current = v
       },
+      on: () => vi.fn(),
     }
   },
   animate: (
@@ -95,6 +105,8 @@ vi.mock('@lynx-js/motion/mini', () => ({
 }))
 beforeEach(() => {
   animations.length = 0
+  register.mockReset()
+  vi.mocked(useEffect).mockClear()
 })
 describe('Popover Motion controller', () => {
   it('runs a consumer main-thread ref cleanup on detach', () => {
@@ -137,8 +149,7 @@ describe('Popover Motion controller', () => {
   })
   it('preserves style properties that motion does not animate', () => {
     const scaleContent = PopoverMotionContent({
-      initialMotion: { scale: 0.8 },
-      openMotion: { scale: 1 },
+      motion: { initial: { scale: 0.8 }, open: { scale: 1 } },
       style: { opacity: 0.4 },
     })
     expect(scaleContent.props.style.opacity).toBe(0.4)
@@ -148,16 +159,14 @@ describe('Popover Motion controller', () => {
     })
     expect(setStyleProperties.mock.calls[0]![0]).not.toHaveProperty('opacity')
     const fadeContent = PopoverMotionContent({
-      initialMotion: { opacity: 0 },
-      openMotion: { opacity: 1 },
+      motion: { initial: { opacity: 0 }, open: { opacity: 1 } },
       style: { transform: 'rotate(10deg)' },
     })
     expect(fadeContent.props.style.transform).toBe('rotate(10deg)')
   })
   it('paints initial scale before Motion and positioning are ready', () => {
     const content = PopoverMotionContent({
-      initialMotion: { scale: 0 },
-      openMotion: { scale: 1 },
+      motion: { initial: { scale: 0 }, open: { scale: 1 } },
       style: { backgroundColor: '#202124' },
     })
     expect(content.props.style).toMatchObject({
@@ -175,9 +184,31 @@ describe('Popover Motion controller', () => {
     expect(animations).toHaveLength(0)
   })
   it('paints an initial fade without waiting for an animation callback', () => {
-    const content = PopoverMotionContent({ initialMotion: { opacity: 0 } })
+    const content = PopoverMotionContent({
+      motion: { initial: { opacity: 0 } },
+    })
     expect(content.props.style.opacity).toBe('0')
     expect(animations).toHaveLength(0)
+  })
+  it('accepts grouped options with a shared transition and phase overrides', () => {
+    const content = PopoverMotionContent({
+      motion: {
+        initial: { scale: 0 },
+        open: { scale: 1 },
+        close: { scale: 0, transition: { type: 'spring', stiffness: 600 } },
+        transition: { type: 'spring', stiffness: 300 },
+      },
+    })
+    expect(content.props.style.transform).toContain('scale(0)')
+    const effects = vi.mocked(useEffect).mock.calls
+    const effect = effects[effects.length - 1]?.[0]
+    expect(effect).toBeDefined()
+    effect!()
+    const driver = register.mock.calls[0]![0]
+    driver({ open: true, complete: vi.fn() })
+    expect(animations[0]!.options.stiffness).toBe(300)
+    driver({ open: false, complete: vi.fn() })
+    expect(animations[1]!.options.stiffness).toBe(600)
   })
   it('waits for every animated property before reporting completion', () => {
     const controller = createPopoverMotion({ scale: 0, opacity: 0 })
@@ -221,15 +252,19 @@ describe('Popover Motion controller', () => {
     expect(complete).toHaveBeenCalledOnce()
   })
   it('synchronizes newly mounted content to its open target immediately', () => {
-    const controller = createController({
-      opacity: createMotionValue(0),
-      scale: createMotionValue(0.5),
-      scaleX: createMotionValue(1),
-      scaleY: createMotionValue(1),
-      x: createMotionValue(0),
-      y: createMotionValue(0),
-      rotate: createMotionValue(0),
-    }, animate)
+    const controller = createController(
+      {
+        opacity: 0,
+        scale: 0.5,
+        scaleX: 1,
+        scaleY: 1,
+        x: 0,
+        y: 0,
+        rotate: 0,
+      },
+      animate,
+      createMotionValue,
+    )
     const complete = vi.fn()
     controller.start(
       { opacity: 1, scale: 1 },

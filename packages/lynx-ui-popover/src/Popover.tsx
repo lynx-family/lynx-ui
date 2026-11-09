@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 
 import {
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -22,6 +21,7 @@ import {
   presenceClassVariants,
   renderPresenceChildren,
   resolveAnimationStatus,
+  usePresenceAnimation,
   useVisibilityFromPresence,
 } from '@lynx-js/lynx-ui-presence'
 import type { CSSProperties, LayoutChangeEvent } from '@lynx-js/types'
@@ -39,14 +39,10 @@ import {
   offset,
   popoverPlatform,
 } from './floating'
-import type { ComputePositionReturn, Middleware, Placement } from './floating'
+import type { ComputePositionReturn, Middleware } from './floating'
 import { limitShift, shift } from './floating/shift'
 import { size } from './floating/size'
-import {
-  PopoverAnimationActiveContext,
-  PopoverAnimationContext,
-  PopoverGeometryContext,
-} from './motionContext'
+import { PopoverMotionContext, PopoverPositionerContext } from './motionContext'
 import type {
   PopoverAnchorProps,
   PopoverArrowProps,
@@ -58,7 +54,6 @@ import type {
   PopoverTriggerProps,
 } from './types'
 import { PopoverContext, useElementInfoReducer } from './useElementInfoReducer'
-import { usePopoverAnimation } from './usePopoverAnimation'
 import './style.css'
 
 export const PopoverRoot = (
@@ -83,18 +78,28 @@ export const PopoverRoot = (
     state,
     updatePresence,
     registerAnimation,
-    markPositioned,
+    markReady,
     animated,
     handleOpen,
     handleClose,
-  } = usePopoverAnimation(actualShow, onOpen, onClose)
+  } = usePresenceAnimation({
+    show: actualShow,
+    onOpen,
+    onClose,
+    enableDelay: true,
+    waitForReady: true,
+  })
   const { sharedInfo, updateRects: dispatchRects } = useElementInfoReducer()
   const updateRects = useCallback(
     (action: Parameters<typeof dispatchRects>[0]) => {
       dispatchRects(action)
-      if (action.type === 'updateArrowCoords') markPositioned()
+      if (action.type === 'updateArrowCoords') markReady()
     },
-    [dispatchRects, markPositioned],
+    [dispatchRects, markReady],
+  )
+  const motionContextValue = useMemo(
+    () => ({ register: registerAnimation, active: animated }),
+    [registerAnimation, animated],
   )
   const contextValue = useMemo(
     () => ({
@@ -135,11 +140,9 @@ export const PopoverRoot = (
     <PopoverContext.Provider
       value={contextValue}
     >
-      <PopoverAnimationContext.Provider value={registerAnimation}>
-        <PopoverAnimationActiveContext.Provider value={animated}>
-          {children}
-        </PopoverAnimationActiveContext.Provider>
-      </PopoverAnimationContext.Provider>
+      <PopoverMotionContext.Provider value={motionContextValue}>
+        {children}
+      </PopoverMotionContext.Provider>
     </PopoverContext.Provider>
   )
 }
@@ -284,7 +287,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
       debugLog={debugLog}
     >
       <PopoverPositionerContext.Provider
-        value={{ placement }}
+        value={{ placement, transformOrigin }}
       >
         <PopoverOverlay
           placement={placement}
@@ -301,17 +304,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
           transition={transition}
           popoverOverlayProps={popoverPositionerProps}
         >
-          {typeof children === 'function'
-            ? status => (
-              <PopoverGeometryContext.Provider value={transformOrigin}>
-                {children(status)}
-              </PopoverGeometryContext.Provider>
-            )
-            : (
-              <PopoverGeometryContext.Provider value={transformOrigin}>
-                {children}
-              </PopoverGeometryContext.Provider>
-            )}
+          {children}
         </PopoverOverlay>
       </PopoverPositionerContext.Provider>
     </Presence>
@@ -320,7 +313,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
 
 export const PopoverTrigger = (props: PopoverTriggerProps) => {
   const { style, children, className, onClick, disabled, transition } = props
-  const animated = useContext(PopoverAnimationActiveContext)
+  const { active: animated } = useContext(PopoverMotionContext)
   const {
     updateRects,
     setUncontrolledShow,
@@ -387,7 +380,7 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
 
 export const PopoverBackdrop = (props: PopoverBackdropProps) => {
   const { className, style, onClick, transition, ...restProps } = props
-  const animated = useContext(PopoverAnimationActiveContext)
+  const { active: animated } = useContext(PopoverMotionContext)
   const { state, setUncontrolledShow, isControlled, onVisibleChange } =
     useContext(PopoverContext)
 
@@ -476,7 +469,7 @@ const PopoverOverlay = (props: PopoverOverlayProps) => {
   } = props
   const { controllers } = useContext(PresenceContext)
   const { state } = controllers
-  const animated = useContext(PopoverAnimationActiveContext)
+  const { active: animated } = useContext(PopoverMotionContext)
   const { sharedInfo, updateRects, show } = useContext(PopoverContext)
   const { floatingCoords } = sharedInfo
   const { x, y } = floatingCoords
@@ -584,12 +577,6 @@ export const PopoverContent = (props: PopoverContentProps) => {
     </view>
   )
 }
-
-const PopoverPositionerContext = createContext<{
-  placement: Placement
-}>({
-  placement: 'top',
-})
 
 export const PopoverArrow = (props: PopoverArrowProps) => {
   const {

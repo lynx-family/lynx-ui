@@ -25,6 +25,7 @@ export type {
   PopoverBackdropProps,
   PopoverContentProps,
   PopoverMotionContentProps,
+  PopoverMotionOptions,
   PopoverMotionValues,
   PopoverMotionTarget,
   PopoverMotionTransition,

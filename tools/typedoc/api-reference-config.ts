@@ -91,6 +91,7 @@ export const apiReferenceConfig: Readonly<
     ],
     supportingTypes: [
       'PopoverOverlayProps',
+      'PopoverMotionOptions',
       'PopoverMotionValues',
       'PopoverMotionTarget',
       'PopoverMotionTransition',

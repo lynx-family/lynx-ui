@@ -5,6 +5,7 @@
 import { useContext, useEffect, useRef } from '@lynx-js/react'
 
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
+import type { PresenceAnimationDriver } from '@lynx-js/lynx-ui-presence'
 import {
   act,
   cleanup,
@@ -22,12 +23,11 @@ import {
   PopoverTrigger,
 } from '../src'
 import {
-  PopoverAnimationContext,
-  PopoverGeometryContext,
+  PopoverMotionContext,
+  PopoverPositionerContext,
 } from '../src/motionContext'
-import type { PopoverAnimationDriver } from '../src/motionContext'
 
-type PopoverAnimation = Parameters<PopoverAnimationDriver>[0]
+type PopoverAnimation = Parameters<PresenceAnimationDriver>[0]
 
 // These cases exercise Presence with a controlled driver, not Motion's native scheduler.
 vi.mock('@lynx-js/motion/mini', () => ({
@@ -88,7 +88,7 @@ function Fixture(
   }: {
     show?: boolean
     arrow?: boolean
-    onAnimate?: PopoverAnimationDriver
+    onAnimate?: PresenceAnimationDriver
     onOpen?: () => void
     onClose?: () => void
     onVisibleChange?: (visible: boolean) => void
@@ -114,22 +114,22 @@ function Fixture(
 }
 
 function TestContent(
-  { onAnimate, arrow }: { onAnimate?: PopoverAnimationDriver, arrow: boolean },
+  { onAnimate, arrow }: { onAnimate?: PresenceAnimationDriver, arrow: boolean },
 ) {
-  const register = useContext(PopoverAnimationContext)!
-  const origin = useContext(PopoverGeometryContext)
+  const { register } = useContext(PopoverMotionContext)
+  const { transformOrigin } = useContext(PopoverPositionerContext)
   const latestDriver = useRef(onAnimate)
   latestDriver.current = onAnimate
   useEffect(
     () =>
       onAnimate
-        ? register(animation => latestDriver.current?.(animation))
+        ? register?.(animation => latestDriver.current?.(animation))
         : undefined,
     [register, !!onAnimate],
   )
   return (
     <PopoverContent
-      style={{ transformOrigin: origin }}
+      style={{ transformOrigin }}
       popoverContentProps={{ id: 'bubble' }}
     >
       <Layout />

@@ -1237,46 +1237,12 @@ all exit properties complete. Use one motion content per popover root.
     "docTypeFallback": null
   },
   {
-    "name": "closeMotion",
-    "type": "PopoverMotionTarget",
+    "name": "motion",
+    "type": "PopoverMotionOptions",
     "summary": [
       {
         "kind": "text",
-        "text": "Closing target. Omitted properties retain their current values."
-      }
-    ],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "initialMotion",
-    "type": "PopoverMotionValues",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Applied on each fresh mount. Omitted properties use visual identity."
-      }
-    ],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "openMotion",
-    "type": "PopoverMotionTarget",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opening target. Omitted properties retain their current values."
+        "text": "Initial, opening and closing values, with an optional shared transition."
       }
     ],
     "summary_zh": [],
@@ -1827,6 +1793,81 @@ The view container of the Popover. Can be overlay or view. Controls the z-index 
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+### PopoverMotionOptions {#api-supporting-types-popover-motion-options}
+
+Motion targets and their shared default transition.
+
+<UIApiTable source={[
+  {
+    "name": "close",
+    "type": "PopoverMotionTarget",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Target values when closing. Its transition overrides the shared default."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initial",
+    "type": "PopoverMotionValues",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Visual values applied on each fresh mount."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "open",
+    "type": "PopoverMotionTarget",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Target values when opening. Its transition overrides the shared default."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "transition",
+    "type": "PopoverMotionTransition",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Default transition for targets without their own transition."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   }
 ]}/>

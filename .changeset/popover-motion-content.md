@@ -1,5 +1,6 @@
 ---
 "@lynx-js/lynx-ui-popover": minor
+"@lynx-js/lynx-ui-presence": minor
 "@lynx-example/lynx-ui-popover": patch
 ---
 

@@ -204,9 +204,12 @@ the popover package still installs it as a dependency.
 
 ```tsx
 <PopoverMotionContent
-  initialMotion={{ opacity: 0, scale: 0.8 }}
-  openMotion={{ opacity: 1, scale: 1 }}
-  closeMotion={{ opacity: 0, scale: 0.8 }}
+  motion={{
+    initial: { opacity: 0, scale: 0.8 },
+    open: { opacity: 1, scale: 1 },
+    close: { opacity: 0, scale: 0.8 },
+    transition: { type: 'spring', stiffness: 300, damping: 30 },
+  }}
 >
   {content}
   <PopoverArrow size={8} />
@@ -218,7 +221,7 @@ any transform target is supplied. Do not animate an owned property with CSS on
 the same node. Other style properties remain available to the consumer. The
 default transform origin is the arrow tip, or the corresponding content edge
 when no arrow is present. Use one motion content per root. Omitted target
-values retain their current values. Set `transition` on each target to
-configure a spring or a tween; tween duration is in seconds. See the Motion
+values retain their current values. Set a shared `transition` in `motion`, or
+override it on each target; tween duration is in seconds. See the Motion
 example for a complete composition. Motion content allows the trigger and
 backdrop to respond while entry or exit is running so the animation can reverse.

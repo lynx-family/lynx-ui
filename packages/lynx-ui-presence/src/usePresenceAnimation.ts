@@ -5,23 +5,45 @@
 import { useCallback, useEffect, useRef, useState } from '@lynx-js/react'
 
 import { delayFrames } from '@lynx-js/lynx-ui-common'
-import { PresenceState } from '@lynx-js/lynx-ui-presence'
 
-import type { PopoverAnimationDriver } from './motionContext'
+import { PresenceState } from './utils'
 
-interface AnimationRegistration {
-  driver: PopoverAnimationDriver
+/** An animation driver must report completion and return an optional cancellation function. */
+export type PresenceAnimationDriver = (
+  animation: { open: boolean, immediate?: boolean, complete: () => void },
+) => (() => void) | undefined
+
+interface UsePresenceAnimationOptions {
+  show: boolean
+  onOpen?: () => void
+  onClose?: () => void
+  enableDelay?: boolean
+  waitForReady?: boolean
 }
 
-/** Coordinates the existing Presence lifecycle with optional motion content. */
-export function usePopoverAnimation(
-  show: boolean,
-  onOpen?: () => void,
-  onClose?: () => void,
-) {
+interface AnimationRegistration {
+  driver: PresenceAnimationDriver
+}
+
+/**
+ * Coordinates Presence with an optional external animation driver. Pass the
+ * returned state and handlers to Presence using the same `enableDelay` value.
+ * With `waitForReady`, signal `markReady` after the current content is ready;
+ * readiness is retained across interrupted exits and reset after a full exit.
+ */
+export function usePresenceAnimation({
+  show,
+  onOpen,
+  onClose,
+  enableDelay = false,
+  waitForReady = false,
+}: UsePresenceAnimationOptions) {
   const [state, setPresenceState] = useState(PresenceState.Initial)
   const [animation, setAnimation] = useState<AnimationRegistration | null>(null)
-  const [positioned, setPositioned] = useState(false)
+  const [ready, setReady] = useState(!waitForReady)
+  const entryState = enableDelay
+    ? PresenceState.DelayedEntering
+    : PresenceState.Entering
   const registrationRef = useRef<AnimationRegistration | null>(null)
   const lastOpenedRef = useRef<AnimationRegistration | null>(null)
   const mounted = useRef(true)
@@ -42,7 +64,7 @@ export function usePopoverAnimation(
     }
   }, [])
 
-  const registerAnimation = useCallback((driver: PopoverAnimationDriver) => {
+  const registerAnimation = useCallback((driver: PresenceAnimationDriver) => {
     const registration = { driver }
     registrationRef.current = registration
     setAnimation(registration)
@@ -58,7 +80,9 @@ export function usePopoverAnimation(
     }
   }, [])
 
-  const markPositioned = useCallback(() => setPositioned(true), [])
+  const markReady = useCallback(() => {
+    if (latest.current.show) setReady(true)
+  }, [])
   const updatePresence: typeof setPresenceState = useCallback(next => {
     if (typeof next === 'function') {
       setPresenceState(previous => {
@@ -78,9 +102,6 @@ export function usePopoverAnimation(
       latest.current.animation
       && (resolved === PresenceState.Entered || resolved === PresenceState.Left)
     ) return
-    if (resolved === PresenceState.Entering && !didAnimate.current) {
-      setPositioned(false)
-    }
     setPresenceState(resolved)
   }, [])
   const handleClose = useCallback(() => {
@@ -103,8 +124,12 @@ export function usePopoverAnimation(
     if (show) closeNotified.current = false
   }, [show])
 
-  const entering = show && positioned
-    && (state === PresenceState.DelayedEntering
+  useEffect(() => {
+    if (waitForReady && !show && state === PresenceState.Left) setReady(false)
+  }, [show, state, waitForReady])
+
+  const entering = show && ready
+    && (state === entryState
       || (didAnimate.current
         && (state === PresenceState.Leaving
           || state === PresenceState.Entering)))
@@ -112,7 +137,7 @@ export function usePopoverAnimation(
   let animationPhase: 'open' | 'close' | 'sync' | null = null
   if (entering) animationPhase = 'open'
   else if (leaving) animationPhase = 'close'
-  else if (show && positioned && state === PresenceState.Entered) {
+  else if (show && ready && state === PresenceState.Entered) {
     animationPhase = 'sync'
   }
 
@@ -139,7 +164,7 @@ export function usePopoverAnimation(
         ) return
         active = false
         if (syncing) return
-        if (opening && currentState.current !== PresenceState.DelayedEntering) {
+        if (opening && currentState.current !== entryState) {
           pendingOpenCompletion.current = true
         } else if (opening) {
           finishOpen()
@@ -153,11 +178,11 @@ export function usePopoverAnimation(
       pendingOpenCompletion.current = false
       cleanup?.()
     }
-  }, [animationPhase, animation, finishOpen])
+  }, [animationPhase, animation, entryState, finishOpen])
 
   useEffect(() => {
     if (
-      state === PresenceState.DelayedEntering && show
+      state === entryState && show
       && pendingOpenCompletion.current
     ) {
       pendingOpenCompletion.current = false
@@ -168,20 +193,20 @@ export function usePopoverAnimation(
     } else if (!animation && didAnimate.current) {
       if (state === PresenceState.Entered) {
         didAnimate.current = false
-      } else if (state === PresenceState.DelayedEntering && show) {
+      } else if (state === entryState && show) {
         didAnimate.current = false
         finishOpen()
       } else if (state === PresenceState.Leaving && !show) {
         setPresenceState(PresenceState.Left)
       }
     }
-  }, [state, animation, show, finishOpen, handleClose])
+  }, [state, animation, show, entryState, finishOpen, handleClose])
 
   return {
     state,
     updatePresence,
     registerAnimation,
-    markPositioned,
+    markReady,
     animated: !!animation,
     handleOpen,
     handleClose,

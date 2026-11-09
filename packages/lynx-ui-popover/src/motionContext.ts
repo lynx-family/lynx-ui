@@ -4,14 +4,16 @@
 
 import { createContext } from '@lynx-js/react'
 
-export type PopoverAnimationDriver = (
-  animation: { open: boolean, immediate?: boolean, complete: () => void },
-) => (() => void) | undefined
+import type { PresenceAnimationDriver } from '@lynx-js/lynx-ui-presence'
 
-export const PopoverAnimationContext = createContext<
-  ((driver: PopoverAnimationDriver) => () => void) | null
->(null)
+import type { Placement } from './floating'
 
-export const PopoverAnimationActiveContext = createContext(false)
+export const PopoverMotionContext = createContext<{
+  register: ((driver: PresenceAnimationDriver) => () => void) | null
+  active: boolean
+}>({ register: null, active: false })
 
-export const PopoverGeometryContext = createContext('50% 50%')
+export const PopoverPositionerContext = createContext<{
+  placement: Placement
+  transformOrigin: string
+}>({ placement: 'top', transformOrigin: '50% 50%' })
