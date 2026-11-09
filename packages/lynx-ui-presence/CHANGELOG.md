@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-presence
 
+## 3.142.0
+
+### Minor Changes
+
+- Add opt-in motion content with spring and tween transitions, arrow-tip transform ([#384](https://github.com/lynx-family/lynx-ui/pull/384))
+  origins, interruption handling, and exit retention.
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
+- Updated dependencies [[`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d)]:
+  - @lynx-js/lynx-ui-common@3.142.0
+
 ## 3.140.1
 
 ### Patch Changes
