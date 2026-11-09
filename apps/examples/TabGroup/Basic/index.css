@@ -1,5 +1,10 @@
 @import "../shared/base.css";
 
+.demo-container {
+  padding-top: 64px;
+  padding-bottom: 72px;
+}
+
 .content-panel {
   flex: 1;
   min-height: 0;
