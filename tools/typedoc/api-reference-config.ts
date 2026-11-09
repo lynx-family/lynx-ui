@@ -86,9 +86,16 @@ export const apiReferenceConfig: Readonly<
       'PopoverPositioner',
       'PopoverBackdrop',
       'PopoverContent',
+      'PopoverMotionContent',
       'PopoverArrow',
     ],
-    supportingTypes: ['PopoverOverlayProps'],
+    supportingTypes: [
+      'PopoverOverlayProps',
+      'PopoverMotionOptions',
+      'PopoverMotionValues',
+      'PopoverMotionTarget',
+      'PopoverMotionTransition',
+    ],
     embeddedTypes: ['PresenceAnimationStatus'],
   },
   'lynx-ui-radio-group': {

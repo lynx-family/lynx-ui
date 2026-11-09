@@ -14,6 +14,7 @@ const baseConfig = exampleConfig({
   PopoverWithScrollView: './WithScrollView/index.tsx',
   PopoverBackdrop: './Backdrop/index.tsx',
   PopoverControlled: './Controlled/index.tsx',
+  PopoverMotion: './Motion/index.tsx',
   PopoverCustomArrow: './CustomArrow/index.tsx',
   PopoverArrowAlignment: './ArrowAlignment/index.tsx',
   // Uncomment entries below when running internal tests for Popover.

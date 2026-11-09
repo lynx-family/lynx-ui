@@ -25,7 +25,8 @@
 ### Interactions
 
 - **Trigger**: Toggles visibility on click/tap.
-- **Backdrop**: Closes popover (sets visibility to `false`) on tap. Respects "busy" lifecycle states (e.g., won't close if already animating out).
+- **Backdrop**: Closes popover (sets visibility to `false`) on tap. Without
+  motion content, it is disabled during busy lifecycle states.
 
 ## 3. AI Coding Guide
 
@@ -192,3 +193,35 @@ maximum-dimension square. Custom children do not receive triangle borders.
 
 See [the arrow alignment example](../../apps/examples/Popover/ArrowAlignment/README.md)
 for native comparisons and design-system integration guidance.
+
+## Motion-driven Content
+
+Use `PopoverMotionContent` in place of `PopoverContent` when motion should
+control entry and exit. Keep the positioner and content mounted and toggle
+`PopoverRoot` visibility so the exit can finish. Bundlers that support tree
+shaking can omit the motion engine when the motion content is unused, although
+the popover package still installs it as a dependency.
+
+```tsx
+<PopoverMotionContent
+  motion={{
+    initial: { opacity: 0, scale: 0.8 },
+    open: { opacity: 1, scale: 1 },
+    close: { opacity: 0, scale: 0.8 },
+    transition: { type: 'spring', stiffness: 300, damping: 30 },
+  }}
+>
+  {content}
+  <PopoverArrow size={8} />
+</PopoverMotionContent>
+```
+
+Motion owns `opacity` when an opacity target is supplied, and `transform` when
+any transform target is supplied. Do not animate an owned property with CSS on
+the same node. Other style properties remain available to the consumer. The
+default transform origin is the arrow tip, or the corresponding content edge
+when no arrow is present. Use one motion content per root. Omitted target
+values retain their current values. Set a shared `transition` in `motion`, or
+override it on each target; tween duration is in seconds. See the Motion
+example for a complete composition. Motion content allows the trigger and
+backdrop to respond while entry or exit is running so the animation can reverse.

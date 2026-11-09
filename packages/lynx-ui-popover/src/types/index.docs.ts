@@ -176,7 +176,7 @@ export interface PopoverOverlayProps extends ComponentBasicProps {
    */
   children?: ReactNode | PresenceChildrenType
   /**
-   * The position of the popover
+   * The position of the popover.
    * @zh Popover 的位置
    * @Android
    * @iOS
@@ -249,6 +249,140 @@ export interface PopoverContentProps extends ComponentBasicProps {
 }
 
 /**
+ * Numeric visual properties supported by PopoverMotionContent.
+ */
+export interface PopoverMotionValues {
+  /**
+   * Opacity.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  opacity?: number
+  /**
+   * Uniform scale.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  scale?: number
+  /**
+   * Horizontal scale.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  scaleX?: number
+  /**
+   * Vertical scale.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  scaleY?: number
+  /**
+   * Horizontal translation in logical pixels.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  x?: number
+  /**
+   * Vertical translation in logical pixels.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  y?: number
+  /**
+   * Rotation in degrees.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  rotate?: number
+}
+
+/**
+ * Spring physics or tween timing. Durations are in seconds. A tween defaults
+ * to 0.3 seconds and `easeOut` when its duration or easing is omitted.
+ * @docTypeFallback ({ type: 'spring', stiffness?: number, damping?: number, mass?: number, velocity?: number } | { type: 'tween', duration?: number, ease?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' })
+ * @Android
+ * @iOS
+ * @Harmony
+ */
+export type PopoverMotionTransition = {
+  type: 'spring'
+  stiffness?: number
+  damping?: number
+  mass?: number
+  velocity?: number
+} | {
+  type: 'tween'
+  /** Zero applies the target immediately. */
+  duration?: number
+  ease?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut'
+}
+
+/** A visual target and its transition settings. */
+export interface PopoverMotionTarget extends PopoverMotionValues {
+  /**
+   * Defaults to a spring with stiffness 300, damping 30 and mass 1.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  transition?: PopoverMotionTransition
+}
+
+/** Motion targets and their shared default transition. */
+export interface PopoverMotionOptions {
+  /**
+   * Visual values applied on each fresh mount.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  initial?: PopoverMotionValues
+  /**
+   * Target values when opening. Its transition overrides the shared default.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  open?: PopoverMotionTarget
+  /**
+   * Target values when closing. Its transition overrides the shared default.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  close?: PopoverMotionTarget
+  /**
+   * Default transition for targets without their own transition.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  transition?: PopoverMotionTransition
+}
+
+/**
+ * Motion-driven content. It owns opacity when an opacity target is specified,
+ * and transform when a transform target is specified. It stays mounted until
+ * all exit properties complete. Use one motion content per popover root.
+ */
+export interface PopoverMotionContentProps extends PopoverContentProps {
+  /**
+   * Initial, opening and closing values, with an optional shared transition.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  motion?: PopoverMotionOptions
+}
+
+/**
  * Helps position the Content and Arrow correctly.
  * @zh 帮助正确定位内容和箭头。
  */
@@ -263,13 +397,13 @@ export interface PopoverPositionerProps extends ComponentBasicProps {
    */
   children?: ReactNode | PresenceChildrenType
   /**
-   * The position of the popover
+   * The position of the popover. Defaults to 'top'.
    * @zh Popover 的位置
    * @Android
    * @iOS
    * @Harmony
    */
-  placement: Placement
+  placement?: Placement
   /**
    * The offset of the popover position
    * @zh Popover 位置的偏移量
@@ -429,8 +563,8 @@ export interface PopoverTriggerUIVariants extends PresenceUIVariants {
   'ui-active'?: boolean
 
   /**
-   * Applied when the trigger is explicitly disabled or the popover is busy.
-   * @zh 触发器被显式禁用或 Popover 处于忙碌状态时生效。
+   * Applied when the trigger is disabled.
+   * @zh 触发器被禁用时生效。
    */
   'ui-disabled'?: boolean
 
@@ -453,8 +587,8 @@ export interface PopoverBackdropUIVariants extends PresenceUIVariants {
   'ui-active'?: boolean
 
   /**
-   * Applied while the popover is entering or leaving.
-   * @zh Popover 正在进入或离开时生效。
+   * Applied while the popover is entering or leaving without motion content.
+   * @zh 未使用动画内容且 Popover 正在进入或离开时生效。
    */
   'ui-disabled'?: boolean
 }
@@ -476,6 +610,11 @@ export interface PopoverPositionerUIVariants extends PresenceUIVariants {}
  * @zh PopoverContent 暴露的 UI variants。
  */
 export interface PopoverContentUIVariants extends PresenceUIVariants {}
+
+/**
+ * UI variants exposed by PopoverMotionContent.
+ */
+export interface PopoverMotionContentUIVariants extends PresenceUIVariants {}
 
 /**
  * UI variants exposed by PopoverArrow.

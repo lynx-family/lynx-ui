@@ -48,6 +48,7 @@ The `Popover` component is composed of the following sub-components:
 - **`PopoverPositioner`**: Handles floating positioning relative to the anchor.
 - **`PopoverBackdrop`**: A backdrop overlay.
 - **`PopoverContent`**: The popover panel content.
+- **`PopoverMotionContent`**: An alternative content part with motion-driven entry and exit.
 - **`PopoverArrow`**: An arrow pointing to the anchor.
 
 ## About @lynx-js/lynx-ui
