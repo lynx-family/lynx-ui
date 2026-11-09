@@ -1,5 +1,15 @@
 # @lynx-example/lynx-ui-popover
 
+## 0.0.24
+
+### Patch Changes
+
+- Add opt-in motion content with spring and tween transitions, arrow-tip transform ([#384](https://github.com/lynx-family/lynx-ui/pull/384))
+  origins, interruption handling, and exit retention.
+- Updated dependencies [[`9bc4636`](https://github.com/lynx-family/lynx-ui/commit/9bc4636f0ce3b3b01a0f577d776c4a52a9926e83), [`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d)]:
+  - @lynx-js/lynx-ui@3.142.0
+  - @lynx-js/luna-styles@0.2.3
+
 ## 0.0.23
 
 ### Patch Changes

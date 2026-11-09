@@ -1,5 +1,42 @@
 # @lynx-js/lynx-ui
 
+## 3.142.0
+
+### Minor Changes
+
+- Export the motion-driven popover content and its configuration types. ([#384](https://github.com/lynx-family/lynx-ui/pull/384))
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
+- Updated dependencies [[`9bc4636`](https://github.com/lynx-family/lynx-ui/commit/9bc4636f0ce3b3b01a0f577d776c4a52a9926e83), [`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d), [`9730b3a`](https://github.com/lynx-family/lynx-ui/commit/9730b3a939313ced907c5c40274d123f4f20f925)]:
+  - @lynx-js/lynx-ui-popover@3.142.0
+  - @lynx-js/lynx-ui-presence@3.142.0
+  - @lynx-js/lynx-ui-button@3.142.0
+  - @lynx-js/lynx-ui-checkbox@3.142.0
+  - @lynx-js/lynx-ui-common@3.142.0
+  - @lynx-js/lynx-ui-deferred-component@3.142.0
+  - @lynx-js/lynx-ui-dialog@3.142.0
+  - @lynx-js/lynx-ui-draggable@3.142.0
+  - @lynx-js/lynx-ui-feed-list@3.142.0
+  - @lynx-js/lynx-ui-form@3.142.0
+  - @lynx-js/lynx-ui-input@3.142.0
+  - @lynx-js/lynx-ui-input-otp@3.142.0
+  - @lynx-js/lynx-ui-lazy-component@3.142.0
+  - @lynx-js/lynx-ui-list@3.142.0
+  - @lynx-js/lynx-ui-radio-group@3.142.0
+  - @lynx-js/lynx-ui-scroll-coordinator@3.142.0
+  - @lynx-js/lynx-ui-scroll-view@3.142.0
+  - @lynx-js/lynx-ui-sheet@3.142.0
+  - @lynx-js/lynx-ui-slider@3.142.0
+  - @lynx-js/lynx-ui-sortable@3.142.0
+  - @lynx-js/lynx-ui-swipe-action@3.142.0
+  - @lynx-js/lynx-ui-swiper@3.142.0
+  - @lynx-js/lynx-ui-switch@3.142.0
+  - @lynx-js/lynx-ui-tab-group@3.142.0
+  - @lynx-js/lynx-ui-view-pager@3.142.0
+
 ## 3.141.0
 
 ### Patch Changes

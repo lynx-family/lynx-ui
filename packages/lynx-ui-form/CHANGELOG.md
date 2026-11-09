@@ -1,5 +1,19 @@
 # @lynx-js/lynx-ui-form
 
+## 3.142.0
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
+- Updated dependencies [[`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d)]:
+  - @lynx-js/lynx-ui-button@3.142.0
+  - @lynx-js/lynx-ui-checkbox@3.142.0
+  - @lynx-js/lynx-ui-common@3.142.0
+  - @lynx-js/lynx-ui-input@3.142.0
+  - @lynx-js/lynx-ui-radio-group@3.142.0
+  - @lynx-js/lynx-ui-switch@3.142.0
+
 ## 3.140.1
 
 ### Patch Changes

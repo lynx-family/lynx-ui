@@ -1,5 +1,11 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.12
+
+### Patch Changes
+
+- Update generated lynx-ui skill references. ([#198](https://github.com/lynx-family/lynx-ui/pull/198))
+
 ## 3.133.11
 
 ### Patch Changes

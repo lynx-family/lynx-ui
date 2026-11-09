@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.142.0
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
 ## 3.139.0
 
 ### Patch Changes
