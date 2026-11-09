@@ -43,10 +43,10 @@ import type { ComputePositionReturn, Middleware, Placement } from './floating'
 import { limitShift, shift } from './floating/shift'
 import { size } from './floating/size'
 import {
+  PopoverAnimationActiveContext,
   PopoverAnimationContext,
   PopoverGeometryContext,
 } from './motionContext'
-import type { PopoverAnimationDriver } from './motionContext'
 import type {
   PopoverAnchorProps,
   PopoverArrowProps,
@@ -58,6 +58,7 @@ import type {
   PopoverTriggerProps,
 } from './types'
 import { PopoverContext, useElementInfoReducer } from './useElementInfoReducer'
+import { usePopoverAnimation } from './usePopoverAnimation'
 import './style.css'
 
 export const PopoverRoot = (
@@ -74,134 +75,27 @@ export const PopoverRoot = (
     debugLog,
   } = props
 
-  const [state, setPresenceState] = useState<PresenceState>(
-    PresenceState.Initial,
-  )
   const [hasAnchor, setHasAnchor] = useState<boolean>(false)
   const isControlled = show !== undefined
   const [uncontrolledShow, setUncontrolledShow] = useState<boolean>(defaultShow)
   const actualShow = isControlled ? show : uncontrolledShow
-
+  const {
+    state,
+    updatePresence,
+    registerAnimation,
+    markPositioned,
+    animated,
+    handleOpen,
+    handleClose,
+  } = usePopoverAnimation(actualShow, onOpen, onClose)
   const { sharedInfo, updateRects: dispatchRects } = useElementInfoReducer()
-  const [animation, setAnimation] = useState<
-    { driver: PopoverAnimationDriver } | null
-  >(null)
-  const [positioned, setPositioned] = useState(false)
-  const registerAnimation = useCallback((driver: PopoverAnimationDriver) => {
-    const registration = { driver }
-    setAnimation(registration)
-    return () => {
-      setAnimation(current => current === registration ? null : current)
-    }
-  }, [])
-  const latest = useRef({ show: actualShow, animation, onClose, onOpen })
-  latest.current = { show: actualShow, animation, onClose, onOpen }
-  const currentState = useRef(state)
-  currentState.current = state
-  const didAnimate = useRef(false)
-  const pendingOpenCompletion = useRef(false)
-  const closeNotified = useRef(false)
-  const openNotified = useRef(false)
-  const animated = !!animation
-
   const updateRects = useCallback(
     (action: Parameters<typeof dispatchRects>[0]) => {
       dispatchRects(action)
-      if (action.type === 'updateArrowCoords') setPositioned(true)
+      if (action.type === 'updateArrowCoords') markPositioned()
     },
-    [dispatchRects],
+    [dispatchRects, markPositioned],
   )
-  const updatePresence: typeof setPresenceState = useCallback(next => {
-    const resolved = typeof next === 'function'
-      ? next(currentState.current)
-      : next
-    // Motion, rather than the CSS fallback timer, completes this lifecycle.
-    if (
-      latest.current.animation
-      && (resolved === PresenceState.Entered || resolved === PresenceState.Left)
-    ) return
-    if (resolved === PresenceState.Entering && !didAnimate.current) {
-      setPositioned(false)
-    }
-    setPresenceState(resolved)
-  }, [])
-  const handleClose = useCallback(() => {
-    if (closeNotified.current) return
-    closeNotified.current = true
-    openNotified.current = false
-    latest.current.onClose?.()
-  }, [])
-  const handleOpen = useCallback(() => {
-    openNotified.current = true
-    latest.current.onOpen?.()
-  }, [])
-  const finishOpen = useCallback(() => {
-    // Presence considers an interrupted exit to be the same open cycle, so it
-    // will not repeat onOpen when the reversed animation finishes.
-    if (openNotified.current) latest.current.onOpen?.()
-    setPresenceState(PresenceState.Entered)
-  }, [])
-
-  useEffect(() => {
-    if (actualShow) closeNotified.current = false
-  }, [actualShow])
-
-  const entering = actualShow && positioned
-    && (state === PresenceState.DelayedEntering
-      || (didAnimate.current
-        && (state === PresenceState.Leaving
-          || state === PresenceState.Entering)))
-  const leaving = !actualShow && state === PresenceState.Leaving
-  const animationPhase = entering ? 'open' : (leaving ? 'close' : null)
-
-  useEffect(() => {
-    const driver = latest.current.animation?.driver
-    if (!driver || !animationPhase) return
-    const opening = animationPhase === 'open'
-    didAnimate.current = true
-    pendingOpenCompletion.current = false
-    let active = true
-    const cleanup = driver({
-      open: opening,
-      complete: () => {
-        if (!active || latest.current.show !== opening) return
-        active = false
-        if (opening && currentState.current !== PresenceState.DelayedEntering) {
-          // Presence still has a delayed entry scheduled after a reversal.
-          pendingOpenCompletion.current = true
-        } else if (opening) {
-          finishOpen()
-        } else {
-          setPresenceState(PresenceState.Left)
-        }
-      },
-    })
-    return () => {
-      active = false
-      pendingOpenCompletion.current = false
-      cleanup?.()
-    }
-  }, [animationPhase, animated, finishOpen])
-
-  useEffect(() => {
-    if (
-      state === PresenceState.DelayedEntering && actualShow
-      && pendingOpenCompletion.current
-    ) {
-      pendingOpenCompletion.current = false
-      finishOpen()
-    } else if (state === PresenceState.Left && didAnimate.current) {
-      didAnimate.current = false
-      handleClose()
-    } else if (
-      !animated && didAnimate.current
-      && (state === PresenceState.DelayedEntering
-        || state === PresenceState.Leaving)
-    ) {
-      if (actualShow) finishOpen()
-      else setPresenceState(PresenceState.Left)
-    }
-  }, [state, animated, actualShow, finishOpen, handleClose])
   const contextValue = useMemo(
     () => ({
       sharedInfo,
@@ -242,7 +136,9 @@ export const PopoverRoot = (
       value={contextValue}
     >
       <PopoverAnimationContext.Provider value={registerAnimation}>
-        {children}
+        <PopoverAnimationActiveContext.Provider value={animated}>
+          {children}
+        </PopoverAnimationActiveContext.Provider>
       </PopoverAnimationContext.Provider>
     </PopoverContext.Provider>
   )
@@ -424,6 +320,7 @@ export const PopoverPositioner = (props: PopoverPositionerProps) => {
 
 export const PopoverTrigger = (props: PopoverTriggerProps) => {
   const { style, children, className, onClick, disabled, transition } = props
+  const animated = useContext(PopoverAnimationActiveContext)
   const {
     updateRects,
     setUncontrolledShow,
@@ -447,7 +344,7 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
   }
 
   const busy = resolveBusyState(state)
-  const actualDisabled = busy || disabled
+  const actualDisabled = (busy && !animated) || disabled
 
   const handleLayoutChange = (e: LayoutChangeEvent) => {
     const { width = 0, height = 0, left: x = 0, top: y = 0 } = getEventDetail(e)
@@ -490,6 +387,7 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
 
 export const PopoverBackdrop = (props: PopoverBackdropProps) => {
   const { className, style, onClick, transition, ...restProps } = props
+  const animated = useContext(PopoverAnimationActiveContext)
   const { state, setUncontrolledShow, isControlled, onVisibleChange } =
     useContext(PopoverContext)
 
@@ -526,7 +424,7 @@ export const PopoverBackdrop = (props: PopoverBackdropProps) => {
       className={`lynx-ui-popover__backdrop ${presenceClassName}`}
       style={style}
       onClick={handleTap}
-      disabled={busy}
+      disabled={busy && !animated}
       {...restProps}
     />
   )
@@ -578,6 +476,7 @@ const PopoverOverlay = (props: PopoverOverlayProps) => {
   } = props
   const { controllers } = useContext(PresenceContext)
   const { state } = controllers
+  const animated = useContext(PopoverAnimationActiveContext)
   const { sharedInfo, updateRects, show } = useContext(PopoverContext)
   const { floatingCoords } = sharedInfo
   const { x, y } = floatingCoords
@@ -613,7 +512,7 @@ const PopoverOverlay = (props: PopoverOverlayProps) => {
   } else if (state === PresenceState.Initial || state === PresenceState.Left) {
     wasVisible.current = false
   }
-  const reopening = show && state === PresenceState.Entering
+  const reopening = animated && show && state === PresenceState.Entering
     && wasVisible.current
 
   return (

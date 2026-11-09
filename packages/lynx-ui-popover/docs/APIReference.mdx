@@ -1187,7 +1187,8 @@ UI variants applied by PopoverContent.
 
 ### PopoverMotionContent {#api-popover-motion-content}
 
-Motion-driven content. It owns transform and opacity and stays mounted until
+Motion-driven content. It owns opacity when an opacity target is specified,
+and transform when a transform target is specified. It stays mounted until
 all exit properties complete. Use one motion content per popover root.
 
 <UIApiTable source={[
@@ -2104,11 +2105,19 @@ A visual target and its transition settings.
 <UIApiTable source={[
   {
     "name": "PopoverMotionTransition",
-    "type": "{damping?: number, mass?: number, stiffness?: number, type: unknown, velocity?: number} | {duration?: number, ease?: linear | easeIn | easeOut | easeInOut, type: unknown}",
+    "type": "({ type: 'spring', stiffness?: number, damping?: number, mass?: number, velocity?: number } | { type: 'tween', duration?: number, ease?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' })",
     "summary": [
       {
         "kind": "text",
-        "text": "Spring physics or tween timing. Durations are in seconds."
+        "text": "Spring physics or tween timing. Durations are in seconds. A tween defaults\nto 0.3 seconds and "
+      },
+      {
+        "kind": "code",
+        "text": "`easeOut`"
+      },
+      {
+        "kind": "text",
+        "text": " when its duration or easing is omitted."
       }
     ],
     "summary_zh": [],
@@ -2117,6 +2126,14 @@ A visual target and its transition settings.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "({ type: 'spring', stiffness?: number, damping?: number, mass?: number, velocity?: number } | { type: 'tween', duration?: number, ease?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' })"
+        }
+      ]
+    }
   }
 ]}/>

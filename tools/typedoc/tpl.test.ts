@@ -436,7 +436,8 @@ describe('doGenTplWithData', () => {
 
   it('uses declared part variants as the complete package contract', async () => {
     const temporaryDirectory = mkdtempSync(
-      join(tmpdir(), 'lynx-ui-typedoc-'),
+      // A parent directory must not determine the generated document's locale.
+      join(tmpdir(), 'lynx-ui-typedoc-zh-'),
     )
     const dataPath = join(temporaryDirectory, 'api-tpl.json')
     const outputPath = join(temporaryDirectory, 'docs', 'APIReference.mdx')

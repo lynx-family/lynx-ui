@@ -304,7 +304,9 @@ export interface PopoverMotionValues {
 }
 
 /**
- * Spring physics or tween timing. Durations are in seconds.
+ * Spring physics or tween timing. Durations are in seconds. A tween defaults
+ * to 0.3 seconds and `easeOut` when its duration or easing is omitted.
+ * @docTypeFallback ({ type: 'spring', stiffness?: number, damping?: number, mass?: number, velocity?: number } | { type: 'tween', duration?: number, ease?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' })
  * @Android
  * @iOS
  * @Harmony
@@ -334,7 +336,8 @@ export interface PopoverMotionTarget extends PopoverMotionValues {
 }
 
 /**
- * Motion-driven content. It owns transform and opacity and stays mounted until
+ * Motion-driven content. It owns opacity when an opacity target is specified,
+ * and transform when a transform target is specified. It stays mounted until
  * all exit properties complete. Use one motion content per popover root.
  */
 export interface PopoverMotionContentProps extends PopoverContentProps {

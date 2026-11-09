@@ -5,11 +5,13 @@
 import { createContext } from '@lynx-js/react'
 
 export type PopoverAnimationDriver = (
-  animation: { open: boolean, complete: () => void },
+  animation: { open: boolean, immediate?: boolean, complete: () => void },
 ) => (() => void) | undefined
 
 export const PopoverAnimationContext = createContext<
   ((driver: PopoverAnimationDriver) => () => void) | null
 >(null)
+
+export const PopoverAnimationActiveContext = createContext(false)
 
 export const PopoverGeometryContext = createContext('50% 50%')

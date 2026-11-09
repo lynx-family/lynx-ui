@@ -4,7 +4,12 @@
 
 import { useContext, useEffect, useRef } from '@lynx-js/react'
 
-import { act, cleanup, render } from '@lynx-js/react/testing-library/pure'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+} from '@lynx-js/react/testing-library/pure'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
@@ -70,26 +75,37 @@ function Layout() {
   return null
 }
 function Fixture(
-  { show = true, onAnimate, onOpen, onClose, placement = 'top', arrow = true }:
-    {
-      show?: boolean
-      arrow?: boolean
-      onAnimate?: PopoverAnimationDriver
-      onOpen?: () => void
-      onClose?: () => void
-      placement?: 'top' | 'bottom' | 'left' | 'right'
-    },
+  {
+    show = true,
+    onAnimate,
+    onOpen,
+    onClose,
+    onVisibleChange,
+    contentKey,
+    placement = 'top',
+    arrow = true,
+  }: {
+    show?: boolean
+    arrow?: boolean
+    onAnimate?: PopoverAnimationDriver
+    onOpen?: () => void
+    onClose?: () => void
+    onVisibleChange?: (visible: boolean) => void
+    contentKey?: number
+    placement?: 'top' | 'bottom' | 'left' | 'right'
+  },
 ) {
   return (
     <PopoverRoot
       show={show}
       onOpen={onOpen}
       onClose={onClose}
+      onVisibleChange={onVisibleChange}
     >
-      <PopoverTrigger>
+      <PopoverTrigger className='trigger'>
         <text>Trigger</text>
         <PopoverPositioner placement={placement}>
-          <TestContent onAnimate={onAnimate} arrow={arrow} />
+          <TestContent key={contentKey} onAnimate={onAnimate} arrow={arrow} />
         </PopoverPositioner>
       </PopoverTrigger>
     </PopoverRoot>
@@ -129,6 +145,134 @@ function TestContent(
 }
 
 describe('Popover custom animation with existing Popover and Presence', () => {
+  it('transfers an in-progress entry to replacement content', async () => {
+    const transitions: PopoverAnimation[] = []
+    const cancel = vi.fn()
+    const onAnimate = (animation: PopoverAnimation) => {
+      transitions.push(animation)
+      return cancel
+    }
+    const onOpen = vi.fn()
+    const { rerender } = render(
+      <Fixture contentKey={1} onAnimate={onAnimate} onOpen={onOpen} />,
+    )
+    await advance(20)
+    const first = transitions[0]!
+    rerender(<Fixture contentKey={2} onAnimate={onAnimate} onOpen={onOpen} />)
+    await advance(20)
+    expect(cancel).toHaveBeenCalled()
+    expect(transitions).toHaveLength(2)
+    expect(transitions[1]!.open).toBe(true)
+    expect(onOpen).not.toHaveBeenCalled()
+    act(() => first.complete())
+    expect(onOpen).not.toHaveBeenCalled()
+    act(() => transitions[1]!.complete())
+    expect(onOpen).toHaveBeenCalledOnce()
+  })
+  it('synchronizes replacement content mounted after entry without repeating onOpen', async () => {
+    const transitions: PopoverAnimation[] = []
+    const onAnimate = (animation: PopoverAnimation) => {
+      transitions.push(animation)
+      return undefined
+    }
+    const onOpen = vi.fn()
+    const { rerender } = render(
+      <Fixture contentKey={1} onAnimate={onAnimate} onOpen={onOpen} />,
+    )
+    await advance(20)
+    act(() => transitions[0]!.complete())
+    rerender(<Fixture contentKey={2} onAnimate={onAnimate} onOpen={onOpen} />)
+    await advance(20)
+    expect(transitions).toHaveLength(2)
+    expect(transitions[1]).toMatchObject({ open: true, immediate: true })
+    act(() => transitions[1]!.complete())
+    expect(onOpen).toHaveBeenCalledOnce()
+  })
+  it('transfers an in-progress exit to replacement content', async () => {
+    const transitions: PopoverAnimation[] = []
+    const onAnimate = (animation: PopoverAnimation) => {
+      transitions.push(animation)
+      return undefined
+    }
+    const onClose = vi.fn()
+    const { rerender, container } = render(
+      <Fixture contentKey={1} onAnimate={onAnimate} onClose={onClose} />,
+    )
+    await advance(20)
+    act(() => transitions[0]!.complete())
+    rerender(
+      <Fixture
+        show={false}
+        contentKey={1}
+        onAnimate={onAnimate}
+        onClose={onClose}
+      />,
+    )
+    const firstExit = transitions[1]!
+    rerender(
+      <Fixture
+        show={false}
+        contentKey={2}
+        onAnimate={onAnimate}
+        onClose={onClose}
+      />,
+    )
+    await advance(20)
+    expect(transitions).toHaveLength(3)
+    expect(transitions[2]!.open).toBe(false)
+    act(() => firstExit.complete())
+    expect(onClose).not.toHaveBeenCalled()
+    expect(container.querySelector('#bubble')).not.toBeNull()
+    act(() => transitions[2]!.complete())
+    expect(onClose).toHaveBeenCalledOnce()
+    expect(container.querySelector('#bubble')).toBeNull()
+  })
+  it('allows a motion-driven popover to be closed while entering', async () => {
+    const onVisibleChange = vi.fn()
+    const { container } = render(
+      <Fixture onAnimate={() => undefined} onVisibleChange={onVisibleChange} />,
+    )
+    await advance(20)
+    act(() => fireEvent.tap(container.querySelector('.trigger')!))
+    expect(onVisibleChange).toHaveBeenCalledWith(false)
+  })
+  it('allows a motion-driven popover to be reopened while leaving', async () => {
+    const transitions: PopoverAnimation[] = []
+    const onAnimate = (animation: PopoverAnimation) => {
+      transitions.push(animation)
+    }
+    const onVisibleChange = vi.fn()
+    const { container, rerender } = render(
+      <Fixture onAnimate={onAnimate} onVisibleChange={onVisibleChange} />,
+    )
+    await advance(20)
+    act(() => transitions[0]!.complete())
+    rerender(
+      <Fixture
+        show={false}
+        onAnimate={onAnimate}
+        onVisibleChange={onVisibleChange}
+      />,
+    )
+    act(() => fireEvent.tap(container.querySelector('.trigger')!))
+    expect(onVisibleChange).toHaveBeenCalledWith(true)
+  })
+  it('preserves the existing busy trigger behavior without motion', async () => {
+    const onVisibleChange = vi.fn()
+    const { container } = render(<Fixture onVisibleChange={onVisibleChange} />)
+    await advance(20)
+    act(() => fireEvent.tap(container.querySelector('.trigger')!))
+    expect(onVisibleChange).not.toHaveBeenCalled()
+  })
+  it('preserves the existing visibility during CSS-only reopening', async () => {
+    const { container, rerender } = render(<Fixture />)
+    await advance(60)
+    rerender(<Fixture show={false} />)
+    rerender(<Fixture />)
+    await advance(8)
+    const bubble = container.querySelector('#bubble') as HTMLElement
+    expect(bubble.parentElement?.style.visibility).toBe('hidden')
+  })
   it('waits beyond the CSS fallback and unmounts only on completion', async () => {
     const transitions: PopoverAnimation[] = []
     const onAnimate = vi.fn((animation: PopoverAnimation) => {
@@ -262,6 +406,24 @@ describe('Popover custom animation with existing Popover and Presence', () => {
     await advance(60)
     expect(container.querySelector('#bubble')).toBeNull()
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+  it('returns to the CSS lifecycle when motion content is removed while open', async () => {
+    const transitions: PopoverAnimation[] = []
+    const onAnimate = (animation: PopoverAnimation) => {
+      transitions.push(animation)
+    }
+    const onClose = vi.fn()
+    const { container, rerender } = render(
+      <Fixture onAnimate={onAnimate} onClose={onClose} />,
+    )
+    await advance(20)
+    act(() => transitions[0]!.complete())
+    rerender(<Fixture onClose={onClose} />)
+    await advance(5)
+    rerender(<Fixture show={false} onClose={onClose} />)
+    await advance(60)
+    expect(container.querySelector('#bubble')).toBeNull()
+    expect(onClose).toHaveBeenCalledOnce()
   })
   it('reports a close even when entering was interrupted before onOpen', async () => {
     const transitions: PopoverAnimation[] = []

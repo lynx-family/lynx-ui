@@ -896,7 +896,7 @@ const doGenTplWithData = async (
 ) => {
   const dataString = fs.readFileSync(dataPath, 'utf-8')
   const data = JSON.parse(dataString)
-  const isZh = savePath.includes('zh')
+  const isZh = path.basename(savePath).endsWith('.zh.mdx')
 
   const currentPkg = findPackageNameFromSavePath(savePath)
   currentTypeDocCandidatesEn = currentPkg
