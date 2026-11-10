@@ -188,7 +188,11 @@ export const apiReferenceConfig: Readonly<
       'TabsIndicator',
     ],
     refs: ['TabsRootRef', 'TabsPanelRef'],
-    supportingTypes: ['TabsIndicatorAnimation'],
+    supportingTypes: [
+      'TabsIndicatorAnimation',
+      'TabsIndicatorAnimationSpring',
+      'TabsIndicatorAnimationTween',
+    ],
     aliases: ['TabItemProps'],
   },
   'lynx-ui-deferred-component': {
