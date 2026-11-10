@@ -32,7 +32,7 @@ export interface DialogBackdropProps extends ComponentBasicProps {
    */
   delayed?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -89,7 +89,7 @@ export interface DialogContentProps extends ComponentBasicProps {
    */
   delayed?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -137,7 +137,7 @@ export interface DialogTriggerProps extends ComponentBasicProps {
    */
   disabled?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -173,7 +173,7 @@ export interface DialogCloseProps extends ComponentBasicProps {
    */
   disabled?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -280,7 +280,7 @@ export interface DialogViewProps extends ComponentBasicProps {
     | ReactNode
     | PresenceChildrenType
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony

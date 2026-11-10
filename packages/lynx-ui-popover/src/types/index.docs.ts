@@ -63,7 +63,7 @@ export interface PopoverArrowProps extends ComponentBasicProps {
    */
   offset?: number
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -91,7 +91,7 @@ export interface PopoverTriggerProps extends ComponentBasicProps {
    */
   disabled?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -122,7 +122,7 @@ export interface PopoverBackdropProps extends ComponentBasicProps {
    */
   children?: ReactNode
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -152,7 +152,7 @@ export interface PopoverAnchorProps extends ComponentBasicProps {
    */
   children?: ReactNode
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -200,7 +200,7 @@ export interface PopoverOverlayProps extends ComponentBasicProps {
    */
   container?: OverlayViewProps['container']
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -231,7 +231,7 @@ export interface PopoverContentProps extends ComponentBasicProps {
    */
   children?: ReactNode
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -429,7 +429,7 @@ export interface PopoverPositionerProps extends ComponentBasicProps {
    */
   crossAxisOffset?: number
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
