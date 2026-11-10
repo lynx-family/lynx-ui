@@ -4,6 +4,10 @@
 
 import { JSONOutput, ReflectionKind } from 'typedoc'
 
+/**
+ * Narrows a root reflection to a declaration that can define a union member.
+ * @param reflection The serialized TypeDoc reflection to inspect.
+ */
 function isDeclaration(
   reflection?: JSONOutput.Reflection,
 ): reflection is JSONOutput.DeclarationReflection {
@@ -15,7 +19,13 @@ function isDeclaration(
 }
 
 /**
- * Expands polymorphic unions whose members use `as` as their discriminator.
+ * Replaces eligible polymorphic union aliases with a merged interface.
+ *
+ * An alias is eligible only when every union member resolves to a root
+ * declaration with an `as` property. This keeps ordinary discriminated unions
+ * intact while preserving the flattened API shape expected for polymorphic
+ * component props. The serialized project is mutated in place.
+ *
  * @param json The serialized TypeDoc project.
  */
 export function expandPolymorphicUnions(
