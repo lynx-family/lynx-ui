@@ -93,7 +93,7 @@ function App() {
           <SheetPositioner
             width={width}
             height={height}
-            style={{ left: 24, top: 200 }}
+            style={{ left: '24px', top: '200px' }}
           >
             <SheetBackdrop className='backdrop' />
             {nested
