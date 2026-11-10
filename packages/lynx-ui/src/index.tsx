@@ -316,6 +316,7 @@ export {
   SheetHandle,
   SheetFooter,
   SheetView,
+  SheetPositioner,
   useSnap,
   useSheetScrollGesture,
 } from '@lynx-js/lynx-ui-sheet'
@@ -330,6 +331,7 @@ export type {
   SheetRootRef,
   SheetSide,
   SheetViewProps,
+  SheetPositionerProps,
   SheetHandleProps,
   SheetFooterProps,
   SheetTransition,

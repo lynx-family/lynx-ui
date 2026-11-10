@@ -9,6 +9,7 @@ export { SheetNestedScrollContent } from './SheetNestedScrollContent'
 export { SheetHandle } from './SheetHandle'
 export { SheetFooter } from './SheetFooter'
 export { SheetView } from './SheetView'
+export { SheetPositioner } from './SheetPositioner'
 export { useSheetScrollGesture, useSnap } from './hooks'
 
 export type {
@@ -20,6 +21,7 @@ export type {
   SheetGestureRelations,
   SheetRootProps,
   SheetViewProps,
+  SheetPositionerProps,
   SheetHandleProps,
   SheetFooterProps,
   SheetTransition,

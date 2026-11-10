@@ -6,7 +6,11 @@ import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { MainThread } from '@lynx-js/types'
 
 import { SheetDragContext, SheetFooterContext } from '../context'
-import type { SheetDragContextValue, SheetFooterContextValue } from '../context'
+import type {
+  SheetDragContextValue,
+  SheetFooterContextValue,
+  SheetPositionerDimensions,
+} from '../context'
 import type { SheetContentProps } from '../types'
 
 export interface SheetSurfaceProps extends SheetContentProps {
@@ -16,6 +20,7 @@ export interface SheetSurfaceProps extends SheetContentProps {
   handleOnly?: boolean
   snapPoints: Array<number | string>
   maxSnapSize: number
+  positioner?: SheetPositionerDimensions | null
   footerContext: SheetFooterContextValue
   setClipMTRef: (element: MainThread.Element) => void
   setSurfaceMTRef: (element: MainThread.Element | null) => void
@@ -48,6 +53,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     handleOnly,
     snapPoints,
     maxSnapSize,
+    positioner,
     footerContext,
     setClipMTRef,
     setSurfaceMTRef,
@@ -128,8 +134,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
           ...(resolvedSide === 'left'
             ? { right: '100%' }
             : { left: '100%' }),
-          width: '150vw',
-          height: '100vh',
+          width: positioner ? `${positioner.width * 1.5}px` : '150vw',
+          height: positioner ? `${positioner.height}px` : '100vh',
           overflow: 'hidden',
           ...style,
           transition: 'none',
@@ -171,7 +177,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
             }
             : { top: '100%' }),
           width: '100%',
-          height: '150vh',
+          height: positioner ? `${positioner.height * 1.5}px` : '150vh',
           overflow: 'visible',
           pointerEvents: 'none',
           transition: 'none',
@@ -194,7 +200,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
               }
               : {}),
             ...style,
-            height: '150vh',
+            height: positioner ? `${positioner.height * 1.5}px` : '150vh',
             overflow: 'hidden',
             pointerEvents: 'auto',
           }}

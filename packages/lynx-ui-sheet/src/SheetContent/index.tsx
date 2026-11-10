@@ -12,7 +12,7 @@ import type { SheetContentProps } from '../types'
  * Use SheetNestedScrollContent when the Sheet contains a native scroll container.
  */
 export function SheetContent(props: SheetContentProps) {
-  const { context, effectiveRubberBand, snap, snapPoints } =
+  const { context, positioner, effectiveRubberBand, snap, snapPoints } =
     useSheetContentController(props)
   const {
     side,
@@ -56,6 +56,7 @@ export function SheetContent(props: SheetContentProps) {
       handleOnly={context.handleOnly}
       snapPoints={snapPoints}
       maxSnapSize={snap.maxSnapSize}
+      positioner={positioner}
       footerContext={snap.footerContext}
       setClipMTRef={snap.setClipMTRef}
       setSurfaceMTRef={snap.setSurfaceMTRef}
