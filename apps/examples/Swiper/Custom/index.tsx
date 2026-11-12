@@ -3,6 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { root, useRef, useState } from '@lynx-js/react'
+import type { JSX } from '@lynx-js/react'
 
 import {
   Swiper,

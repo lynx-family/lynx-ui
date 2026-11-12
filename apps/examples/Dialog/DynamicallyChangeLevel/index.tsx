@@ -14,6 +14,7 @@ import {
   DialogTrigger,
   DialogView,
 } from '@lynx-js/lynx-ui'
+import type { DialogViewProps } from '@lynx-js/lynx-ui'
 
 function App() {
   const handleDismissed = () => {
@@ -23,7 +24,7 @@ function App() {
     console.log('showed!')
   }
   const [show, setShow] = useState(false)
-  const [level, setLevel] = useState(2)
+  const [level, setLevel] = useState<DialogViewProps['overlayLevel']>(2)
 
   useEffect(() => {
     const timer = setTimeout(() => {
