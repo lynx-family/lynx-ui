@@ -58,7 +58,7 @@ function App() {
                 <scroll-view
                   className='nested-scroll'
                   scroll-orientation='vertical'
-                  bounces={false}
+                  bounces={true}
                   main-thread:gesture={scrollGesture}
                 >
                   {Array.from({ length: 20 }, (_, index) => (

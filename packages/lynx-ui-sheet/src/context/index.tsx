@@ -115,6 +115,7 @@ export interface ActiveSheetScrollGesture {
   consuming?: boolean
   revision?: number
   atStart?: boolean
+  atEnd?: boolean
 }
 
 export interface SheetGestureContextValue {

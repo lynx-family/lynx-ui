@@ -16,6 +16,7 @@ const runtime = vi.hoisted(() => {
       pageX: number
       pageY: number
       isAtStart?: boolean | number
+      isAtEnd?: boolean | number
       scrollY?: number
     }
     currentTarget?: { invoke: () => Promise<{ scrollY: number }> }
@@ -97,10 +98,6 @@ vi.mock('@lynx-js/gesture-runtime', () => ({
   useGesture: () => new runtime.Gesture(),
 }))
 vi.mock('../context', () => ({ useSheetGestureContext: () => ({}) }))
-vi.mock(
-  './useSnapTouches',
-  () => ({ getRubberBandConfig: () => ({ enabled: false }) }),
-)
 vi.mock('@lynx-js/lynx-ui-presence', () => ({ PresenceState: {} }))
 
 function makeManager() {
@@ -117,12 +114,14 @@ function makePan(offsets = [450, 900], overrides = {}) {
       value = next
     },
     getVelocity: () => 0,
+    updateVelocity: vi.fn(),
   }
   const scrollManager = makeManager()
   const options = {
     activeScrollMTRef: { current: { manager: scrollManager, atStart: true } },
     yRef: { current: motion },
     viewportSize: 1000,
+    rubberBand: false,
     sheetSizeMTRef: { current: 900 },
     getResolvedSnapOffsets: () => offsets,
     onSnapChangeMT: vi.fn(),
@@ -135,10 +134,17 @@ function makePan(offsets = [450, 900], overrides = {}) {
     ...overrides,
   }
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
-  const gesture = useSheetPanGesture(
+  const pan = useSheetPanGesture(
     options as unknown as Parameters<typeof useSheetPanGesture>[0],
-  ) as unknown as InstanceType<typeof runtime.Gesture>
-  return { gesture, motion, options, scrollManager }
+  )
+  const gesture = pan.gesture as unknown as InstanceType<typeof runtime.Gesture>
+  return {
+    gesture,
+    motion,
+    options,
+    scrollManager,
+    finishTouchMT: pan.finishTouchMT,
+  }
 }
 
 describe('native scroll coordination', () => {
@@ -164,7 +170,9 @@ describe('native scroll coordination', () => {
     ) as unknown as InstanceType<typeof runtime.Gesture>
     return {
       gesture,
-      active: active as { current: { atStart?: boolean } | null },
+      active: active as {
+        current: { atStart?: boolean, atEnd?: boolean } | null
+      },
     }
   }
   function down(
@@ -195,7 +203,7 @@ describe('native scroll coordination', () => {
     gesture.callbacks.update(event(0), manager)
     expect(motion.get()).toBe(900)
     gesture.callbacks.update(event(-20), manager)
-    gesture.callbacks.end(event(-20), manager)
+    gesture.callbacks.up(event(-20), manager)
     expect(options.onSnapChangeMT).toHaveBeenCalledWith(1, 900)
     expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
     expect(options.onReleaseAtMaxMT).toHaveBeenCalledWith(1)
@@ -207,7 +215,7 @@ describe('native scroll coordination', () => {
     options.activeScrollMTRef.current.atStart = false
     gesture.callbacks.begin(event(500), manager)
     gesture.callbacks.update(event(450), manager)
-    gesture.callbacks.end(event(450), manager)
+    gesture.callbacks.up(event(450), manager)
     expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
   })
 
@@ -218,7 +226,7 @@ describe('native scroll coordination', () => {
     gesture.callbacks.update(event(0), manager)
     gesture.callbacks.update(event(-20), manager)
     gesture.callbacks.cancel(event(-20), manager)
-    gesture.callbacks.end(event(-20), manager)
+    gesture.callbacks.up(event(-20), manager)
     expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
   })
 
@@ -243,7 +251,7 @@ describe('native scroll coordination', () => {
     expect(options.onGestureStartMT).toHaveBeenCalledTimes(1)
     expect(options.onDragStartMT).not.toHaveBeenCalled()
     expect(motion.get()).toBe(900)
-    gesture.callbacks.end(event(140), manager)
+    gesture.callbacks.up(event(140), manager)
     expect(options.onGestureEndMT).not.toHaveBeenCalled()
   })
 
@@ -263,7 +271,7 @@ describe('native scroll coordination', () => {
     const manager = makeManager()
     gesture.callbacks.begin(event(100), manager)
     gesture.callbacks.update(event(120), manager)
-    gesture.callbacks.end(event(120), manager)
+    gesture.callbacks.up(event(120), manager)
     gesture.callbacks.up(event(120), manager)
     expect(options.onGestureEndMT).toHaveBeenCalledTimes(1)
   })
@@ -323,6 +331,65 @@ describe('native scroll coordination', () => {
       params: { pageX: 0, pageY: 110, isAtStart: atStart },
     }, manager)
     expect(active.current?.atStart).toBe(true)
+  })
+
+  it.each([true, 1])(
+    'retains native end-boundary value %s across updates',
+    atEnd => {
+      const { gesture, active } = native()
+      const manager = makeManager()
+      gesture.callbacks.down({
+        params: { pageX: 0, pageY: 100, isAtStart: true, isAtEnd: atEnd },
+      }, manager)
+      expect(active.current?.atEnd).toBe(true)
+      gesture.callbacks.update(event(90), manager)
+      expect(active.current?.atEnd).toBe(true)
+      gesture.callbacks.update({
+        params: { pageX: 0, pageY: 80, isAtStart: false, isAtEnd: false },
+      }, manager)
+      expect(active.current?.atEnd).toBe(false)
+    },
+  )
+
+  it.each(['start', 'end'] as const)(
+    'does not combine a new %s boundary with the other stale boundary',
+    boundary => {
+      const { gesture, active } = native()
+      const manager = makeManager()
+      gesture.callbacks.down({
+        params: {
+          pageX: 0,
+          pageY: 100,
+          isAtStart: boundary === 'end',
+          isAtEnd: boundary === 'start',
+        },
+      }, manager)
+      gesture.callbacks.update({
+        params: {
+          pageX: 0,
+          pageY: 90,
+          ...(boundary === 'start' ? { isAtStart: true } : { isAtEnd: true }),
+        },
+      }, manager)
+      expect(
+        boundary === 'start' ? active.current?.atEnd : active.current?.atStart,
+      ).toBeUndefined()
+    },
+  )
+
+  it('does not switch native consumption during a stationary boundary update', () => {
+    const { gesture } = native()
+    const manager = makeManager()
+    gesture.callbacks.down({
+      params: { pageX: 0, pageY: 100, isAtStart: true, isAtEnd: true },
+    }, manager)
+    gesture.callbacks.begin(event(100), manager)
+    gesture.callbacks.update(event(90), manager)
+    manager.consumeGesture.mockClear()
+    gesture.callbacks.update({
+      params: { pageX: 0, pageY: 90, isAtStart: false, isAtEnd: false },
+    }, manager)
+    expect(manager.consumeGesture).not.toHaveBeenCalled()
   })
 
   it('leaves a cross-axis child gesture free to scroll', () => {
@@ -526,7 +593,7 @@ describe('native scroll coordination', () => {
       const manager = makeManager()
       gesture.callbacks.begin(event(500), manager)
       gesture.callbacks.update(event(100), manager)
-      gesture.callbacks.end(event(100), manager)
+      gesture.callbacks.up(event(100), manager)
       expect(motion.get()).toBe(450)
       expect(options.onDragStartMT).not.toHaveBeenCalled()
       expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
@@ -562,7 +629,7 @@ describe('nested pan release recovery', () => {
       gesture.callbacks.update(event(50), manager)
       motion.set(position)
       vi.spyOn(motion, 'getVelocity').mockReturnValue(velocity)
-      gesture.callbacks.end(event(50), manager)
+      gesture.callbacks.up(event(50), manager)
       expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
       expect(options.onDragEndSnapMT).toHaveBeenCalledWith(index)
     },
@@ -583,7 +650,7 @@ describe('nested pan release recovery', () => {
       gesture.callbacks.update(event(50), manager)
       motion.set(200)
       vi.spyOn(motion, 'getVelocity').mockReturnValue(velocity)
-      gesture.callbacks.end(event(50), manager)
+      gesture.callbacks.up(event(50), manager)
       expect(options.onDragEndCloseMT).toHaveBeenCalledOnce()
       expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
     },
@@ -600,7 +667,7 @@ describe('nested pan release recovery', () => {
       gesture.callbacks.update(event(50), manager)
       motion.set(200)
       vi.spyOn(motion, 'getVelocity').mockReturnValue(velocity)
-      gesture.callbacks.end(event(50), manager)
+      gesture.callbacks.up(event(50), manager)
       expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
       expect(options.onDragEndSnapMT).toHaveBeenCalledWith(0)
     },
@@ -617,4 +684,315 @@ describe('relations across recognizer clones', () => {
     expect(native.waitFor).toEqual([])
     expect(native.continueWith).toEqual([])
   })
+})
+
+describe('finger-anchored Sheet resistance', () => {
+  function rubberPan(overrides = {}, offsets = [450, 900]) {
+    const result = makePan(offsets, {
+      activeScrollMTRef: { current: null },
+      rubberBand: true,
+      ...overrides,
+    })
+    result.motion.set(900)
+    result.gesture.callbacks.begin(event(500), makeManager())
+    return result
+  }
+
+  it.each([1, 2, 20, 200])(
+    'maps the same 200px over-drag identically across %s updates',
+    updates => {
+      const { gesture, motion } = rubberPan()
+      const manager = makeManager()
+      for (let i = 1; i <= updates; i++) {
+        gesture.callbacks.update(event(500 - 200 * i / updates), manager)
+      }
+      expect(motion.get()).toBeCloseTo(944.4444444444)
+    },
+  )
+
+  it('never retreats while the finger continues toward the open edge', () => {
+    const { gesture, motion } = rubberPan()
+    const manager = makeManager()
+    gesture.callbacks.update(event(300), manager)
+    let previous = motion.get()
+    for (let i = 1; i <= 50; i++) {
+      gesture.callbacks.update(event(300 - i), manager)
+      expect(motion.get()).toBeGreaterThan(previous)
+      previous = motion.get()
+    }
+  })
+
+  it('holds a stationary finger and unwinds over-drag before collapsing', () => {
+    const { gesture, motion, options } = rubberPan()
+    const manager = makeManager()
+    gesture.callbacks.update(event(300), manager)
+    const stretched = motion.get()
+    for (let i = 0; i < 10; i++) {
+      gesture.callbacks.update(event(300), manager)
+      expect(motion.get()).toBe(stretched)
+    }
+    gesture.callbacks.update(event(400), manager)
+    expect(motion.get()).toBeGreaterThan(900)
+    gesture.callbacks.update(event(500), manager)
+    expect(motion.get()).toBeCloseTo(900)
+    gesture.callbacks.update(event(510), manager)
+    expect(motion.get()).toBeCloseTo(890)
+    expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+  })
+
+  it('anchors a drag that interrupts an already stretched sheet', () => {
+    const { gesture, motion } = rubberPan()
+    const manager = makeManager()
+    motion.set(940)
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(499), manager)
+    expect(motion.get()).toBeGreaterThan(940)
+    expect(motion.get()).toBeLessThan(941)
+    gesture.callbacks.update(event(500), manager)
+    expect(motion.get()).toBeCloseTo(940)
+  })
+
+  it('maps resistance from total displacement across the maximum snap', () => {
+    const { gesture, motion } = rubberPan()
+    const manager = makeManager()
+    motion.set(800)
+    gesture.callbacks.begin(event(500), manager)
+    for (let i = 1; i <= 300; i++) {
+      gesture.callbacks.update(event(500 - i), manager)
+    }
+    expect(motion.get()).toBeCloseTo(944.4444444444)
+  })
+
+  it('keeps lower resistance finger-anchored when dismissal is disabled', () => {
+    const { gesture, motion, options } = rubberPan({ enableDragToClose: false })
+    const manager = makeManager()
+    motion.set(450)
+    gesture.callbacks.begin(event(500), manager)
+    for (let i = 1; i <= 200; i++) {
+      gesture.callbacks.update(event(500 + i), manager)
+    }
+    expect(motion.get()).toBeCloseTo(405.5555555556)
+    gesture.callbacks.update(event(500), manager)
+    expect(motion.get()).toBeCloseTo(450)
+    expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+  })
+
+  it('keeps a physical touch active after the pan recognizer ends', () => {
+    const { gesture, motion, options } = rubberPan()
+    const manager = makeManager()
+    gesture.callbacks.down(event(500), manager)
+    gesture.callbacks.update(event(300), manager)
+    const stretched = motion.get()
+    gesture.callbacks.end?.(event(300), manager)
+    expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    expect(options.onGestureEndMT).not.toHaveBeenCalled()
+    expect(motion.get()).toBe(stretched)
+    gesture.callbacks.up(event(300), manager)
+    expect(options.onDragEndSnapMT.mock.calls).toEqual([[1]])
+    expect(options.onGestureEndMT).toHaveBeenCalledOnce()
+  })
+
+  it('keeps a known non-scrollable target with Sheet resistance', () => {
+    const { gesture, motion } = rubberPan({
+      activeScrollMTRef: {
+        current: { manager: makeManager(), atStart: true, atEnd: true },
+      },
+    })
+    const manager = makeManager()
+    gesture.callbacks.update(event(300), manager)
+    expect(motion.get()).toBeCloseTo(944.4444444444)
+    gesture.callbacks.update(event(500), manager)
+    expect(motion.get()).toBeCloseTo(900)
+  })
+})
+
+describe('Sheet ownership segments and physical release', () => {
+  it('discards native-owned travel before Sheet takes over a reversal', () => {
+    const { gesture, motion, options } = makePan()
+    const manager = makeManager()
+    motion.set(800)
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(200), manager)
+    expect(motion.get()).toBe(900)
+    gesture.callbacks.update(event(100), manager)
+    options.activeScrollMTRef.current.atStart = false
+    gesture.callbacks.update(event(300), manager)
+    expect(motion.get()).toBe(900)
+    options.activeScrollMTRef.current.atStart = true
+    gesture.callbacks.update(event(310), manager)
+    expect(motion.get()).toBe(890)
+  })
+
+  it.each(['native-first', 'pan-first'] as const)(
+    'settles once when physical release callbacks arrive %s',
+    order => {
+      const { gesture, motion, options, finishTouchMT } = makePan()
+      const manager = makeManager()
+      const native = useSheetNativeScrollGesture(
+        {
+          sheetGesture: gesture as unknown as Parameters<
+            typeof useSheetNativeScrollGesture
+          >[0]['sheetGesture'],
+          activeScrollMTRef: options.activeScrollMTRef,
+          resolvedSide: 'bottom',
+          position: options.yRef,
+          getResolvedSnapOffsets: options.getResolvedSnapOffsets,
+          onScrollEndMT: finishTouchMT,
+        } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
+      ) as unknown as InstanceType<typeof runtime.Gesture>
+      native.callbacks.down({
+        params: { pageX: 0, pageY: 500, isAtStart: true, isAtEnd: false },
+      }, manager)
+      gesture.callbacks.begin(event(500), manager)
+      gesture.callbacks.update(event(480), manager)
+      expect(motion.get()).toBe(470)
+      if (order === 'native-first') {
+        native.callbacks.up(event(480), manager)
+        gesture.callbacks.up(event(480), manager)
+      } else {
+        gesture.callbacks.up(event(480), manager)
+        native.callbacks.up(event(480), manager)
+      }
+      expect(options.onDragEndSnapMT).toHaveBeenCalledOnce()
+      expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+    },
+  )
+
+  it('uses native touch completion even if the pan no longer receives events', () => {
+    const { gesture, options, finishTouchMT } = makePan()
+    const manager = makeManager()
+    const native = useSheetNativeScrollGesture(
+      {
+        sheetGesture: gesture,
+        activeScrollMTRef: options.activeScrollMTRef,
+        resolvedSide: 'bottom',
+        position: options.yRef,
+        getResolvedSnapOffsets: options.getResolvedSnapOffsets,
+        onScrollEndMT: finishTouchMT,
+      } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
+    ) as unknown as InstanceType<typeof runtime.Gesture>
+    native.callbacks.down(
+      { params: { pageX: 0, pageY: 500, isAtStart: true } },
+      manager,
+    )
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(480), manager)
+    gesture.callbacks.end?.(event(480), manager)
+    expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    native.callbacks.up(event(480), manager)
+    expect(options.onDragEndSnapMT).toHaveBeenCalledOnce()
+  })
+
+  it('replaces an imperative animation when the finger moves again', () => {
+    const { gesture, motion, options } = makePan([450, 900], {
+      activeScrollMTRef: { current: null },
+    })
+    const manager = makeManager()
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(490), manager)
+    motion.set(600)
+    gesture.callbacks.update(event(480), manager)
+    expect(motion.get()).toBe(610)
+    expect(options.onDragStartMT).toHaveBeenCalledTimes(2)
+  })
+
+  it('keeps existing resistance through a resize and selects the new release snap', () => {
+    const offsets = [450, 900]
+    const { gesture, motion, options } = makePan(offsets, {
+      activeScrollMTRef: { current: null },
+      rubberBand: true,
+    })
+    const manager = makeManager()
+    motion.set(900)
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(300), manager)
+    offsets[1] = 800
+    const stretched = motion.get()
+    gesture.callbacks.update(event(300), manager)
+    expect(motion.get()).toBe(stretched)
+    gesture.callbacks.update(event(299), manager)
+    expect(motion.get()).toBeGreaterThan(stretched)
+    gesture.callbacks.up(event(299), manager)
+    expect(options.onDragEndSnapMT).toHaveBeenCalledWith(1)
+  })
+
+  it('settles cancellation without using stale fling velocity to dismiss', () => {
+    const { gesture, motion, options } = makePan()
+    const manager = makeManager()
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(750), manager)
+    vi.spyOn(motion, 'getVelocity').mockReturnValue(-1800)
+    gesture.callbacks.cancel(event(750), manager)
+    expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+    expect(motion.updateVelocity).toHaveBeenCalledWith(0)
+    expect(options.onDragEndSnapMT.mock.calls).toEqual([[0]])
+    gesture.callbacks.up(event(750), manager)
+  })
+})
+
+describe('Sheet pan resistance directions', () => {
+  it.each(
+    [
+      { side: 'bottom', enableRTL: false, horizontal: false, sign: -1 },
+      { side: 'top', enableRTL: false, horizontal: false, sign: 1 },
+      { side: 'left', enableRTL: false, horizontal: true, sign: 1 },
+      { side: 'right', enableRTL: false, horizontal: true, sign: -1 },
+      { side: 'start', enableRTL: false, horizontal: true, sign: 1 },
+      { side: 'start', enableRTL: true, horizontal: true, sign: -1 },
+      { side: 'end', enableRTL: false, horizontal: true, sign: -1 },
+      { side: 'end', enableRTL: true, horizontal: true, sign: 1 },
+    ] as const,
+  )(
+    'preserves $side displacement with RTL=$enableRTL',
+    ({ side, enableRTL, horizontal, sign }) => {
+      const { gesture, motion } = makePan([450, 900], {
+        activeScrollMTRef: { current: null },
+        side,
+        enableRTL,
+        rubberBand: true,
+      })
+      const manager = makeManager()
+      const point = (distance: number) =>
+        horizontal
+          ? event(0, distance * sign)
+          : event(distance * sign)
+      motion.set(900)
+      gesture.callbacks.begin(point(0), manager)
+      for (let i = 1; i <= 200; i++) gesture.callbacks.update(point(i), manager)
+      expect(motion.get()).toBeCloseTo(944.4444444444)
+      gesture.callbacks.update(point(0), manager)
+      expect(motion.get()).toBeCloseTo(900)
+    },
+  )
+
+  it('anchors on the stopped position when Sheet first acquires the drag', () => {
+    const { gesture, motion, options } = makePan([450, 900], {
+      activeScrollMTRef: { current: null },
+      rubberBand: true,
+    })
+    const manager = makeManager()
+    options.onDragStartMT.mockImplementation(() => motion.set(900))
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(490), manager)
+    expect(motion.get()).toBeGreaterThan(900)
+    expect(motion.get()).toBeLessThan(910)
+  })
+
+  it.each([{ offsets: [0, 450, 900] }, { offsets: [-1, 0, 900, 450] }])(
+    'preserves open snap identity on cancellation with offsets $offsets',
+    ({ offsets }) => {
+      const { gesture, motion, options } = makePan(offsets)
+      const manager = makeManager()
+      gesture.callbacks.begin(event(500), manager)
+      gesture.callbacks.update(event(900), manager)
+      motion.set(0)
+      gesture.callbacks.cancel(event(900), manager)
+      const expected = offsets.indexOf(
+        Math.min(...offsets.filter(offset => offset > 0)),
+      )
+      expect(options.onDragEndSnapMT.mock.calls).toEqual([[expected]])
+      expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+    },
+  )
 })

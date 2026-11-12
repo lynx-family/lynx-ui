@@ -11,6 +11,8 @@ export interface ResolveNestedScrollOwnerOptions {
   maximumPosition: number
   /** Whether the scrolling content is synchronously known to be at its start. */
   contentAtStart?: boolean
+  /** Whether the scrolling content is synchronously known to be at its end. */
+  contentAtEnd?: boolean
 }
 
 /**
@@ -24,8 +26,13 @@ export function resolveNestedScrollOwner({
   position,
   maximumPosition,
   contentAtStart,
+  contentAtEnd,
 }: ResolveNestedScrollOwnerOptions): 'sheet' | 'content' {
   'main thread'
+  if (delta === 0) return 'content'
+  // Keep a stretched Sheet with its finger until its over-drag is unwound.
+  if (position > maximumPosition) return 'sheet'
+  if (contentAtStart === true && contentAtEnd === true) return 'sheet'
   if (delta > 0) return position < maximumPosition ? 'sheet' : 'content'
   if (delta < 0) return contentAtStart === true ? 'sheet' : 'content'
   return 'content'
