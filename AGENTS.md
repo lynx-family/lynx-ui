@@ -386,6 +386,9 @@ factory and include those files in their lint project. Run
 3. **Pull Request Titles**: Pull request titles **MUST** use a Conventional Commits style prefix that starts the title, such as `fix(swiper): preserve release velocity on Android`.
    Do not prepend labels like `[codex]` before the release type, because the semantic PR check parses the type from the beginning of the title.
    Use one of the repository's allowed types, such as `fix`, `feat`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`, `release`, or `security`.
+4. **Pull Request Review**: Open pull requests as drafts by default (`gh pr create --draft`).
+   All pull requests require human review and manual merging. Review agents may approve changes,
+   but only human maintainers may mark pull requests ready for review or merge them.
 
 ## Documentation Maintenance
 
