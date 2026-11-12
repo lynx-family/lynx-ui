@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 
 import { root, useEffect, useRef, useState } from '@lynx-js/react'
-import type { JSX } from '@lynx-js/react'
 
 import { Swiper, SwiperItem } from '@lynx-js/lynx-ui'
 import type { SwiperRef } from '@lynx-js/lynx-ui'
@@ -20,7 +19,7 @@ const itemWidths = [250, 350, 400]
 const alignArr: ['start', 'center', 'end'] = ['start', 'center', 'end']
 const INITIAL_INDEX = 0
 
-function SwiperEntry(): JSX.Element {
+function SwiperEntry() {
   const [itemWidthsIndex, setItemWidthsIndex] = useState<number>(0)
   const [alignIndex, setAlignIndex] = useState<number>(1)
   const [currentIndex, setCurrentIndex] = useState<number>(INITIAL_INDEX)

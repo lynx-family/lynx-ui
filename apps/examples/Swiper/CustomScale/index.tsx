@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 
 import { root, useRef, useState } from '@lynx-js/react'
-import type { JSX } from '@lynx-js/react'
 
 import {
   Swiper,
@@ -66,7 +65,7 @@ function customAnimationFirstScreen(value: number, _index: number) {
   }
 }
 
-function SwiperEntry(): JSX.Element {
+function SwiperEntry() {
   const swiperRef = useRef<SwiperRef>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
 
