@@ -185,7 +185,14 @@ pnpm check:all
 
 ## Publishing
 
-- Use `pnpm bootstrap:package` only for initial npm placeholder publishes needed before Trusted Publishing is configured.
+Stable releases are automated by [publish.yml](.github/workflows/publish.yml)
+on `main`. Changesets creates or updates a release PR; after that PR is
+merged, the workflow packs and publishes packages using npm Trusted Publishing.
+
+- Keep build and pack jobs separate from npm publishing permissions.
+- Prevent stale workflow runs from overwriting the release PR or publishing outdated packages.
+- Use `pnpm bootstrap:package` only for initial npm placeholder publishes
+  before Trusted Publishing is configured.
 
 ## Coding Standards
 
