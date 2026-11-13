@@ -40,7 +40,7 @@ const getContainerWidth = () => {
  * REPRODUCES: Swipe the empty swiper before data loads (within 1 second)
  * Result: Swiper shows wrong position (index -1, -2 loop placeholders instead of starting at 0)
  */
-function EmptyDataWithAutoPlay(): JSX.Element {
+function EmptyDataWithAutoPlay() {
   const [data, setData] = useState<number[]>([])
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [onChangeLog, setOnChangeLog] = useState<string[]>([])
@@ -133,7 +133,7 @@ function EmptyDataWithAutoPlay(): JSX.Element {
  * Note: Just clicking SwipeNext button doesn't reproduce - must use swipe gesture
  * Observe: Visual shows wrong position, but callbacks report correct values
  */
-function EmptyDataWithManualSwipe(): JSX.Element {
+function EmptyDataWithManualSwipe() {
   const [data, setData] = useState<number[]>([])
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [onChangeLog, setOnChangeLog] = useState<string[]>([])
@@ -249,7 +249,7 @@ function EmptyDataWithManualSwipe(): JSX.Element {
 /**
  * Scenario 3: Data becomes empty during use
  */
-function DataBecomesEmpty(): JSX.Element {
+function DataBecomesEmpty() {
   const [data, setData] = useState<number[]>(DEFAULT_DATA)
   const [_currentIndex, setCurrentIndex] = useState<number>(0)
   const swiperRef = useRef<SwiperRef>(null)
@@ -307,7 +307,7 @@ function DataBecomesEmpty(): JSX.Element {
 /**
  * Scenario 4: Reset with corrupted prevIndexRef
  */
-function ResetWithCorruptedIndex(): JSX.Element {
+function ResetWithCorruptedIndex() {
   const [data, setData] = useState<number[]>([])
   const [swiperKey, setSwiperKey] = useState<string>('key-1')
   const swiperRef = useRef<SwiperRef>(null)
@@ -363,7 +363,7 @@ function ResetWithCorruptedIndex(): JSX.Element {
   )
 }
 
-function EmptyDataBugExample(): JSX.Element {
+function EmptyDataBugExample() {
   return (
     <scroll-view class='container lunaris-dark' scroll-orientation='vertical'>
       <text class='main-title'>Empty Data Bug Reproduction</text>

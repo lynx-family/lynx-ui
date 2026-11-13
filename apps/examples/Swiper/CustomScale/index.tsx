@@ -65,7 +65,7 @@ function customAnimationFirstScreen(value: number, _index: number) {
   }
 }
 
-function SwiperEntry(): JSX.Element {
+function SwiperEntry() {
   const swiperRef = useRef<SwiperRef>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
 
