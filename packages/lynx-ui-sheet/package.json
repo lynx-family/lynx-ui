@@ -17,11 +17,12 @@
   "types": "./dist/index.d.ts",
   "files": [
     "LICENSE",
-    "src/**",
+    "src",
+    "!src/**/__tests__/**",
+    "!src/**/*.test.*",
     "README.md",
+    "SKILL.md",
     "CHANGELOG.md",
-    "tsconfig.docs.json",
-    "tsconfig.json",
     "dist/**"
   ],
   "scripts": {

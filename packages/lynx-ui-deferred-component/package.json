@@ -16,15 +16,13 @@
   "module": "./dist/index.jsx",
   "types": "./dist/index.d.ts",
   "files": [
-    "src/**",
-    "docs/**",
+    "src",
+    "!src/**/__tests__/**",
+    "!src/**/*.test.*",
     "README.md",
-    "README_zh.md",
     "SKILL.md",
     "CHANGELOG.md",
     "LICENSE",
-    "tsconfig.docs.json",
-    "tsconfig.json",
     "dist/**"
   ],
   "scripts": {

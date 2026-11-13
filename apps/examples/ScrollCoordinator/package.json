@@ -15,6 +15,7 @@
   "type": "module",
   "files": [
     "LICENSE",
+    "CHANGELOG.md",
     "dist/",
     "**/*.tsx",
     "**/*.ts",
