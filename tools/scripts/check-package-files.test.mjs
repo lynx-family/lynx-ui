@@ -222,6 +222,32 @@ test('reports src/** glob bypass and missing test exclusions inside src/', (t) =
   )
 })
 
+test('matches ** as zero directories in test file exclusions', (t) => {
+  const root = createTempDir(t)
+  const { packageDir, manifest } = createValidPackage(root, 'packages/demo', {
+    files: ['src', '!src/**/__tests__/**'],
+  })
+  mkdirSync(path.join(packageDir, 'src/__tests__'), { recursive: true })
+  mkdirSync(path.join(packageDir, 'src/foo/__tests__'), { recursive: true })
+  writeFileSync(path.join(packageDir, 'src/__tests__/example.ts'), 'test()\n')
+  writeFileSync(path.join(packageDir, 'src/foo/__tests__/x.ts'), 'test()\n')
+
+  const issues = inspectPackageManifest(packageDir, manifest, {
+    packageRelPath: 'packages/demo',
+  })
+
+  assert.ok(
+    !issues.includes(
+      'test file "src/__tests__/example.ts" would be included by "files"',
+    ),
+  )
+  assert.ok(
+    !issues.includes(
+      'test file "src/foo/__tests__/x.ts" would be included by "files"',
+    ),
+  )
+})
+
 test('checks entry point coverage and dist targets when checkDist is enabled', (t) => {
   const root = createTempDir(t)
   const { packageDir, manifest } = createValidPackage(root, 'packages/demo', {

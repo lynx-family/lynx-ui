@@ -186,7 +186,11 @@ function fileEntryMatchesTarget(entry, relativeTarget) {
     return true
   }
 
-  if (normalizedEntry.endsWith('/**')) {
+  if (
+    normalizedEntry.endsWith('/**')
+    && !normalizedEntry.slice(0, -3).includes('*')
+    && !normalizedEntry.slice(0, -3).includes('?')
+  ) {
     const prefix = normalizedEntry.slice(0, -3)
     return normalizedTarget.startsWith(`${prefix}/`)
   }
