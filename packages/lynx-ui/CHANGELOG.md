@@ -1,5 +1,18 @@
 # @lynx-js/lynx-ui
 
+## 3.143.0
+
+### Minor Changes
+
+- Expose the Toast APIs from the aggregate lynx-ui package. ([#286](https://github.com/lynx-family/lynx-ui/pull/286))
+  
+  Include `useToastSlideAnimation`, `calculateToastTargetPoint`, and `performToastAnimation` with Toast-specific names.
+
+### Patch Changes
+
+- Updated dependencies [[`b064123`](https://github.com/lynx-family/lynx-ui/commit/b06412353b5db6316aabe6ad6c6100c6fd7e055b)]:
+  - @lynx-js/lynx-ui-toast@3.143.0
+
 ## 3.142.0
 
 ### Minor Changes

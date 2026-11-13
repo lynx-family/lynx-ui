@@ -1,5 +1,11 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.13
+
+### Patch Changes
+
+- Add Toast guidance and generated component references to the Lynx UI skill. ([#286](https://github.com/lynx-family/lynx-ui/pull/286))
+
 ## 3.133.12
 
 ### Patch Changes
