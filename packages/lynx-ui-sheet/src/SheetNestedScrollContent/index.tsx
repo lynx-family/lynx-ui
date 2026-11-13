@@ -26,7 +26,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     gestureRelations,
     ...surfaceProps
   } = props
-  const { context, effectiveRubberBand, snap, snapPoints } =
+  const { context, positioner, effectiveRubberBand, snap, snapPoints } =
     useSheetContentController(surfaceProps)
   const activeScrollMTRef = useMainThreadRef<ActiveSheetScrollGesture | null>(
     null,
@@ -88,6 +88,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         handleOnly={context.handleOnly}
         snapPoints={snapPoints}
         maxSnapSize={snap.maxSnapSize}
+        positioner={positioner}
         footerContext={snap.footerContext}
         setClipMTRef={snap.setClipMTRef}
         setSurfaceMTRef={snap.setSurfaceMTRef}

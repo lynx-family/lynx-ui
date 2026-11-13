@@ -63,6 +63,8 @@ qrcode
 Rects
 refreshheader
 refreshview
+retarget
+retargets
 rltl
 rsdoctor
 rslint
@@ -84,6 +86,7 @@ ufra
 uivariants
 Unexposure
 unstub
+viewports
 vitest
 webp
 worklet

@@ -35,6 +35,7 @@ export interface SheetControllerAnimationDeps {
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
   initialSnap: number
+  retargetAnimationMT?: (value: number, complete: () => void) => boolean
 }
 
 /**
@@ -66,6 +67,7 @@ export function useSheetController(
     enterAnimation,
     exitAnimation,
     initialSnap,
+    retargetAnimationMT,
   } = deps
 
   const {
@@ -93,6 +95,7 @@ export function useSheetController(
       animationConfig?: SheetTransition
     } | null
   >(null)
+  const activeSnapMTRef = useMainThreadRef<number | null>(null)
 
   /**
    * Complete a snap transition - handle state changes after animation
@@ -150,6 +153,7 @@ export function useSheetController(
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined
 
     const clampedIndex = Math.max(0, Math.min(index, values.length - 1))
+    activeSnapMTRef.current = clampedIndex
     if (!isEntry && onSnapStartMT) {
       onSnapStartMT(clampedIndex, values[clampedIndex], opts?.animate !== false)
     }
@@ -209,6 +213,8 @@ export function useSheetController(
       return
     }
 
+    activeSnapMTRef.current = null
+    if (retargetAnimationMT) pendingSnapMTRef.current = null
     stopAnimationMT()
     leave()
     const target = 0
@@ -272,6 +278,7 @@ export function useSheetController(
    */
   function onDragStartMT() {
     'main thread'
+    activeSnapMTRef.current = null
     // If currently closing, resurrect
     if (presenceStateMTRef.current === PresenceState.Leaving) {
       resurrectMT()
@@ -297,6 +304,8 @@ export function useSheetController(
    */
   function onDragEndCloseMT(opts?: { animationConfig?: SheetTransition }) {
     'main thread'
+    activeSnapMTRef.current = null
+    if (retargetAnimationMT) pendingSnapMTRef.current = null
     // Transition to close if not already
     if (
       presenceStateMTRef.current !== PresenceState.Leaving
@@ -318,6 +327,33 @@ export function useSheetController(
     )
   }
 
+  /** Reconcile local geometry without opening, firing a snap-start, or moving a drag. */
+  function reconcileSnapMT(previousOffsets: number[]) {
+    'main thread'
+    if (
+      presenceStateMTRef.current === PresenceState.Leaving
+      || presenceStateMTRef.current === PresenceState.Left
+    ) return
+    if (pendingSnapMTRef.current) {
+      resolvePendingSnapMT()
+      return
+    }
+    const index = activeSnapMTRef.current
+    if (index === null) return
+    const target = getTargetForSnap(index)
+    const value = getResolvedSnapPointValues()[index]
+    if (target < 0 || target === previousOffsets[index]) return
+    const complete = () => {
+      'main thread'
+      completeSnapTransition(index, value)
+    }
+    if (retargetAnimationMT?.(target, complete)) return
+    if (Math.abs(yRef.current.get() - previousOffsets[index]) < 0.5) {
+      yRef.current.jump(target)
+      complete()
+    }
+  }
+
   return {
     presenceStateMTRef,
     // Commands
@@ -331,5 +367,6 @@ export function useSheetController(
     resurrectMT,
     // Layout helpers
     resolvePendingSnapMT,
+    reconcileSnapMT,
   }
 }

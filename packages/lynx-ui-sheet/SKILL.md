@@ -10,6 +10,13 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - **`SheetRoot`**: Owns visibility state, side, snap points, drag behavior, and imperative methods.
 - **`SheetView`**: Renders the sheet subtree in the overlay layer and controls mount/unmount.
+- **`SheetPositioner`**: Optionally wraps backdrop and content in a local viewport.
+  Supply positive `width` and `height` in logical pixels from the host pane;
+  use `style` to place it inside `SheetView`. The same dimensions drive layout
+  and snap physics before opening, without an asynchronous measurement query.
+  Keep these props synchronized with the host pane when it resizes. Do not
+  override its dimensions through CSS. Without it, the existing viewport path
+  and opening flow remain unchanged.
 - **`SheetBackdrop`**: Renders the scrim behind the sheet and optionally closes the sheet on tap.
 - **`SheetContent`**: Renders the moving sheet or drawer surface and receives consumer sizing/styling.
 - **`SheetNestedScrollContent`**: Content layer that coordinates sheet dragging and nested native scrolling. Keep `SheetContent` for the existing raw-touch behavior.
@@ -67,8 +74,17 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Use `side="top"` for top sheets.
 - Use `side="left"` or `side="right"` for drawer-style panels that should stay on a physical edge.
 - Use `side="start"` or `side="end"` for drawer-style panels that should follow writing direction. These resolve to the physical edge from `enableRTL`.
-- In `top` and `bottom` mode, percentage snap points resolve against the vertical main-axis basis: `screenHeight` when provided, otherwise viewport height.
-- In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against the horizontal main-axis basis: `screenWidth` when provided, otherwise viewport width.
+- In `top` and `bottom` mode, percentage snap points use the positioner height
+  when present, otherwise `screenHeight` or the existing viewport fallback.
+- In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points
+  use the positioner width when present, otherwise `screenWidth` or the
+  existing viewport fallback.
+- Positioner resizing retains the snap index, updates an idle snap immediately,
+  and retargets running animations without another snap-start notification.
+  Drag positions and native scroll nodes stay intact. Intrinsic `fit` sizing
+  still follows content layout; it does not require a positioner query.
+- Positioner placement, the animated `bottomInset` gap relative to its bottom
+  edge, and content safe-area padding are separate layout concerns.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
 - Attached numeric-snap sheets use `maxSnapSize`, the highest resolved `snapPoints` value, as their stable content size. Detached bottom sheets resize the numeric-snap viewport to the visible panel. Pure `'fit'` snap point sheets stay content-driven.
 - `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.

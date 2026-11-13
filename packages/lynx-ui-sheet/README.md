@@ -42,6 +42,7 @@ The `Sheet` component is composed of several specialized sub-components to give 
 
 - **`SheetRoot`**: The root container that manages the state, side, logical RTL resolution, snap points, and drag logic.
 - **`SheetView`**: The viewport container for the sheet components.
+- **`SheetPositioner`**: An optional local viewport wrapping the backdrop and content.
 - **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.
 - **`SheetNestedScrollContent`**: A replacement for `SheetContent` that coordinates

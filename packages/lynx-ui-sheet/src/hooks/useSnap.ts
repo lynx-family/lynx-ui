@@ -17,6 +17,7 @@ import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
+import type { SheetPositionerDimensions } from '../context'
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
 import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
@@ -50,6 +51,7 @@ export interface SnapOptions {
   enableRTL?: boolean
   screenHeight?: number
   screenWidth?: number
+  positioner?: SheetPositionerDimensions | null
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
@@ -74,6 +76,7 @@ export function useSnap({
   enableRTL = false,
   screenHeight: userScreenHeight,
   screenWidth: userScreenWidth,
+  positioner,
   rubberBand,
   onSnapChange = noop,
   onSnapStartMT,
@@ -117,6 +120,7 @@ export function useSnap({
   }, [])
   const contentSizeMTRef = useMainThreadRef<number>(0)
   const fitSizeMTRef = useMainThreadRef<number>(0)
+  const fitMeasuredMTRef = useMainThreadRef(false)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
   const animateSurfaceChangesMTRef = useMainThreadRef(true)
   const {
@@ -124,15 +128,16 @@ export function useSnap({
     stopAnimationMT,
     interruptAnimationMT,
     resumeAnimationMT,
+    retargetAnimationMT,
   } = useSheetAnimation(yRef, snapAnimation)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const screenHeight: number = userScreenHeight
+  const screenHeight: number = positioner?.height ?? userScreenHeight
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenHeight
     ?? 500
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const screenWidth: number = userScreenWidth
+  const screenWidth: number = positioner?.width ?? userScreenWidth
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
@@ -302,6 +307,7 @@ export function useSnap({
       enterAnimation,
       exitAnimation,
       initialSnap,
+      retargetAnimationMT: positioner ? retargetAnimationMT : undefined,
     },
   )
 
@@ -319,6 +325,26 @@ export function useSnap({
     initialSnap,
     snapAnimation,
   })
+
+  // Only local viewports reconcile resizing; the legacy path remains unchanged.
+  useEffect(() => {
+    if (!positioner) return
+    runOnMainThread((values: number[], nextMax: number) => {
+      'main thread'
+      const previousOffsets = getResolvedSnapOffsets()
+      resolvedSnapPointMTRef.current = values.map(value =>
+        value === -1 && fitMeasuredMTRef.current
+          ? fitSizeMTRef.current
+          : value
+      )
+      resolvedSnapOffsetsMTRef.current = resolvedSnapPointMTRef.current
+      if (!hasFitSnapPoint) {
+        sheetSizeMTRef.current = nextMax
+        updateContentSizeMT(nextMax)
+      }
+      controller.reconcileSnapMT(previousOffsets)
+    })(snapPointValues, maxSnapSize)
+  }, [positioner?.width, positioner?.height, snapPointValues, maxSnapSize])
 
   // Controller-delegated MT functions
   function expandMT(opts?: SnappingOptions) {
@@ -395,7 +421,8 @@ export function useSnap({
   ) {
     'main thread'
 
-    const previousFit = getResolvedSnapOffsets()[currentSnapIndex.current]
+    const previousOffsets = getResolvedSnapOffsets()
+    const previousFit = previousOffsets[currentSnapIndex.current]
     const bodySize = getMainAxisLayoutSize(resolvedSide, e)
     bodySizeMTRef.current = bodySize
     const layoutSize = !hasFitSnapPoint && !isHorizontalSide(resolvedSide)
@@ -417,6 +444,7 @@ export function useSnap({
         ? layoutSize
         : fitSizeMTRef.current
       fitSizeMTRef.current = fitSize
+      fitMeasuredMTRef.current = true
       resolvedSnapPointMTRef.current = innerSnapPointValues.map(v =>
         v === -1 ? fitSize : v
       )
@@ -425,6 +453,10 @@ export function useSnap({
       )
       // Resolve any pending snap operation
       controller.resolvePendingSnapMT()
+      if (positioner) {
+        controller.reconcileSnapMT(previousOffsets)
+        return
+      }
       // Intrinsic body and footer changes must resize an idle fit panel too.
       if (
         snapPointValues[currentSnapIndex.current] === -1

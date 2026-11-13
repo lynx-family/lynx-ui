@@ -56,6 +56,7 @@ export const apiReferenceConfig: Readonly<
       'SheetRoot',
       'SheetBackdrop',
       'SheetView',
+      'SheetPositioner',
       'SheetContent',
       'SheetNestedScrollContent',
       'SheetFooter',

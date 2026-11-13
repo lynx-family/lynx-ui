@@ -15,6 +15,30 @@ import type { MainThread, ViewProps } from '@lynx-js/types'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
 
+/**
+ * Optional local viewport inside SheetView. Wrap the backdrop and content together.
+ * Width and height come from the host pane in logical pixels and are available
+ * before opening. Sheet does not wait for an asynchronous layout query.
+ * CSS places the viewport; its origin does not enter snap or drag calculations.
+ * Updating dimensions preserves the selected snap and active gestures.
+ * @zh SheetView 内可选的局部视口，同时包裹背景遮罩和内容。宽高由宿主区域以逻辑像素提供，
+ * 在打开前即可用于计算，无需等待异步布局查询。CSS 控制位置，原点不参与吸附或拖拽计算。
+ * 更新宽高会保留吸附索引和正在进行的手势。
+ */
+export interface SheetPositionerProps extends ComponentBasicProps {
+  /** Local viewport width in positive logical pixels. Overrides screenWidth. @zh 局部视口宽度，正逻辑像素，优先于 screenWidth。 */
+  width: number
+  /** Local viewport height in positive logical pixels. Overrides screenHeight. @zh 局部视口高度，正逻辑像素，优先于 screenHeight。 */
+  height: number
+  children?: ReactNode
+  /**
+   * Native properties for the positioner view. Dimensions, clipping, className,
+   * and style are owned by SheetPositioner; use style for its placement.
+   * @zh 定位容器的原生属性。宽高、裁剪、类名和样式由 SheetPositioner 管理，使用 style 设置位置。
+   */
+  positionerProps?: ViewProps
+}
+
 export interface SheetRootRef {
   /**
    * @docTypeFallback (index: number, opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void
@@ -130,12 +154,14 @@ export interface SheetContentProps extends ComponentBasicProps {
   /**
    * External gap below a bottom sheet, in logical pixels. This is separate
    * from content padding and safe-area padding. Numeric and percentage snap
-   * sizes exclude this gap; percentages still use `screenHeight`.
+   * sizes exclude this gap; percentages use the positioner height when present,
+   * otherwise `screenHeight`. The gap is relative to the local bottom edge.
    * Changes use `snapAnimation` and animate from the current rendered inset.
    * Other sides ignore it. Negative and non-finite values resolve to zero.
    * @defaultValue 0
    * @zh 底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，
-   * 也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。
+   * 也不计入吸附高度。百分比基于定位容器高度，未使用定位容器时基于 screenHeight。
+   * 间距相对于局部底边，其他方向忽略此属性。
    */
   bottomInset?: number
   /**

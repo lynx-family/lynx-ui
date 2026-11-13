@@ -1529,6 +1529,139 @@ Controls the Sheet's overlay layer and stacking order.
   }
 ]}/>
 
+### SheetPositioner {#api-sheet-positioner}
+
+Optional local viewport inside SheetView. Wrap the backdrop and content together.
+Width and height come from the host pane in logical pixels and are available
+before opening. Sheet does not wait for an asynchronous layout query.
+CSS places the viewport; its origin does not enter snap or drag calculations.
+Updating dimensions preserves the selected snap and active gestures.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "height",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Local viewport height in positive logical pixels. Overrides screenHeight."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "局部视口高度，正逻辑像素，优先于 screenHeight。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "positionerProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native properties for the positioner view. Dimensions, clipping, className,\nand style are owned by SheetPositioner; use style for its placement."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "定位容器的原生属性。宽高、裁剪、类名和样式由 SheetPositioner 管理，使用 style 设置位置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Local viewport width in positive logical pixels. Overrides screenWidth."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "局部视口宽度，正逻辑像素，优先于 screenWidth。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
 ### SheetContent {#api-sheet-content}
 
 The main content of the Sheet.
@@ -1540,7 +1673,7 @@ The main content of the Sheet.
     "summary": [
       {
         "kind": "text",
-        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages still use "
+        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages use the positioner height when present,\notherwise "
       },
       {
         "kind": "code",
@@ -1548,7 +1681,7 @@ The main content of the Sheet.
       },
       {
         "kind": "text",
-        "text": ".\nChanges use "
+        "text": ". The gap is relative to the local bottom edge.\nChanges use "
       },
       {
         "kind": "code",
@@ -1562,7 +1695,7 @@ The main content of the Sheet.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。"
+        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比基于定位容器高度，未使用定位容器时基于 screenHeight。\n间距相对于局部底边，其他方向忽略此属性。"
       }
     ],
     "defaultValue": "0",
@@ -1957,7 +2090,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary": [
       {
         "kind": "text",
-        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages still use "
+        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages use the positioner height when present,\notherwise "
       },
       {
         "kind": "code",
@@ -1965,7 +2098,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "text",
-        "text": ".\nChanges use "
+        "text": ". The gap is relative to the local bottom edge.\nChanges use "
       },
       {
         "kind": "code",
@@ -1979,7 +2112,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。"
+        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比基于定位容器高度，未使用定位容器时基于 screenHeight。\n间距相对于局部底边，其他方向忽略此属性。"
       }
     ],
     "defaultValue": "0",
