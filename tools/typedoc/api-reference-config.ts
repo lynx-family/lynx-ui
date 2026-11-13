@@ -124,6 +124,15 @@ export const apiReferenceConfig: Readonly<
     ],
     embeddedTypes: ['SliderUIVariants'],
   },
+  'lynx-ui-toast': {
+    parts: [
+      'ToastRoot',
+      'ToastPositioner',
+      'ToastContent',
+      'ToastDraggableContent',
+    ],
+    supportingTypes: ['StaticToastConfig', 'ToastContextType'],
+  },
   'lynx-ui-input-otp': {
     parts: ['InputOTP', 'InputOTPSlot'],
     refs: ['InputOTPRef'],
