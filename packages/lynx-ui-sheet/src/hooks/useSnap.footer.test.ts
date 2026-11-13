@@ -46,9 +46,13 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
   ) => ref.current.on(event, fn),
 }))
 
-function setup(snapPoints: Array<number | string> = ['fit']) {
+function setup(
+  snapPoints: Array<number | string> = ['fit'],
+  onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
+) {
   const state = { current: PresenceState.Left }
   const entered = vi.fn()
+  const onSnapChange = vi.fn()
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
@@ -56,6 +60,8 @@ function setup(snapPoints: Array<number | string> = ['fit']) {
     screenWidth: 400,
     presenceStateMTRef: state,
     onEntered: entered,
+    onSnapChange,
+    onSnapStartMT: onSnapStart,
   })
   const styles = vi.fn()
   const element = {
@@ -67,7 +73,7 @@ function setup(snapPoints: Array<number | string> = ['fit']) {
       setStyleProperties: () => undefined,
     } as unknown as MainThread.Element,
   )
-  return { snap, state, entered, styles }
+  return { snap, state, entered, styles, onSnapChange }
 }
 
 describe('Sheet intrinsic and footer fit sizing', () => {
@@ -81,6 +87,34 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   afterEach(() => {
     vi.useRealTimers()
     vi.unstubAllGlobals()
+  })
+
+  it('reports a released maximum snap without an onSnapStart subscriber', () => {
+    const { snap, onSnapChange } = setup([300, 800])
+    snap.show({ animate: false })
+    snap.yRef.current.set(800)
+    expect(onSnapChange).not.toHaveBeenCalled()
+
+    snap.releaseAtMaxSnapMT(1)
+    vi.advanceTimersByTime(1000)
+    expect(onSnapChange.mock.calls).toEqual([[1, 800]])
+  })
+
+  it('starts fullscreen appearance before reporting the released maximum snap', () => {
+    const onSnapStart = vi.fn()
+    const { snap, onSnapChange } = setup([300, 800], onSnapStart)
+    snap.show({ animate: false })
+    snap.yRef.current.set(800)
+    expect(onSnapStart).not.toHaveBeenCalled()
+    expect(onSnapChange).not.toHaveBeenCalled()
+
+    snap.releaseAtMaxSnapMT(1)
+    expect(onSnapStart.mock.calls).toEqual([[1, 800, true]])
+    vi.advanceTimersByTime(1000)
+    expect(onSnapChange.mock.calls).toEqual([[1, 800]])
+    expect(onSnapStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onSnapChange.mock.invocationCallOrder[0],
+    )
   })
 
   it('preserves an immediate open while waiting for fit measurement', () => {

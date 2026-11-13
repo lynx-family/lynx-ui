@@ -33,6 +33,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - Use `main-thread:onSnapStart(index, value, animated)` on `SheetRoot` to react to the selected target before Sheet starts moving. It fires on drag release and imperative snaps, including same-point releases and handoff to nested scrolling at the maximum snap.
 - The callback does not fire for opening or closing. `animated` is false for an immediate snap. It reports a target, not per-frame animation progress or completed arrival.
+- Use `onSnapChange` for a settled snap index change. After a nested scroll handoff, the Sheet waits for touch-up before reporting the final snap.
 - Intrinsic content changes resize an idle `'fit'` panel with an immediate snap; this also notifies `onSnapStart` with `animated={false}`. Active drags, numeric destinations, and closing panels retain their current motion.
 - Fullscreen is a consumer policy. Compare the resolved target with the consumer's fullscreen size; the largest snap need not be fullscreen.
 - Use `className` / `style` to style the painted surface and `innerClassName` / `innerStyle` for content layout. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
