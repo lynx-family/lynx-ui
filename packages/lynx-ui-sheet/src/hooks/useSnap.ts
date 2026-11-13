@@ -4,21 +4,20 @@
 import {
   runOnBackground,
   runOnMainThread,
+  useEffect,
   useMainThreadRef,
   useMemo,
+  useRef,
 } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
 import { noop, useMemoizedFn } from '@lynx-js/lynx-ui-common'
-import type { PresenceState } from '@lynx-js/lynx-ui-presence'
-import {
-  animate,
-  useMotionValueRef,
-  useMotionValueRefEvent,
-} from '@lynx-js/motion/mini'
+import { PresenceState } from '@lynx-js/lynx-ui-presence'
+import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
+import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
 import type { SheetSide, SheetTransition } from '../types'
 import {
@@ -98,9 +97,26 @@ export function useSnap({
   const contentMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const yRef = useMotionValueRef<number>(0)
   const sheetSizeMTRef = useMainThreadRef<number>(0)
+  const bodySizeMTRef = useMainThreadRef<number>(-1)
+  const footerHeightMTRef = useMainThreadRef<number>(-1)
+  const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
+  const footerIdMTRef = useMainThreadRef<string | null>(null)
+  const ownerMounted = useRef(true)
+  useEffect(() => {
+    ownerMounted.current = true
+    return () => {
+      ownerMounted.current = false
+    }
+  }, [])
   const contentSizeMTRef = useMainThreadRef<number>(0)
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
+  const {
+    animateToMT,
+    stopAnimationMT,
+    interruptAnimationMT,
+    resumeAnimationMT,
+  } = useSheetAnimation(yRef, snapAnimation)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const screenHeight: number = userScreenHeight
@@ -188,8 +204,18 @@ export function useSnap({
     }
   }
 
+  function updateFooterPositionMT(visibleHeight: number) {
+    'main thread'
+    footerMTRef.current?.setStyleProperties({
+      transform: `translateY(${
+        Math.max(0, visibleHeight - Math.max(0, footerHeightMTRef.current))
+      }px)`,
+    })
+  }
+
   useMotionValueRefEvent(yRef, 'change', v => {
     'main thread'
+    updateFooterPositionMT(v)
     const el = sheetMTRef.current
     if (el) {
       const offsets = getResolvedSnapOffsets()
@@ -200,7 +226,6 @@ export function useSnap({
         : v
       el.setStyleProperties({
         transform: getSheetTransform(resolvedSide, transformValue),
-        transition: 'none',
       })
       if (sheetProgress?.current) {
         const closed = 0
@@ -218,28 +243,6 @@ export function useSnap({
     if (currentSnapIndex.current !== index) {
       currentSnapIndex.current = index
       runOnBackground(onSnapChange)(index, value)
-    }
-  }
-
-  function animateToMT(
-    value: number,
-    cb: () => void = noop,
-    config?: SheetTransition,
-  ) {
-    'main thread'
-    const finalConfig = config ?? snapAnimation
-    if (finalConfig.type === 'spring') {
-      animate(yRef.current, value, {
-        type: 'spring',
-        stiffness: finalConfig.stiffness ?? 200,
-        damping: finalConfig.damping ?? 60,
-        mass: finalConfig.mass ?? 1,
-      }).then(cb)
-    } else {
-      animate(yRef.current, value, {
-        duration: (finalConfig.duration ?? 400) / 1000,
-        ease: finalConfig.ease ?? (t => t),
-      }).then(cb)
     }
   }
 
@@ -279,6 +282,7 @@ export function useSnap({
     {
       yRef,
       animateToMT,
+      stopAnimationMT,
       getTargetForSnap,
       getResolvedSnapPointValues,
       onSnapChangeMT,
@@ -352,10 +356,15 @@ export function useSnap({
       detail?: { height?: number, width?: number }
       params?: { height?: number, width?: number }
     },
+    allowEmptyFit = false,
   ) {
     'main thread'
 
-    const layoutSize = getMainAxisLayoutSize(resolvedSide, e)
+    const bodySize = getMainAxisLayoutSize(resolvedSide, e)
+    bodySizeMTRef.current = bodySize
+    const layoutSize = bodySize + (hasFitSnapPoint && resolvedSide === 'bottom'
+      ? Math.max(0, footerHeightMTRef.current)
+      : 0)
     sheetSizeMTRef.current = layoutSize
 
     // The rename is required, to prevent from xx.map is not a function
@@ -363,8 +372,12 @@ export function useSnap({
     const innerSnapOffsets = snapOffsets
 
     if (hasFitSnapPoint) {
-      if (fitSizeMTRef.current === 0 && layoutSize <= 0) return
-      const fitSize = layoutSize > 0 ? layoutSize : fitSizeMTRef.current
+      if (!allowEmptyFit && fitSizeMTRef.current === 0 && layoutSize <= 0) {
+        return
+      }
+      const fitSize = layoutSize > 0 || allowEmptyFit
+        ? layoutSize
+        : fitSizeMTRef.current
       fitSizeMTRef.current = fitSize
       resolvedSnapPointMTRef.current = innerSnapPointValues.map(v =>
         v === -1 ? fitSize : v
@@ -379,7 +392,64 @@ export function useSnap({
     }
   }
 
+  function updateFooterHeightMT(height: number) {
+    'main thread'
+    const previousFit = getResolvedSnapOffsets()[currentSnapIndex.current]
+    const previousHeight = footerHeightMTRef.current
+    footerHeightMTRef.current = height
+    updateFooterPositionMT(yRef.current.get())
+    if (hasFitSnapPoint && bodySizeMTRef.current >= 0) {
+      handleSheetLayoutChangeMT(
+        { detail: { height: bodySizeMTRef.current } },
+        previousHeight > 0 && height === 0 && bodySizeMTRef.current === 0,
+      )
+      // Reconcile a fit snap when intrinsic footer content changes after opening.
+      if (snapPointValues[currentSnapIndex.current] === -1) {
+        const state = controller.presenceStateMTRef.current
+        if (
+          state === PresenceState.Entered && !yRef.current.isAnimating()
+          && Math.abs(yRef.current.get() - previousFit) < 0.5
+        ) {
+          controller.snapToMT(currentSnapIndex.current, { animate: false })
+        } else if (
+          state === PresenceState.Entering && yRef.current.isAnimating()
+        ) {
+          controller.snapToMT(currentSnapIndex.current, { isEntry: true })
+        }
+      }
+    }
+  }
+
+  function registerFooterMT(id: string, height: number) {
+    'main thread'
+    const element = sheetMTRef.current?.querySelector(`#${id}`)
+    if (!element || !yRef.current) return
+    footerIdMTRef.current = id
+    footerMTRef.current = element
+    updateFooterHeightMT(height)
+  }
+
+  function unregisterFooterMT(id: string) {
+    'main thread'
+    if (footerIdMTRef.current !== id || !yRef.current) return
+    footerIdMTRef.current = null
+    footerMTRef.current = null
+    updateFooterHeightMT(0)
+  }
+
+  const registerFooter = useMemoizedFn((id: string, height: number) => {
+    if (ownerMounted.current) runOnMainThread(registerFooterMT)(id, height)
+  })
+  const unregisterFooter = useMemoizedFn((id: string) => {
+    if (ownerMounted.current) runOnMainThread(unregisterFooterMT)(id)
+  })
+
   return {
+    footerContext: {
+      resolvedSide,
+      registerFooter,
+      unregisterFooter,
+    },
     setSheetMTRef,
     setContentMTRef,
     snapTo,
@@ -407,6 +477,8 @@ export function useSnap({
     maxSnapSize,
     getClampedValueMT,
     animateToMT,
+    interruptAnimationMT,
+    resumeAnimationMT,
     nearestSnapMT,
     onSnapChangeMT,
     sheetHeightMTRef: sheetSizeMTRef,
