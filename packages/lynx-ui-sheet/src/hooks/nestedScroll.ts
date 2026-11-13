@@ -9,8 +9,12 @@ export interface ResolveNestedScrollOwnerOptions {
   position: number
   /** The maximum visible Sheet size. */
   maximumPosition: number
+  /** Whether the current touch is already dragging the Sheet. */
+  sheetDragging?: boolean
   /** Whether the scrolling content is synchronously known to be at its start. */
   contentAtStart?: boolean
+  /** Whether the scrolling content is synchronously known to be at its end. */
+  contentAtEnd?: boolean
 }
 
 /**
@@ -23,9 +27,15 @@ export function resolveNestedScrollOwner({
   delta,
   position,
   maximumPosition,
+  sheetDragging,
   contentAtStart,
+  contentAtEnd,
 }: ResolveNestedScrollOwnerOptions): 'sheet' | 'content' {
   'main thread'
+  if (delta === 0) return 'content'
+  // Only the touch that owns the stretch needs to unwind it.
+  if (sheetDragging && position > maximumPosition) return 'sheet'
+  if (contentAtStart === true && contentAtEnd === true) return 'sheet'
   if (delta > 0) return position < maximumPosition ? 'sheet' : 'content'
   if (delta < 0) return contentAtStart === true ? 'sheet' : 'content'
   return 'content'

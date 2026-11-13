@@ -31,7 +31,7 @@ function PaymentMethodList({ footerHeight }: { footerHeight: number }) {
       className='payment-methods'
       style={{ paddingBottom: `${footerHeight}px` }}
       scroll-orientation='vertical'
-      bounces={false}
+      bounces={true}
       main-thread:gesture={gesture}
     >
       {paymentMethods.map((method, index) => (

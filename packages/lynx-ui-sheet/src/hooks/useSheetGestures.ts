@@ -27,7 +27,6 @@ import {
   getDefaultRubberBand,
   getNextMainAxisOffset,
   resolveSheetSide,
-  rubberEffect,
 } from '../utils'
 import {
   parseScrollInfoAtStart,
@@ -35,9 +34,10 @@ import {
   setupSheetScrollGestureRelations,
 } from './gestureRelations'
 import { resolveNestedScrollOwner } from './nestedScroll'
+import { createSheetDragState, moveSheetDrag } from './sheetDrag'
+import type { SheetDragState } from './sheetDrag'
 import { getSheetScrollGesture } from './sheetScrollGesture'
 import type { SnappingOptions } from './useSnap'
-import { getRubberBandConfig } from './useSnapTouches'
 
 interface UseSheetPanGestureOptions {
   side?: SheetSide
@@ -76,6 +76,7 @@ interface UseSheetNativeScrollGestureOptions {
   activeScrollMTRef: MainThreadRef<ActiveSheetScrollGesture | null>
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
   position: MainThreadRef<MotionValue<number>>
+  sheetDraggingMTRef: MainThreadRef<boolean>
   getResolvedSnapOffsets: () => number[]
   onScrollEndMT?: (cancelled: boolean) => void
 }
@@ -123,6 +124,7 @@ export function useSheetPanGesture({
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const lastCoordinateMTRef = useMainThreadRef(0)
   const draggingMTRef = useMainThreadRef(false)
+  const dragStateMTRef = useMainThreadRef<SheetDragState | null>(null)
   const handedOffAtMaxMTRef = useMainThreadRef(false)
   const interactionStartedMTRef = useMainThreadRef(false)
   const originMTRef = useMainThreadRef({ pageX: 0, pageY: 0 })
@@ -132,11 +134,13 @@ export function useSheetPanGesture({
     'main thread'
     const started = interactionStartedMTRef.current
     interactionStartedMTRef.current = false
-    // The native scroll gesture resumes settling if it still owns this touch.
+    // Recognizer completion is not physical release. Native touch-up can call
+    // this too, after a related recognizer has failed or handed off the drag.
     if (started && !activeScrollMTRef.current) onGestureEndMT?.()
     const wasDragging = draggingMTRef.current
-    const handedOffAtMax = handedOffAtMaxMTRef.current
     draggingMTRef.current = false
+    dragStateMTRef.current = null
+    const handedOffAtMax = handedOffAtMaxMTRef.current
     handedOffAtMaxMTRef.current = false
     if (!wasDragging) {
       if (handedOffAtMax) {
@@ -192,6 +196,10 @@ export function useSheetPanGesture({
   pan
     .enabled(dragEnabled)
     .minDistance(gestureConfig?.minDistance ?? 3)
+    .onTouchesDown(() => {
+      'main thread'
+      dragStateMTRef.current = null
+    })
     .onBegin(event => {
       'main thread'
       originMTRef.current = {
@@ -203,6 +211,7 @@ export function useSheetPanGesture({
         event.params,
       )
       draggingMTRef.current = false
+      dragStateMTRef.current = null
       handedOffAtMaxMTRef.current = false
       interactionStartedMTRef.current = false
     })
@@ -229,39 +238,57 @@ export function useSheetPanGesture({
       const rawDelta = coordinate - lastCoordinateMTRef.current
       lastCoordinateMTRef.current = coordinate
       const current = yRef.current.get()
-      const next = getNextMainAxisOffset(resolvedSide, current, rawDelta)
-      const delta = next - current
+      const delta = getNextMainAxisOffset(resolvedSide, 0, rawDelta)
       const offsets = getResolvedSnapOffsets()
       const scroll = activeScrollMTRef.current
       // Gesture runtimes may emit stationary updates while a related native
       // gesture is still resolving. A zero delta carries no ownership intent.
       if (delta === 0) return
-      if (!interactionStartedMTRef.current) {
-        interactionStartedMTRef.current = true
-        // Freeze an existing snap before either recognizer owns this drag.
-        onGestureStartMT?.()
-      }
-      let maximumPosition: number | undefined
-      if (scroll) {
-        maximumPosition = resolveMaximumPosition(offsets)
-        const owner = resolveNestedScrollOwner({
+      const maximumPosition = scroll
+        ? resolveMaximumPosition(offsets)
+        : undefined
+      const owner = scroll && maximumPosition !== undefined
+        ? resolveNestedScrollOwner({
           delta,
           position: current,
           maximumPosition,
+          sheetDragging: draggingMTRef.current,
           contentAtStart: scroll.atStart,
+          contentAtEnd: scroll.atEnd,
         })
+        : 'sheet'
+      if (!interactionStartedMTRef.current) {
+        interactionStartedMTRef.current = true
+        // Let a released stretch settle while the new touch scrolls content.
+        if (
+          owner === 'sheet' || maximumPosition === undefined
+          || current <= maximumPosition
+        ) {
+          onGestureStartMT?.()
+        }
+      }
+      let handoffMaximum = maximumPosition
+      if (scroll && maximumPosition !== undefined) {
         if (owner === 'content') {
           // Both recognizers stay active so reversals retain live boundaries.
           if (draggingMTRef.current && current === maximumPosition) {
             handedOffAtMaxMTRef.current = true
           }
           draggingMTRef.current = false
+          dragStateMTRef.current = null
           if (scroll.consuming !== true) {
             scroll.manager?.consumeGesture(true)
             scroll.consuming = true
             activeScrollMTRef.current = scroll
           }
           return
+        }
+        // Keep resistance for short content or while unwinding an existing stretch.
+        if (
+          (scroll.atStart === true && scroll.atEnd === true)
+          || current > maximumPosition
+        ) {
+          handoffMaximum = undefined
         }
         if (scroll.consuming !== false) {
           scroll.manager?.consumeGesture(false)
@@ -275,28 +302,27 @@ export function useSheetPanGesture({
         handedOffAtMaxMTRef.current = false
         onDragStartMT()
       }
-      const valid = offsets.filter(offset => offset !== -1)
-      const max = valid.length > 0 ? Math.max(...valid) : 0
-      const min = valid.length > 0 ? Math.min(...valid) : 0
-      let boundedNext = maximumPosition !== undefined && delta > 0
-        ? Math.min(next, maximumPosition)
-        : next
-      const rubber = getRubberBandConfig(
-        effectiveRubberBand,
-        viewportSize,
-        max,
-      )
-      if (boundedNext > max) {
-        boundedNext = rubber.enabled
-          ? max + rubberEffect(boundedNext - max, rubber.max, rubber.coeff)
-          : max
+      let dragPosition = yRef.current.get()
+      let state = dragStateMTRef.current
+      // Rebase after an external position change, but never feed resistance
+      // or native-owned displacement back into the next raw Sheet movement.
+      if (dragPosition !== state?.position) {
+        if (state) {
+          onDragStartMT()
+          dragPosition = yRef.current.get()
+        }
+        state = createSheetDragState(
+          dragPosition,
+          offsets,
+          effectiveRubberBand,
+          viewportSize,
+          enableDragToClose,
+        )
       }
-      if (boundedNext < min && !enableDragToClose) {
-        boundedNext = rubber.enabled
-          ? min + rubberEffect(boundedNext - min, rubber.max, rubber.coeff)
-          : min
-      }
-      yRef.current.set(boundedNext)
+      if (!state) return
+      const next = moveSheetDrag(state, delta, handoffMaximum)
+      dragStateMTRef.current = next
+      yRef.current.set(next.position)
     })
     .onTouchesUp(() => {
       'main thread'
@@ -308,11 +334,12 @@ export function useSheetPanGesture({
     })
 
   reconcileSheetGestureRelations(pan, gestureRelations)
-  return { gesture: pan, finishTouchMT }
+  return { gesture: pan, finishTouchMT, sheetDraggingMTRef: draggingMTRef }
 }
 
 type NativeScrollParams = NativeGestureChangeEvent['params'] & {
   isAtStart?: boolean | number
+  isAtEnd?: boolean | number
   scrollX?: number
   scrollY?: number
 }
@@ -339,6 +366,7 @@ export function useSheetNativeScrollGesture({
   activeScrollMTRef,
   resolvedSide,
   position,
+  sheetDraggingMTRef,
   getResolvedSnapOffsets,
   onScrollEndMT,
 }: UseSheetNativeScrollGestureOptions): NativeGesture {
@@ -381,6 +409,9 @@ export function useSheetNativeScrollGesture({
       const capturedState: ActiveSheetScrollGesture = {
         manager,
         atStart: boundaryFromParams,
+        atEnd: params.isAtEnd === undefined
+          ? undefined
+          : params.isAtEnd === true || params.isAtEnd === 1,
         revision: 0,
       }
       scrollStateMTRef.current = capturedState
@@ -421,8 +452,25 @@ export function useSheetNativeScrollGesture({
         resolvedSide,
         params,
       )
-      if (boundaryFromParams !== undefined) {
-        state.atStart = boundaryFromParams
+      if (boundaryFromParams !== undefined || params.isAtEnd !== undefined) {
+        if (boundaryFromParams !== undefined) {
+          // A changed partial observation invalidates the other old boundary;
+          // combining the top and bottom from different frames looks like an
+          // empty target even when the content has scrolled between them.
+          if (
+            state.atStart !== boundaryFromParams && params.isAtEnd === undefined
+          ) {
+            state.atEnd = undefined
+          }
+          state.atStart = boundaryFromParams
+        }
+        if (params.isAtEnd !== undefined) {
+          const atEnd = params.isAtEnd === true || params.isAtEnd === 1
+          if (state.atEnd !== atEnd && boundaryFromParams === undefined) {
+            state.atStart = undefined
+          }
+          state.atEnd = atEnd
+        }
         state.revision = (state.revision ?? 0) + 1
         scrollStateMTRef.current = state
         activeScrollMTRef.current = state
@@ -458,13 +506,16 @@ export function useSheetNativeScrollGesture({
       // Reclassifying there mistakes small sideways drift for a new child pan.
       if (rawDelta !== 0) mainAxisStartedMTRef.current = true
       const sheetDelta = getNextMainAxisOffset(resolvedSide, 0, rawDelta)
+      if (sheetDelta === 0) return
       const offsets = getResolvedSnapOffsets()
       const maximumPosition = resolveMaximumPosition(offsets)
       const owner = resolveNestedScrollOwner({
         delta: sheetDelta,
         position: position.current.get(),
         maximumPosition,
+        sheetDragging: sheetDraggingMTRef.current,
         contentAtStart: state.atStart,
+        contentAtEnd: state.atEnd,
       })
       if (owner === 'sheet' && state.consuming !== false) {
         manager.consumeGesture(false)
