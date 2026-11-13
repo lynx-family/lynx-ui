@@ -182,6 +182,7 @@ pnpm check:all
 - **`pnpm check:manypkg`**: Checks for dependency mismatches in the monorepo.
 - **`pnpm check:sherif`**: Lints `package.json` files for potential issues using Sherif.
 - **`pnpm check:exports`**: Verifies that `@lynx-js/lynx-ui` re-exports the expected public surface from included sub-packages.
+- **`pnpm check:package-files`**: Verifies publishable workspace package `files` arrays, required metadata, entry coverage, and source test exclusions.
 - **`pnpm check:package-readmes`**: Verifies that every package under `packages/` has a `README_zh.md`.
 - **`pnpm spell`**: Runs CSpell to check for spelling errors.
 

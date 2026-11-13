@@ -15,7 +15,10 @@
   "files": [
     "SKILL.md",
     "references",
-    "evals"
+    "evals",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "scripts": {
     "check:eval-definitions": "node ../../tools/skill-lynx-ui/check-eval-definitions.mjs",

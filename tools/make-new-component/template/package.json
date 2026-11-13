@@ -11,11 +11,13 @@
   "module": "./dist/index.jsx",
   "types": "./dist/index.d.ts",
   "files": [
-    "src/**",
+    "src",
+    "!src/**/*.test.*",
+    "!src/**/__tests__/**",
     "README.md",
+    "SKILL.md",
     "CHANGELOG.md",
-    "tsconfig.docs.json",
-    "tsconfig.json",
+    "LICENSE",
     "dist/**"
   ],
   "scripts": {
@@ -37,6 +39,9 @@
     "@lynx-js/react": ">=0.100.0",
     "@lynx-js/types": "*",
     "@types/react": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "jsnext:source": "./src/index.tsx"
 }
