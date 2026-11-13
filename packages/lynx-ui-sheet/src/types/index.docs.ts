@@ -343,9 +343,10 @@ export interface SheetRootProps extends ComponentBasicProps {
    */
   initialSnap?: number
   /**
-   * Callback when the snap point changes.
+   * Called when the Sheet settles at a different snap index. During a drag,
+   * the Sheet waits for the touch to end, including after a nested scroll handoff.
    * `value` is the resolved snap point in pixels.
-   * @zh 吸附点变化时的回调。
+   * @zh Sheet 到达不同的吸附档位时触发。拖拽时会等待触摸结束，即使手势已交给嵌套滚动容器。
    * `value` 表示换算后的像素值。
    */
   onSnapChange?: (index: number, value: number) => void

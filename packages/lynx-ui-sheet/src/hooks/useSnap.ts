@@ -373,7 +373,6 @@ export function useSnap({
 
   function releaseAtMaxSnapMT(index: number) {
     'main thread'
-    if (!onSnapStartMT) return
     // The content owns the gesture, so the Sheet has no release velocity.
     yRef.current.updateVelocity(0)
     controller.snapToMT(index)
@@ -555,7 +554,6 @@ export function useSnap({
     interruptAnimationMT,
     resumeAnimationMT,
     nearestSnapMT,
-    onSnapChangeMT,
     sheetHeightMTRef: sheetSizeMTRef,
     sheetSizeMTRef,
     // Getters for resolved snapPoints (after 'fit' is resolved)
