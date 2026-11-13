@@ -42,6 +42,34 @@ describe('resolveNestedScrollOwner', () => {
     ).toBe('content')
   })
 
+  it('keeps a known non-scrollable target with the Sheet', () => {
+    expect(resolveNestedScrollOwner({
+      ...base,
+      position: 800,
+      contentAtEnd: true,
+      delta: 20,
+    })).toBe('sheet')
+    expect(resolveNestedScrollOwner({
+      ...base,
+      position: 800,
+      contentAtEnd: false,
+      delta: 20,
+    })).toBe('content')
+  })
+
+  it.each([-20, 20])(
+    'keeps an over-drag with Sheet while reversing: %s',
+    delta => {
+      expect(resolveNestedScrollOwner({
+        ...base,
+        position: 820,
+        sheetDragging: true,
+        contentAtStart: false,
+        delta,
+      })).toBe('sheet')
+    },
+  )
+
   it('keeps stationary updates with content', () => {
     expect(resolveNestedScrollOwner({ ...base, delta: 0 })).toBe('content')
   })

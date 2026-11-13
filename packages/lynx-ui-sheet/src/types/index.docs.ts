@@ -391,12 +391,19 @@ export interface SheetRootProps extends ComponentBasicProps {
    * If false, disables rubber band effect.
    * If number, enables rubber band effect with the specified coefficient.
    * If object, allows specifying coefficient and max distance.
+   * Sheet-owned over-drag follows total finger displacement and holds until
+   * touch-up or cancellation. Its resistance geometry is sampled when the
+   * Sheet acquires the drag. Nested content uses its own native bounce settings
+   * after handoff at the maximum snap; this option does not enable content bounce.
    * @zh 橡皮筋效果配置。
    * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
    * 如果为 true，启用默认橡皮筋效果（系数 0.5）。
    * 如果为 false，禁用橡皮筋效果。
    * 如果为数字，启用指定系数的橡皮筋效果。
    * 如果为对象，允许指定系数和最大距离。
+   * Sheet 的越界阻尼跟随手指累计位移，在抬手或取消前保持拖拽位置。
+   * 阻尼几何参数在 Sheet 接管拖拽时采样。嵌套内容在最大吸附点交接后
+   * 使用自身的原生回弹配置；此选项不会启用内容回弹。
    */
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   /**

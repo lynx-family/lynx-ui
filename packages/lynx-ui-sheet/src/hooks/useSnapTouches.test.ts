@@ -121,3 +121,116 @@ describe('sheet release velocity', () => {
     expect(result.onDragEndSnapMT).toHaveBeenCalledWith(0)
   })
 })
+
+function rawDrag(initial = 900, overrides: Partial<SnapTouchOptions> = {}) {
+  let position = initial
+  const options = {
+    yRef: {
+      current: {
+        get: () => position,
+        set: (value: number) => {
+          position = value
+        },
+        getVelocity: () => 0,
+      } as unknown as MotionValue<number>,
+    },
+    viewportSize: 1000,
+    sheetSizeMTRef: { current: 900 },
+    snapOffsets: [450, 900],
+    snapPointValues: [450, 900],
+    minOffset: 450,
+    maxOffset: 900,
+    getResolvedSnapOffsets: () => [450, 900],
+    getResolvedSnapPointValues: () => [450, 900],
+    onDragStartMT: vi.fn(),
+    onDragEndSnapMT: vi.fn(),
+    onDragEndCloseMT: vi.fn(),
+    ...overrides,
+  }
+  // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+  const handlers = useSnapTouches(options)
+  return {
+    handlers,
+    options,
+    getPosition: () => position,
+    setPosition: (value: number) => {
+      position = value
+    },
+  }
+}
+
+function touchAt(y: number, x = 0) {
+  return { detail: { x, y } } as MainThread.TouchEvent
+}
+
+describe('raw-touch Sheet resistance', () => {
+  it.each([1, 2, 20, 200])(
+    'preserves total displacement across %s updates',
+    count => {
+      const { handlers, getPosition, options } = rawDrag()
+      handlers.handleTouchStartMT(touchAt(500))
+      for (let i = 1; i <= count; i++) {
+        handlers.handleTouchMoveMT(touchAt(500 - 200 * i / count))
+      }
+      expect(getPosition()).toBeCloseTo(944.4444444444)
+      handlers.handleTouchMoveMT(touchAt(300))
+      expect(getPosition()).toBeCloseTo(944.4444444444)
+      handlers.handleTouchMoveMT(touchAt(500))
+      expect(getPosition()).toBeCloseTo(900)
+      expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+      handlers.handleTouchEndMT(touchAt(500))
+      expect(options.onDragEndSnapMT).toHaveBeenCalledWith(1)
+    },
+  )
+
+  it('anchors on the stopped animation when movement is first recognized', () => {
+    const { handlers, options, getPosition, setPosition } = rawDrag(800)
+    vi.mocked(options.onDragStartMT).mockImplementation(() => setPosition(900))
+    handlers.handleTouchStartMT(touchAt(500))
+    handlers.handleTouchMoveMT(touchAt(490))
+    expect(getPosition()).toBeGreaterThan(900)
+    expect(getPosition()).toBeLessThan(910)
+  })
+
+  it('rebases after an imperative position change during the touch', () => {
+    const { handlers, getPosition, setPosition, options } = rawDrag(800)
+    handlers.handleTouchStartMT(touchAt(500))
+    handlers.handleTouchMoveMT(touchAt(480))
+    expect(getPosition()).toBe(820)
+    setPosition(600)
+    handlers.handleTouchMoveMT(touchAt(470))
+    expect(getPosition()).toBe(610)
+    expect(options.onDragStartMT).toHaveBeenCalledTimes(2)
+  })
+
+  it.each(
+    [
+      { side: 'bottom', enableRTL: false, horizontal: false, sign: -1 },
+      { side: 'top', enableRTL: false, horizontal: false, sign: 1 },
+      { side: 'left', enableRTL: false, horizontal: true, sign: 1 },
+      { side: 'right', enableRTL: false, horizontal: true, sign: -1 },
+      { side: 'start', enableRTL: false, horizontal: true, sign: 1 },
+      { side: 'start', enableRTL: true, horizontal: true, sign: -1 },
+      { side: 'end', enableRTL: false, horizontal: true, sign: -1 },
+      { side: 'end', enableRTL: true, horizontal: true, sign: 1 },
+    ] as const,
+  )(
+    'normalizes $side over-drag with RTL=$enableRTL',
+    ({ side, enableRTL, horizontal, sign }) => {
+      const { handlers, getPosition } = rawDrag(900, {
+        side,
+        enableRTL,
+        rubberBand: true,
+      })
+      const point = (distance: number) =>
+        horizontal
+          ? touchAt(0, distance * sign)
+          : touchAt(distance * sign)
+      handlers.handleTouchStartMT(point(0))
+      for (let i = 1; i <= 200; i++) handlers.handleTouchMoveMT(point(i))
+      expect(getPosition()).toBeCloseTo(944.4444444444)
+      handlers.handleTouchMoveMT(point(0))
+      expect(getPosition()).toBeCloseTo(900)
+    },
+  )
+})

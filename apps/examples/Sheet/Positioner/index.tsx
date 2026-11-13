@@ -106,7 +106,7 @@ function App() {
                         ? 'vertical'
                         : 'horizontal'}
                       main-thread:gesture={scrollGesture}
-                      bounces={false}
+                      bounces={true}
                     >
                       {Array.from(
                         { length: 16 },

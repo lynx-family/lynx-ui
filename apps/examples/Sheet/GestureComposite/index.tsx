@@ -24,7 +24,7 @@ function HorizontalCategories() {
     <scroll-view
       className='category-strip'
       scroll-orientation='horizontal'
-      bounces={false}
+      bounces={true}
     >
       <view className='category-row'>
         {categories.map((category) => (
@@ -44,7 +44,7 @@ function FoldLikeContent() {
     <scroll-view
       className='fold-like-content'
       scroll-orientation='vertical'
-      bounces={false}
+      bounces={true}
       main-thread:gesture={verticalGesture}
     >
       <view className='fold-toolbar'>
