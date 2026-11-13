@@ -394,6 +394,55 @@ The root component of the Sheet, containing all of its child components.
     "docTypeFallback": null
   },
   {
+    "name": "main-thread:onSnapStart",
+    "type": "(index: number, value: number, animated: boolean) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called on the main thread after a snap target is selected and before the\nSheet starts moving to it. "
+      },
+      {
+        "kind": "code",
+        "text": "`value`"
+      },
+      {
+        "kind": "text",
+        "text": " is the resolved size in pixels, and\n"
+      },
+      {
+        "kind": "code",
+        "text": "`animated`"
+      },
+      {
+        "kind": "text",
+        "text": " is false when the snap was requested without animation.\n\nThis fires for drag releases and programmatic snaps, including snaps back\nto the same point and release after handing off to a nested scroll at the\nmaximum point. It does not fire for opening or closing the Sheet.\nResizing an idle 'fit' panel to changed intrinsic content also requests an\nimmediate snap, with "
+      },
+      {
+        "kind": "code",
+        "text": "`animated`"
+      },
+      {
+        "kind": "text",
+        "text": " set to false.\nUse the "
+      },
+      {
+        "kind": "code",
+        "text": "`main thread`"
+      },
+      {
+        "kind": "text",
+        "text": " directive in the callback."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "onClose",
     "type": "() => void",
     "summary": [
@@ -465,7 +514,7 @@ The root component of the Sheet, containing all of its child components.
     "summary": [
       {
         "kind": "text",
-        "text": "Callback when the snap point changes.\n"
+        "text": "Called when the Sheet settles at a different snap index. During a drag,\nthe Sheet waits for the touch to end, including after a nested scroll handoff.\n"
       },
       {
         "kind": "code",
@@ -479,7 +528,7 @@ The root component of the Sheet, containing all of its child components.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "吸附点变化时的回调。\n"
+        "text": "Sheet 到达不同的吸附档位时触发。拖拽时会等待触摸结束，即使手势已交给嵌套滚动容器。\n"
       },
       {
         "kind": "code",
@@ -1406,7 +1455,7 @@ Controls the Sheet's overlay layer and stacking order.
   },
   {
     "name": "nativeProps",
-    "type": "OverlayViewProps | ViewProps",
+    "type": "ViewProps | OverlayViewProps",
     "summary": [
       {
         "kind": "text",
@@ -1486,6 +1535,44 @@ The main content of the Sheet.
 
 <UIApiTable source={[
   {
+    "name": "bottomInset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages still use "
+      },
+      {
+        "kind": "code",
+        "text": "`screenHeight`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nChanges use "
+      },
+      {
+        "kind": "code",
+        "text": "`snapAnimation`"
+      },
+      {
+        "kind": "text",
+        "text": " and animate from the current rendered inset.\nOther sides ignore it. Negative and non-finite values resolve to zero."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "children",
     "type": "ReactNode",
     "summary": [
@@ -1527,6 +1614,60 @@ The main content of the Sheet.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "detached",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Keep a bottom sheet's painted surface bounded to the visible panel instead\nof extending its background beyond the screen edge. Switching this option\npreserves the content and native scroll node. Other sides ignore it.\nStyle the surface with "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": "; put content padding and\nlayout on "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。\n切换时保留内容和原生滚动节点。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -1617,7 +1758,7 @@ The main content of the Sheet.
     "summary": [
       {
         "kind": "text",
-        "text": "Inline styles for the inner layer.\nUse this for content layout and sizing styles.\nNote: Visual styles (background, borderRadius, etc.) should be set via\nthe main "
+        "text": "Inline styles for the inner layer.\nUse this for content layout and sizing styles. Visual styles can also be\napplied here for a separately styled inner panel. The outer "
       },
       {
         "kind": "code",
@@ -1625,7 +1766,7 @@ The main content of the Sheet.
       },
       {
         "kind": "text",
-        "text": " prop which applies to the moving surface layer.\nIn horizontal drawer mode, set drawer width here so "
+        "text": " prop\nstyles the painted surface; Sheet owns its coverage height and movement.\nA narrower inner panel needs Lynx SDK 3.5 or newer for outside taps to\npass through the transparent moving surface to the backdrop.\nIn horizontal drawer mode, set drawer width here so "
       },
       {
         "kind": "code",
@@ -1639,7 +1780,7 @@ The main content of the Sheet.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "内层容器的内联样式。\n用于设置内容区域的布局和尺寸样式。\n注意：背景、圆角等视觉样式应通过主 "
+        "text": "内层容器的内联样式。\n用于设置内容区域的布局和尺寸样式。\n内层面板与外层宽度不同时，也可以在此设置背景和圆角。主 "
       },
       {
         "kind": "code",
@@ -1647,7 +1788,7 @@ The main content of the Sheet.
       },
       {
         "kind": "text",
-        "text": " 属性设置，该属性会应用到移动的 surface 层。\n在水平抽屉模式下，应在这里设置抽屉宽度，这样 "
+        "text": " 属性作用于背景面板，Sheet 管理覆盖高度和位移。\n在水平抽屉模式下，应在这里设置抽屉宽度，这样 "
       },
       {
         "kind": "code",
@@ -1656,6 +1797,98 @@ The main content of the Sheet.
       {
         "kind": "text",
         "text": " 才能根据测量得到的抽屉宽度完成解析。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "innerViewProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view properties for the inner panel. Sheet owns its ref, layout\nmeasurement, gesture handlers, class name, and style; use "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": "\nand "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": " for styling."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内层面板的原生 view 属性。Sheet 管理引用、布局测量、手势、类名和样式；\n请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": " 和 "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": " 设置样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:surfaceRef",
+    "type": "MainThreadRef<Element | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A main-thread ref to the painted view styled by "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nIts value is set while the view is mounted and cleared on unmount.\nUse it to animate appearance, such as width on a bottom sheet. Give each\nanimated property one owner: avoid updating it through React styles or a\nCSS transition while writing it imperatively.\nSheet owns movement, coverage height, inset positioning, and clipping.\nFor horizontal drawers, Sheet writes the movement transform on this view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "背景面板的主线程引用，与 className 和 style 作用在同一个节点。\n可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。"
       }
     ],
     "defaultValue": "",
@@ -1719,6 +1952,44 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
 
 <UIApiTable source={[
   {
+    "name": "bottomInset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "External gap below a bottom sheet, in logical pixels. This is separate\nfrom content padding and safe-area padding. Numeric and percentage snap\nsizes exclude this gap; percentages still use "
+      },
+      {
+        "kind": "code",
+        "text": "`screenHeight`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nChanges use "
+      },
+      {
+        "kind": "code",
+        "text": "`snapAnimation`"
+      },
+      {
+        "kind": "text",
+        "text": " and animate from the current rendered inset.\nOther sides ignore it. Negative and non-finite values resolve to zero."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，\n也不计入吸附高度。百分比仍基于 screenHeight。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "0",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "children",
     "type": "ReactNode | (props: SheetNestedScrollRenderProps) => ReactNode",
     "summary": [
@@ -1755,6 +2026,60 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "detached",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Keep a bottom sheet's painted surface bounded to the visible panel instead\nof extending its background beyond the screen edge. Switching this option\npreserves the content and native scroll node. Other sides ignore it.\nStyle the surface with "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": "; put content padding and\nlayout on "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。\n切换时保留内容和原生滚动节点。其他方向忽略此属性。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -1879,7 +2204,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary": [
       {
         "kind": "text",
-        "text": "Inline styles for the inner layer.\nUse this for content layout and sizing styles.\nNote: Visual styles (background, borderRadius, etc.) should be set via\nthe main "
+        "text": "Inline styles for the inner layer.\nUse this for content layout and sizing styles. Visual styles can also be\napplied here for a separately styled inner panel. The outer "
       },
       {
         "kind": "code",
@@ -1887,7 +2212,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "text",
-        "text": " prop which applies to the moving surface layer.\nIn horizontal drawer mode, set drawer width here so "
+        "text": " prop\nstyles the painted surface; Sheet owns its coverage height and movement.\nA narrower inner panel needs Lynx SDK 3.5 or newer for outside taps to\npass through the transparent moving surface to the backdrop.\nIn horizontal drawer mode, set drawer width here so "
       },
       {
         "kind": "code",
@@ -1901,7 +2226,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "内层容器的内联样式。\n用于设置内容区域的布局和尺寸样式。\n注意：背景、圆角等视觉样式应通过主 "
+        "text": "内层容器的内联样式。\n用于设置内容区域的布局和尺寸样式。\n内层面板与外层宽度不同时，也可以在此设置背景和圆角。主 "
       },
       {
         "kind": "code",
@@ -1909,7 +2234,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "text",
-        "text": " 属性设置，该属性会应用到移动的 surface 层。\n在水平抽屉模式下，应在这里设置抽屉宽度，这样 "
+        "text": " 属性作用于背景面板，Sheet 管理覆盖高度和位移。\n在水平抽屉模式下，应在这里设置抽屉宽度，这样 "
       },
       {
         "kind": "code",
@@ -1918,6 +2243,98 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       {
         "kind": "text",
         "text": " 才能根据测量得到的抽屉宽度完成解析。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "innerViewProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view properties for the inner panel. Sheet owns its ref, layout\nmeasurement, gesture handlers, class name, and style; use "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": "\nand "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": " for styling."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "内层面板的原生 view 属性。Sheet 管理引用、布局测量、手势、类名和样式；\n请使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`innerClassName`"
+      },
+      {
+        "kind": "text",
+        "text": " 和 "
+      },
+      {
+        "kind": "code",
+        "text": "`innerStyle`"
+      },
+      {
+        "kind": "text",
+        "text": " 设置样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:surfaceRef",
+    "type": "MainThreadRef<Element | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A main-thread ref to the painted view styled by "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nIts value is set while the view is mounted and cleared on unmount.\nUse it to animate appearance, such as width on a bottom sheet. Give each\nanimated property one owner: avoid updating it through React styles or a\nCSS transition while writing it imperatively.\nSheet owns movement, coverage height, inset positioning, and clipping.\nFor horizontal drawers, Sheet writes the movement transform on this view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "背景面板的主线程引用，与 className 和 style 作用在同一个节点。\n可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。"
       }
     ],
     "defaultValue": "",

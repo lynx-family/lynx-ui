@@ -11,7 +11,7 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetSide, SheetTransition } from '../types'
+import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
@@ -52,6 +52,7 @@ export interface SheetContextValue {
   snapPoints?: Array<number | string>
   initialSnap?: number
   onSnapChange?: (index: number, value: number) => void
+  onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   side: SheetSide
   enableRTL: boolean
   resolvedSide: SheetResolvedSide

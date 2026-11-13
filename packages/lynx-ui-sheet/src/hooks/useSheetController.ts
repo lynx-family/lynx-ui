@@ -9,7 +9,7 @@ import { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 
 import { useSheetPresence } from './useSheetPresence'
-import type { SheetTransition } from '../types'
+import type { SheetRootProps, SheetTransition } from '../types'
 
 export interface SheetControllerOptions {
   onEntered?: () => void
@@ -31,6 +31,7 @@ export interface SheetControllerAnimationDeps {
   getTargetForSnap: (index: number) => number
   getResolvedSnapPointValues: () => number[]
   onSnapChangeMT: (index: number, value: number) => void
+  onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
   initialSnap: number
@@ -61,6 +62,7 @@ export function useSheetController(
     getTargetForSnap,
     getResolvedSnapPointValues,
     onSnapChangeMT,
+    onSnapStartMT,
     enterAnimation,
     exitAnimation,
     initialSnap,
@@ -87,6 +89,7 @@ export function useSheetController(
     {
       index: number
       isEntry: boolean
+      animate?: boolean
       animationConfig?: SheetTransition
     } | null
   >(null)
@@ -127,10 +130,16 @@ export function useSheetController(
       pendingSnapMTRef.current = {
         index,
         isEntry: opts?.isEntry ?? false,
+        animate: opts?.animate,
         animationConfig: opts?.animationConfig,
       }
       return
     }
+
+    // A new snap can interrupt the opening animation before presence reaches
+    // Entered. Classify the action itself, not the current presence state.
+    const isEntry = opts?.isEntry === true
+      || presenceStateMTRef.current === PresenceState.Left
 
     // If called when Left, transition to Entering first
     if (presenceStateMTRef.current === PresenceState.Left) {
@@ -141,6 +150,9 @@ export function useSheetController(
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined
 
     const clampedIndex = Math.max(0, Math.min(index, values.length - 1))
+    if (!isEntry && onSnapStartMT) {
+      onSnapStartMT(clampedIndex, values[clampedIndex], opts?.animate !== false)
+    }
 
     if (opts?.animate === false) {
       yRef.current.jump(target)
@@ -250,6 +262,7 @@ export function useSheetController(
     pendingSnapMTRef.current = null
     snapToMT(pending.index, {
       isEntry: pending.isEntry,
+      animate: pending.animate,
       animationConfig: pending.animationConfig,
     })
   }
