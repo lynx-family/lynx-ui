@@ -24,23 +24,28 @@ interface NativeInvocation {
   fail?: (result: unknown) => void
 }
 
-const invoke = vi.fn((_options: NativeInvocation) => ({ exec: vi.fn() }))
+const invoke = vi.fn((..._args: unknown[]) => ({ exec: vi.fn() }))
+
+function asNativeInvocation(value: unknown): NativeInvocation {
+  return value as NativeInvocation
+}
 
 beforeEach(() => {
   invoke.mockClear()
-  const prototype = Object.getPrototypeOf(
-    lynx.createSelectorQuery().selectUniqueID(0),
-  )
+  const query = lynx.createSelectorQuery()
+  // @ts-expect-error The test runtime supports this API absent from public types.
+  const selected = query.selectUniqueID(0)
+  const prototype = Object.getPrototypeOf(selected)
   vi.spyOn(prototype, 'invoke').mockImplementation(invoke)
 })
 
 function nativeEvent(element: Element, name: string, detail: object) {
   const event = createEvent(`bindEvent:${name}`, element)
   Object.assign(event, { eventType: 'bindEvent', eventName: name, detail })
-  fireEvent(
-    lynx.createSelectorQuery().select(element.tagName.toLowerCase()),
-    event,
-  )
+  const target = lynx.createSelectorQuery().select(
+    element.tagName.toLowerCase(),
+  ) as unknown as Element
+  fireEvent(target, event)
 }
 
 describe('ScrollCoordinator', () => {
@@ -276,12 +281,15 @@ describe('ScrollCoordinator', () => {
     second.current?.finishRefresh()
     withoutRefresh.current?.startRefresh()
     withoutRefresh.current?.finishRefresh()
-    expect(invoke.mock.calls.map(([options]) => options.method)).toEqual([
-      'autoStartRefresh',
-      'autoStartRefresh',
-      'finishRefresh',
-      'finishRefresh',
-    ])
+    expect(
+      invoke.mock.calls.map(([options]) => asNativeInvocation(options).method),
+    )
+      .toEqual([
+        'autoStartRefresh',
+        'autoStartRefresh',
+        'finishRefresh',
+        'finishRefresh',
+      ])
     expect(invoke.mock.contexts[0]).not.toEqual(invoke.mock.contexts[1])
     expect(invoke.mock.contexts[0]).toEqual(invoke.mock.contexts[2])
     expect(invoke.mock.contexts[1]).toEqual(invoke.mock.contexts[3])
@@ -319,10 +327,10 @@ describe('ScrollCoordinator', () => {
     nativeEvent(refresh, 'startrefresh', { isManual: true })
     expect(onStartRefresh).not.toHaveBeenCalled()
     ref.current?.finishRefresh()
-    expect(invoke.mock.calls.map(([options]) => options.method)).toEqual([
-      'autoStartRefresh',
-      'finishRefresh',
-    ])
+    expect(
+      invoke.mock.calls.map(([options]) => asNativeInvocation(options).method),
+    )
+      .toEqual(['autoStartRefresh', 'finishRefresh'])
     rerender(renderCoordinator(true))
     ref.current?.startRefresh()
     expect(invoke).toHaveBeenLastCalledWith({ method: 'autoStartRefresh' })
@@ -369,10 +377,12 @@ describe('ScrollCoordinator', () => {
         headers={<text id='chapter'>Chapter</text>}
       />,
     )
-    invoke.mockImplementationOnce(options => {
+    invoke.mockImplementationOnce(value => {
+      const options = asNativeInvocation(value)
       options.success?.({ top: 230 })
       return { exec: vi.fn() }
-    }).mockImplementationOnce(options => {
+    }).mockImplementationOnce(value => {
+      const options = asNativeInvocation(value)
       options.success?.({ top: 80 })
       return { exec: vi.fn() }
     })
@@ -384,10 +394,12 @@ describe('ScrollCoordinator', () => {
       }))
     })
     invoke.mockClear()
-    invoke.mockImplementationOnce(options => {
+    invoke.mockImplementationOnce(value => {
+      const options = asNativeInvocation(value)
       options.fail?.({ code: 2, data: { message: 'missing target' } })
       return { exec: vi.fn() }
-    }).mockImplementationOnce(options => {
+    }).mockImplementationOnce(value => {
+      const options = asNativeInvocation(value)
       options.success?.({ top: 80 })
       return { exec: vi.fn() }
     })

@@ -34,13 +34,14 @@ function pageEvent(element: Element, name: string, index: number) {
   return event
 }
 
-const invoke = vi.fn(() => ({ exec: vi.fn() }))
+const invoke = vi.fn((..._args: unknown[]) => ({ exec: vi.fn() }))
 
 beforeEach(() => {
   invoke.mockClear()
-  const prototype = Object.getPrototypeOf(
-    lynx.createSelectorQuery().selectUniqueID(0),
-  )
+  const query = lynx.createSelectorQuery()
+  // @ts-expect-error The test runtime supports this API absent from public types.
+  const selected = query.selectUniqueID(0)
+  const prototype = Object.getPrototypeOf(selected)
   vi.spyOn(prototype, 'invoke').mockImplementation(invoke)
 })
 
@@ -225,7 +226,7 @@ describe('ViewPager', () => {
         {renderPage}
       </ViewPager>,
     )
-    fireEvent.tap(getByText('A 0'))
+    fireEvent.tap(getByText('A 0') as Element)
     rerender(
       <ViewPager
         data={[pages[1], pages[0], pages[2]]}
@@ -259,7 +260,7 @@ describe('ViewPager', () => {
         {renderPage}
       </ViewPager>,
     )
-    fireEvent.tap(getByText('A 0'))
+    fireEvent.tap(getByText('A 0') as Element)
     rerender(
       <ViewPager
         data={[pages[1], pages[0], pages[2]]}
@@ -290,7 +291,11 @@ describe('ViewPager', () => {
     })
 
     rerender(
-      <ViewPager ref={ref} data={[]} getItemKey={page => page.id}>
+      <ViewPager
+        ref={ref}
+        data={pages.slice(0, 0)}
+        getItemKey={page => page.id}
+      >
         {page => <text>{page.label}</text>}
       </ViewPager>,
     )
