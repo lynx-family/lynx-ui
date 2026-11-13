@@ -33,7 +33,7 @@
     },
   ],
   // Misc words
-  "words": [],
+  "words": ["receipe", "receipes"],
   // Glob
   "ignorePaths": [
     ".gitignore",

@@ -81,6 +81,9 @@
       "path": "./packages/lynx-ui-switch"
     },
     {
+      "path": "./receipes/lynx-ui-receipe-luna"
+    },
+    {
       "path": "./tsconfig.node.json"
     }
   ]
