@@ -15,6 +15,9 @@
       "@lynx-js/luna-styles",
       "@lynx-js/luna-tailwind",
       "@lynx-js/luna-tokens"
+    ],
+    [
+      "@lynx-example/lynx-ui-*"
     ]
   ],
   "linked": [
