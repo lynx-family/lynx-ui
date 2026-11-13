@@ -31,7 +31,11 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
   const activeScrollMTRef = useMainThreadRef<ActiveSheetScrollGesture | null>(
     null,
   )
-  const { gesture: sheetGesture, finishTouchMT } = useSheetPanGesture({
+  const {
+    gesture: sheetGesture,
+    finishTouchMT,
+    sheetDraggingMTRef,
+  } = useSheetPanGesture({
     side: context.side,
     enableRTL: context.enableRTL,
     dragDisabled: context.dragDisabled,
@@ -61,6 +65,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     activeScrollMTRef,
     resolvedSide: context.resolvedSide,
     position: snap.yRef,
+    sheetDraggingMTRef,
     getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
     onScrollEndMT: cancelled => {
       'main thread'

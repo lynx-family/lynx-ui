@@ -144,6 +144,7 @@ function makePan(offsets = [450, 900], overrides = {}) {
     options,
     scrollManager,
     finishTouchMT: pan.finishTouchMT,
+    sheetDraggingMTRef: pan.sheetDraggingMTRef,
   }
 }
 
@@ -165,6 +166,7 @@ describe('native scroll coordination', () => {
         resolvedSide: options?.resolvedSide ?? 'bottom',
         minDistance: options?.minDistance,
         position: { current: { get: () => 900 } },
+        sheetDraggingMTRef: { current: false },
         getResolvedSnapOffsets: () => [450, 900],
       } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
     ) as unknown as InstanceType<typeof runtime.Gesture>
@@ -287,6 +289,7 @@ describe('native scroll coordination', () => {
           activeScrollMTRef: active,
           resolvedSide: 'bottom',
           position: { current: { get: () => 900 } },
+          sheetDraggingMTRef: { current: false },
           getResolvedSnapOffsets: () => [450, 900],
           onScrollEndMT,
         } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
@@ -825,9 +828,70 @@ describe('Sheet ownership segments and physical release', () => {
   })
 
   it.each(['native-first', 'pan-first'] as const)(
+    'hands a fresh content swipe the gesture during a handle rebound (%s)',
+    order => {
+      const { gesture: pan, motion, options, sheetDraggingMTRef } = makePan(
+        [450, 900],
+        { activeScrollMTRef: { current: null }, rubberBand: true },
+      )
+      const panManager = makeManager()
+      const scrollManager = makeManager()
+      const scroll = useSheetNativeScrollGesture(
+        {
+          sheetGesture: pan,
+          activeScrollMTRef: options.activeScrollMTRef,
+          resolvedSide: 'bottom',
+          position: options.yRef,
+          sheetDraggingMTRef,
+          getResolvedSnapOffsets: options.getResolvedSnapOffsets,
+        } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
+      ) as unknown as InstanceType<typeof runtime.Gesture>
+
+      motion.set(900)
+      pan.callbacks.begin(event(500), panManager)
+      pan.callbacks.update(event(300), panManager)
+      expect(motion.get()).toBeGreaterThan(920)
+      pan.callbacks.up(event(300), panManager)
+      expect(options.onDragEndSnapMT.mock.calls).toEqual([[1]])
+      options.onGestureStartMT.mockClear()
+      options.onDragStartMT.mockClear()
+
+      // Sample the Sheet partway through the release animation.
+      motion.set(920)
+      const start = {
+        params: { pageX: 0, pageY: 500, isAtStart: true, isAtEnd: false },
+      }
+      scroll.callbacks.down(start, scrollManager)
+      scroll.callbacks.begin(start, scrollManager)
+      pan.callbacks.down(start, panManager)
+      pan.callbacks.begin(start, panManager)
+      const move = event(480)
+      if (order === 'native-first') {
+        scroll.callbacks.update(move, scrollManager)
+        pan.callbacks.update(move, panManager)
+      } else {
+        pan.callbacks.update(move, panManager)
+        scroll.callbacks.update(move, scrollManager)
+      }
+
+      expect(scrollManager.consumeGesture.mock.calls).toEqual([[true]])
+      expect(options.onGestureStartMT).not.toHaveBeenCalled()
+      expect(options.onDragStartMT).not.toHaveBeenCalled()
+      expect(motion.get()).toBe(920)
+
+      motion.set(900)
+      scroll.callbacks.update(event(460), scrollManager)
+      pan.callbacks.update(event(460), panManager)
+      expect(motion.get()).toBe(900)
+      expect(scrollManager.consumeGesture.mock.calls).toEqual([[true]])
+    },
+  )
+
+  it.each(['native-first', 'pan-first'] as const)(
     'settles once when physical release callbacks arrive %s',
     order => {
-      const { gesture, motion, options, finishTouchMT } = makePan()
+      const { gesture, motion, options, finishTouchMT, sheetDraggingMTRef } =
+        makePan()
       const manager = makeManager()
       const native = useSheetNativeScrollGesture(
         {
@@ -837,6 +901,7 @@ describe('Sheet ownership segments and physical release', () => {
           activeScrollMTRef: options.activeScrollMTRef,
           resolvedSide: 'bottom',
           position: options.yRef,
+          sheetDraggingMTRef,
           getResolvedSnapOffsets: options.getResolvedSnapOffsets,
           onScrollEndMT: finishTouchMT,
         } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
@@ -860,7 +925,7 @@ describe('Sheet ownership segments and physical release', () => {
   )
 
   it('uses native touch completion even if the pan no longer receives events', () => {
-    const { gesture, options, finishTouchMT } = makePan()
+    const { gesture, options, finishTouchMT, sheetDraggingMTRef } = makePan()
     const manager = makeManager()
     const native = useSheetNativeScrollGesture(
       {
@@ -868,6 +933,7 @@ describe('Sheet ownership segments and physical release', () => {
         activeScrollMTRef: options.activeScrollMTRef,
         resolvedSide: 'bottom',
         position: options.yRef,
+        sheetDraggingMTRef,
         getResolvedSnapOffsets: options.getResolvedSnapOffsets,
         onScrollEndMT: finishTouchMT,
       } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],

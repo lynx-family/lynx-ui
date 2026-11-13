@@ -51,6 +51,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - Sheet-owned resistance follows raw finger displacement, not a repeatedly compressed motion value. Holding a stationary finger must hold the current stretch; reverse movement unwinds it before ordinary Sheet movement resumes.
 - Recognizer completion or nested handoff is not touch release. Snap selection and rebound belong to touch-up or cancellation, including native touch completion when the Sheet pan no longer owns the recognizer.
+- A fresh swipe toward expansion inside scrollable content can take ownership during the Sheet's rebound from its maximum snap. A new handle drag can still interrupt that rebound and continue the stretch.
 - Resistance geometry is sampled when Sheet acquires a drag. A positioner resize changes the live handoff and release targets without repeatedly remapping an existing stretch. A new ownership segment samples the current geometry; imperative position changes rebase the drag.
 - Keep enabled-rubber gesture regressions: equivalent event partitions, monotonic over-drag, stationary holds, reversals, interrupted stretch, and both touch-completion orders. Mock the runtime, not the resistance configuration.
 

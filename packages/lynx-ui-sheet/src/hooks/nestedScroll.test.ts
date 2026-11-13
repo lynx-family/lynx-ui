@@ -63,6 +63,7 @@ describe('resolveNestedScrollOwner', () => {
       expect(resolveNestedScrollOwner({
         ...base,
         position: 820,
+        sheetDragging: true,
         contentAtStart: false,
         delta,
       })).toBe('sheet')

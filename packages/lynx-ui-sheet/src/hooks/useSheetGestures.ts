@@ -77,6 +77,7 @@ interface UseSheetNativeScrollGestureOptions {
   activeScrollMTRef: MainThreadRef<ActiveSheetScrollGesture | null>
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
   position: MainThreadRef<MotionValue<number>>
+  sheetDraggingMTRef: MainThreadRef<boolean>
   getResolvedSnapOffsets: () => number[]
   onScrollEndMT?: (cancelled: boolean) => void
 }
@@ -244,21 +245,31 @@ export function useSheetPanGesture({
       // Gesture runtimes may emit stationary updates while a related native
       // gesture is still resolving. A zero delta carries no ownership intent.
       if (delta === 0) return
-      if (!interactionStartedMTRef.current) {
-        interactionStartedMTRef.current = true
-        // Freeze an existing snap before either recognizer owns this drag.
-        onGestureStartMT?.()
-      }
-      let maximumPosition: number | undefined
-      if (scroll) {
-        maximumPosition = resolveMaximumPosition(offsets)
-        const owner = resolveNestedScrollOwner({
+      const maximumPosition = scroll
+        ? resolveMaximumPosition(offsets)
+        : undefined
+      const owner = scroll && maximumPosition !== undefined
+        ? resolveNestedScrollOwner({
           delta,
           position: current,
           maximumPosition,
+          sheetDragging: draggingMTRef.current,
           contentAtStart: scroll.atStart,
           contentAtEnd: scroll.atEnd,
         })
+        : 'sheet'
+      if (!interactionStartedMTRef.current) {
+        interactionStartedMTRef.current = true
+        // Let a released stretch settle while the new touch scrolls content.
+        if (
+          owner === 'sheet' || maximumPosition === undefined
+          || current <= maximumPosition
+        ) {
+          onGestureStartMT?.()
+        }
+      }
+      let handoffMaximum = maximumPosition
+      if (scroll && maximumPosition !== undefined) {
         if (owner === 'content') {
           // Both recognizers stay active so reversals retain live boundaries.
           // Report the reached snap without starting a release animation.
@@ -275,12 +286,12 @@ export function useSheetPanGesture({
           }
           return
         }
-        // A target known to have no scroll range leaves upper resistance with Sheet.
-        if (scroll.atStart === true && scroll.atEnd === true) {
-          maximumPosition = undefined
-        }
-        if (maximumPosition !== undefined && current > maximumPosition) {
-          maximumPosition = undefined
+        // Keep resistance for short content or while unwinding an existing stretch.
+        if (
+          (scroll.atStart === true && scroll.atEnd === true)
+          || current > maximumPosition
+        ) {
+          handoffMaximum = undefined
         }
         if (scroll.consuming !== false) {
           scroll.manager?.consumeGesture(false)
@@ -312,7 +323,7 @@ export function useSheetPanGesture({
         )
       }
       if (!state) return
-      const next = moveSheetDrag(state, delta, maximumPosition)
+      const next = moveSheetDrag(state, delta, handoffMaximum)
       dragStateMTRef.current = next
       yRef.current.set(next.position)
     })
@@ -326,7 +337,7 @@ export function useSheetPanGesture({
     })
 
   reconcileSheetGestureRelations(pan, gestureRelations)
-  return { gesture: pan, finishTouchMT }
+  return { gesture: pan, finishTouchMT, sheetDraggingMTRef: draggingMTRef }
 }
 
 type NativeScrollParams = NativeGestureChangeEvent['params'] & {
@@ -358,6 +369,7 @@ export function useSheetNativeScrollGesture({
   activeScrollMTRef,
   resolvedSide,
   position,
+  sheetDraggingMTRef,
   getResolvedSnapOffsets,
   onScrollEndMT,
 }: UseSheetNativeScrollGestureOptions): NativeGesture {
@@ -504,6 +516,7 @@ export function useSheetNativeScrollGesture({
         delta: sheetDelta,
         position: position.current.get(),
         maximumPosition,
+        sheetDragging: sheetDraggingMTRef.current,
         contentAtStart: state.atStart,
         contentAtEnd: state.atEnd,
       })
