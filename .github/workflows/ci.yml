@@ -48,17 +48,12 @@ jobs:
           pnpm check:mdx
           pnpm dprint check
           pnpm dlx sherif@latest
-      - name: Package Chinese README Check
+      - name: Tools Tests
+        run: pnpm test:tools
+      - name: Package Checks
         run: |
-          pnpm test:package-readmes
+          pnpm check:package-files
           pnpm check:package-readmes
-      - name: Changeset Script Tests
-        run: |
-          pnpm test:changeset-files
-          pnpm test:changesets-coverage
-          pnpm test:changesets-private
-      - name: Lint Infrastructure Tests
-        run: node --test tools/lint/*.test.mjs
       - name: Changeset Validation
         run: |
           pnpm check:changesets
@@ -72,9 +67,7 @@ jobs:
       - name: New Publishable Package Check
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
-        run: |
-          pnpm test:new-packages
-          pnpm check:new-packages --base "$BASE_SHA"
+        run: pnpm check:new-packages --base "$BASE_SHA"
 
   check-skills:
     name: Check Skills
