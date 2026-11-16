@@ -192,6 +192,10 @@ The lynx-website build depends on the **latest `main` branch** of this repositor
 
 ## Pull Request Guidelines
 
+Open pull requests as drafts by default (`gh pr create --draft`). Draft pull requests receive CI checks
+and CodeRabbit reviews. All pull requests require human review and manual merging; only human
+maintainers may mark them ready for review or merge them.
+
 ### Commits & Merge Strategy
 
 - **One Commit per PR (after merge)**

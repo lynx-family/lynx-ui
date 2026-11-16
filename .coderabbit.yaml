@@ -17,7 +17,7 @@ reviews:
   sequence_diagrams: false
   auto_review:
     enabled: true
-    drafts: false
+    drafts: true
   path_instructions:
     - path: "**"
       instructions: |
