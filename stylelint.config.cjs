@@ -13,7 +13,7 @@ module.exports = {
       ],
       rules: {
         'selector-class-pattern': [
-          '^lynx-ui-[a-z0-9-]+(?:__(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:--(?:[a-z0-9]+(?:-[a-z0-9]+)*))?)?$',
+          '^(?:lynx-ui-[a-z0-9-]+(?:__(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:--(?:[a-z0-9]+(?:-[a-z0-9]+)*))?)?|ui-(?:active|checked|disabled))$',
           {
             message:
               'Component classes must use the `lynx-ui-<package>__<lowercase-kebab-name>` namespace.',

@@ -2,6 +2,101 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
 
 ## Component API {#api}
 
+### LunaThemeScope {#api-luna-theme-scope}
+
+Props for the view that scopes the LUNA theme stylesheet.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Content that inherits this theme."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "继承当前主题的内容。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Styles for the scope view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主题容器的样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "themeKey",
+    "type": "luna-light | luna-dark | lunaris-light | lunaris-dark",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "The theme class to apply. Import the LUNA stylesheet once in the app."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "要应用的主题类名。请在应用中导入一次 LUNA 样式表。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
 ### Box {#api-box}
 
 A plain view with shared layout props and no forced display mode.
@@ -4837,6 +4932,306 @@ A section with vertical breathing room.
       {
         "kind": "text",
         "text": "宽度，数字表示像素。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### LunaButton {#api-luna-button}
+
+Props for the themed text button.
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Visible text label."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "可见的按钮文字。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes for the root."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "根节点的附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "disabled",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Whether interaction is disabled."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "是否禁用交互。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onClick",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called when the enabled button is activated."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "未禁用时点击按钮触发。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Styles for the root."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "根节点样式。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "variant",
+    "type": "solid | soft",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Visual treatment."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "按钮外观。"
+      }
+    ],
+    "defaultValue": "\"solid\"",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### LunaSwitch {#api-luna-switch}
+
+Props for the themed switch with a built-in track and thumb.
+
+<UIApiTable source={[
+  {
+    "name": "checked",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Checked state in controlled mode."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "受控模式下的选中状态。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Additional CSS classes for the root."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "根节点的附加 CSS 类名。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "defaultChecked",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Initial checked state in uncontrolled mode."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "非受控模式下的初始选中状态。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "disabled",
+    "type": "boolean",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Whether interaction is disabled."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "是否禁用交互。"
+      }
+    ],
+    "defaultValue": "false",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "label",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Accessible name for the control. Render any visible label separately."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "开关的无障碍名称，可见文字需单独渲染。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onChange",
+    "type": "(checked: boolean) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called with the next checked state."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "状态变化时传入下一选中值。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Styles for the root."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "根节点样式。"
       }
     ],
     "defaultValue": "",

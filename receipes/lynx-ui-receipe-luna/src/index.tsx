@@ -3,6 +3,9 @@
 // LICENSE file in the root directory of this source tree.
 
 export { Box, Column, Container, Flex, Grid, Row, Section } from './layout.js'
+export { LunaButton } from './button.js'
+export { LunaSwitch } from './switch.js'
+export { LunaThemeScope } from './theme.js'
 export type {
   BoxProps,
   ColumnProps,
@@ -10,6 +13,9 @@ export type {
   FlexProps,
   GridProps,
   LayoutProps,
+  LunaButtonProps,
+  LunaSwitchProps,
+  LunaThemeScopeProps,
   RowProps,
   SectionProps,
   Space,

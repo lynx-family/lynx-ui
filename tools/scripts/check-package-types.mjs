@@ -6,11 +6,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
 import {
   formatPackageFilesFailures,
   inspectWorkspacePackageFiles,
 } from './check-package-files.mjs'
+import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
 
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),

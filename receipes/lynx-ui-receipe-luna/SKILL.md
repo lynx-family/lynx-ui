@@ -6,6 +6,11 @@ Compose product layouts using `Box`, `Flex`, `Row`, `Column`, `Grid`,
 `Container`, and `Section`. These components wrap native `view` elements and
 share spacing and sizing props. They inherit the host's LUNA theme.
 
+`LunaButton` styles the headless button, and `LunaSwitch` composes the
+headless switch, track, and thumb. Use `LunaThemeScope` to apply or change
+a LUNA palette for a subtree. See the
+[theme switching demo](../../apps/examples/ReceipeLuna/ThemedControls/index.tsx).
+
 ## AI coding guide
 
 ### Minimal usable example
@@ -45,7 +50,10 @@ the application's LUNA theme."
 - Set application colors with semantic LUNA tokens in CSS. Import
   `@lynx-js/luna-styles/index.css` directly in a stylesheet using these tokens,
   and apply a theme class such as `luna-light` at the screen root.
-- Keep text inside `text` elements. Use headless controls for interactions.
+- Keep text inside `text` elements. Use `LunaButton` for text actions and
+  `LunaSwitch` for toggles. For a different anatomy use the headless controls.
+- Enable CSS selectors and CSS inheritance in the ReactLynx plugin. Apply
+  the theme class with `LunaThemeScope` or on an existing ancestor.
 - Pass native attributes and events through `viewProps`.
 - `style` is applied last, allowing explicit overrides of generated props.
   Constant display defaults live in package CSS; import the public entry so
@@ -62,8 +70,10 @@ props in the application using its viewport information.
 
 ### Is a theme provider required?
 
-Layout geometry works without a provider. The application owns the theme and
-content colors. These components do not import a global theme stylesheet.
+Layout geometry works without a provider. For styled controls, import
+`@lynx-js/luna-styles/index.css` in the application and apply a LUNA theme
+class to an ancestor. `LunaThemeScope` applies the class and can be nested.
+It does not need the separate JavaScript `LunaThemeProvider`.
 
 ### Do Row and Column add extra views?
 
@@ -72,5 +82,5 @@ alignment, spacing, wrapping, and sizing options.
 
 ## Sub components
 
-All seven layouts are standalone components; no nested component contract is
-required.
+The layouts and themed controls are standalone components. The switch
+provides its track and thumb internally.

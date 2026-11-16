@@ -24,7 +24,18 @@ export const apiReferenceConfig: Readonly<
   Record<string, ApiReferenceConfig>
 > = {
   'lynx-ui-receipe-luna': {
-    parts: ['Box', 'Flex', 'Row', 'Column', 'Grid', 'Container', 'Section'],
+    parts: [
+      'LunaThemeScope',
+      'Box',
+      'Flex',
+      'Row',
+      'Column',
+      'Grid',
+      'Container',
+      'Section',
+      'LunaButton',
+      'LunaSwitch',
+    ],
     supportingTypes: ['LayoutProps', 'Space'],
   },
   'lynx-ui-view-pager': {

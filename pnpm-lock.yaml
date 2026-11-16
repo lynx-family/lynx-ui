@@ -1227,6 +1227,9 @@ importers:
       '@lynx-example/lynx-ui-radio-group':
         specifier: workspace:*
         version: link:../../../apps/examples/RadioGroup
+      '@lynx-example/lynx-ui-receipe-luna':
+        specifier: workspace:*
+        version: link:../../../apps/examples/ReceipeLuna
       '@lynx-example/lynx-ui-scroll-coordinator':
         specifier: workspace:*
         version: link:../../../apps/examples/ScrollCoordinator
@@ -2395,6 +2398,15 @@ importers:
 
   receipes/lynx-ui-receipe-luna:
     dependencies:
+      '@lynx-js/luna-core':
+        specifier: workspace:*
+        version: link:../../luna/packages/luna-core
+      '@lynx-js/lynx-ui-button':
+        specifier: workspace:*
+        version: link:../../packages/lynx-ui-button
+      '@lynx-js/lynx-ui-switch':
+        specifier: workspace:*
+        version: link:../../packages/lynx-ui-switch
       clsx:
         specifier: 'catalog:'
         version: 2.1.1

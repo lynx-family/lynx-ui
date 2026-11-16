@@ -1,7 +1,12 @@
 {
   "name": "@lynx-js/lynx-ui-receipe-luna",
   "version": "0.0.1",
-  "description": "Experimental Luna layout recipes for ReactLynx",
+  "description": "Experimental Luna layouts and themed controls for ReactLynx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynx-family/lynx-ui.git",
+    "directory": "receipes/lynx-ui-receipe-luna"
+  },
   "license": "Apache-2.0",
   "author": {
     "name": "The Lynx Authors"
@@ -12,14 +17,13 @@
   "module": "./dist/index.jsx",
   "types": "./dist/index.d.ts",
   "files": [
-    "src/**",
+    "src",
+    "!src/**/*.test.*",
+    "!src/**/__tests__/**",
     "SKILL.md",
     "README.md",
-    "README_zh.md",
-    "docs/**",
+    "LICENSE",
     "CHANGELOG.md",
-    "tsconfig.docs.json",
-    "tsconfig.json",
     "dist/**"
   ],
   "scripts": {
@@ -27,6 +31,9 @@
     "build:watch": "rslib build --watch"
   },
   "dependencies": {
+    "@lynx-js/luna-core": "workspace:*",
+    "@lynx-js/lynx-ui-button": "workspace:*",
+    "@lynx-js/lynx-ui-switch": "workspace:*",
     "clsx": "catalog:"
   },
   "devDependencies": {
@@ -40,6 +47,9 @@
     "@lynx-js/react": ">=0.100.0",
     "@lynx-js/types": "*",
     "@types/react": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "jsnext:source": "./src/index.tsx"
 }

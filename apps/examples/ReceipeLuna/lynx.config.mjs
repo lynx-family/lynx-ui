@@ -6,9 +6,10 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
 const config = exampleConfig({
   ReceipeLunaBasic: './Basic/index.tsx',
+  ReceipeLunaThemedControls: './ThemedControls/index.tsx',
 })
 
-// Exercise the published layout entry and its stylesheet in this consumer.
+// Exercise the built recipe entry and its stylesheets in this consumer.
 config.tools.rspack.resolve.mainFields = ['module', 'main']
 
 export default config
