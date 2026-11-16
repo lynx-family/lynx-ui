@@ -1,6 +1,7 @@
 {
   "extends": "../../tools/configs/tsconfig.base.json",
   "compilerOptions": {
+    "jsxImportSource": "@lynx-js/react",
     "noEmit": true,
     "declaration": false,
     "declarationMap": false,

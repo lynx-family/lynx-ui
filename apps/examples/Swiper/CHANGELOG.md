@@ -1,5 +1,22 @@
 # @lynx-example/lynx-ui-swiper
 
+## 0.0.25
+
+### Patch Changes
+
+- Use ReactLynx's JSX type source for all examples, infer Swiper return types, and ([#399](https://github.com/lynx-family/lynx-ui/pull/399))
+  type the Dialog overlay level from its public prop contract for React 18/19.
+- Updated dependencies [[`29beec7`](https://github.com/lynx-family/lynx-ui/commit/29beec7b241026010b83c417f7e1d1c961cd4f09), [`b064123`](https://github.com/lynx-family/lynx-ui/commit/b06412353b5db6316aabe6ad6c6100c6fd7e055b)]:
+  - @lynx-js/lynx-ui@3.143.0
+
+## 0.0.24
+
+### Patch Changes
+
+- Updated dependencies [[`9bc4636`](https://github.com/lynx-family/lynx-ui/commit/9bc4636f0ce3b3b01a0f577d776c4a52a9926e83), [`49cb3c5`](https://github.com/lynx-family/lynx-ui/commit/49cb3c5b20d9346ff0f8b314367b4c8e354d195d)]:
+  - @lynx-js/lynx-ui@3.142.0
+  - @lynx-js/luna-styles@0.2.3
+
 ## 0.0.23
 
 ### Patch Changes

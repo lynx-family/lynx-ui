@@ -19,7 +19,7 @@ const itemWidths = [250, 350, 400]
 const alignArr: ['start', 'center', 'end'] = ['start', 'center', 'end']
 const INITIAL_INDEX = 0
 
-function SwiperEntry(): JSX.Element {
+function SwiperEntry() {
   const [itemWidthsIndex, setItemWidthsIndex] = useState<number>(0)
   const [alignIndex, setAlignIndex] = useState<number>(1)
   const [currentIndex, setCurrentIndex] = useState<number>(INITIAL_INDEX)

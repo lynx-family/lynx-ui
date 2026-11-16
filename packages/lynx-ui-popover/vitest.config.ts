@@ -4,9 +4,12 @@
 
 import { fileURLToPath } from 'node:url'
 
+import { vitestTestingLibraryPlugin } from '@lynx-js/react/testing-library/plugins'
 import { defineConfig, type UserConfig } from 'vitest/config'
 
 const config: UserConfig = defineConfig({
+  root: import.meta.dirname,
+  plugins: [vitestTestingLibraryPlugin()],
   resolve: {
     alias: {
       '@lynx-js/lynx-ui-common': fileURLToPath(
@@ -15,6 +18,7 @@ const config: UserConfig = defineConfig({
     },
   },
   test: {
+    include: ['__tests__/*.test.{ts,tsx}'],
     name: 'lynx-ui-popover',
   },
 })

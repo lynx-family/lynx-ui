@@ -14,4 +14,7 @@ export { usePresenceGroup } from './usePresenceGroup'
 
 export { useVisibilityFromPresence } from './useVisibilityFromPresence'
 
+export { usePresenceAnimation } from './usePresenceAnimation'
+export type { PresenceAnimationDriver } from './usePresenceAnimation'
+
 export type * from './types'

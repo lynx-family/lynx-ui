@@ -1,5 +1,7 @@
 # @lynx-js/luna-tokens
 
+## 0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

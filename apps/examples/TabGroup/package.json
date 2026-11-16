@@ -1,6 +1,6 @@
 {
   "name": "@lynx-example/lynx-ui-tab-group",
-  "version": "0.0.23",
+  "version": "0.0.25",
   "description": "Example app demonstrating TabGroup usage in lynx-ui",
   "homepage": "https://github.com/lynx-family/lynx-ui/tree/main/apps/examples/TabGroup#readme",
   "repository": {
@@ -31,7 +31,8 @@
   "dependencies": {
     "@lynx-js/luna-styles": "workspace:*",
     "@lynx-js/lynx-ui": "workspace:*",
-    "@lynx-js/react": "catalog:"
+    "@lynx-js/react": "catalog:",
+    "clsx": "catalog:"
   },
   "devDependencies": {
     "@lynx-js/qrcode-rsbuild-plugin": "catalog:",

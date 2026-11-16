@@ -21,7 +21,7 @@ const alignArr: ['start', 'center', 'end'] = ['start', 'center', 'end']
 
 const INITIAL_INDEX = 2
 
-function SwiperEntry(): JSX.Element {
+function SwiperEntry() {
   const [itemWidthsIndex, _setItemWidthsIndex] = useState<number>(0)
   const [alignIndex, _setAlignIndex] = useState<number>(1)
   const [currentIndex, setCurrentIndex] = useState<number>(INITIAL_INDEX)

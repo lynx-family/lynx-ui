@@ -216,6 +216,7 @@ export {
   PopoverBackdrop,
   PopoverTrigger,
   PopoverContent,
+  PopoverMotionContent,
   PopoverPositioner,
   PopoverRoot,
 } from '@lynx-js/lynx-ui-popover'
@@ -225,6 +226,11 @@ export type {
   PopoverAnchorProps,
   PopoverBackdropProps,
   PopoverContentProps,
+  PopoverMotionContentProps,
+  PopoverMotionOptions,
+  PopoverMotionValues,
+  PopoverMotionTarget,
+  PopoverMotionTransition,
   PopoverPositionerProps,
   PopoverRootProps,
   PopoverTriggerProps,
@@ -368,6 +374,28 @@ export type {
   SliderValue,
   SliderValueChangeSource,
 } from '@lynx-js/lynx-ui-slider'
+
+// toast
+export {
+  ToastContext,
+  useToastSlideAnimation,
+  calculateToastTargetPoint,
+  performToastAnimation,
+  ToastPositioner,
+  ToastRoot,
+  ToastContent,
+  toast,
+  ToastMountPoint,
+  ToastDraggableContent,
+} from '@lynx-js/lynx-ui-toast'
+export type {
+  StaticToastConfig,
+  ToastContextType,
+  ToastRootProps,
+  ToastPositionerProps,
+  ToastContentProps,
+  ToastDraggableContentProps,
+} from '@lynx-js/lynx-ui-toast'
 
 // only presence types are exported
 export type {

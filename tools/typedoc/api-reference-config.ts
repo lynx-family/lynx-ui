@@ -90,9 +90,16 @@ export const apiReferenceConfig: Readonly<
       'PopoverPositioner',
       'PopoverBackdrop',
       'PopoverContent',
+      'PopoverMotionContent',
       'PopoverArrow',
     ],
-    supportingTypes: ['PopoverOverlayProps'],
+    supportingTypes: [
+      'PopoverOverlayProps',
+      'PopoverMotionOptions',
+      'PopoverMotionValues',
+      'PopoverMotionTarget',
+      'PopoverMotionTransition',
+    ],
     embeddedTypes: ['PresenceAnimationStatus'],
   },
   'lynx-ui-radio-group': {
@@ -120,6 +127,15 @@ export const apiReferenceConfig: Readonly<
       'SliderUpdateValueOptions',
     ],
     embeddedTypes: ['SliderUIVariants'],
+  },
+  'lynx-ui-toast': {
+    parts: [
+      'ToastRoot',
+      'ToastPositioner',
+      'ToastContent',
+      'ToastDraggableContent',
+    ],
+    supportingTypes: ['StaticToastConfig', 'ToastContextType'],
   },
   'lynx-ui-input-otp': {
     parts: ['InputOTP', 'InputOTPSlot'],
@@ -185,7 +201,11 @@ export const apiReferenceConfig: Readonly<
       'TabsIndicator',
     ],
     refs: ['TabsRootRef', 'TabsPanelRef'],
-    supportingTypes: ['TabsIndicatorAnimation'],
+    supportingTypes: [
+      'TabsIndicatorAnimation',
+      'TabsIndicatorAnimationSpring',
+      'TabsIndicatorAnimationTween',
+    ],
     aliases: ['TabItemProps'],
   },
   'lynx-ui-deferred-component': {

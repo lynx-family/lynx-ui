@@ -1,5 +1,14 @@
 # @lynx-js/luna-reactlynx
 
+## 0.2.3
+
+### Patch Changes
+
+- Accept React 18 and newer types. ReactLynx still defines the compatible versions for each app. ([#383](https://github.com/lynx-family/lynx-ui/pull/383))
+
+- Updated dependencies []:
+  - @lynx-js/luna-core@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

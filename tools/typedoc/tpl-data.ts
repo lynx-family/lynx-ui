@@ -299,6 +299,10 @@ const doFindObjectWithTag = (obj: any, tagName: any) => {
   return recursiveSearch(obj)
 }
 
+const doLiteralTypeCalc = (value: unknown): string => {
+  return typeof value === 'string' ? JSON.stringify(value) : String(value)
+}
+
 const doSingleTypeCalc = (
   t: any,
   isZhContext: boolean,
@@ -435,6 +439,8 @@ export const doTypeCalc = (
       }
       case 'array':
         return renderArrayType(t.elementType, isZhContext, currentPkgName)
+      case 'literal':
+        return doLiteralTypeCalc(t.value)
       case 'tuple':
         return `[${
           t.elements.map((element: any) =>
@@ -537,7 +543,11 @@ const doMoreForItem = (item: any, currentPkgName?: string) => {
     ? doGetTagContent(summary_zh_tag)
     : []
   // 默认值
-  const defaultValue = doFindObjectWithTagValue(item, 'tag', '@defaultValue')
+  const defaultValue = doFindObjectWithTagValue(
+    item.comment ?? {},
+    'tag',
+    '@defaultValue',
+  )
   // typeDoc 复杂类型的 fallback 处理
   const docTypeFallback = doFindObjectWithTagValue(
     item,
