@@ -1,5 +1,11 @@
 # @lynx-js/lynx-ui-common
 
+## 3.143.0
+
+### Patch Changes
+
+- Include missing README/CHANGELOG/SKILL/LICENSE files in published tarballs and exclude test and workspace-only config files. ([#404](https://github.com/lynx-family/lynx-ui/pull/404))
+
 ## 3.142.0
 
 ### Patch Changes

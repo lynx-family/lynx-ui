@@ -1,5 +1,13 @@
 # @lynx-example/lynx-ui-scroll-coordinator
 
+## 0.0.25
+
+### Patch Changes
+
+- Include missing README/CHANGELOG/SKILL/LICENSE files in published tarballs and exclude test and workspace-only config files. ([#404](https://github.com/lynx-family/lynx-ui/pull/404))
+- Updated dependencies [[`29beec7`](https://github.com/lynx-family/lynx-ui/commit/29beec7b241026010b83c417f7e1d1c961cd4f09), [`b064123`](https://github.com/lynx-family/lynx-ui/commit/b06412353b5db6316aabe6ad6c6100c6fd7e055b)]:
+  - @lynx-js/lynx-ui@3.143.0
+
 ## 0.0.24
 
 ### Patch Changes
