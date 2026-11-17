@@ -5,16 +5,23 @@
 export { SheetRoot } from './SheetRoot'
 export { SheetBackdrop } from './SheetBackdrop'
 export { SheetContent } from './SheetContent'
+export { SheetNestedScrollContent } from './SheetNestedScrollContent'
 export { SheetHandle } from './SheetHandle'
+export { SheetFooter } from './SheetFooter'
 export { SheetView } from './SheetView'
-export { useSnap } from './hooks'
+export { useSheetScrollGesture, useSnap } from './hooks'
 
 export type {
   SheetBackdropProps,
   SheetContentProps,
+  SheetGestureConfig,
+  SheetNestedScrollContentProps,
+  SheetNestedScrollRenderProps,
+  SheetGestureRelations,
   SheetRootProps,
   SheetViewProps,
   SheetHandleProps,
+  SheetFooterProps,
   SheetTransition,
   SheetRootRef,
   SheetSide,

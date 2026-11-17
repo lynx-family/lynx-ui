@@ -12,4 +12,8 @@ This directory contains examples for the Sheet component.
 - **Imperative**: Imperative usage of Sheet.
 - **AutoHeight**: Sheet with auto height.
 - **Tablet**: Tablet-friendly Sheet layout.
+- **GestureScrollView**: Default same-finger handoff between Sheet and ScrollView.
+- **GestureList**: Coordinated handoff between the Sheet and native list scrolling.
+- **GestureFixedFooter**: Scrollable content with a fixed action area and tablet width.
+- **GestureComposite**: A drag handle, vertical owner, and horizontal child composed together.
 - **InternalTest**: Internal test for Sheet.
