@@ -4,7 +4,7 @@
 
 import { clsx } from 'clsx'
 
-import type { LunaThemeScopeProps } from './types/index.docs.js'
+import type { LunaThemeScopeProps } from '../types/index.docs.js'
 
 export function LunaThemeScope({
   themeKey,

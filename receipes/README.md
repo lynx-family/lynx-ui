@@ -13,6 +13,10 @@ the specific headless packages for behavior and the design system for tokens,
 so future DUX or GenUI entries can follow the same structure and choose their
 own theme contract. Keep runnable consumers in `apps/examples/`.
 
+Give each component its own folder under the recipe's `src/`, with its
+implementation and any component-specific stylesheet together. Put helpers
+used by multiple components in `src/shared/`.
+
 Scaffold another entry with
 `pnpm make-new-component --create receipe-<name> --recipe`, then update its
 manifest, public exports, documentation, examples, and changesets.

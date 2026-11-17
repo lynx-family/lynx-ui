@@ -4,7 +4,15 @@
 
 import type { CSSProperties } from '@lynx-js/types'
 
-import type { LayoutProps, Space } from './types/index.docs.js'
+import type { LayoutProps, Space } from '../types/index.docs.js'
+
+export const alignments = {
+  start: 'flex-start',
+  center: 'center',
+  end: 'flex-end',
+  baseline: 'baseline',
+  stretch: 'stretch',
+} as const
 
 const spacing = [0, 4, 8, 12, 16, 24, 32, 40, 48, 64] as const
 
@@ -57,16 +65,4 @@ export function getGapStyle(
   if (horizontal !== undefined) style.columnGap = resolveSpace(horizontal)
   if (vertical !== undefined) style.rowGap = resolveSpace(vertical)
   return style
-}
-
-export function resolveTracks(value: number | string | undefined) {
-  if (value === undefined) return undefined
-  if (typeof value === 'number' || /^\d+$/.test(value)) {
-    const count = Number(value)
-    if (!Number.isSafeInteger(count) || count < 1) {
-      throw new RangeError('Grid track counts must be positive integers.')
-    }
-    return `repeat(${count}, 1fr)`
-  }
-  return value
 }

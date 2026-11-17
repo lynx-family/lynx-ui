@@ -5,8 +5,8 @@
 import { Button } from '@lynx-js/lynx-ui-button'
 import { clsx } from 'clsx'
 
-import type { LunaButtonProps } from './types/index.docs.js'
-import './button.css'
+import type { LunaButtonProps } from '../types/index.docs.js'
+import './index.css'
 
 export function LunaButton({
   children,

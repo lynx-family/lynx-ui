@@ -5,8 +5,8 @@
 import { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui-switch'
 import { clsx } from 'clsx'
 
-import type { LunaSwitchProps } from './types/index.docs.js'
-import './switch.css'
+import type { LunaSwitchProps } from '../types/index.docs.js'
+import './index.css'
 
 export function LunaSwitch({
   label,
