@@ -1,1 +1,81 @@
+@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
+
+.demo-container {
+  padding-top: 64px;
+  padding-bottom: 72px;
+}
+
+.content-panel {
+  flex: 1;
+  min-height: 0;
+  margin: 16px 20px 0;
+  padding: 12px;
+  border-radius: 16px;
+  background-color: var(--canvas);
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.content-rose {
+  background: linear-gradient(
+    159deg,
+    var(--gradient-a) -15%,
+    var(--gradient-b) 55%,
+    var(--gradient-c) 86%
+  );
+}
+
+.content-berry {
+  background: linear-gradient(
+    145deg,
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+
+.content-afterglow {
+  background: linear-gradient(
+    215deg,
+    var(--gradient-b),
+    var(--gradient-c)
+  );
+}
+
+.content-ocean {
+  background: linear-gradient(
+    145deg,
+    var(--gradient-c),
+    var(--gradient-d)
+  );
+}
+
+.content-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-title {
+  color: var(--gradient-content);
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.content-description {
+  margin-top: 8px;
+  color: var(--gradient-content-faded);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}

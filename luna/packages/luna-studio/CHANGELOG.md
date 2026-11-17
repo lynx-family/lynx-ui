@@ -1,5 +1,21 @@
 # @lynx-js/luna-studio
 
+## 0.1.4
+
+### Patch Changes
+
+- Include missing README/CHANGELOG/SKILL/LICENSE files in published tarballs and exclude test and workspace-only config files. ([#404](https://github.com/lynx-family/lynx-ui/pull/404))
+- Updated dependencies [[`29beec7`](https://github.com/lynx-family/lynx-ui/commit/29beec7b241026010b83c417f7e1d1c961cd4f09)]:
+  - @lynx-js/luna-stage@0.1.3
+
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @lynx-js/luna-core@0.2.3
+  - @lynx-js/luna-stage@0.1.2
+
 ## 0.1.2
 
 ### Patch Changes

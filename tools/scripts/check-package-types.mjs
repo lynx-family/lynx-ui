@@ -6,6 +6,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+import {
+  formatPackageFilesFailures,
+  inspectWorkspacePackageFiles,
+} from './check-package-files.mjs'
+
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../..',
@@ -119,6 +124,13 @@ function checkResolution(packages, label, moduleResolution, module) {
 }
 
 try {
+  const { checkedPackages, failures } = inspectWorkspacePackageFiles(repoRoot, {
+    checkDist: true,
+  })
+  if (failures.length > 0) {
+    throw new Error(formatPackageFilesFailures(failures))
+  }
+
   const packages = getPackageEntries()
   checkResolution(
     packages,
@@ -133,7 +145,7 @@ try {
     ts.ModuleKind.NodeNext,
   )
   console.log(
-    `Package type resolution check passed for ${packages.length} packages (Bundler and NodeNext).`,
+    `Package type resolution check passed for ${packages.length} packages (Bundler and NodeNext) and verified dist targets for ${checkedPackages.length} publishable packages.`,
   )
 } catch (error) {
   console.error(error instanceof Error ? error.message : error)

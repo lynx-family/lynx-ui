@@ -66,6 +66,70 @@ describe('doGenDocData', () => {
       }
     },
   )
+
+  it('does not inherit nested defaults on union type aliases', async () => {
+    const temporaryDirectory = mkdtempSync(
+      join(tmpdir(), 'lynx-ui-typedoc-data-'),
+    )
+    const dataPath = join(temporaryDirectory, 'typedoc.json')
+    const outputPath = join(temporaryDirectory, 'api-tpl.json')
+
+    try {
+      writeFileSync(
+        dataPath,
+        JSON.stringify({
+          groups: [{
+            title: 'Type Aliases',
+            children: [1],
+          }],
+          children: [{
+            id: 1,
+            name: 'LazyOptions',
+            kind: 2097152,
+            flags: {},
+            groups: [],
+            children: [],
+            type: {
+              type: 'union',
+              types: [{
+                type: 'reflection',
+                declaration: {
+                  children: [{
+                    id: 2,
+                    name: 'margin',
+                    kind: 1024,
+                    flags: { isOptional: true },
+                    comment: {
+                      blockTags: [{
+                        tag: '@defaultValue',
+                        content: [{
+                          kind: 'code',
+                          text: '```ts\n10px\n```',
+                        }],
+                      }],
+                    },
+                    type: { type: 'intrinsic', name: 'string' },
+                  }],
+                },
+              }],
+            },
+          }],
+        }),
+      )
+
+      await doGenDocData(
+        dataPath,
+        outputPath,
+        true,
+        '@lynx-js/lynx-ui-example',
+      )
+
+      const output = JSON.parse(readFileSync(outputPath, 'utf8'))
+      expect(output.children[0].typeAlias.defaultValue).toBe('')
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true })
+    }
+  })
 })
 
 describe('renderArrayType', () => {
@@ -98,6 +162,14 @@ describe('renderArrayType', () => {
 })
 
 describe('doTypeCalc', () => {
+  it.each([
+    ['string', { type: 'literal', value: 'spring' }, '"spring"'],
+    ['false', { type: 'literal', value: false }, 'false'],
+    ['true', { type: 'literal', value: true }, 'true'],
+  ])('renders %s literal types', (_name, type, expected) => {
+    expect(doTypeCalc(type, false)).toBe(expected)
+  })
+
   it('preserves fields in object return types nested inside Promise', () => {
     expect(doTypeCalc({
       type: 'reflection',

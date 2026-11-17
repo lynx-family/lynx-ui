@@ -32,7 +32,7 @@ export interface DialogBackdropProps extends ComponentBasicProps {
    */
   delayed?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -89,7 +89,7 @@ export interface DialogContentProps extends ComponentBasicProps {
    */
   delayed?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -116,28 +116,28 @@ export type TriggerChildrenType = (
  */
 export interface DialogTriggerProps extends ComponentBasicProps {
   /**
-   * The content of the close component. It can be a function that returns a `ReactNode` or a `ReactNode` itself.
+   * The content of the trigger component. It can be a function that returns a `ReactNode` or a `ReactNode` itself.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 关闭组件的内容。它可以是一个返回 `ReactNode` 的函数，也可以是一个 `ReactNode` 本身。
+   * @zh 触发组件的内容。它可以是一个返回 `ReactNode` 的函数，也可以是一个 `ReactNode` 本身。
    * @docTypeFallback ReactNode | (status: {active: boolean, busy: boolean}) => ReactNode
    */
   children:
     | TriggerChildrenType
     | ReactNode
   /**
-   * Determines whether the close component is disabled.
+   * Determines whether the trigger component is disabled.
    * When `true`, the component will be in a disabled state and cannot be interacted with.
    * @defaultValue false
    * @Android
    * @iOS
    * @Harmony
-   * @zh 确定关闭组件是否被禁用。当值为 `true` 时，组件将处于禁用状态，无法进行交互。
+   * @zh 确定触发组件是否被禁用。当值为 `true` 时，组件将处于禁用状态，无法进行交互。
    */
   disabled?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -173,7 +173,7 @@ export interface DialogCloseProps extends ComponentBasicProps {
    */
   disabled?: boolean
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony
@@ -280,7 +280,7 @@ export interface DialogViewProps extends ComponentBasicProps {
     | ReactNode
     | PresenceChildrenType
   /**
-   * If set to true, the className will has the transition classes like 'ui-entering', 'ui-leaving', 'ui-animating'
+   * When true, className includes transition classes such as 'ui-entering', 'ui-leaving', and 'ui-animating'.
    * @Android
    * @iOS
    * @Harmony

@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/luna-tailwind",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "TailwindCSS preset for the L.U.N.A project",
   "keywords": [
     "luna",

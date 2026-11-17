@@ -1,5 +1,19 @@
 # @lynx-js/skill-lynx-ui
 
+## 3.133.13
+
+### Patch Changes
+
+- Include missing README/CHANGELOG/SKILL/LICENSE files in published tarballs and exclude test and workspace-only config files. ([#404](https://github.com/lynx-family/lynx-ui/pull/404))
+
+- Add Toast guidance and generated component references to the Lynx UI skill. ([#286](https://github.com/lynx-family/lynx-ui/pull/286))
+
+## 3.133.12
+
+### Patch Changes
+
+- Update generated lynx-ui skill references. ([#198](https://github.com/lynx-family/lynx-ui/pull/198))
+
 ## 3.133.11
 
 ### Patch Changes

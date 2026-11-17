@@ -1,0 +1,20 @@
+@import "@lynx-js/luna-styles/index.css";
+@import "../shared/base.css";
+
+.motion-positioner {
+  width: 200px;
+}
+
+.motion-content {
+  display: flex;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: var(--paper);
+  box-shadow: var(--shadow-lg);
+}
+
+.motion-text {
+  color: var(--content);
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+}

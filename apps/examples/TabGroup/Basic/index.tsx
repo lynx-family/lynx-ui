@@ -5,21 +5,21 @@
 import { root, useState } from '@lynx-js/react'
 
 import { TabsBar, TabsIndicator, TabsItem, TabsRoot } from '@lynx-js/lynx-ui'
+import { clsx } from 'clsx'
 
 import { tabs } from './data'
 import './index.css'
 
 export function App() {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const selectedTab = tabs[selectedIndex] ?? tabs[0]
 
   return (
     <view className='demo-container lunaris-dark'>
-      <text className='caption'>Basic tab selection</text>
       <TabsRoot
         onClickItem={index => console.info('tabs click', index)}
         onTabChanged={index => {
           setSelectedIndex(index)
-          console.info('tabs changed', index)
         }}
       >
         <TabsBar
@@ -29,9 +29,9 @@ export function App() {
           renderTabItem={item => (
             <TabsItem className='tab-item'>
               <text
-                className={item.id === tabs[selectedIndex]?.id
-                  ? 'tab-label selected'
-                  : 'tab-label'}
+                className={clsx('tab-label', {
+                  selected: item.id === selectedTab.id,
+                })}
               >
                 {item.label}
               </text>
@@ -42,6 +42,16 @@ export function App() {
             <view className='indicator-line' />
           </TabsIndicator>
         </TabsBar>
+        <view className='content-panel'>
+          <view className={clsx('content', selectedTab.contentVariant)}>
+            <view className='content-copy'>
+              <text className='content-title'>{selectedTab.label}</text>
+              <text className='content-description'>
+                {selectedTab.description}
+              </text>
+            </view>
+          </view>
+        </view>
       </TabsRoot>
     </view>
   )

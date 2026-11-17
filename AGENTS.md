@@ -80,7 +80,9 @@ Use this workflow to create, run, and review component examples.
    - When adding examples for an existing component, follow that component's
      established example patterns. For a new component, use examples from
      components with similar behavior and layouts as references.
-   - For an initial example package release, align its version with the
+   - `@lynx-example/lynx-ui-*` packages are configured in a `fixed` Changesets
+     group so they always release together at a single unified version; for an
+     initial example package release, align its starting version with the
      existing example packages. Keeping example versions aligned reduces
      maintenance overhead and lets consumers identify examples from the same
      release batch by version.
@@ -180,12 +182,23 @@ pnpm check:all
 - **`pnpm check:manypkg`**: Checks for dependency mismatches in the monorepo.
 - **`pnpm check:sherif`**: Lints `package.json` files for potential issues using Sherif.
 - **`pnpm check:exports`**: Verifies that `@lynx-js/lynx-ui` re-exports the expected public surface from included sub-packages.
+- **`pnpm check:package-files`**: Verifies publishable workspace package `files` arrays, required metadata, entry coverage, and source test exclusions.
 - **`pnpm check:package-readmes`**: Verifies that every package under `packages/` has a `README_zh.md`.
 - **`pnpm spell`**: Runs CSpell to check for spelling errors.
 
 ## Publishing
 
-- Use `pnpm bootstrap:package` only for initial npm placeholder publishes needed before Trusted Publishing is configured.
+Stable releases are automated by [publish.yml](.github/workflows/publish.yml)
+on `main`. Changesets creates or updates a release PR; after that PR is
+merged, the workflow packs and publishes packages using npm Trusted Publishing.
+
+- Keep build and pack jobs separate from npm publishing permissions.
+- Prevent stale workflow runs from overwriting the release PR or publishing outdated packages.
+- Keep `@lynx-example/lynx-ui-*` packages in one `fixed` Changesets group so
+  releasing any matching example package updates all `@lynx-example/lynx-ui-*`
+  packages together to the same version.
+- Use `pnpm bootstrap:package` only for initial npm placeholder publishes
+  before Trusted Publishing is configured.
 
 ## Coding Standards
 
