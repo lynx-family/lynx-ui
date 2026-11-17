@@ -20,6 +20,8 @@ interface SheetSurfaceLayoutOptions {
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
   detached: boolean
   bottomInset: number
+  contentTopInset?: number
+  handleHeight?: number
   screenHeight: number
   maxSnapSize: number
   hasFitSnapPoint: boolean
@@ -36,6 +38,8 @@ export function useSheetSurfaceLayout({
   resolvedSide,
   detached,
   bottomInset,
+  contentTopInset,
+  handleHeight,
   screenHeight,
   maxSnapSize,
   hasFitSnapPoint,
@@ -48,6 +52,15 @@ export function useSheetSurfaceLayout({
     ? Math.max(0, bottomInset)
     : 0
   const coverage = isBottom && detached ? 0 : 1
+  const contentTop =
+    contentTopInset !== undefined && Number.isFinite(contentTopInset)
+      ? Math.max(0, contentTopInset)
+      : 0
+  const handleSize = handleHeight !== undefined && Number.isFinite(handleHeight)
+    ? Math.max(0, handleHeight)
+    : 0
+  const useContentViewport = isBottom && detached && !hasFitSnapPoint
+    && contentTopInset !== undefined
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const viewportMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -87,6 +100,24 @@ export function useSheetSurfaceLayout({
     const effectiveInset = isBottom ? appearance.inset * visibleFraction : 0
     const clipInset = effectiveInset * appearance.coverage
     clipMTRef.current?.setStyleProperties({ bottom: `${clipInset}px` })
+    if (useContentViewport) {
+      const surfaceTop = screenHeight - value - effectiveInset
+      // Keep the painted top inside the viewport while retaining the active bottom gap.
+      const correction = Math.min(height, Math.max(0, -surfaceTop))
+      const surfaceHeight = height - correction
+      const contentOffset = Math.max(
+        handleSize,
+        contentTop - surfaceTop - correction,
+      )
+      surfaceMTRef.current?.setStyleProperties({
+        top: `${clipInset - effectiveInset + correction}px`,
+        height: `${surfaceHeight}px`,
+      })
+      viewportMTRef.current?.setStyleProperties({
+        height: `${Math.max(0, surfaceHeight - contentOffset)}px`,
+      })
+      return
+    }
     surfaceMTRef.current?.setStyleProperties({
       top: `${-(effectiveInset - clipInset)}px`,
       height: `${Math.max(height, screenHeight * 1.5 * appearance.coverage)}px`,
@@ -141,7 +172,16 @@ export function useSheetSurfaceLayout({
 
   useEffect(() => {
     runOnMainThread(configureSurfaceMT)(inset, coverage)
-  }, [inset, coverage, screenHeight, maxSnapSize, hasFitSnapPoint])
+  }, [
+    inset,
+    coverage,
+    screenHeight,
+    maxSnapSize,
+    hasFitSnapPoint,
+    useContentViewport,
+    contentTop,
+    handleSize,
+  ])
   useEffect(() => () => {
     runOnMainThread(() => {
       'main thread'

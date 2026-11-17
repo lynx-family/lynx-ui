@@ -46,6 +46,8 @@ export interface SnapOptions {
   initialSnap?: number
   detached?: boolean
   bottomInset?: number
+  contentTopInset?: number
+  handleHeight?: number
   snapAnimation?: SheetTransition
   side?: SheetSide
   enableRTL?: boolean
@@ -71,6 +73,8 @@ export function useSnap({
   initialSnap = 0,
   detached = false,
   bottomInset = 0,
+  contentTopInset,
+  handleHeight,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
   enableRTL = false,
@@ -318,6 +322,8 @@ export function useSnap({
     resolvedSide,
     detached,
     bottomInset,
+    contentTopInset,
+    handleHeight,
     screenHeight,
     maxSnapSize,
     hasFitSnapPoint,

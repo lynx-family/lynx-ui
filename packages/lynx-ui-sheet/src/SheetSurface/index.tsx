@@ -11,9 +11,13 @@ import type {
   SheetFooterContextValue,
   SheetPositionerDimensions,
 } from '../context'
-import type { SheetContentProps } from '../types'
+import type { SheetContentProps, SheetNestedScrollContentProps } from '../types'
 
-export interface SheetSurfaceProps extends SheetContentProps {
+export interface SheetSurfaceProps
+  extends
+    SheetContentProps,
+    Pick<SheetNestedScrollContentProps, 'contentViewport'>
+{
   dragHandlers: SheetDragContextValue['dragHandlers']
   sheetGesture?: GestureKind
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
@@ -45,7 +49,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
-    detached: _detached,
+    detached,
+    contentViewport,
     bottomInset: _bottomInset,
     dragHandlers,
     sheetGesture,
@@ -66,6 +71,18 @@ export function SheetSurface(props: SheetSurfaceProps) {
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
   const hasFitSnapPoint = snapPoints.some(p => String(p).trim() === 'fit')
+  const useContentViewport = resolvedSide === 'bottom' && detached
+    && !hasFitSnapPoint
+    && contentViewport !== undefined
+  const dragOnContent = !handleOnly && !useContentViewport
+  const viewportHandle = contentViewport?.handle
+  const handleHeight = contentViewport?.handleHeight ?? 0
+  const handleSize = Number.isFinite(handleHeight)
+    ? Math.max(0, handleHeight)
+    : 0
+  const sheetDragContext = {
+    dragHandlers: sheetGesture && !handleOnly ? {} : dragHandlers,
+  }
   const registerSurfaceMT = isHorizontal ? setSheetMTRef : setSurfaceMTRef
 
   function setPaintedViewRefMT(element: MainThread.Element | null) {
@@ -98,23 +115,19 @@ export function SheetSurface(props: SheetSurfaceProps) {
         }}
       event-through={false}
       main-thread:ref={setContentMTRef}
-      main-thread:gesture={handleOnly ? undefined : sheetGesture}
-      main-thread:bindtouchstart={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchStartMT}
-      main-thread:bindtouchmove={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchMoveMT}
-      main-thread:bindtouchend={handleOnly
-        ? undefined
-        : dragHandlers.handleTouchEndMT}
+      main-thread:gesture={dragOnContent ? sheetGesture : undefined}
+      main-thread:bindtouchstart={dragOnContent
+        ? dragHandlers.handleTouchStartMT
+        : undefined}
+      main-thread:bindtouchmove={dragOnContent
+        ? dragHandlers.handleTouchMoveMT
+        : undefined}
+      main-thread:bindtouchend={dragOnContent
+        ? dragHandlers.handleTouchEndMT
+        : undefined}
       main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
     >
-      <SheetDragContext.Provider
-        value={{
-          dragHandlers: sheetGesture && !handleOnly ? {} : dragHandlers,
-        }}
-      >
+      <SheetDragContext.Provider value={sheetDragContext}>
         <SheetFooterContext.Provider
           value={footerContext}
         >
@@ -207,10 +220,16 @@ export function SheetSurface(props: SheetSurfaceProps) {
           main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSurfaceMTRef}
           enable-new-animator={true}
           event-through={false}
+          main-thread:gesture={useContentViewport && !handleOnly
+            ? sheetGesture
+            : undefined}
         >
           <view
             style={{
               width: '100%',
+              ...(useContentViewport
+                ? { position: 'absolute', left: 0, bottom: 0 }
+                : {}),
               ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
             }}
             main-thread:ref={setViewportMTRef}
@@ -218,6 +237,21 @@ export function SheetSurface(props: SheetSurfaceProps) {
           >
             {content}
           </view>
+          {useContentViewport && viewportHandle != null && (
+            <view
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${handleSize}px`,
+              }}
+            >
+              <SheetDragContext.Provider value={sheetDragContext}>
+                {viewportHandle}
+              </SheetDragContext.Provider>
+            </view>
+          )}
         </view>
       </view>
     </view>

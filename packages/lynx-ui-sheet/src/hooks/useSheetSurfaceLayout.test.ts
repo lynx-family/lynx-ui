@@ -58,7 +58,12 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
   },
 }))
 
-function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
+function setup(
+  detached = true,
+  bottomInset = 8,
+  hasFitSnapPoint = false,
+  contentTopInset?: number,
+) {
   const position = { current: createMotionValue(400) }
   const presence = { current: PresenceState.Entered }
   const animateChanges = { current: true }
@@ -86,6 +91,8 @@ function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
       resolvedSide: 'bottom',
       detached: nextDetached,
       bottomInset: nextInset,
+      contentTopInset,
+      handleHeight: 24,
       screenHeight: 1000,
       maxSnapSize: 800,
       hasFitSnapPoint,
@@ -152,6 +159,30 @@ describe('Sheet surface geometry', () => {
     expect(viewportStyle.height).toBe('850px')
     position.current.set(300)
     expect(surfaceStyle.height).toBe('300px')
+  })
+
+  it('anchors the content below the safe top while the handle moves and the gap stays visible', () => {
+    const { position, render, animateChanges, surfaceStyle, viewportStyle } =
+      setup(true, 8, false, 82)
+    position.current.set(950)
+    expect(surfaceStyle).toEqual({ top: '-8px', height: '950px' })
+    expect(viewportStyle.height).toBe('910px')
+
+    position.current.set(1000)
+    expect(surfaceStyle).toEqual({ top: '0px', height: '992px' })
+    expect(viewportStyle.height).toBe('910px')
+
+    animateChanges.current = false
+    render(true, 0)
+    expect(surfaceStyle).toEqual({ top: '0px', height: '1000px' })
+    expect(viewportStyle.height).toBe('918px')
+  })
+
+  it('restores the ordinary handle height when the drag reverses below the safe top', () => {
+    const { position, viewportStyle } = setup(true, 8, false, 82)
+    position.current.set(1000)
+    position.current.set(800)
+    expect(viewportStyle.height).toBe('776px')
   })
 
   it('allows native refs to attach before the motion value is initialized', () => {

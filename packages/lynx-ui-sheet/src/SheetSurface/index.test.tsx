@@ -59,9 +59,21 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
   }) as unknown as { props: ViewProps }
   const movement = surface.props.children as { props: ViewProps }
   const painted = movement.props.children as { props: ViewProps }
-  const viewport = painted.props.children as { props: ViewProps }
+  const [viewport, handle] = painted.props.children as [
+    { props: ViewProps },
+    { props: ViewProps } | false,
+  ]
   const panel = viewport.props.children as { props: ViewProps }
-  return { surface, movement, painted, viewport, panel, measure, gesture }
+  return {
+    surface,
+    movement,
+    painted,
+    viewport,
+    panel,
+    handle,
+    measure,
+    gesture,
+  }
 }
 
 describe('Sheet surface composition', () => {
@@ -124,6 +136,22 @@ describe('Sheet surface composition', () => {
     })
     expect(panel.props.id).toBe('sheet-panel')
     expect(panel.props.style.width).toBe('300px')
+  })
+
+  it('shares the native pan between the handle and the bottom-anchored viewport', () => {
+    const handle = { type: 'grabber' }
+    const result = renderSurface({
+      detached: true,
+      contentViewport: { topInset: 56, handle, handleHeight: 24 },
+    })
+    expect(result.painted.props['main-thread:gesture']).toBe(result.gesture)
+    expect(result.panel.props['main-thread:gesture']).toBeUndefined()
+    expect(result.viewport.props.style).toMatchObject({
+      position: 'absolute',
+      bottom: 0,
+    })
+    expect(result.handle && result.handle.props.style.height).toBe('24px')
+    expect(result.painted.props).not.toHaveProperty('contentViewport')
   })
 
   it('keeps handle-only dragging off the panel', () => {

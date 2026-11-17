@@ -7,7 +7,11 @@ import { useEffect, useRef } from '@lynx-js/react'
 import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
 
 import { useSheetContext, useSheetPositionerContext } from '../context'
-import type { SheetContentProps, SheetTransition } from '../types'
+import type {
+  SheetContentProps,
+  SheetNestedScrollContentProps,
+  SheetTransition,
+} from '../types'
 import { getDefaultRubberBand } from '../utils'
 import { useSnap } from './useSnap'
 
@@ -31,13 +35,18 @@ const DEFAULT_TRANSITION: SheetTransition = {
   damping: 60,
 }
 
-export function useSheetContentController(props: SheetContentProps) {
+export function useSheetContentController(
+  props:
+    & SheetContentProps
+    & Pick<SheetNestedScrollContentProps, 'contentViewport'>,
+) {
   const {
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
     detached,
     bottomInset,
+    contentViewport,
   } = props
   const context = useSheetContext()
   const positioner = useSheetPositionerContext()
@@ -80,6 +89,9 @@ export function useSheetContentController(props: SheetContentProps) {
     initialSnap,
     detached,
     bottomInset,
+    contentTopInset: contentViewport?.topInset
+      ?? (contentViewport ? 0 : undefined),
+    handleHeight: contentViewport?.handleHeight,
     snapAnimation,
     side,
     enableRTL,

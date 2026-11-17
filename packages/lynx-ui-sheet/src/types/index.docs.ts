@@ -288,6 +288,23 @@ export interface SheetNestedScrollContentProps
    * useSheetScrollGesture().
    */
   children?: ReactNode | ((props: SheetNestedScrollRenderProps) => ReactNode)
+  /**
+   * A bottom-anchored content viewport for detached bottom sheets with numeric
+   * or percentage snaps. The surface and handle move independently of the
+   * content's protected top edge. Insets are logical pixels from the local
+   * Sheet viewport. The same content and native scroll node stay mounted.
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  contentViewport?: {
+    /** The earliest visible top of the content, relative to the local viewport. */
+    topInset?: number
+    /** Optional handle rendered above the content under the shared Sheet pan. */
+    handle?: ReactNode
+    /** The minimum height reserved for the handle, in logical pixels. */
+    handleHeight?: number
+  }
   /** Native pan recognition thresholds. */
   gestureConfig?: SheetGestureConfig
   /** Relationships between the Sheet pan and external gestures. */
