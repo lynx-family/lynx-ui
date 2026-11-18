@@ -16,7 +16,7 @@ This directory contains examples for the Sheet component.
 - **FloatingFit**: A content-sized floating panel that responds to content changes.
 - **SurfaceRef**: A custom Motion spring animates the painted surface width on the main thread.
 - **Transition**: Floating-to-fullscreen styling after snap selection, including an intermediate snap and an immediate snap.
-- **SafeArea**: A moving handle beside a protected `SheetBody`, with four simulated viewport insets, an external bottom gap, and coordinated scrolling.
+- **SafeArea**: A moving handle beside a protected `SheetBody`, with simulated top/right viewport insets, a floating bottom gap, coordinated scrolling, and a main-thread fullscreen width/corner spring.
 - **Tablet**: Tablet-friendly Sheet layout.
 - **GestureScrollView**: Default same-finger handoff between Sheet and ScrollView.
 - **GestureList**: Coordinated handoff between the Sheet and native list scrolling.
@@ -35,7 +35,7 @@ This directory contains examples for the Sheet component.
 | Fullscreen appearance | Transition | Release at 100% or use Fullscreen; 70% remains floating. Close and reopen to restore the initial appearance. |
 | Immediate appearance | Transition | Use Instant fullscreen; both the snap and companion appearance update without animation. |
 | Same-finger handoff | GestureScrollView / Transition | Drag up to the maximum and continue scrolling; reverse to scroll to the start before collapsing. |
-| Protected content | SafeArea | Drag past the top guide: the body stays inside the inset rectangle as the handle moves upward. The panel fills the width while content avoids the asymmetric side insets. |
+| Protected content | SafeArea | Drag past the top guide, then release at fullscreen: the panel widens past the right guide while the body stays inside it. Use 45% to reverse the width/corner animation. |
 | Native list | GestureList | Repeat the handoff with recycled list content. |
 | Fixed footer | GestureFixedFooter | Scroll to the final item; verify it remains reachable above the fixed actions. |
 | Composed gestures | GestureComposite | Drag the handle, scroll vertically, then swipe the horizontal child. |
