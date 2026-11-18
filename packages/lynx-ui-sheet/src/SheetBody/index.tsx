@@ -53,7 +53,15 @@ export function SheetBody(
   return (
     <view
       style={enabled
-        ? { position: 'relative', flex: 1, minWidth: 0, minHeight: 0 }
+        ? {
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          flexGrow: 1,
+          flexShrink: 1,
+          minWidth: 0,
+          minHeight: 0,
+        }
         : undefined}
       main-thread:bindlayoutchange={enabled ? onLayoutMT : undefined}
       event-through={true}
@@ -66,8 +74,8 @@ export function SheetBody(
             position: 'absolute',
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
+            right: 0,
+            bottom: 0,
           }
           : style}
         main-thread:ref={enabled ? setBodyElementMT : undefined}
