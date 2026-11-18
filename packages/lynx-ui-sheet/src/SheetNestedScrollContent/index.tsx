@@ -31,7 +31,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
   const activeScrollMTRef = useMainThreadRef<ActiveSheetScrollGesture | null>(
     null,
   )
-  const sheetGesture = useSheetPanGesture({
+  const { gesture: sheetGesture, finishTouchMT } = useSheetPanGesture({
     side: context.side,
     enableRTL: context.enableRTL,
     dragDisabled: context.dragDisabled,
@@ -45,12 +45,12 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     viewportSize: snap.viewportSize,
     sheetSizeMTRef: snap.sheetSizeMTRef,
     getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
-    onSnapChangeMT: snap.onSnapChangeMT,
     onGestureStartMT: snap.interruptAnimationMT,
     onGestureEndMT: snap.resumeAnimationMT,
     onDragStartMT: snap.onDragStartMT,
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
+    onReleaseAtMaxMT: snap.releaseAtMaxSnapMT,
   })
   const scrollGesture = useSheetNativeScrollGesture({
     sheetGesture,
@@ -61,7 +61,11 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     resolvedSide: context.resolvedSide,
     position: snap.yRef,
     getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
-    onScrollEndMT: snap.resumeAnimationMT,
+    onScrollEndMT: cancelled => {
+      'main thread'
+      finishTouchMT(cancelled)
+      snap.resumeAnimationMT()
+    },
   })
   const dragEnabled = !context.dragDisabled && (gestureConfig?.enabled ?? true)
   const resolvedChildren = typeof children === 'function'
@@ -85,6 +89,9 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         snapPoints={snapPoints}
         maxSnapSize={snap.maxSnapSize}
         footerContext={snap.footerContext}
+        setClipMTRef={snap.setClipMTRef}
+        setSurfaceMTRef={snap.setSurfaceMTRef}
+        setViewportMTRef={snap.setViewportMTRef}
         setSheetMTRef={snap.setSheetMTRef}
         setContentMTRef={snap.setContentMTRef}
         handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}

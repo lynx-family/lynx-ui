@@ -13,15 +13,8 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { TriggerButton } from '../shared/index.js'
+import { SnapButton, TriggerButton } from '../shared/index.js'
 import './index.css'
-
-const colors = [
-  'var(--primary)',
-  'var(--secondary)',
-  'var(--paper)',
-  'var(--neutral-ambient)',
-]
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -52,6 +45,16 @@ function App() {
                     Sheet expands fully, then content scrolls in the same drag
                   </text>
                 </view>
+                <view className='gesture-controls'>
+                  <SnapButton
+                    text='45%'
+                    onClick={() => sheetRef.current?.collapse()}
+                  />
+                  <SnapButton
+                    text='90%'
+                    onClick={() => sheetRef.current?.expand()}
+                  />
+                </view>
                 <scroll-view
                   className='nested-scroll'
                   scroll-orientation='vertical'
@@ -61,12 +64,11 @@ function App() {
                   {Array.from({ length: 20 }, (_, index) => (
                     <view
                       className='nested-item'
-                      style={{
-                        backgroundColor: colors[index % colors.length],
-                      }}
                       key={index}
                     >
-                      <text>{`ScrollView item ${index + 1}`}</text>
+                      <text className='nested-item-text'>
+                        {`ScrollView item ${index + 1}`}
+                      </text>
                     </view>
                   ))}
                 </scroll-view>
