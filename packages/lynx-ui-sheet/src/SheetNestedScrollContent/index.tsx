@@ -96,6 +96,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         positioner={positioner}
         footerContext={snap.footerContext}
         bodyContext={snap.bodyContext}
+        measureSurfaceMT={snap.measureSurfaceMT}
         setClipMTRef={snap.setClipMTRef}
         setSurfaceMTRef={snap.setSurfaceMTRef}
         setViewportMTRef={snap.setViewportMTRef}

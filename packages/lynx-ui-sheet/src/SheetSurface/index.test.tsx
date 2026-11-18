@@ -56,6 +56,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       measureBodyMT: vi.fn(),
     },
     setSheetMTRef: vi.fn(),
+    measureSurfaceMT: vi.fn(),
     setClipMTRef: vi.fn(),
     setSurfaceMTRef: vi.fn(),
     setViewportMTRef: vi.fn(),

@@ -322,7 +322,6 @@ export function useSnap({
     panelLayout,
     screenHeight,
     screenWidth,
-    positioner,
     allowOverDrag,
     sheetSizeMTRef,
     maxSnapSize,

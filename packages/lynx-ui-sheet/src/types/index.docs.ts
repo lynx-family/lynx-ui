@@ -284,7 +284,7 @@ export interface SheetBodyProps extends ComponentBasicProps {
   children?: ReactNode
   /**
    * Minimum distance from each supplied physical edge of the local viewport,
-   * in logical pixels. Place the body in the Sheet content layout, alongside
+   * in logical pixels. Place the body in the Sheet flex content layout, alongside
    * any handle that should travel with the panel. Supply at most one body per
    * SheetContent or SheetNestedScrollContent. Viewport constraints apply to
    * explicit snap sizes; fit sheets keep the body's intrinsic layout.

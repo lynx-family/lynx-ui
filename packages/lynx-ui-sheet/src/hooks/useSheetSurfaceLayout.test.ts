@@ -173,8 +173,8 @@ describe('Sheet surface geometry', () => {
       { setStyleProperties: write } as unknown as MainThread.Element,
       { top: 82 },
     )
-    measureBodyParentMT({ left: 0, top: 600, width: 1000, height: 800 })
-    bodyContext.measureBodyMT({ left: 0, top: 624, width: 1000, height: 776 })
+    measureBodyParentMT({ left: 0, top: 0, width: 1000, height: 800 })
+    bodyContext.measureBodyMT({ left: 0, top: 24, width: 1000, height: 776 })
     expect(write).toHaveBeenLastCalledWith({
       left: '0px',
       top: '0px',
@@ -207,13 +207,12 @@ describe('Sheet surface geometry', () => {
         side,
       )
       const write = vi.fn()
-      const left = side === 'right' ? 600 : -400
       bodyContext.setBodyMTRef(
         { setStyleProperties: write } as unknown as MainThread.Element,
         { top: 20, left: 250, right: 250 },
       )
-      measureBodyParentMT({ left, top: 0, width: 800, height: 1000 })
-      bodyContext.measureBodyMT({ left, top: 0, width: 800, height: 1000 })
+      measureBodyParentMT({ left: 0, top: 0, width: 800, height: 1000 })
+      bodyContext.measureBodyMT({ left: 0, top: 0, width: 800, height: 1000 })
       expect(write).toHaveBeenLastCalledWith({
         left: side === 'right' ? '0px' : '650px',
         top: '20px',
@@ -229,6 +228,43 @@ describe('Sheet surface geometry', () => {
       })
     },
   )
+
+  it('uses local parent coordinates when the panel is offset inside its pane', () => {
+    const { bodyContext, measureBodyParentMT, measureSurfaceMT, position } =
+      setup(false, 0, false, 'right')
+    const write = vi.fn()
+    bodyContext.setBodyMTRef(
+      { setStyleProperties: write } as unknown as MainThread.Element,
+      { top: 86, bottom: 24 },
+    )
+    measureSurfaceMT(
+      { detail: { left: 0, top: 0 } } as MainThread.LayoutChangeEvent,
+    )
+    measureBodyParentMT({ left: 0, top: 0, width: 800, height: 1000 })
+    bodyContext.measureBodyMT({ left: 0, top: 24, width: 800, height: 976 })
+    expect(write).toHaveBeenLastCalledWith({
+      left: '0px',
+      top: '62px',
+      right: '0px',
+      bottom: '24px',
+    })
+    position.current.set(800)
+    expect(write).toHaveBeenLastCalledWith({
+      left: '0px',
+      top: '62px',
+      right: '0px',
+      bottom: '24px',
+    })
+    measureSurfaceMT(
+      { detail: { left: 0, top: 100 } } as MainThread.LayoutChangeEvent,
+    )
+    expect(write).toHaveBeenLastCalledWith({
+      left: '0px',
+      top: '0px',
+      right: '0px',
+      bottom: '124px',
+    })
+  })
 
   it('allows native refs to attach before the motion value is initialized', () => {
     const { position, setSurfaceMTRef } = setup()

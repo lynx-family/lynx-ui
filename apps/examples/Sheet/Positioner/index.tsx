@@ -102,6 +102,7 @@ function App() {
                 <SheetNestedScrollContent
                   className='surface'
                   panelLayout={{ bottomGap: 8 }}
+                  innerStyle={{ display: 'flex', flexDirection: 'column' }}
                 >
                   {({ scrollGesture }) => (
                     <>
