@@ -98,7 +98,10 @@ function App() {
             <SheetBackdrop className='backdrop' />
             {nested
               ? (
-                <SheetNestedScrollContent className='surface' bottomInset={8}>
+                <SheetNestedScrollContent
+                  className='surface'
+                  panelLayout={{ bottomGap: 8 }}
+                >
                   {({ scrollGesture }) => (
                     <scroll-view
                       className='scroll'
@@ -123,7 +126,10 @@ function App() {
                 </SheetNestedScrollContent>
               )
               : (
-                <SheetContent className='surface' bottomInset={8}>
+                <SheetContent
+                  className='surface'
+                  panelLayout={{ bottomGap: 8 }}
+                >
                   <SheetHandle className='handle' />
                   <view className='panel'>
                     <text className='panel-label'>Local snap points</text>

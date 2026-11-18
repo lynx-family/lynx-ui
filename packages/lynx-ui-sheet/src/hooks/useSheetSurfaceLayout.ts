@@ -10,7 +10,7 @@ import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetTransition } from '../types'
+import type { SheetContentProps, SheetTransition } from '../types'
 import { useSheetAnimation } from './useSheetAnimation'
 
 interface SheetSurfaceLayoutOptions {
@@ -18,8 +18,7 @@ interface SheetSurfaceLayoutOptions {
   position: MainThreadRef<MotionValue<number>>
   presence: MainThreadRef<PresenceState>
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
-  detached: boolean
-  bottomInset: number
+  panelLayout?: SheetContentProps['panelLayout']
   screenHeight: number
   maxSnapSize: number
   hasFitSnapPoint: boolean
@@ -34,8 +33,7 @@ export function useSheetSurfaceLayout({
   animateChanges,
   presence,
   resolvedSide,
-  detached,
-  bottomInset,
+  panelLayout,
   screenHeight,
   maxSnapSize,
   hasFitSnapPoint,
@@ -44,10 +42,11 @@ export function useSheetSurfaceLayout({
   snapAnimation,
 }: SheetSurfaceLayoutOptions) {
   const isBottom = resolvedSide === 'bottom'
-  const inset = isBottom && Number.isFinite(bottomInset)
-    ? Math.max(0, bottomInset)
+  const requestedGap = panelLayout?.bottomGap ?? 0
+  const inset = isBottom && Number.isFinite(requestedGap)
+    ? Math.max(0, requestedGap)
     : 0
-  const coverage = isBottom && detached ? 0 : 1
+  const coverage = isBottom && panelLayout ? 0 : 1
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const viewportMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -86,17 +85,25 @@ export function useSheetSurfaceLayout({
       : 1
     const effectiveInset = isBottom ? appearance.inset * visibleFraction : 0
     const clipInset = effectiveInset * appearance.coverage
+    // Keep a bounded panel's top inside the viewport without losing its gap.
+    const overflow = Math.max(0, value + effectiveInset - screenHeight)
+    const correction = isBottom
+      ? Math.min(height, overflow) * (1 - appearance.coverage)
+      : 0
+    const visibleHeight = height - correction
     clipMTRef.current?.setStyleProperties({ bottom: `${clipInset}px` })
     surfaceMTRef.current?.setStyleProperties({
-      top: `${-(effectiveInset - clipInset)}px`,
-      height: `${Math.max(height, screenHeight * 1.5 * appearance.coverage)}px`,
+      top: `${clipInset - effectiveInset + correction}px`,
+      height: `${
+        Math.max(visibleHeight, screenHeight * 1.5 * appearance.coverage)
+      }px`,
     })
     if (!hasFitSnapPoint) {
+      const contentHeight = visibleHeight
+        + (Math.max(maxSnapSize, visibleHeight) - visibleHeight)
+          * appearance.coverage
       viewportMTRef.current?.setStyleProperties({
-        height: `${
-          height
-          + (Math.max(maxSnapSize, height) - height) * appearance.coverage
-        }px`,
+        height: `${contentHeight}px`,
       })
     }
   }

@@ -21,7 +21,12 @@ import type { SheetPositionerDimensions } from '../context'
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
 import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
-import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
+import type {
+  SheetContentProps,
+  SheetRootProps,
+  SheetSide,
+  SheetTransition,
+} from '../types'
 import {
   clamp,
   findNearestSnap,
@@ -44,8 +49,7 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
-  detached?: boolean
-  bottomInset?: number
+  panelLayout?: SheetContentProps['panelLayout']
   snapAnimation?: SheetTransition
   side?: SheetSide
   enableRTL?: boolean
@@ -69,8 +73,7 @@ export interface SnapOptions {
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
-  detached = false,
-  bottomInset = 0,
+  panelLayout,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
   enableRTL = false,
@@ -316,8 +319,7 @@ export function useSnap({
     animateChanges: animateSurfaceChangesMTRef,
     presence: controller.presenceStateMTRef,
     resolvedSide,
-    detached,
-    bottomInset,
+    panelLayout,
     screenHeight,
     maxSnapSize,
     hasFitSnapPoint,

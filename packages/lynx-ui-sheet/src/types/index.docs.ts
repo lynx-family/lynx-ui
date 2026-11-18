@@ -141,29 +141,14 @@ export interface SheetContentProps extends ComponentBasicProps {
    */
   'main-thread:surfaceRef'?: MainThreadRef<MainThread.Element | null>
   /**
-   * Keep a bottom sheet's painted surface bounded to the visible panel instead
-   * of extending its background beyond the screen edge. Switching this option
-   * preserves the content and native scroll node. Other sides ignore it.
-   * Style the surface with `className` and `style`; put content padding and
-   * layout on `innerClassName` and `innerStyle`.
-   * @defaultValue false
-   * @zh 将底部 Sheet 的背景限制在可见面板内，而不是延伸到屏幕边缘之外。
-   * 切换时保留内容和原生滚动节点。其他方向忽略此属性。
+   * Opt into a bounded bottom panel. Omit this to retain the default
+   * extended surface. The gap is external and excluded from snap sizes.
+   * Updating it follows the snap animation without replacing the content.
    */
-  detached?: boolean
-  /**
-   * External gap below a bottom sheet, in logical pixels. This is separate
-   * from content padding and safe-area padding. Numeric and percentage snap
-   * sizes exclude this gap; percentages use the positioner height when present,
-   * otherwise `screenHeight`. The gap is relative to the local bottom edge.
-   * Changes use `snapAnimation` and animate from the current rendered inset.
-   * Other sides ignore it. Negative and non-finite values resolve to zero.
-   * @defaultValue 0
-   * @zh 底部 Sheet 下方的外部间距，单位为逻辑像素。它不属于内容或安全区内边距，
-   * 也不计入吸附高度。百分比基于定位容器高度，未使用定位容器时基于 screenHeight。
-   * 间距相对于局部底边，其他方向忽略此属性。
-   */
-  bottomInset?: number
+  panelLayout?: {
+    /** Space below the panel in local logical pixels. Defaults to zero. */
+    bottomGap?: number
+  }
   /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。
