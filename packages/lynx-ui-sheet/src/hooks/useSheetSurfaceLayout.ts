@@ -105,15 +105,11 @@ export function useSheetSurfaceLayout({
     element: MainThread.Element | null
     insets: SheetBodyProps['viewportInsets']
     outer: SheetLayoutRect | null
-    before: number
-    after: number
     applied: string
   }>({
     element: null,
     insets: undefined,
     outer: null,
-    before: 0,
-    after: 0,
     applied: '',
   })
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -136,22 +132,25 @@ export function useSheetSurfaceLayout({
   function applyBodyLayoutMT() {
     'main thread'
     const range = bodyRangeMTRef.current
-    const { element, outer, insets, before, after, applied } = bodyMTRef.current
+    const { element, outer, insets, applied } = bodyMTRef.current
     if (!range || !element || !outer || !insets) return
     const { start, size } = range
-    // Layout change positions are relative to each node's layout parent.
+    // Remove the shared pre-transform layout origin before applying motion.
     const surface = surfaceOriginMTRef.current
     const parent = parentLayoutMTRef.current
+    if (!parent?.width || !parent.height) return
     const left = horizontal
-      ? start + (parent?.left ?? 0) + before
-      : surface.left + (parent?.left ?? 0) + outer.left
+      ? start + outer.left - (parent.left ?? 0)
+      : surface.left + outer.left - (parent.left ?? 0)
     const top = horizontal
-      ? surface.top + (parent?.top ?? 0) + outer.top
-      : start + (parent?.top ?? 0) + before
-    const width = horizontal ? Math.max(0, size - before - after) : outer.width
+      ? surface.top + outer.top - (parent.top ?? 0)
+      : start + outer.top - (parent.top ?? 0)
+    const width = horizontal
+      ? Math.max(0, size - parent.width + outer.width)
+      : outer.width
     const height = horizontal
       ? outer.height
-      : Math.max(0, size - before - after)
+      : Math.max(0, size - parent.height + outer.height)
     const offsets = resolveBodyLayout(
       { left, top, width, height },
       screenWidth,
@@ -244,22 +243,22 @@ export function useSheetSurfaceLayout({
 
   function measureBodyParentMT(rect?: Partial<SheetLayoutRect>) {
     'main thread'
-    parentLayoutMTRef.current = rect ?? null
+    parentLayoutMTRef.current = rect
+      ? {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      }
+      : null
+    applyBodyLayoutMT()
   }
 
   function measureBodyMT(
     { left = 0, top = 0, width = 0, height = 0 }: Partial<SheetLayoutRect>,
   ) {
     'main thread'
-    const parent = parentLayoutMTRef.current
-    const before = horizontal ? left : top
-    const size = horizontal ? width : height
-    const parentSize = horizontal ? parent?.width : parent?.height
     bodyMTRef.current.outer = { left, top, width, height }
-    bodyMTRef.current.before = before
-    bodyMTRef.current.after = parentSize === undefined
-      ? 0
-      : parentSize - before - size
     applyBodyLayoutMT()
   }
 

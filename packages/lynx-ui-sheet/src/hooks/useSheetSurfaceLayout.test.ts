@@ -229,7 +229,7 @@ describe('Sheet surface geometry', () => {
     },
   )
 
-  it('uses local parent coordinates when the panel is offset inside its pane', () => {
+  it('uses a shared layout frame when the panel is offset inside its pane', () => {
     const { bodyContext, measureBodyParentMT, measureSurfaceMT, position } =
       setup(false, 0, false, 'right')
     const write = vi.fn()
@@ -258,6 +258,8 @@ describe('Sheet surface geometry', () => {
     measureSurfaceMT(
       { detail: { left: 0, top: 100 } } as MainThread.LayoutChangeEvent,
     )
+    measureBodyParentMT({ left: 0, top: 100, width: 800, height: 1000 })
+    bodyContext.measureBodyMT({ left: 0, top: 124, width: 800, height: 976 })
     expect(write).toHaveBeenLastCalledWith({
       left: '0px',
       top: '0px',
@@ -265,6 +267,45 @@ describe('Sheet surface geometry', () => {
       bottom: '124px',
     })
   })
+
+  it.each([0, 1000])(
+    'normalizes shared native layout origins (%s)',
+    layoutTop => {
+      const { position, bodyContext, measureBodyParentMT, measureSurfaceMT } =
+        setup()
+      const write = vi.fn()
+      bodyContext.setBodyMTRef(
+        { setStyleProperties: write } as unknown as MainThread.Element,
+        { top: 82, right: 0, left: 0 },
+      )
+      measureSurfaceMT(
+        { detail: { left: 8, top: 1000 } } as MainThread.LayoutChangeEvent,
+      )
+      bodyContext.measureBodyMT({
+        left: 8,
+        top: layoutTop + 24,
+        width: 984,
+        height: 376,
+      })
+      const parent = { left: 8, top: layoutTop, width: 984, height: 400 }
+      measureBodyParentMT(parent)
+      parent.top = 9000
+      position.current.set(950)
+      expect(write).toHaveBeenLastCalledWith({
+        left: '0px',
+        top: '16px',
+        right: '0px',
+        bottom: '0px',
+      })
+      position.current.set(1000)
+      expect(write).toHaveBeenLastCalledWith({
+        left: '0px',
+        top: '58px',
+        right: '0px',
+        bottom: '0px',
+      })
+    },
+  )
 
   it('allows native refs to attach before the motion value is initialized', () => {
     const { position, setSurfaceMTRef } = setup()
