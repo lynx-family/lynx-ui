@@ -55,8 +55,7 @@
 
 .sheet-surface {
   background-color: var(--paper);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  border-radius: 24px;
 }
 
 .sheet-layout,
@@ -84,6 +83,8 @@
 .header {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px 8px;
@@ -98,6 +99,7 @@
 .controls {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 0 16px 12px;
 }
