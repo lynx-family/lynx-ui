@@ -10,7 +10,7 @@ import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetLayoutRect, SheetPositionerDimensions } from '../context'
+import type { SheetLayoutRect } from '../context'
 import type {
   SheetBodyProps,
   SheetContentProps,
@@ -26,7 +26,6 @@ interface SheetSurfaceLayoutOptions {
   panelLayout?: SheetContentProps['panelLayout']
   screenHeight: number
   screenWidth: number
-  positioner?: SheetPositionerDimensions | null
   allowOverDrag: boolean
   sheetSizeMTRef: MainThreadRef<number>
   maxSnapSize: number
@@ -80,7 +79,6 @@ export function useSheetSurfaceLayout({
   panelLayout,
   screenHeight,
   screenWidth,
-  positioner,
   allowOverDrag,
   sheetSizeMTRef,
   maxSnapSize,
@@ -95,11 +93,14 @@ export function useSheetSurfaceLayout({
     ? Math.max(0, requestedGap)
     : 0
   const coverage = isBottom && panelLayout ? 0 : 1
-  const originMTRef = positioner?.originMTRef
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
+  const surfaceOriginMTRef = useMainThreadRef({ left: 0, top: 0 })
   const parentLayoutMTRef = useMainThreadRef<Partial<SheetLayoutRect> | null>(
     null,
   )
+  const bodyRangeMTRef = useMainThreadRef<
+    { start: number, size: number } | null
+  >(null)
   const bodyMTRef = useMainThreadRef<{
     element: MainThread.Element | null
     insets: SheetBodyProps['viewportInsets']
@@ -132,13 +133,21 @@ export function useSheetSurfaceLayout({
   const animateAppearanceMT = animation.animateToMT
   const stopAppearanceMT = animation.stopAnimationMT
 
-  function updateBodyMT(start: number, size: number) {
+  function applyBodyLayoutMT() {
     'main thread'
+    const range = bodyRangeMTRef.current
     const { element, outer, insets, before, after, applied } = bodyMTRef.current
-    if (!element || !outer || !insets || hasFitSnapPoint) return
-    const origin = originMTRef?.current
-    const left = horizontal ? start + before : outer.left - (origin?.left ?? 0)
-    const top = horizontal ? outer.top - (origin?.top ?? 0) : start + before
+    if (!range || !element || !outer || !insets) return
+    const { start, size } = range
+    // Layout change positions are relative to each node's layout parent.
+    const surface = surfaceOriginMTRef.current
+    const parent = parentLayoutMTRef.current
+    const left = horizontal
+      ? start + (parent?.left ?? 0) + before
+      : surface.left + (parent?.left ?? 0) + outer.left
+    const top = horizontal
+      ? surface.top + (parent?.top ?? 0) + outer.top
+      : start + (parent?.top ?? 0) + before
     const width = horizontal ? Math.max(0, size - before - after) : outer.width
     const height = horizontal
       ? outer.height
@@ -161,6 +170,13 @@ export function useSheetSurfaceLayout({
     })
   }
 
+  function updateBodyRangeMT(start: number, size: number) {
+    'main thread'
+    if (hasFitSnapPoint) return
+    bodyRangeMTRef.current = { start, size }
+    applyBodyLayoutMT()
+  }
+
   function updateSurfaceMT() {
     'main thread'
     const motion = position.current
@@ -169,7 +185,7 @@ export function useSheetSurfaceLayout({
     if (horizontal) {
       const opened = Math.max(sheetSizeMTRef.current, maxSnapSize)
       const extent = allowOverDrag ? value : Math.min(value, opened)
-      updateBodyMT(
+      updateBodyRangeMT(
         resolvedSide === 'right' ? screenWidth - extent : extent - maxSnapSize,
         maxSnapSize,
       )
@@ -210,11 +226,20 @@ export function useSheetSurfaceLayout({
       viewportMTRef.current?.setStyleProperties({
         height: `${contentHeight}px`,
       })
-      updateBodyMT(
+      updateBodyRangeMT(
         isBottom ? surfaceTop + correction : value - contentHeight,
         contentHeight,
       )
     }
+  }
+
+  function measureSurfaceMT(event: MainThread.LayoutChangeEvent) {
+    'main thread'
+    const { left, top } = event.detail ?? event.params
+    const previous = surfaceOriginMTRef.current
+    if (previous.left === left && previous.top === top) return
+    surfaceOriginMTRef.current = { left, top }
+    applyBodyLayoutMT()
   }
 
   function measureBodyParentMT(rect?: Partial<SheetLayoutRect>) {
@@ -227,9 +252,7 @@ export function useSheetSurfaceLayout({
   ) {
     'main thread'
     const parent = parentLayoutMTRef.current
-    const before = horizontal
-      ? left - (parent?.left ?? left)
-      : top - (parent?.top ?? top)
+    const before = horizontal ? left : top
     const size = horizontal ? width : height
     const parentSize = horizontal ? parent?.width : parent?.height
     bodyMTRef.current.outer = { left, top, width, height }
@@ -237,7 +260,7 @@ export function useSheetSurfaceLayout({
     bodyMTRef.current.after = parentSize === undefined
       ? 0
       : parentSize - before - size
-    updateSurfaceMT()
+    applyBodyLayoutMT()
   }
 
   function setBodyMTRef(
@@ -249,7 +272,7 @@ export function useSheetSurfaceLayout({
     body.element = element
     body.insets = insets
     body.applied = ''
-    if (element) updateSurfaceMT()
+    if (element) applyBodyLayoutMT()
   }
 
   useMotionValueRefEvent(position, 'change', updateSurfaceMT)
@@ -331,6 +354,7 @@ export function useSheetSurfaceLayout({
     setSurfaceMTRef,
     setViewportMTRef,
     measureBodyParentMT,
+    measureSurfaceMT,
     bodyContext: { enabled: !hasFitSnapPoint, setBodyMTRef, measureBodyMT },
   }
 }

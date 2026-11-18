@@ -28,6 +28,7 @@ export interface SheetSurfaceProps extends SheetContentProps {
   positioner?: SheetPositionerDimensions | null
   footerContext: SheetFooterContextValue
   bodyContext: SheetBodyContextValue
+  measureSurfaceMT: (event: MainThread.LayoutChangeEvent) => void
   setClipMTRef: (element: MainThread.Element) => void
   setSurfaceMTRef: (element: MainThread.Element | null) => void
   setViewportMTRef: (element: MainThread.Element) => void
@@ -61,6 +62,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     positioner,
     footerContext,
     bodyContext,
+    measureSurfaceMT,
     setClipMTRef,
     setSurfaceMTRef,
     setViewportMTRef,
@@ -151,6 +153,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
         main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSheetMTRef}
         implicit-animation='false'
         event-through={true}
+        main-thread:bindlayoutchange={measureSurfaceMT}
       >
         {content}
       </view>
@@ -213,6 +216,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
             pointerEvents: 'auto',
           }}
           main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSurfaceMTRef}
+          main-thread:bindlayoutchange={measureSurfaceMT}
           enable-new-animator={true}
           event-through={false}
         >

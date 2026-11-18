@@ -2,9 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { useMainThreadRef, useMemo } from '@lynx-js/react'
+import { useMemo } from '@lynx-js/react'
 
-import type { MainThread } from '@lynx-js/types'
 import { clsx } from 'clsx'
 
 import { SheetPositionerContext } from '../context'
@@ -19,18 +18,7 @@ export function SheetPositioner(props: SheetPositionerProps) {
   ) {
     throw new Error('SheetPositioner width and height must be positive pixels')
   }
-  const originMTRef = useMainThreadRef({ left: 0, top: 0 })
-  const dimensions = useMemo(() => ({ width, height, originMTRef }), [
-    width,
-    height,
-    originMTRef,
-  ])
-
-  function onLayoutMT(event: MainThread.LayoutChangeEvent) {
-    'main thread'
-    const { left, top } = event.detail ?? event.params
-    originMTRef.current = { left, top }
-  }
+  const dimensions = useMemo(() => ({ width, height }), [width, height])
 
   return (
     <SheetPositionerContext.Provider value={dimensions}>
@@ -46,7 +34,6 @@ export function SheetPositioner(props: SheetPositionerProps) {
           height: `${height}px`,
           overflow: 'hidden',
         }}
-        main-thread:bindlayoutchange={onLayoutMT}
         event-through={true}
       >
         {children}

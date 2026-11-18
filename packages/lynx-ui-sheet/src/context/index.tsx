@@ -82,7 +82,6 @@ export interface SheetFooterContextValue {
 export interface SheetPositionerDimensions {
   width: number
   height: number
-  originMTRef?: MainThreadRef<{ left: number, top: number }>
 }
 
 export interface SheetLayoutRect {
