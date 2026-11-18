@@ -6,7 +6,7 @@ import { useEffect, useRef } from '@lynx-js/react'
 
 import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
 
-import { useSheetContext } from '../context'
+import { useSheetContext, useSheetPositionerContext } from '../context'
 import type { SheetContentProps, SheetTransition } from '../types'
 import { getDefaultRubberBand } from '../utils'
 import { useSnap } from './useSnap'
@@ -39,6 +39,7 @@ export function useSheetContentController(props: SheetContentProps) {
     panelLayout,
   } = props
   const context = useSheetContext()
+  const positioner = useSheetPositionerContext()
   const {
     sheetProgress,
     registerMethods,
@@ -82,6 +83,7 @@ export function useSheetContentController(props: SheetContentProps) {
     enableRTL,
     screenHeight,
     screenWidth,
+    positioner,
     onSnapChange,
     onSnapStartMT,
     onDismiss: handleDismissed,
@@ -129,6 +131,7 @@ export function useSheetContentController(props: SheetContentProps) {
 
   return {
     context,
+    positioner,
     effectiveRubberBand,
     snap,
     snapPoints,

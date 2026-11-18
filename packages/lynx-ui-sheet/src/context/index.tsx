@@ -74,6 +74,19 @@ export interface SheetFooterContextValue {
   unregisterFooter: (id: string) => void
 }
 
+export interface SheetPositionerDimensions {
+  width: number
+  height: number
+}
+
+export const SheetPositionerContext = createContext<
+  SheetPositionerDimensions | null
+>(null)
+
+export function useSheetPositionerContext() {
+  return useContext(SheetPositionerContext)
+}
+
 export const SheetFooterContext = createContext<SheetFooterContextValue | null>(
   null,
 )
