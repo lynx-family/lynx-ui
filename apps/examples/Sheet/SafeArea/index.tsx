@@ -116,6 +116,7 @@ function App() {
                       scroll-orientation='vertical'
                       main-thread:gesture={scrollGesture}
                       bounces={true}
+                      event-through={false}
                     >
                       <SurfaceRows />
                     </scroll-view>
