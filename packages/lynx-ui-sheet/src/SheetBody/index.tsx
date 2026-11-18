@@ -64,7 +64,7 @@ export function SheetBody(
         }
         : undefined}
       main-thread:bindlayoutchange={enabled ? onLayoutMT : undefined}
-      event-through={true}
+      event-through={false}
     >
       <view
         className={className}
