@@ -21,8 +21,8 @@ import './index.css'
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const [detached, setDetached] = useState(true)
-  const [bottomInset, setBottomInset] = useState(8)
+  const [bounded, setBounded] = useState(true)
+  const [bottomGap, setBottomGap] = useState(8)
   const width = Math.min(screenWidth - 32, 664)
 
   return (
@@ -42,8 +42,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            detached={detached}
-            bottomInset={bottomInset}
+            panelLayout={bounded ? { bottomGap } : undefined}
             className='sheet-content surface-card'
             innerClassName='surface-layout'
             style={{
@@ -56,12 +55,12 @@ function App() {
                 <SheetHandle className='sheet-handle' />
                 <view className='surface-body'>
                   <text className='surface-title'>
-                    {detached ? 'Floating' : 'Attached'}
+                    {bounded ? 'Floating' : 'Attached'}
                   </text>
                   <view className='surface-controls'>
                     <Button
                       className='surface-action'
-                      onClick={() => setDetached(value => !value)}
+                      onClick={() => setBounded(value => !value)}
                     >
                       <text className='surface-action-text'>
                         Switch coverage
@@ -69,11 +68,10 @@ function App() {
                     </Button>
                     <Button
                       className='surface-action'
-                      onClick={() =>
-                        setBottomInset(value => value === 0 ? 8 : 0)}
+                      onClick={() => setBottomGap(value => value === 0 ? 8 : 0)}
                     >
                       <text className='surface-action-text'>
-                        {`Bottom gap: ${bottomInset}px`}
+                        {`Bottom gap: ${bottomGap}px`}
                       </text>
                     </Button>
                     <Button
@@ -87,7 +85,7 @@ function App() {
                 <scroll-view
                   className='surface-scroll'
                   scroll-orientation='vertical'
-                  bounces={false}
+                  bounces={true}
                   main-thread:gesture={scrollGesture}
                 >
                   <SurfaceRows />

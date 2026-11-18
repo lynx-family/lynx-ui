@@ -38,8 +38,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            detached
-            bottomInset={8}
+            panelLayout={{ bottomGap: 8 }}
             className='sheet-content surface-card'
             innerClassName='surface-layout'
             style={{

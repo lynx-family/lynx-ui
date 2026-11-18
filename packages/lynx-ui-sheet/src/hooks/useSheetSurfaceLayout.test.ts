@@ -58,7 +58,11 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
   },
 }))
 
-function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
+function setup(
+  bounded = true,
+  bottomGap = 8,
+  hasFitSnapPoint = false,
+) {
   const position = { current: createMotionValue(400) }
   const presence = { current: PresenceState.Entered }
   const animateChanges = { current: true }
@@ -74,7 +78,7 @@ function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
   const viewport = {
     setStyleProperties: (style: object) => Object.assign(viewportStyle, style),
   } as unknown as MainThread.Element
-  function render(nextDetached = detached, nextInset = bottomInset) {
+  function render(nextBounded = bounded, nextGap = bottomGap) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
     hooks.effects = []
@@ -84,8 +88,7 @@ function setup(detached = true, bottomInset = 8, hasFitSnapPoint = false) {
       presence,
       animateChanges,
       resolvedSide: 'bottom',
-      detached: nextDetached,
-      bottomInset: nextInset,
+      panelLayout: nextBounded ? { bottomGap: nextGap } : undefined,
       screenHeight: 1000,
       maxSnapSize: 800,
       hasFitSnapPoint,
@@ -136,12 +139,6 @@ describe('Sheet surface geometry', () => {
     expect(surfaceStyle.height).toBe('1500px')
   })
 
-  it('clips attached background coverage before the external bottom gap', () => {
-    const { clipStyle, surfaceStyle } = setup(false, 8)
-    expect(clipStyle.bottom).toBe('8px')
-    expect(surfaceStyle).toEqual({ top: '0px', height: '1500px' })
-  })
-
   it('keeps the external gap at a smaller snap and through rubber banding', () => {
     const { position, surfaceStyle, viewportStyle } = setup()
     expect(surfaceStyle).toEqual({ top: '-8px', height: '400px' })
@@ -152,6 +149,17 @@ describe('Sheet surface geometry', () => {
     expect(viewportStyle.height).toBe('850px')
     position.current.set(300)
     expect(surfaceStyle.height).toBe('300px')
+  })
+
+  it('keeps the bounded panel top inside the viewport at the maximum drag even without a body', () => {
+    const { position, render, animateChanges, surfaceStyle, viewportStyle } =
+      setup()
+    position.current.set(1000)
+    expect(surfaceStyle).toEqual({ top: '0px', height: '992px' })
+    expect(viewportStyle.height).toBe('992px')
+    animateChanges.current = false
+    render(true, 0)
+    expect(surfaceStyle.height).toBe('1000px')
   })
 
   it('allows native refs to attach before the motion value is initialized', () => {

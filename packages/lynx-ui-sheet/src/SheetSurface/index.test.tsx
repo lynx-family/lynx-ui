@@ -132,16 +132,14 @@ describe('Sheet surface composition', () => {
   })
 })
 
-it('keeps one content tree when switching detached coverage', () => {
+it('keeps one content tree when switching panel layout', () => {
   const child = { type: 'scroll-view' }
   const attached = renderSurface({ children: child })
   const floating = renderSurface({
-    detached: true,
-    bottomInset: 8,
+    panelLayout: { bottomGap: 8 },
     children: child,
   })
-  expect(floating.surface.props).not.toHaveProperty('detached')
-  expect(floating.painted.props).not.toHaveProperty('bottomInset')
+  expect(floating.painted.props).not.toHaveProperty('panelLayout')
   expect(floating.painted.props.style.height).toBe(
     attached.painted.props.style.height,
   )

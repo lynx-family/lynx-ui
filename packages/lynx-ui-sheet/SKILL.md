@@ -39,18 +39,12 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Use `className` / `style` to style the painted surface and `innerClassName` / `innerStyle` for content layout. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
 - A background-thread state update followed by a CSS transition has its own clock. It does not synchronize with the Sheet spring. Keep live text and controls unscaled; animating actual width can reflow text and still incurs layout work. Do not expose or mutate the movement ref to implement companion styles.
 
-## Surface Coverage Rules
+## Panel Layout
 
-- Attached bottom sheets (`detached={false}`, the default) extend their painted background beyond the viewport to cover upward rubber-banding.
-- Use `detached` for a bounded floating bottom sheet. Its painted lower edge stays anchored during snapping and rubber-banding; the library resizes coverage and the numeric-snap content viewport on the main thread.
-- Set `bottomInset` for an external gap below the panel. It defaults to zero, is independent of `detached`, and excludes content padding and safe areas. It does not change numeric or percentage snap sizes.
-- These two options apply only to `side="bottom"`. Other sides retain their existing behavior.
-- Switching `detached` and `bottomInset` updates the current appearance using `snapAnimation`, without remounting children or replacing the coordinated native scroll node. Appearance changes after an immediate snap are immediate too.
-- Put background, corners, width, and companion width transitions on `className` / `style`. The private movement transform and the surface coverage height belong to Sheet. Previous vertical `style.top` positioning should migrate to `bottomInset`.
-- For imperative animations, pass `useMainThreadRef<MainThread.Element | null>(null)` as `main-thread:surfaceRef` to either content component. The ref points at the same painted view as `className` / `style` and clears when the view unmounts. See the `SurfaceRef` example for starting a Motion width animation from `onSnapStart`. Let the animation own width while it runs and keep movement, coverage, inset positioning, and clipping under Sheet's control.
-- Put content padding, intrinsic fit sizing, and layout on `innerClassName` / `innerStyle`. Intrinsic fit measurement is independent of the animated viewport height.
-- A floating card does not require a nonzero inset: `detached` selects bounded coverage, while `bottomInset` selects placement.
-- See the `Attached`, `Floating`, `FloatingFit`, and `Transition` entries under `apps/examples/Sheet` for extended coverage, independent gap/mode changes, intrinsic sizing, and release-triggered fullscreen styling.
+- Omit `panelLayout` to retain extended background coverage and the original content layout.
+- Set `panelLayout={{ bottomGap: 8 }}` for a bounded bottom panel. The gap is outside the panel and does not count toward a snap size. An empty `panelLayout` uses a zero gap.
+- Updating `bottomGap` uses `snapAnimation` without remounting the content or native scroll view.
+- Put paint and width on surface `className` and `style`. Use `innerClassName` and `innerStyle` for the child layout.
 
 ## Footer Rules
 
