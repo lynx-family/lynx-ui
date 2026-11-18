@@ -178,22 +178,22 @@ describe('Sheet surface geometry', () => {
     expect(write).toHaveBeenLastCalledWith({
       left: '0px',
       top: '0px',
-      width: '1000px',
-      height: '776px',
+      right: '0px',
+      bottom: '0px',
     })
     position.current.set(950)
     expect(write).toHaveBeenLastCalledWith({
       left: '0px',
       top: '8px',
-      width: '1000px',
-      height: '918px',
+      right: '0px',
+      bottom: '0px',
     })
     position.current.set(800)
     expect(write).toHaveBeenLastCalledWith({
       left: '0px',
       top: '0px',
-      width: '1000px',
-      height: '776px',
+      right: '0px',
+      bottom: '0px',
     })
   })
 
@@ -217,15 +217,15 @@ describe('Sheet surface geometry', () => {
       expect(write).toHaveBeenLastCalledWith({
         left: side === 'right' ? '0px' : '650px',
         top: '20px',
-        width: '150px',
-        height: '980px',
+        right: side === 'right' ? '650px' : '0px',
+        bottom: '0px',
       })
       position.current.set(800)
       expect(write).toHaveBeenLastCalledWith({
         left: side === 'right' ? '50px' : '250px',
         top: '20px',
-        width: '500px',
-        height: '980px',
+        right: side === 'right' ? '250px' : '50px',
+        bottom: '0px',
       })
     },
   )

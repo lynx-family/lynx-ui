@@ -36,6 +36,41 @@ interface SheetSurfaceLayoutOptions {
   snapAnimation: SheetTransition
 }
 
+function viewportOverlap(
+  inset: number | undefined,
+  distance: number,
+  size: number,
+) {
+  'main thread'
+  if (inset === undefined || !Number.isFinite(inset)) return 0
+  return Math.min(size, Math.max(0, Math.max(0, inset) - distance))
+}
+
+function resolveBodyLayout(
+  rect: SheetLayoutRect,
+  viewportWidth: number,
+  viewportHeight: number,
+  insets: NonNullable<SheetBodyProps['viewportInsets']>,
+) {
+  'main thread'
+  const left = viewportOverlap(insets.left, rect.left, rect.width)
+  const top = viewportOverlap(insets.top, rect.top, rect.height)
+  return {
+    left,
+    top,
+    right: viewportOverlap(
+      insets.right,
+      viewportWidth - rect.left - rect.width,
+      rect.width - left,
+    ),
+    bottom: viewportOverlap(
+      insets.bottom,
+      viewportHeight - rect.top - rect.height,
+      rect.height - top,
+    ),
+  }
+}
+
 // Separate background coverage from movement and intrinsic content measurement.
 export function useSheetSurfaceLayout({
   position,
@@ -115,14 +150,14 @@ export function useSheetSurfaceLayout({
       insets,
     )
     const key =
-      `${offsets.left}/${offsets.top}/${offsets.width}/${offsets.height}`
+      `${offsets.left}/${offsets.top}/${offsets.right}/${offsets.bottom}`
     if (key === applied) return
     bodyMTRef.current.applied = key
     element.setStyleProperties({
       left: `${offsets.left}px`,
       top: `${offsets.top}px`,
-      width: `${offsets.width}px`,
-      height: `${offsets.height}px`,
+      right: `${offsets.right}px`,
+      bottom: `${offsets.bottom}px`,
     })
   }
 
@@ -298,41 +333,4 @@ export function useSheetSurfaceLayout({
     measureBodyParentMT,
     bodyContext: { enabled: !hasFitSnapPoint, setBodyMTRef, measureBodyMT },
   }
-}
-
-function resolveBodyLayout(
-  rect: SheetLayoutRect,
-  viewportWidth: number,
-  viewportHeight: number,
-  insets: NonNullable<SheetBodyProps['viewportInsets']>,
-): SheetLayoutRect {
-  'main thread'
-  const left = viewportOverlap(insets.left, rect.left, rect.width)
-  const top = viewportOverlap(insets.top, rect.top, rect.height)
-  return {
-    left,
-    top,
-    width: rect.width - left
-      - viewportOverlap(
-        insets.right,
-        viewportWidth - rect.left - rect.width,
-        rect.width - left,
-      ),
-    height: rect.height - top
-      - viewportOverlap(
-        insets.bottom,
-        viewportHeight - rect.top - rect.height,
-        rect.height - top,
-      ),
-  }
-}
-
-function viewportOverlap(
-  inset: number | undefined,
-  distance: number,
-  size: number,
-) {
-  'main thread'
-  if (inset === undefined || !Number.isFinite(inset)) return 0
-  return Math.min(size, Math.max(0, Math.max(0, inset) - distance))
 }
