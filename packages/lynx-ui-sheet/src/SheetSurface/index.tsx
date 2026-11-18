@@ -5,19 +5,20 @@
 import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { MainThread } from '@lynx-js/types'
 
-import { SheetDragContext, SheetFooterContext } from '../context'
+import {
+  SheetBodyContext,
+  SheetDragContext,
+  SheetFooterContext,
+} from '../context'
 import type {
+  SheetBodyContextValue,
   SheetDragContextValue,
   SheetFooterContextValue,
   SheetPositionerDimensions,
 } from '../context'
-import type { SheetContentProps, SheetNestedScrollContentProps } from '../types'
+import type { SheetContentProps } from '../types'
 
-export interface SheetSurfaceProps
-  extends
-    SheetContentProps,
-    Pick<SheetNestedScrollContentProps, 'contentViewport'>
-{
+export interface SheetSurfaceProps extends SheetContentProps {
   dragHandlers: SheetDragContextValue['dragHandlers']
   sheetGesture?: GestureKind
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
@@ -26,6 +27,7 @@ export interface SheetSurfaceProps
   maxSnapSize: number
   positioner?: SheetPositionerDimensions | null
   footerContext: SheetFooterContextValue
+  bodyContext: SheetBodyContextValue
   setClipMTRef: (element: MainThread.Element) => void
   setSurfaceMTRef: (element: MainThread.Element | null) => void
   setViewportMTRef: (element: MainThread.Element) => void
@@ -49,9 +51,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
-    detached,
-    contentViewport,
-    bottomInset: _bottomInset,
+    panelLayout: _panelLayout,
     dragHandlers,
     sheetGesture,
     resolvedSide,
@@ -60,6 +60,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     maxSnapSize,
     positioner,
     footerContext,
+    bodyContext,
     setClipMTRef,
     setSurfaceMTRef,
     setViewportMTRef,
@@ -71,15 +72,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
   const hasFitSnapPoint = snapPoints.some(p => String(p).trim() === 'fit')
-  const useContentViewport = resolvedSide === 'bottom' && detached
-    && !hasFitSnapPoint
-    && contentViewport !== undefined
-  const dragOnContent = !handleOnly && !useContentViewport
-  const viewportHandle = contentViewport?.handle
-  const handleHeight = contentViewport?.handleHeight ?? 0
-  const handleSize = Number.isFinite(handleHeight)
-    ? Math.max(0, handleHeight)
-    : 0
+  const dragOnContent = !handleOnly
   const sheetDragContext = {
     dragHandlers: sheetGesture && !handleOnly ? {} : dragHandlers,
   }
@@ -131,7 +124,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
         <SheetFooterContext.Provider
           value={footerContext}
         >
-          {children}
+          <SheetBodyContext.Provider value={bodyContext}>
+            {children}
+          </SheetBodyContext.Provider>
         </SheetFooterContext.Provider>
       </SheetDragContext.Provider>
     </view>
@@ -220,16 +215,10 @@ export function SheetSurface(props: SheetSurfaceProps) {
           main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSurfaceMTRef}
           enable-new-animator={true}
           event-through={false}
-          main-thread:gesture={useContentViewport && !handleOnly
-            ? sheetGesture
-            : undefined}
         >
           <view
             style={{
               width: '100%',
-              ...(useContentViewport
-                ? { position: 'absolute', left: 0, bottom: 0 }
-                : {}),
               ...(hasFitSnapPoint ? {} : { height: `${maxSnapSize}px` }),
             }}
             main-thread:ref={setViewportMTRef}
@@ -237,21 +226,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
           >
             {content}
           </view>
-          {useContentViewport && viewportHandle != null && (
-            <view
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: `${handleSize}px`,
-              }}
-            >
-              <SheetDragContext.Provider value={sheetDragContext}>
-                {viewportHandle}
-              </SheetDragContext.Provider>
-            </view>
-          )}
         </view>
       </view>
     </view>

@@ -10,7 +10,12 @@ import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetTransition } from '../types'
+import type { SheetLayoutRect, SheetPositionerDimensions } from '../context'
+import type {
+  SheetBodyProps,
+  SheetContentProps,
+  SheetTransition,
+} from '../types'
 import { useSheetAnimation } from './useSheetAnimation'
 
 interface SheetSurfaceLayoutOptions {
@@ -18,11 +23,12 @@ interface SheetSurfaceLayoutOptions {
   position: MainThreadRef<MotionValue<number>>
   presence: MainThreadRef<PresenceState>
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
-  detached: boolean
-  bottomInset: number
-  contentTopInset?: number
-  handleHeight?: number
+  panelLayout?: SheetContentProps['panelLayout']
   screenHeight: number
+  screenWidth: number
+  positioner?: SheetPositionerDimensions | null
+  allowOverDrag: boolean
+  sheetSizeMTRef: MainThreadRef<number>
   maxSnapSize: number
   hasFitSnapPoint: boolean
   initialSize: (index: number) => number
@@ -36,11 +42,12 @@ export function useSheetSurfaceLayout({
   animateChanges,
   presence,
   resolvedSide,
-  detached,
-  bottomInset,
-  contentTopInset,
-  handleHeight,
+  panelLayout,
   screenHeight,
+  screenWidth,
+  positioner,
+  allowOverDrag,
+  sheetSizeMTRef,
   maxSnapSize,
   hasFitSnapPoint,
   initialSize,
@@ -48,19 +55,31 @@ export function useSheetSurfaceLayout({
   snapAnimation,
 }: SheetSurfaceLayoutOptions) {
   const isBottom = resolvedSide === 'bottom'
-  const inset = isBottom && Number.isFinite(bottomInset)
-    ? Math.max(0, bottomInset)
+  const requestedGap = panelLayout?.bottomGap ?? 0
+  const inset = isBottom && Number.isFinite(requestedGap)
+    ? Math.max(0, requestedGap)
     : 0
-  const coverage = isBottom && detached ? 0 : 1
-  const contentTop =
-    contentTopInset !== undefined && Number.isFinite(contentTopInset)
-      ? Math.max(0, contentTopInset)
-      : 0
-  const handleSize = handleHeight !== undefined && Number.isFinite(handleHeight)
-    ? Math.max(0, handleHeight)
-    : 0
-  const useContentViewport = isBottom && detached && !hasFitSnapPoint
-    && contentTopInset !== undefined
+  const coverage = isBottom && panelLayout ? 0 : 1
+  const originMTRef = positioner?.originMTRef
+  const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
+  const parentLayoutMTRef = useMainThreadRef<Partial<SheetLayoutRect> | null>(
+    null,
+  )
+  const bodyMTRef = useMainThreadRef<{
+    element: MainThread.Element | null
+    insets: SheetBodyProps['viewportInsets']
+    outer: SheetLayoutRect | null
+    before: number
+    after: number
+    applied: string
+  }>({
+    element: null,
+    insets: undefined,
+    outer: null,
+    before: 0,
+    after: 0,
+    applied: '',
+  })
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const viewportMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -78,12 +97,49 @@ export function useSheetSurfaceLayout({
   const animateAppearanceMT = animation.animateToMT
   const stopAppearanceMT = animation.stopAnimationMT
 
+  function updateBodyMT(start: number, size: number) {
+    'main thread'
+    const { element, outer, insets, before, after, applied } = bodyMTRef.current
+    if (!element || !outer || !insets || hasFitSnapPoint) return
+    const origin = originMTRef?.current
+    const left = horizontal ? start + before : outer.left - (origin?.left ?? 0)
+    const top = horizontal ? outer.top - (origin?.top ?? 0) : start + before
+    const width = horizontal ? Math.max(0, size - before - after) : outer.width
+    const height = horizontal
+      ? outer.height
+      : Math.max(0, size - before - after)
+    const offsets = resolveBodyLayout(
+      { left, top, width, height },
+      screenWidth,
+      screenHeight,
+      insets,
+    )
+    const key =
+      `${offsets.left}/${offsets.top}/${offsets.width}/${offsets.height}`
+    if (key === applied) return
+    bodyMTRef.current.applied = key
+    element.setStyleProperties({
+      left: `${offsets.left}px`,
+      top: `${offsets.top}px`,
+      width: `${offsets.width}px`,
+      height: `${offsets.height}px`,
+    })
+  }
+
   function updateSurfaceMT() {
     'main thread'
-    if (resolvedSide === 'left' || resolvedSide === 'right') return
     const motion = position.current
     if (!motion) return
     const value = Math.max(0, motion.get())
+    if (horizontal) {
+      const opened = Math.max(sheetSizeMTRef.current, maxSnapSize)
+      const extent = allowOverDrag ? value : Math.min(value, opened)
+      updateBodyMT(
+        resolvedSide === 'right' ? screenWidth - extent : extent - maxSnapSize,
+        maxSnapSize,
+      )
+      return
+    }
     const state = presence.current
     const entering = state === PresenceState.Entering
     const leaving = state === PresenceState.Leaving
@@ -99,37 +155,66 @@ export function useSheetSurfaceLayout({
       : 1
     const effectiveInset = isBottom ? appearance.inset * visibleFraction : 0
     const clipInset = effectiveInset * appearance.coverage
+    const surfaceTop = screenHeight - value - effectiveInset
+    // Keep a bounded panel's top inside the viewport without losing its gap.
+    const correction = isBottom
+      ? Math.min(height, Math.max(0, -surfaceTop)) * (1 - appearance.coverage)
+      : 0
+    const visibleHeight = height - correction
     clipMTRef.current?.setStyleProperties({ bottom: `${clipInset}px` })
-    if (useContentViewport) {
-      const surfaceTop = screenHeight - value - effectiveInset
-      // Keep the painted top inside the viewport while retaining the active bottom gap.
-      const correction = Math.min(height, Math.max(0, -surfaceTop))
-      const surfaceHeight = height - correction
-      const contentOffset = Math.max(
-        handleSize,
-        contentTop - surfaceTop - correction,
-      )
-      surfaceMTRef.current?.setStyleProperties({
-        top: `${clipInset - effectiveInset + correction}px`,
-        height: `${surfaceHeight}px`,
-      })
-      viewportMTRef.current?.setStyleProperties({
-        height: `${Math.max(0, surfaceHeight - contentOffset)}px`,
-      })
-      return
-    }
     surfaceMTRef.current?.setStyleProperties({
-      top: `${-(effectiveInset - clipInset)}px`,
-      height: `${Math.max(height, screenHeight * 1.5 * appearance.coverage)}px`,
+      top: `${clipInset - effectiveInset + correction}px`,
+      height: `${
+        Math.max(visibleHeight, screenHeight * 1.5 * appearance.coverage)
+      }px`,
     })
     if (!hasFitSnapPoint) {
+      const contentHeight = visibleHeight
+        + (Math.max(maxSnapSize, visibleHeight) - visibleHeight)
+          * appearance.coverage
       viewportMTRef.current?.setStyleProperties({
-        height: `${
-          height
-          + (Math.max(maxSnapSize, height) - height) * appearance.coverage
-        }px`,
+        height: `${contentHeight}px`,
       })
+      updateBodyMT(
+        isBottom ? surfaceTop + correction : value - contentHeight,
+        contentHeight,
+      )
     }
+  }
+
+  function measureBodyParentMT(rect?: Partial<SheetLayoutRect>) {
+    'main thread'
+    parentLayoutMTRef.current = rect ?? null
+  }
+
+  function measureBodyMT(
+    { left = 0, top = 0, width = 0, height = 0 }: Partial<SheetLayoutRect>,
+  ) {
+    'main thread'
+    const parent = parentLayoutMTRef.current
+    const before = horizontal
+      ? left - (parent?.left ?? left)
+      : top - (parent?.top ?? top)
+    const size = horizontal ? width : height
+    const parentSize = horizontal ? parent?.width : parent?.height
+    bodyMTRef.current.outer = { left, top, width, height }
+    bodyMTRef.current.before = before
+    bodyMTRef.current.after = parentSize === undefined
+      ? 0
+      : parentSize - before - size
+    updateSurfaceMT()
+  }
+
+  function setBodyMTRef(
+    element: MainThread.Element | null,
+    insets: SheetBodyProps['viewportInsets'],
+  ) {
+    'main thread'
+    const body = bodyMTRef.current
+    body.element = element
+    body.insets = insets
+    body.applied = ''
+    if (element) updateSurfaceMT()
   }
 
   useMotionValueRefEvent(position, 'change', updateSurfaceMT)
@@ -178,9 +263,8 @@ export function useSheetSurfaceLayout({
     screenHeight,
     maxSnapSize,
     hasFitSnapPoint,
-    useContentViewport,
-    contentTop,
-    handleSize,
+    screenWidth,
+    resolvedSide,
   ])
   useEffect(() => () => {
     runOnMainThread(() => {
@@ -207,5 +291,48 @@ export function useSheetSurfaceLayout({
     updateSurfaceMT()
   }
 
-  return { setClipMTRef, setSurfaceMTRef, setViewportMTRef }
+  return {
+    setClipMTRef,
+    setSurfaceMTRef,
+    setViewportMTRef,
+    measureBodyParentMT,
+    bodyContext: { enabled: !hasFitSnapPoint, setBodyMTRef, measureBodyMT },
+  }
+}
+
+function resolveBodyLayout(
+  rect: SheetLayoutRect,
+  viewportWidth: number,
+  viewportHeight: number,
+  insets: NonNullable<SheetBodyProps['viewportInsets']>,
+): SheetLayoutRect {
+  'main thread'
+  const left = viewportOverlap(insets.left, rect.left, rect.width)
+  const top = viewportOverlap(insets.top, rect.top, rect.height)
+  return {
+    left,
+    top,
+    width: rect.width - left
+      - viewportOverlap(
+        insets.right,
+        viewportWidth - rect.left - rect.width,
+        rect.width - left,
+      ),
+    height: rect.height - top
+      - viewportOverlap(
+        insets.bottom,
+        viewportHeight - rect.top - rect.height,
+        rect.height - top,
+      ),
+  }
+}
+
+function viewportOverlap(
+  inset: number | undefined,
+  distance: number,
+  size: number,
+) {
+  'main thread'
+  if (inset === undefined || !Number.isFinite(inset)) return 0
+  return Math.min(size, Math.max(0, Math.max(0, inset) - distance))
 }

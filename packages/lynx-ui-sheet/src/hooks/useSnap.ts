@@ -17,11 +17,16 @@ import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetPositionerDimensions } from '../context'
+import type { SheetLayoutRect, SheetPositionerDimensions } from '../context'
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
 import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
-import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
+import type {
+  SheetContentProps,
+  SheetRootProps,
+  SheetSide,
+  SheetTransition,
+} from '../types'
 import {
   clamp,
   findNearestSnap,
@@ -44,10 +49,7 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
-  detached?: boolean
-  bottomInset?: number
-  contentTopInset?: number
-  handleHeight?: number
+  panelLayout?: SheetContentProps['panelLayout']
   snapAnimation?: SheetTransition
   side?: SheetSide
   enableRTL?: boolean
@@ -71,10 +73,7 @@ export interface SnapOptions {
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
-  detached = false,
-  bottomInset = 0,
-  contentTopInset,
-  handleHeight,
+  panelLayout,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
   enableRTL = false,
@@ -320,17 +319,20 @@ export function useSnap({
     animateChanges: animateSurfaceChangesMTRef,
     presence: controller.presenceStateMTRef,
     resolvedSide,
-    detached,
-    bottomInset,
-    contentTopInset,
-    handleHeight,
+    panelLayout,
     screenHeight,
+    screenWidth,
+    positioner,
+    allowOverDrag,
+    sheetSizeMTRef,
     maxSnapSize,
     hasFitSnapPoint,
     initialSize: getTargetForSnap,
     initialSnap,
     snapAnimation,
   })
+
+  const measureBodyParentMT = surfaceLayout.measureBodyParentMT
 
   // Only local viewports reconcile resizing; the legacy path remains unchanged.
   useEffect(() => {
@@ -420,8 +422,8 @@ export function useSnap({
 
   function handleSheetLayoutChangeMT(
     e: {
-      detail?: { height?: number, width?: number }
-      params?: { height?: number, width?: number }
+      detail?: Partial<SheetLayoutRect>
+      params?: Partial<SheetLayoutRect>
     },
     allowEmptyFit = false,
   ) {
@@ -429,6 +431,7 @@ export function useSnap({
 
     const previousOffsets = getResolvedSnapOffsets()
     const previousFit = previousOffsets[currentSnapIndex.current]
+    measureBodyParentMT(e.detail ?? e.params)
     const bodySize = getMainAxisLayoutSize(resolvedSide, e)
     bodySizeMTRef.current = bodySize
     const layoutSize = !hasFitSnapPoint && !isHorizontalSide(resolvedSide)

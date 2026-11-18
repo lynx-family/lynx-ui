@@ -59,10 +59,10 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 }))
 
 function setup(
-  detached = true,
-  bottomInset = 8,
+  bounded = true,
+  bottomGap = 8,
   hasFitSnapPoint = false,
-  contentTopInset?: number,
+  resolvedSide: 'bottom' | 'right' | 'left' | 'top' = 'bottom',
 ) {
   const position = { current: createMotionValue(400) }
   const presence = { current: PresenceState.Entered }
@@ -79,7 +79,7 @@ function setup(
   const viewport = {
     setStyleProperties: (style: object) => Object.assign(viewportStyle, style),
   } as unknown as MainThread.Element
-  function render(nextDetached = detached, nextInset = bottomInset) {
+  function render(nextBounded = bounded, nextGap = bottomGap) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
     hooks.effects = []
@@ -88,12 +88,12 @@ function setup(
       position,
       presence,
       animateChanges,
-      resolvedSide: 'bottom',
-      detached: nextDetached,
-      bottomInset: nextInset,
-      contentTopInset,
-      handleHeight: 24,
+      resolvedSide,
+      panelLayout: nextBounded ? { bottomGap: nextGap } : undefined,
       screenHeight: 1000,
+      screenWidth: 1000,
+      allowOverDrag: false,
+      sheetSizeMTRef: { current: 800 },
       maxSnapSize: 800,
       hasFitSnapPoint,
       initialSize: () => 400,
@@ -143,12 +143,6 @@ describe('Sheet surface geometry', () => {
     expect(surfaceStyle.height).toBe('1500px')
   })
 
-  it('clips attached background coverage before the external bottom gap', () => {
-    const { clipStyle, surfaceStyle } = setup(false, 8)
-    expect(clipStyle.bottom).toBe('8px')
-    expect(surfaceStyle).toEqual({ top: '0px', height: '1500px' })
-  })
-
   it('keeps the external gap at a smaller snap and through rubber banding', () => {
     const { position, surfaceStyle, viewportStyle } = setup()
     expect(surfaceStyle).toEqual({ top: '-8px', height: '400px' })
@@ -161,29 +155,80 @@ describe('Sheet surface geometry', () => {
     expect(surfaceStyle.height).toBe('300px')
   })
 
-  it('anchors the content below the safe top while the handle moves and the gap stays visible', () => {
+  it('keeps the bounded panel top inside the viewport at the maximum drag even without a body', () => {
     const { position, render, animateChanges, surfaceStyle, viewportStyle } =
-      setup(true, 8, false, 82)
-    position.current.set(950)
-    expect(surfaceStyle).toEqual({ top: '-8px', height: '950px' })
-    expect(viewportStyle.height).toBe('910px')
-
+      setup()
     position.current.set(1000)
     expect(surfaceStyle).toEqual({ top: '0px', height: '992px' })
-    expect(viewportStyle.height).toBe('910px')
-
+    expect(viewportStyle.height).toBe('992px')
     animateChanges.current = false
     render(true, 0)
-    expect(surfaceStyle).toEqual({ top: '0px', height: '1000px' })
-    expect(viewportStyle.height).toBe('918px')
+    expect(surfaceStyle.height).toBe('1000px')
   })
 
-  it('restores the ordinary handle height when the drag reverses below the safe top', () => {
-    const { position, viewportStyle } = setup(true, 8, false, 82)
-    position.current.set(1000)
+  it('protects the body while the handle moves, without opting into panel layout', () => {
+    const { position, bodyContext, measureBodyParentMT } = setup(false)
+    const write = vi.fn()
+    bodyContext.setBodyMTRef(
+      { setStyleProperties: write } as unknown as MainThread.Element,
+      { top: 82 },
+    )
+    measureBodyParentMT({ left: 0, top: 600, width: 1000, height: 800 })
+    bodyContext.measureBodyMT({ left: 0, top: 624, width: 1000, height: 776 })
+    expect(write).toHaveBeenLastCalledWith({
+      left: '0px',
+      top: '0px',
+      width: '1000px',
+      height: '776px',
+    })
+    position.current.set(950)
+    expect(write).toHaveBeenLastCalledWith({
+      left: '0px',
+      top: '8px',
+      width: '1000px',
+      height: '918px',
+    })
     position.current.set(800)
-    expect(viewportStyle.height).toBe('776px')
+    expect(write).toHaveBeenLastCalledWith({
+      left: '0px',
+      top: '0px',
+      width: '1000px',
+      height: '776px',
+    })
   })
+
+  it.each(['right', 'left'] as const)(
+    'protects both horizontal edges of a %s sheet',
+    side => {
+      const { position, bodyContext, measureBodyParentMT } = setup(
+        false,
+        0,
+        false,
+        side,
+      )
+      const write = vi.fn()
+      const left = side === 'right' ? 600 : -400
+      bodyContext.setBodyMTRef(
+        { setStyleProperties: write } as unknown as MainThread.Element,
+        { top: 20, left: 250, right: 250 },
+      )
+      measureBodyParentMT({ left, top: 0, width: 800, height: 1000 })
+      bodyContext.measureBodyMT({ left, top: 0, width: 800, height: 1000 })
+      expect(write).toHaveBeenLastCalledWith({
+        left: side === 'right' ? '0px' : '650px',
+        top: '20px',
+        width: '150px',
+        height: '980px',
+      })
+      position.current.set(800)
+      expect(write).toHaveBeenLastCalledWith({
+        left: side === 'right' ? '50px' : '250px',
+        top: '20px',
+        width: '500px',
+        height: '980px',
+      })
+    },
+  )
 
   it('allows native refs to attach before the motion value is initialized', () => {
     const { position, setSurfaceMTRef } = setup()

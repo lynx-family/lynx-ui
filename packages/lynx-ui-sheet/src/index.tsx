@@ -4,6 +4,7 @@
 
 export { SheetRoot } from './SheetRoot'
 export { SheetBackdrop } from './SheetBackdrop'
+export { SheetBody } from './SheetBody'
 export { SheetContent } from './SheetContent'
 export { SheetNestedScrollContent } from './SheetNestedScrollContent'
 export { SheetHandle } from './SheetHandle'
@@ -14,6 +15,7 @@ export { useSheetScrollGesture, useSnap } from './hooks'
 
 export type {
   SheetBackdropProps,
+  SheetBodyProps,
   SheetContentProps,
   SheetGestureConfig,
   SheetNestedScrollContentProps,

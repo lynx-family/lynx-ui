@@ -11,6 +11,7 @@ import type { SheetSurfaceProps } from './index'
 vi.mock('../context', () => ({
   SheetDragContext: { Provider: 'drag-provider' },
   SheetFooterContext: { Provider: 'footer-provider' },
+  SheetBodyContext: { Provider: 'body-provider' },
 }))
 
 vi.stubGlobal('React', {
@@ -49,6 +50,11 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       registerFooter: vi.fn(),
       unregisterFooter: vi.fn(),
     },
+    bodyContext: {
+      enabled: true,
+      setBodyMTRef: vi.fn(),
+      measureBodyMT: vi.fn(),
+    },
     setSheetMTRef: vi.fn(),
     setClipMTRef: vi.fn(),
     setSurfaceMTRef: vi.fn(),
@@ -59,10 +65,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
   }) as unknown as { props: ViewProps }
   const movement = surface.props.children as { props: ViewProps }
   const painted = movement.props.children as { props: ViewProps }
-  const [viewport, handle] = painted.props.children as [
-    { props: ViewProps },
-    { props: ViewProps } | false,
-  ]
+  const viewport = painted.props.children as { props: ViewProps }
   const panel = viewport.props.children as { props: ViewProps }
   return {
     surface,
@@ -70,7 +73,6 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
     painted,
     viewport,
     panel,
-    handle,
     measure,
     gesture,
   }
@@ -138,38 +140,22 @@ describe('Sheet surface composition', () => {
     expect(panel.props.style.width).toBe('300px')
   })
 
-  it('shares the native pan between the handle and the bottom-anchored viewport', () => {
-    const handle = { type: 'grabber' }
-    const result = renderSurface({
-      detached: true,
-      contentViewport: { topInset: 56, handle, handleHeight: 24 },
-    })
-    expect(result.painted.props['main-thread:gesture']).toBe(result.gesture)
-    expect(result.panel.props['main-thread:gesture']).toBeUndefined()
-    expect(result.viewport.props.style).toMatchObject({
-      position: 'absolute',
-      bottom: 0,
-    })
-    expect(result.handle && result.handle.props.style.height).toBe('24px')
-    expect(result.painted.props).not.toHaveProperty('contentViewport')
-  })
-
   it('keeps handle-only dragging off the panel', () => {
     const { panel } = renderSurface({ handleOnly: true })
     expect(panel.props['main-thread:gesture']).toBeUndefined()
   })
 })
 
-it('keeps one content tree when switching detached coverage', () => {
+it('keeps the content layout and gesture when only panelLayout is set', () => {
   const child = { type: 'scroll-view' }
   const attached = renderSurface({ children: child })
   const floating = renderSurface({
-    detached: true,
-    bottomInset: 8,
+    panelLayout: { bottomGap: 8 },
     children: child,
   })
-  expect(floating.surface.props).not.toHaveProperty('detached')
-  expect(floating.painted.props).not.toHaveProperty('bottomInset')
+  expect(floating.painted.props).not.toHaveProperty('panelLayout')
+  expect(floating.panel.props['main-thread:gesture']).toBe(floating.gesture)
+  expect(floating.panel.props.style).toEqual(attached.panel.props.style)
   expect(floating.painted.props.style.height).toBe(
     attached.painted.props.style.height,
   )

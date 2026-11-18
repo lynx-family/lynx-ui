@@ -95,6 +95,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         maxSnapSize={snap.maxSnapSize}
         positioner={positioner}
         footerContext={snap.footerContext}
+        bodyContext={snap.bodyContext}
         setClipMTRef={snap.setClipMTRef}
         setSurfaceMTRef={snap.setSurfaceMTRef}
         setViewportMTRef={snap.setViewportMTRef}
