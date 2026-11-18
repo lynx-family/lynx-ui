@@ -11,7 +11,12 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
+import type {
+  SheetBodyProps,
+  SheetRootProps,
+  SheetSide,
+  SheetTransition,
+} from '../types'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
@@ -77,7 +82,28 @@ export interface SheetFooterContextValue {
 export interface SheetPositionerDimensions {
   width: number
   height: number
+  originMTRef?: MainThreadRef<{ left: number, top: number }>
 }
+
+export interface SheetLayoutRect {
+  left: number
+  top: number
+  width: number
+  height: number
+}
+
+export interface SheetBodyContextValue {
+  enabled: boolean
+  setBodyMTRef: (
+    element: MainThread.Element | null,
+    insets: SheetBodyProps['viewportInsets'],
+  ) => void
+  measureBodyMT: (rect: Partial<SheetLayoutRect>) => void
+}
+
+export const SheetBodyContext = createContext<SheetBodyContextValue | null>(
+  null,
+)
 
 export const SheetPositionerContext = createContext<
   SheetPositionerDimensions | null

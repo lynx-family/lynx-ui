@@ -90,8 +90,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            detached={!panel.fullscreen}
-            bottomInset={panel.fullscreen ? 0 : 8}
+            panelLayout={{ bottomGap: panel.fullscreen ? 0 : 8 }}
             className={clsx(
               'sheet-content',
               !panel.fullscreen && 'surface-card',

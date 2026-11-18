@@ -56,18 +56,15 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Resistance geometry is sampled when Sheet acquires a drag. A positioner resize changes the live handoff and release targets without repeatedly remapping an existing stretch. A new ownership segment samples the current geometry; imperative position changes rebase the drag.
 - Keep enabled-rubber gesture regressions: equivalent event partitions, monotonic over-drag, stationary holds, reversals, interrupted stretch, and both touch-completion orders. Mock the runtime, not the resistance configuration.
 
-## Surface Coverage Rules
+## Panel and Body Layout
 
-- Attached bottom sheets (`detached={false}`, the default) extend their painted background beyond the viewport to cover upward rubber-banding.
-- Use `detached` for a bounded floating bottom sheet. Its painted lower edge stays anchored during snapping and rubber-banding; the library resizes coverage and the numeric-snap content viewport on the main thread.
-- Set `bottomInset` for an external gap below the panel. It defaults to zero, is independent of `detached`, and excludes content padding and safe areas. It does not change numeric or percentage snap sizes.
-- These two options apply only to `side="bottom"`. Other sides retain their existing behavior.
-- Switching `detached` and `bottomInset` updates the current appearance using `snapAnimation`, without remounting children or replacing the coordinated native scroll node. Appearance changes after an immediate snap are immediate too.
-- Put background, corners, width, and companion width transitions on `className` / `style`. The private movement transform and the surface coverage height belong to Sheet. Previous vertical `style.top` positioning should migrate to `bottomInset`.
-- For imperative animations, pass `useMainThreadRef<MainThread.Element | null>(null)` as `main-thread:surfaceRef` to either content component. The ref points at the same painted view as `className` / `style` and clears when the view unmounts. See the `SurfaceRef` example for starting a Motion width animation from `onSnapStart`. Let the animation own width while it runs and keep movement, coverage, inset positioning, and clipping under Sheet's control.
-- Put content padding, intrinsic fit sizing, and layout on `innerClassName` / `innerStyle`. Intrinsic fit measurement is independent of the animated viewport height.
-- A floating card does not require a nonzero inset: `detached` selects bounded coverage, while `bottomInset` selects placement.
-- See the `Attached`, `Floating`, `FloatingFit`, and `Transition` entries under `apps/examples/Sheet` for extended coverage, independent gap/mode changes, intrinsic sizing, and release-triggered fullscreen styling.
+- Omit `panelLayout` to retain extended background coverage and the original content layout.
+- Set `panelLayout={{ bottomGap: 8 }}` for a bounded bottom panel. The gap is outside the panel and does not count toward a snap size. An empty `panelLayout` opts into bounded coverage with a zero gap.
+- Updating `bottomGap` uses `snapAnimation`. Panel layout works with or without `SheetBody`.
+- Place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` are physical edges in logical pixels relative to the Sheet viewport. Use `SheetPositioner` when the host is a local pane.
+- Use one `SheetBody` per content element. Explicit snaps let the body occupy the remaining space in the content layout. Fit sheets keep the body's intrinsic layout.
+- Bind `scrollGesture` to the same native scroll view inside the body. Moving that body requires no extra pan gesture.
+- Use surface `className` and `style` for paint and width. Use `innerClassName` and `innerStyle` for the child layout.
 
 ## Footer Rules
 
@@ -93,7 +90,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
   and retargets running animations without another snap-start notification.
   Drag positions and native scroll nodes stay intact. Intrinsic `fit` sizing
   still follows content layout; it does not require a positioner query.
-- Positioner placement, the animated `bottomInset` gap relative to its bottom
+- Positioner placement, the animated `panelLayout.bottomGap` relative to its bottom
   edge, and content safe-area padding are separate layout concerns.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
 - Attached numeric-snap sheets use `maxSnapSize`, the highest resolved `snapPoints` value, as their stable content size. Detached bottom sheets resize the numeric-snap viewport to the visible panel. Pure `'fit'` snap point sheets stay content-driven.

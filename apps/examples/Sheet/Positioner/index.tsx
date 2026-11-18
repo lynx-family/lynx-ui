@@ -7,6 +7,7 @@ import { root, useRef, useState } from '@lynx-js/react'
 import {
   Button,
   SheetBackdrop,
+  SheetBody,
   SheetContent,
   SheetHandle,
   SheetNestedScrollContent,
@@ -98,32 +99,46 @@ function App() {
             <SheetBackdrop className='backdrop' />
             {nested
               ? (
-                <SheetNestedScrollContent className='surface' bottomInset={8}>
+                <SheetNestedScrollContent
+                  className='surface'
+                  panelLayout={{ bottomGap: 8 }}
+                >
                   {({ scrollGesture }) => (
-                    <scroll-view
-                      className='scroll'
-                      scroll-orientation={side === 'top' || side === 'bottom'
-                        ? 'vertical'
-                        : 'horizontal'}
-                      main-thread:gesture={scrollGesture}
-                      bounces={true}
-                    >
-                      {Array.from(
-                        { length: 16 },
-                        (_, index) => (
-                          <view className='row' key={index}>
-                            <text className='row-label'>
-                              {`Item ${index + 1}`}
-                            </text>
-                          </view>
-                        ),
-                      )}
-                    </scroll-view>
+                    <>
+                      <SheetHandle className='handle' />
+                      <SheetBody
+                        viewportInsets={{ top: 64, left: 32, right: 32 }}
+                      >
+                        <scroll-view
+                          className='scroll'
+                          scroll-orientation={side === 'top'
+                              || side === 'bottom'
+                            ? 'vertical'
+                            : 'horizontal'}
+                          main-thread:gesture={scrollGesture}
+                          bounces={true}
+                        >
+                          {Array.from(
+                            { length: 16 },
+                            (_, index) => (
+                              <view className='row' key={index}>
+                                <text className='row-label'>
+                                  {`Item ${index + 1}`}
+                                </text>
+                              </view>
+                            ),
+                          )}
+                        </scroll-view>
+                      </SheetBody>
+                    </>
                   )}
                 </SheetNestedScrollContent>
               )
               : (
-                <SheetContent className='surface' bottomInset={8}>
+                <SheetContent
+                  className='surface'
+                  panelLayout={{ bottomGap: 8 }}
+                >
                   <SheetHandle className='handle' />
                   <view className='panel'>
                     <text className='panel-label'>Local snap points</text>

@@ -3,6 +3,4 @@
 "@lynx-example/lynx-ui-sheet": patch
 ---
 
-Add detached bottom-sheet surfaces and configurable external bottom insets while preserving extended background coverage for attached sheets. Surface styles support width transitions independently of the private movement layer.
-
-Expose `main-thread:surfaceRef` for custom main-thread appearance animations.
+Add an opt-in bounded bottom panel with an external bottom gap. Keep background coverage and clipping consistent during snapping and rubber-banding.
