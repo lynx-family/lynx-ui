@@ -66,8 +66,6 @@ function App() {
       left: `${(viewport.width - width) / 2}px`,
       'border-top-left-radius': radius,
       'border-top-right-radius': radius,
-      'border-bottom-left-radius': radius,
-      'border-bottom-right-radius': radius,
     })
   }
 
@@ -159,7 +157,10 @@ function App() {
               main-thread:surfaceRef={surfaceRef}
               className='sheet-surface'
               innerClassName='sheet-layout'
-              panelLayout={{ bottomGap: fullscreen ? 0 : 8 }}
+              panelLayout={{
+                bottomGap: fullscreen ? 0 : 8,
+                bottomCornerRadius: fullscreen ? 0 : 24,
+              }}
               style={{
                 width: `${floatingWidth}px`,
                 left: `${(viewport.width - floatingWidth) / 2}px`,

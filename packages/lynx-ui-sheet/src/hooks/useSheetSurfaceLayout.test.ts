@@ -70,6 +70,12 @@ function setup(
   const clipStyle: Record<string, string> = {}
   const surfaceStyle: Record<string, string> = {}
   const viewportStyle: Record<string, string> = {}
+  const movingStyle: Record<string, string> = {}
+  const movingSurfaceMTRef = {
+    current: {
+      setStyleProperties: (style: object) => Object.assign(movingStyle, style),
+    } as unknown as MainThread.Element,
+  }
   const clip = {
     setStyleProperties: (style: object) => Object.assign(clipStyle, style),
   } as unknown as MainThread.Element
@@ -79,7 +85,11 @@ function setup(
   const viewport = {
     setStyleProperties: (style: object) => Object.assign(viewportStyle, style),
   } as unknown as MainThread.Element
-  function render(nextBounded = bounded, nextGap = bottomGap) {
+  function render(
+    nextBounded = bounded,
+    nextGap = bottomGap,
+    bottomCornerRadius?: number,
+  ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
     hooks.effects = []
@@ -89,11 +99,14 @@ function setup(
       presence,
       animateChanges,
       resolvedSide,
-      panelLayout: nextBounded ? { bottomGap: nextGap } : undefined,
+      panelLayout: nextBounded
+        ? { bottomGap: nextGap, bottomCornerRadius }
+        : undefined,
       screenHeight: 1000,
       screenWidth: 1000,
       allowOverDrag: false,
       sheetSizeMTRef: { current: 800 },
+      movingSurfaceMTRef,
       maxSnapSize: 800,
       hasFitSnapPoint,
       initialSize: () => 400,
@@ -116,6 +129,7 @@ function setup(
     clipStyle,
     surfaceStyle,
     viewportStyle,
+    movingStyle,
   }
 }
 
@@ -316,6 +330,93 @@ describe('Sheet surface geometry', () => {
   it('supports a bounded surface with no external gap', () => {
     expect(setup(true, 0).surfaceStyle).toEqual({ top: '0px', height: '400px' })
   })
+
+  it('moves and clips a rounded panel without resizing its layout', () => {
+    const {
+      render,
+      surfaceStyle,
+      viewportStyle,
+      clipStyle,
+      movingStyle,
+      position,
+      animateChanges,
+    } = setup()
+    animateChanges.current = false
+    render(true, 8, 24)
+    expect(surfaceStyle).toEqual({
+      top: '0px',
+      height: '1500px',
+      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 24px 24px)',
+    })
+    expect(clipStyle.bottom).toBe('8px')
+    expect(viewportStyle.height).toBe('800px')
+    position.current.set(1000)
+    expect(movingStyle.transform).toBe('translate(0px, -992px)')
+    expect(surfaceStyle.height).toBe('1500px')
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 508px 0px round 0px 0px 24px 24px)',
+    )
+    expect(viewportStyle.height).toBe('800px')
+    render(true, 0, 0)
+    expect(clipStyle.bottom).toBe('0px')
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 500px 0px round 0px 0px 0px 0px)',
+    )
+    render(true, 0)
+    expect(surfaceStyle['clip-path']).toBe('none')
+    expect(surfaceStyle.height).toBe('1000px')
+  })
+
+  it('interpolates the clipped radius and gap together during interruption', () => {
+    const { render, clipStyle, surfaceStyle, animateChanges } = setup()
+    animateChanges.current = false
+    render(true, 8, 24)
+    animateChanges.current = true
+    render(true, 0, 0)
+    vi.advanceTimersByTime(96)
+    const gap = Number.parseFloat(clipStyle.bottom)
+    const mask = surfaceStyle['clip-path']!
+    const radius = Number.parseFloat(mask.split(' ').pop()!)
+    expect(gap).toBeGreaterThan(0)
+    expect(gap).toBeLessThan(8)
+    expect(radius).toBeCloseTo(gap * 3)
+    render(true, 8, 24)
+    expect(surfaceStyle['clip-path']).toBe(mask)
+    vi.advanceTimersByTime(300)
+    expect(clipStyle.bottom).toBe('8px')
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 1100px 0px round 0px 0px 24px 24px)',
+    )
+  })
+
+  it.each([false, true])(
+    'only writes changed surface geometry with bounded layout %s',
+    bounded => {
+      const layout = setup(bounded, 0)
+      const writeClip = vi.fn()
+      const writeSurface = vi.fn()
+      const writeViewport = vi.fn()
+      layout.setClipMTRef(
+        { setStyleProperties: writeClip } as unknown as MainThread.Element,
+      )
+      layout.setSurfaceMTRef(
+        { setStyleProperties: writeSurface } as unknown as MainThread.Element,
+      )
+      layout.setViewportMTRef(
+        { setStyleProperties: writeViewport } as unknown as MainThread.Element,
+      )
+      writeClip.mockClear()
+      writeSurface.mockClear()
+      writeViewport.mockClear()
+
+      layout.position.current.set(450)
+
+      expect(writeClip).not.toHaveBeenCalled()
+      const expected = bounded ? [[{ height: '450px' }]] : []
+      expect(writeSurface.mock.calls).toEqual(expected)
+      expect(writeViewport.mock.calls).toEqual(expected)
+    },
+  )
 
   it('does not constrain intrinsic fit measurement with the animated viewport', () => {
     const { position, viewportStyle } = setup(true, 8, true)

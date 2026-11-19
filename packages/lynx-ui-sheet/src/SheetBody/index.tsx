@@ -21,8 +21,11 @@ export function SheetBody(
   const context = useContext(SheetBodyContext)
   const elementMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const enabled = Boolean(context?.enabled && viewportInsets)
+  const intrinsic = enabled && context?.intrinsic === true
   const setBodyMTRef = context?.setBodyMTRef
+  const setBodySlotMTRef = context?.setBodySlotMTRef
   const measureBodyMT = context?.measureBodyMT
+  const measureIntrinsicBodyMT = context?.measureIntrinsicBodyMT
   const top = viewportInsets?.top
   const right = viewportInsets?.right
   const bottom = viewportInsets?.bottom
@@ -40,6 +43,12 @@ export function SheetBody(
     if (rect?.width >= 0 && rect.height >= 0) measureBodyMT?.(rect)
   }
 
+  function onIntrinsicLayoutMT(event: MainThread.LayoutChangeEvent) {
+    'main thread'
+    const rect = event.detail ?? event.params
+    if (rect?.width >= 0 && rect.height >= 0) measureIntrinsicBodyMT?.(rect)
+  }
+
   useEffect(() => {
     if (!enabled || !setBodyMTRef) return
     runOnMainThread(() => {
@@ -49,6 +58,35 @@ export function SheetBody(
       }
     })()
   }, [enabled, setBodyMTRef, top, right, bottom, left, elementMTRef])
+
+  if (intrinsic) {
+    return (
+      <view
+        style={{ position: 'relative', height: 0, flexShrink: 0 }}
+        main-thread:ref={setBodySlotMTRef}
+        main-thread:bindlayoutchange={onLayoutMT}
+        event-through={false}
+      >
+        <view
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            overflow: 'hidden',
+          }}
+          main-thread:ref={setBodyElementMT}
+        >
+          <view
+            style={{ width: '100%', flexShrink: 0 }}
+            main-thread:bindlayoutchange={onIntrinsicLayoutMT}
+          >
+            <view className={className} style={style}>{children}</view>
+          </view>
+        </view>
+      </view>
+    )
+  }
 
   return (
     <view

@@ -1941,7 +1941,7 @@ The main content of the Sheet.
   },
   {
     "name": "panelLayout",
-    "type": "{bottomGap?: number}",
+    "type": "{bottomCornerRadius?: number, bottomGap?: number}",
     "summary": [
       {
         "kind": "text",
@@ -2069,7 +2069,23 @@ A body region that can stay inside the local Sheet viewport as the panel moves.
     "summary": [
       {
         "kind": "text",
-        "text": "Minimum distance from each supplied physical edge of the local viewport,\nin logical pixels. Place the body in the Sheet flex content layout, alongside\nany handle that should travel with the panel. Supply at most one body per\nSheetContent or SheetNestedScrollContent. Viewport constraints apply to\nexplicit snap sizes; fit sheets keep the body's intrinsic layout."
+        "text": "Minimum distance from each supplied physical edge of the local viewport,\nin logical pixels. Place the body in the Sheet flex content layout, alongside\nany handle that should travel with the panel. Supply at most one body per\nSheetContent or SheetNestedScrollContent. Bottom sheets with a "
+      },
+      {
+        "kind": "code",
+        "text": "`fit`"
+      },
+      {
+        "kind": "text",
+        "text": " snap\nmeasure the body at its available width, then constrain its visible area\nindependently of the measured height. Use intrinsically sized body content\nfor "
+      },
+      {
+        "kind": "code",
+        "text": "`fit`"
+      },
+      {
+        "kind": "text",
+        "text": ". Other sheet sides support viewport insets with explicit snaps."
       }
     ],
     "summary_zh": [],
@@ -2392,7 +2408,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
   },
   {
     "name": "panelLayout",
-    "type": "{bottomGap?: number}",
+    "type": "{bottomCornerRadius?: number, bottomGap?: number}",
     "summary": [
       {
         "kind": "text",

@@ -31,7 +31,7 @@ This directory contains examples for the Sheet component.
 | Attached background | Attached | Pull past 75%; the lower background continues to cover the viewport. |
 | Floating with or without a gap | Floating | Toggle 0px/8px independently of coverage; the requested panel height does not include the external gap. |
 | Live surface changes | Floating | Scroll, then change coverage; the same native scroll node and content remain mounted. |
-| Intrinsic height | FloatingFit | Toggle more detail; the panel fits its content while keeping the external gap. |
+| Intrinsic height and safe edges | FloatingFit | Toggle more detail to resize the fitted panel. Expand and return to Fit to see how the top and right safe edges affect the same body. |
 | Fullscreen appearance | Transition | Release at 100% or use Fullscreen; 70% remains floating. Close and reopen to restore the initial appearance. |
 | Immediate appearance | Transition | Use Instant fullscreen; both the snap and companion appearance update without animation. |
 | Same-finger handoff | GestureScrollView / Transition | Drag up to the maximum and continue scrolling; reverse to scroll to the start before collapsing. |
