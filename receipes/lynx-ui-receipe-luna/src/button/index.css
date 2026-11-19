@@ -1,0 +1,43 @@
+/* Copyright 2026 The Lynx Authors. All rights reserved.
+ * Licensed under the Apache License Version 2.0 that can be found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.lynx-ui-receipe-luna__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+}
+
+.lynx-ui-receipe-luna__button--solid {
+  background-color: var(--primary);
+}
+
+.lynx-ui-receipe-luna__button--soft {
+  background-color: var(--secondary);
+}
+
+.lynx-ui-receipe-luna__button-label--solid,
+.lynx-ui-receipe-luna__button-label--soft {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lynx-ui-receipe-luna__button-label--solid {
+  color: var(--primary-content);
+}
+
+.lynx-ui-receipe-luna__button-label--soft {
+  color: var(--secondary-content);
+}
+
+.lynx-ui-receipe-luna__button.ui-active {
+  opacity: 0.8;
+}
+
+.lynx-ui-receipe-luna__button.ui-disabled {
+  opacity: 0.5;
+}

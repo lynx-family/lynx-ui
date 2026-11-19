@@ -100,7 +100,7 @@ function makeNewComponent(componentName: string, _sourceFiles?: any[]) {
   // Define paths
   const newPackagePath = path.join(
     __dirname,
-    '../../packages',
+    process.argv.includes('--recipe') ? '../../receipes' : '../../packages',
     `lynx-ui-${componentName.toLowerCase()}`,
   )
   const realComponentName = componentName.toLowerCase()
@@ -442,6 +442,7 @@ Usage: node tools/makeNewComponent/index.js [options]
 Options:
   --help                    Show this help message.
   --create <ComponentName>  Create a new component package.
+  --recipe                  Place the created package under receipes/.
   --example <ComponentName> Create a new example for a component.
   --merge-only              Merge the template with all existing component packages.
   Example: tsx tools/make-new-component/index.ts --create Button

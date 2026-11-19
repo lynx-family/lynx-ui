@@ -51,8 +51,16 @@ export function inspectPackageReadmes(root) {
 }
 
 function main() {
-  const { packageDirectories, missingReadmes } = inspectPackageReadmes(
-    packagesRoot,
+  const roots = [packagesRoot, path.join(repoRoot, 'receipes')]
+    .filter(root => fs.existsSync(root))
+  const results = roots.map(root => inspectPackageReadmes(root))
+  const packageDirectories = results.flatMap(result =>
+    result.packageDirectories
+  )
+  const missingReadmes = results.flatMap((result, index) =>
+    result.missingReadmes.map(name =>
+      path.relative(repoRoot, path.join(roots[index], name))
+    )
   )
 
   if (missingReadmes.length === 0) {
@@ -63,12 +71,12 @@ function main() {
   }
 
   console.error(
-    'Every package directory under packages/ must contain README_zh.md.',
+    'Every component and recipe package must contain README_zh.md.',
   )
   console.error('Missing Chinese README files:')
 
   for (const packageDirectory of missingReadmes) {
-    console.error(`- packages/${packageDirectory}/README_zh.md`)
+    console.error(`- ${packageDirectory}/README_zh.md`)
   }
 
   process.exitCode = 1

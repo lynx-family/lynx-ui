@@ -90,13 +90,15 @@ export function checkCoverage({ cwd = repoRoot, ref, releaseRef, since } = {}) {
     ref,
     '--',
     'packages',
+    'receipes',
     'apps/examples',
     'luna/packages',
   ]).split('\0').filter(Boolean)
   const groups = new Map()
   for (const file of files) {
-    const match = /^((?:packages|apps\/examples|luna\/packages)\/[^/]+)\/(.+)$/u
-      .exec(file)
+    const match =
+      /^((?:packages|receipes|apps\/examples|luna\/packages)\/[^/]+)\/(.+)$/u
+        .exec(file)
     if (!match || !isReleaseFile(match[2])) {
       continue
     }

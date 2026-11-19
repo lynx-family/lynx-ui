@@ -23,6 +23,21 @@ export interface ApiReferenceConfig {
 export const apiReferenceConfig: Readonly<
   Record<string, ApiReferenceConfig>
 > = {
+  'lynx-ui-receipe-luna': {
+    parts: [
+      'Theme',
+      'Box',
+      'Flex',
+      'Row',
+      'Column',
+      'Grid',
+      'Container',
+      'Section',
+      'Button',
+      'Switch',
+    ],
+    supportingTypes: ['LayoutProps', 'Space'],
+  },
   'lynx-ui-view-pager': {
     parts: ['ViewPager'],
     refs: ['ViewPagerRef'],

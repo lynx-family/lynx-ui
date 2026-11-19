@@ -2,8 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { existsSync, readFileSync } from 'node:fs'
+import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import ts from 'typescript'
@@ -14,14 +14,12 @@ import {
   collectPublicRuntimeExportNames,
   collectPublicTypeExportNames,
 } from './runtime-exports'
+import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
 
 const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), '../..')
-const packagesRoot = join(repositoryRoot, 'packages')
-const documentedPackageNames = readdirSync(packagesRoot)
-  .filter(packageName =>
-    existsSync(join(packagesRoot, packageName, 'docs/APIReference.mdx'))
-  )
-  .sort()
+const documentedPackages = getComponentPackageDirectories(repositoryRoot)
+  .filter(packageRoot => existsSync(join(packageRoot, 'docs/APIReference.mdx')))
+  .map(packageRoot => ({ packageName: basename(packageRoot), packageRoot }))
 
 function getPackageEntryPoint(packageRoot: string): string {
   const entryPoint = ['index.tsx', 'index.ts']
@@ -73,14 +71,13 @@ function collectDocumentedEntityNames(filePath: string): Set<string> {
 describe('apiReferenceConfig', () => {
   it('configures every package with a generated API reference', () => {
     expect(Object.keys(apiReferenceConfig).sort()).toEqual(
-      documentedPackageNames,
+      documentedPackages.map(({ packageName }) => packageName).sort(),
     )
   })
 
-  it.each(documentedPackageNames)(
-    'lists every documented runtime part for %s',
-    packageName => {
-      const packageRoot = join(repositoryRoot, 'packages', packageName)
+  it.each(documentedPackages)(
+    'lists every documented runtime part for $packageName',
+    ({ packageName, packageRoot }) => {
       const runtimeExports = collectPublicRuntimeExportNames(
         getPackageEntryPoint(packageRoot),
       )
@@ -97,11 +94,12 @@ describe('apiReferenceConfig', () => {
     },
   )
 
-  it.each(Object.entries(apiReferenceConfig))(
-    'only configures documented entities for %s',
-    (packageName, config) => {
+  it.each(documentedPackages)(
+    'only configures documented entities for $packageName',
+    ({ packageName, packageRoot }) => {
+      const config = apiReferenceConfig[packageName]
       const documentedEntities = collectDocumentedEntityNames(
-        join(packagesRoot, packageName, 'src/types/index.docs.ts'),
+        join(packageRoot, 'src/types/index.docs.ts'),
       )
       const configuredEntities = [
         ...config.parts.map(part => `${part}Props`),
@@ -117,10 +115,9 @@ describe('apiReferenceConfig', () => {
     },
   )
 
-  it.each(documentedPackageNames)(
-    'accounts for every public type exported by %s',
-    packageName => {
-      const packageRoot = join(packagesRoot, packageName)
+  it.each(documentedPackages)(
+    'accounts for every public type exported by $packageName',
+    ({ packageName, packageRoot }) => {
       const publicTypeExports = collectPublicTypeExportNames(
         getPackageEntryPoint(packageRoot),
       )

@@ -109,7 +109,7 @@ jobs:
         if: inputs.upload-package-artifacts
         run: |
           PACKAGE_ARTIFACTS=()
-          for dir in packages/*/dist luna/packages/*/dist; do
+          for dir in packages/*/dist receipes/*/dist luna/packages/*/dist; do
             if [ -d "$dir" ]; then
               PACKAGE_ARTIFACTS+=("$dir")
             fi

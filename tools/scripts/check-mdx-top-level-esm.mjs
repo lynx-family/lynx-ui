@@ -6,10 +6,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = path.join(__dirname, '../..')
-const packagesDir = path.join(rootDir, 'packages')
 const mdxExtension = '.mdx'
 
 function isTargetMdxFile(name) {
@@ -28,9 +29,9 @@ function collectMdxFiles(dirPath) {
 }
 
 function getTargetFilesFromPackages() {
-  return fs.readdirSync(packagesDir)
-    .filter(name => name.startsWith('lynx-ui-'))
-    .map(name => path.join(packagesDir, name, 'docs'))
+  return getComponentPackageDirectories(rootDir)
+    .filter(directory => path.basename(directory).startsWith('lynx-ui-'))
+    .map(directory => path.join(directory, 'docs'))
     .filter(docsDir =>
       fs.existsSync(docsDir) && fs.statSync(docsDir).isDirectory()
     )

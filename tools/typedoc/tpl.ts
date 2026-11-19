@@ -84,7 +84,7 @@ function tryReadTypedocJsonFromGenDir(
 
 function findPackageNameFromSavePath(savePath: string): string | null {
   const normalized = savePath.replace(/\\/g, '/')
-  const marker = '/packages/'
+  const marker = normalized.includes('/receipes/') ? '/receipes/' : '/packages/'
   const idx = normalized.lastIndexOf(marker)
   if (idx === -1) return null
   const rest = normalized.slice(idx + marker.length)

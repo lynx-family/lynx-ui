@@ -13,6 +13,8 @@
     "../../**/*.cjs",
     "../../packages/**/*.ts",
     "../../packages/**/*.tsx",
+    "../../receipes/**/*.ts",
+    "../../receipes/**/*.tsx",
     "../../apps/**/*.ts",
     "../../apps/**/*.tsx",
     "../../luna/**/*.ts",

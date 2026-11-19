@@ -55,6 +55,7 @@ const demosByPackage = {
     'PopoverCustomArrow',
   ],
   radioGroup: ['RadioGroupBasic', 'RadioGroupDisabled'],
+  receipeLuna: ['ReceipeLunaBasic', 'ReceipeLunaThemedControls'],
   scrollCoordinator: [
     'ScrollCoordinatorList',
     'ScrollCoordinatorViewPager',

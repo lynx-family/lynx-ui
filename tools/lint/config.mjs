@@ -31,6 +31,7 @@ const SOURCE_FILES = [
   'apps/**/*.{ts,tsx}',
   'luna/**/*.{ts,tsx}',
   'packages/**/*.{ts,tsx}',
+  'receipes/**/*.{ts,tsx}',
 ]
 
 function scopeConfigs(configs, files, ignores = []) {

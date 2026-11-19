@@ -84,6 +84,9 @@
       "path": "./packages/lynx-ui-toast"
     },
     {
+      "path": "./receipes/lynx-ui-receipe-luna"
+    },
+    {
       "path": "./tsconfig.node.json"
     }
   ]

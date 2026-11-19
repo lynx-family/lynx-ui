@@ -36,6 +36,13 @@ This repository follows a standard Monorepo structure. Understanding this is cru
 
 - **`luna/`**: The in-repo theming foundation (L.U.N.A) used by lynx-ui (tokens, styles, Tailwind preset, ReactLynx bindings).
 
+- **`receipes/`**: Opinionated product and themed component entries, including
+  composed layouts. Keep headless primitives in `packages/` and shared theme
+  foundations in `luna/`. Consumers import recipes from their own package entry.
+  Recipe packages follow component build, documentation, example, and release
+  conventions. Scaffold them with
+  `pnpm make-new-component --create receipe-<name> --recipe`.
+
 ## Development Workflow
 
 ### 1. Initial Setup

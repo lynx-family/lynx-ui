@@ -16,7 +16,7 @@
     "check:changesets-coverage": "node tools/scripts/check-changeset-coverage.mjs",
     "check:changesets-private": "node tools/scripts/check-changeset-private-targets.mjs",
     "check:exports": "node tools/scripts/check-aggregate-exports.mjs",
-    "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\" \"luna/examples/**/*.css\"",
+    "check:luna-vars": "stylelint --allow-empty-input --config ./stylelint.config.cjs \"apps/**/*.css\" \"packages/**/*.css\" \"receipes/**/*.css\" \"luna/examples/**/*.css\"",
     "check:manypkg": "pnpm dlx @manypkg/cli check",
     "check:mdx": "node tools/scripts/check-mdx-top-level-esm.mjs",
     "check:new-packages": "node tools/scripts/check-new-publishable-packages.mjs",

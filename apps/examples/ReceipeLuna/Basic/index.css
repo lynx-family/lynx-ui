@@ -1,0 +1,31 @@
+@import "@lynx-js/luna-styles/index.css";
+
+.demo-container {
+  min-height: 100vh;
+  padding-top: 48px;
+  padding-bottom: 48px;
+  background-color: var(--canvas);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--content);
+}
+.metric {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--content);
+}
+.caption {
+  font-size: 13px;
+  color: var(--content-muted);
+}
+.card {
+  background-color: var(--paper);
+  border-radius: 12px;
+}
+.status, .tag {
+  background-color: var(--canvas-ambient);
+  border-radius: 8px;
+}

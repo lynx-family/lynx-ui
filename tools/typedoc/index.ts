@@ -19,6 +19,14 @@ import { doGenTplWithData } from './tpl.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const rootPath = join(__dirname, '../../')
+
+function getPackageFolder(packageName: string) {
+  const recipeFolder = join(rootPath, 'receipes', packageName)
+  return fs.existsSync(join(recipeFolder, 'package.json'))
+    ? recipeFolder
+    : join(rootPath, 'packages', packageName)
+}
+
 export async function runTypeDocForPackage(
   entryPoints: string | string[],
   tsconfig: string,
@@ -70,7 +78,7 @@ function getTsConfigPath(
 export async function genLynxUIDocForPackage(
   packageName: string,
 ): Promise<void> {
-  const subPackageFolder = join(rootPath, 'packages', packageName)
+  const subPackageFolder = getPackageFolder(packageName)
 
   // Some packages reference types from other workspace packages (e.g. Dialog -> Presence).
   // Generate those referenced packages' TypeDoc JSON first so templates can inline/expand them.
@@ -92,7 +100,7 @@ export async function genLynxUIDocForPackage(
           && depName !== '@lynx-js/lynx-ui-common' && version === 'workspace:*'
         ) {
           const depFolderName = depName.replace('@lynx-js/', '')
-          const depFolder = join(rootPath, 'packages', depFolderName)
+          const depFolder = getPackageFolder(depFolderName)
           if (!fs.existsSync(depFolder)) continue
 
           const { path: depTsconfigPath, isDocsConfig: depIsDocsConfig } =
