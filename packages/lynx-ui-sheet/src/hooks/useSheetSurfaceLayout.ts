@@ -174,12 +174,12 @@ export function useSheetSurfaceLayout({
   function reportFitBodyLayoutMT(allowStableParent = false) {
     'main thread'
     const body = bodyMTRef.current
-    const { slot, outer, natural, expectedWidth, reservedHeight, parent } = body
+    const { slot, outer, expectedWidth, fitWidth, reservedHeight, parent } =
+      body
     if (
-      !slot || !body.element || outer.width < 0 || !natural
+      !slot || !body.element || outer.width < 0 || fitWidth < 0
       || parent.height === undefined
-      || Math.abs(natural.width - expectedWidth) > 1
-      || Math.abs(expectedWidth - body.fitWidth) > 1
+      || Math.abs(expectedWidth - fitWidth) > 1
       || Math.abs(outer.height - reservedHeight) > 1
     ) return
     if (

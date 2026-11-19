@@ -338,6 +338,8 @@ describe('Sheet local viewport calculations and resizing', () => {
     snap.handleSheetLayoutChangeMT({ detail: { width: 320, height: 300 } })
     bodyContext.measureIntrinsicBodyMT?.({ width: 260, height: 240 })
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 320, height: 240 })
+    // Native hydration can deliver an earlier, unrestricted measurement.
+    bodyContext.measureIntrinsicBodyMT?.({ width: 320, height: 200 })
     vi.advanceTimersByTime(16)
     expect(snap.yRef.current.get()).toBe(300)
   })
