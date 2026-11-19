@@ -61,7 +61,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Omit `panelLayout` to retain extended background coverage and the original content layout.
 - Set `panelLayout={{ bottomGap: 8 }}` for a bounded bottom panel. The gap is outside the panel and does not count toward a snap size. An empty `panelLayout` opts into bounded coverage with a zero gap.
 - Updating `bottomGap` uses `snapAnimation`. Panel layout works with or without `SheetBody`.
+- Set `panelLayout.bottomCornerRadius` to clip a fixed-height moving panel. Set it to zero for square bottom corners. The Sheet owns the clip path, and radius and gap changes share one animation. Style the top corners on the painted surface.
 - In a flex content layout, place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` are physical edges in logical pixels relative to the Sheet viewport. Use `SheetPositioner` when the host is a local pane.
+- A bottom `fit` snap with viewport insets measures the body at its safe width. Give the content an intrinsic height. The visible body can change height during dragging without changing the fit measurement.
+- Inset `fit` uses the compact measurement while an appearance animation changes the panel width. A change to the local viewport width or horizontal insets can establish a new compact size.
 - Use one `SheetBody` per content element. Explicit snaps let the body occupy the remaining space in the content layout. Fit sheets keep the body's intrinsic layout.
 - Bind `scrollGesture` to the same native scroll view inside the body. Moving that body requires no extra pan gesture.
 - Use surface `className` and `style` for paint and width. Use `innerClassName` and `innerStyle` for the child layout.

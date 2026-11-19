@@ -93,6 +93,9 @@ export interface SheetLayoutRect {
 
 export interface SheetBodyContextValue {
   enabled: boolean
+  intrinsic?: boolean
+  setBodySlotMTRef?: (element: MainThread.Element | null) => void
+  measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
   setBodyMTRef: (
     element: MainThread.Element | null,
     insets: SheetBodyProps['viewportInsets'],

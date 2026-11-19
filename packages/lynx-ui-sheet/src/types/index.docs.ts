@@ -148,6 +148,15 @@ export interface SheetContentProps extends ComponentBasicProps {
   panelLayout?: {
     /** Space below the panel in local logical pixels. Defaults to zero. */
     bottomGap?: number
+    /**
+     * Radius of the two visible bottom corners in logical pixels. Set this,
+     * including to zero, to keep the panel at a fixed layout height and clip
+     * it to its visible bounds while it moves. The Sheet owns the surface's
+     * clip path in this mode and animates radius changes with the bottom gap.
+     * Numeric and percentage snaps share a content viewport sized for the
+     * largest snap.
+     */
+    bottomCornerRadius?: number
   }
   /**
    * The transition configuration for the Sheet snap animation.
@@ -286,8 +295,10 @@ export interface SheetBodyProps extends ComponentBasicProps {
    * Minimum distance from each supplied physical edge of the local viewport,
    * in logical pixels. Place the body in the Sheet flex content layout, alongside
    * any handle that should travel with the panel. Supply at most one body per
-   * SheetContent or SheetNestedScrollContent. Viewport constraints apply to
-   * explicit snap sizes; fit sheets keep the body's intrinsic layout.
+   * SheetContent or SheetNestedScrollContent. Bottom sheets with a `fit` snap
+   * measure the body at its available width, then constrain its visible area
+   * independently of the measured height. Use intrinsically sized body content
+   * for `fit`. Other sheet sides support viewport insets with explicit snaps.
    */
   viewportInsets?: {
     top?: number
