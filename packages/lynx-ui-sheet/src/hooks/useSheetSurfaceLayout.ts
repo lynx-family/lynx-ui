@@ -115,7 +115,8 @@ export function useSheetSurfaceLayout({
     insets: SheetBodyProps['viewportInsets']
     outer: SheetLayoutRect
     parent: Partial<SheetLayoutRect>
-    applied: string
+    appliedHorizontal: string
+    appliedVertical: string
     translatedTop: number | null
     slot: MainThread.Element | null
     natural: { width: number, height: number } | null
@@ -131,7 +132,8 @@ export function useSheetSurfaceLayout({
     insets: undefined,
     outer: { left: 0, top: 0, width: -1, height: -1 },
     parent: {},
-    applied: '',
+    appliedHorizontal: '',
+    appliedVertical: '',
     translatedTop: null,
     slot: null,
     natural: null,
@@ -181,6 +183,7 @@ export function useSheetSurfaceLayout({
       || parent.height === undefined
       || Math.abs(expectedWidth - fitWidth) > 1
       || Math.abs(outer.height - reservedHeight) > 1
+      || body.reportedHeight === parent.height
     ) return
     if (
       !allowStableParent && parent.height === body.parentHeightBeforeReservation
@@ -197,7 +200,6 @@ export function useSheetSurfaceLayout({
       }
       return
     }
-    if (body.reportedHeight === parent.height) return
     body.reportedHeight = parent.height
     onFitBodyLayoutMT?.(parent.height)
   }
@@ -206,7 +208,7 @@ export function useSheetSurfaceLayout({
     'main thread'
     const range = nextRange ?? bodyRangeMTRef.current
     const body = bodyMTRef.current
-    const { element, outer, insets, applied, parent } = body
+    const { element, outer, insets, parent } = body
     if ((!range && !intrinsic) || !element || outer.width < 0 || !insets) return
     // Remove the shared pre-transform layout origin before applying motion.
     const surface = surfaceOriginMTRef.current
@@ -231,13 +233,16 @@ export function useSheetSurfaceLayout({
       screenHeight,
       insets,
     )
+    const horizontalKey = `${offsets.left}/${offsets.right}`
+    const horizontalChanged = horizontalKey !== body.appliedHorizontal
     if (intrinsic) {
       const natural = body.natural
       body.expectedWidth = width - offsets.left - offsets.right
+      const measuredAtWidth = natural !== null
+        && Math.abs(natural.width - body.expectedWidth) <= 1
       const compactWidth = Math.abs(body.expectedWidth - body.fitWidth) <= 1
       if (
-        body.slot && natural
-        && Math.abs(natural.width - body.expectedWidth) <= 1
+        body.slot && measuredAtWidth
         && (body.fitWidth < 0 || compactWidth
           || body.fitScreenWidth !== screenWidth)
       ) {
@@ -254,38 +259,47 @@ export function useSheetSurfaceLayout({
         }
       }
 
-      // Vary the clipping viewport independently of the in-flow slot height.
       const topOffset = range ? offsets.top : 0
+      const availableHeight = Math.max(0, height - topOffset - offsets.bottom)
+      // Keep the natural layout when it already fits inside the visible body.
+      // A width change can reuse the last height for clipping until layout
+      // reports the new height. Only the fit reservation needs a width match.
       const heightStyle = range
-        ? `${Math.max(0, height - topOffset - offsets.bottom)}px`
+          && (offsets.bottom > 0 || !natural || natural.height > availableHeight
+            || (!measuredAtWidth && (footerHeightMTRef?.current ?? 0) > 0))
+        ? `${availableHeight}px`
         : 'auto'
-      const key = `${offsets.left}/${offsets.right}/${heightStyle}`
-      const layoutChanged = key !== applied
+      const heightChanged = heightStyle !== body.appliedVertical
       const positionChanged = topOffset !== body.translatedTop
-      if (layoutChanged || positionChanged) {
-        const style: Record<string, string> = {}
-        if (layoutChanged) {
-          style.left = `${offsets.left}px`
-          style.right = `${offsets.right}px`
-          style.height = heightStyle
-        }
-        if (positionChanged) style.transform = `translateY(${topOffset}px)`
-        body.applied = key
+      if (horizontalChanged || heightChanged || positionChanged) {
+        body.appliedHorizontal = horizontalKey
+        body.appliedVertical = heightStyle
         body.translatedTop = topOffset
-        element.setStyleProperties(style)
+        element.setStyleProperties({
+          ...(horizontalChanged
+            ? { left: `${offsets.left}px`, right: `${offsets.right}px` }
+            : {}),
+          ...(heightChanged ? { height: heightStyle } : {}),
+          ...(positionChanged
+            ? { transform: `translateY(${topOffset}px)` }
+            : {}),
+        })
       }
       reportFitBodyLayoutMT()
       return
     }
-    const key =
-      `${offsets.left}/${offsets.top}/${offsets.right}/${offsets.bottom}`
-    if (key === applied) return
-    bodyMTRef.current.applied = key
+    const verticalKey = `${offsets.top}/${offsets.bottom}`
+    const verticalChanged = verticalKey !== body.appliedVertical
+    if (!horizontalChanged && !verticalChanged) return
+    body.appliedHorizontal = horizontalKey
+    body.appliedVertical = verticalKey
     element.setStyleProperties({
-      left: `${offsets.left}px`,
-      top: `${offsets.top}px`,
-      right: `${offsets.right}px`,
-      bottom: `${offsets.bottom}px`,
+      ...(horizontalChanged
+        ? { left: `${offsets.left}px`, right: `${offsets.right}px` }
+        : {}),
+      ...(verticalChanged
+        ? { top: `${offsets.top}px`, bottom: `${offsets.bottom}px` }
+        : {}),
     })
   }
 
@@ -439,16 +453,22 @@ export function useSheetSurfaceLayout({
   ) {
     'main thread'
     const body = bodyMTRef.current
-    if (body.element !== element) body.reportedHeight = -1
+    const sameWidthInsets = body.insets?.left === insets?.left
+      && body.insets?.right === insets?.right
     if (
-      body.insets?.left !== insets?.left || body.insets?.right !== insets?.right
-    ) {
-      body.fitWidth = -1
+      body.element === element && sameWidthInsets
+      && body.insets?.top === insets?.top
+      && body.insets?.bottom === insets?.bottom
+    ) return
+    if (body.element !== element) {
+      body.reportedHeight = -1
+      body.appliedHorizontal = ''
+      body.appliedVertical = ''
+      body.translatedTop = null
     }
+    if (!sameWidthInsets) body.fitWidth = -1
     body.element = element
     body.insets = insets
-    body.applied = ''
-    body.translatedTop = null
     if (element) applyBodyLayoutMT()
   }
 

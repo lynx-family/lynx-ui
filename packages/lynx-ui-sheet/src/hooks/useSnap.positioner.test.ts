@@ -292,11 +292,13 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(snap.yRef.current.get()).toBe(304)
     expect(entered).toHaveBeenCalledTimes(1)
 
+    writeBody.mockClear()
+    snap.yRef.current.set(340)
+    snap.yRef.current.set(380)
+    expect(writeBody).not.toHaveBeenCalled()
+
     snap.snapToMT(1, { animate: false })
     expect(writeBody).toHaveBeenLastCalledWith({
-      left: '0px',
-      right: '60px',
-      height: '360px',
       transform: 'translateY(16px)',
     })
     snap.yRef.current.set(390)
@@ -308,9 +310,23 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(writeSlot.mock.calls).toEqual([[{ height: '280px' }]])
     expect(snap.getResolvedSnapOffsets()).toEqual([304, 400])
 
+    snap.yRef.current.set(260)
+    expect(writeBody).toHaveBeenLastCalledWith({
+      height: '236px',
+      transform: 'translateY(0px)',
+    })
+    snap.yRef.current.set(400)
+    expect(writeBody).toHaveBeenLastCalledWith({
+      height: 'auto',
+      transform: 'translateY(16px)',
+    })
+
     // A transient panel width can reflow the text without moving the fit snap.
+    writeBody.mockClear()
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 240, height: 280 })
+    expect(writeBody.mock.calls).toEqual([[{ left: '0px', right: '0px' }]])
     bodyContext.measureIntrinsicBodyMT?.({ width: 240, height: 360 })
+    expect(writeBody).toHaveBeenCalledTimes(1)
     expect(writeSlot.mock.calls).toEqual([[{ height: '280px' }]])
     expect(snap.getResolvedSnapOffsets()).toEqual([304, 400])
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 320, height: 280 })

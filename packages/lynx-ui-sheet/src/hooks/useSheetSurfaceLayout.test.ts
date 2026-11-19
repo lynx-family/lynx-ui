@@ -197,16 +197,12 @@ describe('Sheet surface geometry', () => {
     })
     position.current.set(950)
     expect(write).toHaveBeenLastCalledWith({
-      left: '0px',
       top: '8px',
-      right: '0px',
       bottom: '0px',
     })
     position.current.set(800)
     expect(write).toHaveBeenLastCalledWith({
-      left: '0px',
       top: '0px',
-      right: '0px',
       bottom: '0px',
     })
   })
@@ -236,9 +232,7 @@ describe('Sheet surface geometry', () => {
       position.current.set(800)
       expect(write).toHaveBeenLastCalledWith({
         left: side === 'right' ? '50px' : '250px',
-        top: '20px',
         right: side === 'right' ? '250px' : '50px',
-        bottom: '0px',
       })
     },
   )
@@ -275,9 +269,7 @@ describe('Sheet surface geometry', () => {
     measureBodyParentMT({ left: 0, top: 100, width: 800, height: 1000 })
     bodyContext.measureBodyMT({ left: 0, top: 124, width: 800, height: 976 })
     expect(write).toHaveBeenLastCalledWith({
-      left: '0px',
       top: '0px',
-      right: '0px',
       bottom: '124px',
     })
   })
@@ -306,16 +298,12 @@ describe('Sheet surface geometry', () => {
       parent.top = 9000
       position.current.set(950)
       expect(write).toHaveBeenLastCalledWith({
-        left: '0px',
         top: '16px',
-        right: '0px',
         bottom: '0px',
       })
       position.current.set(1000)
       expect(write).toHaveBeenLastCalledWith({
-        left: '0px',
         top: '58px',
-        right: '0px',
         bottom: '0px',
       })
     },

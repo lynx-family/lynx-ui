@@ -20,8 +20,6 @@ export function SheetBody(
 ) {
   const context = useContext(SheetBodyContext)
   const elementMTRef = useMainThreadRef<MainThread.Element | null>(null)
-  const enabled = Boolean(context?.enabled && viewportInsets)
-  const intrinsic = enabled && context?.intrinsic === true
   const setBodyMTRef = context?.setBodyMTRef
   const setBodySlotMTRef = context?.setBodySlotMTRef
   const measureBodyMT = context?.measureBodyMT
@@ -30,6 +28,11 @@ export function SheetBody(
   const right = viewportInsets?.right
   const bottom = viewportInsets?.bottom
   const left = viewportInsets?.left
+  const enabled = Boolean(
+    context?.enabled && (Number.isFinite(top) || Number.isFinite(right)
+      || Number.isFinite(bottom) || Number.isFinite(left)),
+  )
+  const intrinsic = enabled && context?.intrinsic === true
 
   function setBodyElementMT(element: MainThread.Element | null) {
     'main thread'
