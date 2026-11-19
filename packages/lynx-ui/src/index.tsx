@@ -2,33 +2,6 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-export {
-  Box,
-  Column,
-  Container,
-  Flex,
-  Grid,
-  LunaButton,
-  LunaSwitch,
-  LunaThemeScope,
-  Row,
-  Section,
-} from '@lynx-js/lynx-ui-receipe-luna'
-export type {
-  BoxProps,
-  ColumnProps,
-  ContainerProps,
-  FlexProps,
-  GridProps,
-  LayoutProps,
-  LunaButtonProps,
-  LunaSwitchProps,
-  LunaThemeScopeProps,
-  RowProps,
-  SectionProps,
-  Space,
-} from '@lynx-js/lynx-ui-receipe-luna'
-
 // Aggregate re-exports for lynx-ui open-source packages.
 // Excludes lynx-ui-overlay and lynx-ui-presence.
 

@@ -7,9 +7,9 @@ export { Column } from './column/index.js'
 export { Container } from './container/index.js'
 export { Flex } from './flex/index.js'
 export { Grid } from './grid/index.js'
-export { LunaButton } from './button/index.js'
-export { LunaSwitch } from './switch/index.js'
-export { LunaThemeScope } from './theme-scope/index.js'
+export { Button } from './button/index.js'
+export { Switch } from './switch/index.js'
+export { Theme } from './theme/index.js'
 export { Row } from './row/index.js'
 export { Section } from './section/index.js'
 export type {
@@ -19,9 +19,9 @@ export type {
   FlexProps,
   GridProps,
   LayoutProps,
-  LunaButtonProps,
-  LunaSwitchProps,
-  LunaThemeScopeProps,
+  ButtonProps,
+  SwitchProps,
+  ThemeProps,
   RowProps,
   SectionProps,
   Space,

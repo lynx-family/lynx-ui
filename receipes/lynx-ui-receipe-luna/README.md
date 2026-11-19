@@ -16,9 +16,9 @@ npm install @lynx-js/lynx-ui-receipe-luna @lynx-js/luna-styles
 - `Grid`: native CSS grid with column and row counts or track lists.
 - `Container`: a centered content region with a maximum width.
 - `Section`: a section with vertical spacing.
-- `LunaThemeScope`: scopes a LUNA palette to a subtree.
-- `LunaButton`: a text action with solid and soft treatments.
-- `LunaSwitch`: a toggle with a styled track and thumb.
+- `Theme`: scopes a LUNA palette to a subtree.
+- `Button`: a text action with solid and soft treatments.
+- `Switch`: a toggle with a styled track and thumb.
 
 ## Usage
 
@@ -30,25 +30,25 @@ app, then apply a theme key at your app or screen boundary:
 import '@lynx-js/luna-styles/index.css'
 import {
   Column,
-  LunaButton,
-  LunaSwitch,
-  LunaThemeScope,
+  Button,
+  Switch,
+  Theme,
   Row,
 } from '@lynx-js/lynx-ui-receipe-luna'
 
 function Settings({ onSave }: { onSave: () => void }) {
   return (
-    <LunaThemeScope themeKey='lunaris-dark'>
+    <Theme themeKey='lunaris-dark'>
       <Column p='4' gap='3'>
         <Row align='center' justify='between'>
           <text className='settings-label'>Product updates</text>
-          <LunaSwitch label='Product updates' defaultChecked />
+          <Switch accessibility-label='Product updates' defaultChecked />
         </Row>
         <Row justify='end'>
-          <LunaButton onClick={onSave}>Save changes</LunaButton>
+          <Button onClick={onSave}>Save changes</Button>
         </Row>
       </Column>
-    </LunaThemeScope>
+    </Theme>
   )
 }
 ```
@@ -57,8 +57,9 @@ In your app stylesheet, set `.settings-label { color: var(--content); }`.
 
 Use `lunaris-dark`, `lunaris-light`, `luna-dark`, or `luna-light`.
 You can also wrap a region in a nested scope, or apply the same theme class
-to a view you already own. The scope sets a CSS class; interactive controls
-read its inherited tokens through CSS and keep their state when the theme
+to a view you already own for CSS-only styling. `Theme` applies the CSS class
+and supplies its matching values to `useLunaColor` from
+`@lynx-js/luna-reactlynx`. Interactive controls keep their state across theme
 changes. Layout geometry works on its own.
 
 See [API reference](./docs/APIReference.mdx), [coding guide](./SKILL.md), and the

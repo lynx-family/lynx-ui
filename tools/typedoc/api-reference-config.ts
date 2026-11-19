@@ -25,7 +25,7 @@ export const apiReferenceConfig: Readonly<
 > = {
   'lynx-ui-receipe-luna': {
     parts: [
-      'LunaThemeScope',
+      'Theme',
       'Box',
       'Flex',
       'Row',
@@ -33,8 +33,8 @@ export const apiReferenceConfig: Readonly<
       'Grid',
       'Container',
       'Section',
-      'LunaButton',
-      'LunaSwitch',
+      'Button',
+      'Switch',
     ],
     supportingTypes: ['LayoutProps', 'Space'],
   },

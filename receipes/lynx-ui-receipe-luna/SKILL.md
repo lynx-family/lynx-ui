@@ -6,8 +6,8 @@ Compose product layouts using `Box`, `Flex`, `Row`, `Column`, `Grid`,
 `Container`, and `Section`. These components wrap native `view` elements and
 share spacing and sizing props. They inherit the host's LUNA theme.
 
-`LunaButton` styles the headless button, and `LunaSwitch` composes the
-headless switch, track, and thumb. Use `LunaThemeScope` to apply or change
+`Button` styles the headless button, and `Switch` composes the
+headless switch, track, and thumb. Use `Theme` to apply or change
 a LUNA palette for a subtree. See the
 [theme switching demo](../../apps/examples/ReceipeLuna/ThemedControls/index.tsx).
 
@@ -50,10 +50,10 @@ the application's LUNA theme."
 - Set application colors with semantic LUNA tokens in CSS. Import
   `@lynx-js/luna-styles/index.css` directly in a stylesheet using these tokens,
   and apply a theme class such as `luna-light` at the screen root.
-- Keep text inside `text` elements. Use `LunaButton` for text actions and
-  `LunaSwitch` for toggles. For a different anatomy use the headless controls.
+- Keep text inside `text` elements. Use `Button` for text actions and
+  `Switch` for toggles. For a different anatomy use the headless controls.
 - Enable CSS selectors and CSS inheritance in the ReactLynx plugin. Apply
-  the theme class with `LunaThemeScope` or on an existing ancestor.
+  the theme class with `Theme`, or on an existing ancestor for CSS-only styling.
 - Pass native attributes and events through `viewProps`.
 - `style` is applied last, allowing explicit overrides of generated props.
   Constant display defaults live in package CSS; import the public entry so
@@ -72,8 +72,8 @@ props in the application using its viewport information.
 
 Layout geometry works without a provider. For styled controls, import
 `@lynx-js/luna-styles/index.css` in the application and apply a LUNA theme
-class to an ancestor. `LunaThemeScope` applies the class and can be nested.
-It does not need the separate JavaScript `LunaThemeProvider`.
+class to an ancestor. `Theme` applies the class, can be nested, and supplies the same theme to
+`useLunaColor` from `@lynx-js/luna-reactlynx`.
 
 ### Do Row and Column add extra views?
 

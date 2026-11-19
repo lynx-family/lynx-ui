@@ -2,22 +2,22 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { Button } from '@lynx-js/lynx-ui-button'
+import { Button as HeadlessButton } from '@lynx-js/lynx-ui-button'
 import { clsx } from 'clsx'
 
-import type { LunaButtonProps } from '../types/index.docs.js'
+import type { ButtonProps } from '../types/index.docs.js'
 import './index.css'
 
-export function LunaButton({
+export function Button({
   children,
   variant = 'solid',
   disabled,
   onClick,
   className,
   style,
-}: LunaButtonProps) {
+}: ButtonProps) {
   return (
-    <Button
+    <HeadlessButton
       disabled={disabled}
       onClick={onClick}
       className={clsx(
@@ -35,6 +35,6 @@ export function LunaButton({
       <text className={`lynx-ui-receipe-luna__button-label--${variant}`}>
         {children}
       </text>
-    </Button>
+    </HeadlessButton>
   )
 }

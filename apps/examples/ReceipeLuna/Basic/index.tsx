@@ -12,7 +12,7 @@ import {
   Grid,
   Row,
   Section,
-} from '@lynx-js/lynx-ui'
+} from '@lynx-js/lynx-ui-receipe-luna'
 
 import './index.css'
 

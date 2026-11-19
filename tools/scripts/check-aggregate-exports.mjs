@@ -8,8 +8,6 @@ import { fileURLToPath } from 'node:url'
 
 import * as ts from 'typescript'
 
-import { getComponentPackageDirectories } from '../configs/component-packages.mjs'
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = path.join(__dirname, '../..')
@@ -21,20 +19,15 @@ const aggregateEntryPath = path.join(
   'src/index.tsx',
 )
 const skippedPackages = new Set(['lynx-ui-overlay', 'lynx-ui-presence'])
-const packageDirectories = new Map(
-  getComponentPackageDirectories(rootDir).map(directory => [
-    path.basename(directory),
-    directory,
-  ]),
-)
 
 function getPackageDirs() {
-  return [...packageDirectories.keys()]
+  return fs.readdirSync(packagesDir)
     .filter(name =>
       name.startsWith('lynx-ui-') && name !== aggregatePackageName
     )
+    .filter(name => fs.statSync(path.join(packagesDir, name)).isDirectory())
     .filter(name => {
-      const pkgPath = path.join(packageDirectories.get(name), 'package.json')
+      const pkgPath = path.join(packagesDir, name, 'package.json')
       if (!fs.existsSync(pkgPath)) return true
       const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
       return pkg.private !== true
@@ -43,9 +36,12 @@ function getPackageDirs() {
 }
 
 function getEntryCandidates(packageName) {
-  const directory = packageDirectories.get(packageName)
-  return ['src/index.tsx', 'src/index.ts', 'index.tsx', 'index.ts']
-    .map(entry => path.join(directory, entry))
+  return [
+    path.join(packagesDir, packageName, 'src/index.tsx'),
+    path.join(packagesDir, packageName, 'src/index.ts'),
+    path.join(packagesDir, packageName, 'index.tsx'),
+    path.join(packagesDir, packageName, 'index.ts'),
+  ]
 }
 
 function getEntryPath(packageName) {

@@ -38,8 +38,9 @@ This repository follows a standard Monorepo structure. Understanding this is cru
 
 - **`receipes/`**: Opinionated product and themed component entries, including
   composed layouts. Keep headless primitives in `packages/` and shared theme
-  foundations in `luna/`. Recipe packages follow component build, public export,
-  documentation, example, and release conventions. Scaffold them with
+  foundations in `luna/`. Consumers import recipes from their own package entry.
+  Recipe packages follow component build, documentation, example, and release
+  conventions. Scaffold them with
   `pnpm make-new-component --create receipe-<name> --recipe`.
 
 ## Development Workflow

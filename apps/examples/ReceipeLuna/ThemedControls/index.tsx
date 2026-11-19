@@ -4,15 +4,26 @@
 
 import { root, useState } from '@lynx-js/react'
 
+import { useLunaColor } from '@lynx-js/luna-reactlynx'
 import {
+  Button,
   Column,
-  LunaButton,
-  LunaSwitch,
-  LunaThemeScope,
   Row,
-} from '@lynx-js/lynx-ui'
+  Switch,
+  Theme,
+} from '@lynx-js/lynx-ui-receipe-luna'
 
 import './index.css'
+
+function ThemeSwatch() {
+  const color = useLunaColor({ format: 'value' })
+  return (
+    <view
+      className='preview-swatch'
+      style={{ backgroundColor: color('primary') }}
+    />
+  )
+}
 
 function App() {
   const [darkPreview, setDarkPreview] = useState(false)
@@ -20,44 +31,47 @@ function App() {
   const [savedNotifications, setSavedNotifications] = useState(false)
 
   return (
-    <LunaThemeScope themeKey='lunaris-dark' className='demo-container'>
+    <Theme themeKey='lunaris-dark' className='demo-container'>
       <Column gap='4' className='stage'>
         <Row align='center' justify='between' gap='2'>
           <text className='preview-label'>Appearance preview</text>
-          <LunaButton
+          <Button
             variant='soft'
             onClick={() => setDarkPreview(!darkPreview)}
           >
             {darkPreview ? 'Use light' : 'Use dark'}
-          </LunaButton>
+          </Button>
         </Row>
 
-        <LunaThemeScope
+        <Theme
           themeKey={darkPreview ? 'lunaris-dark' : 'lunaris-light'}
           className='panel'
         >
           <Column p='5' gap='4'>
-            <text className='title'>Notifications</text>
+            <Row align='center' gap='2'>
+              <ThemeSwatch />
+              <text className='title'>Notifications</text>
+            </Row>
             <Row align='center' justify='between' gap='3'>
               <text className='label'>Product updates</text>
-              <LunaSwitch
-                label='Product updates'
+              <Switch
+                accessibility-label='Product updates'
                 checked={notifications}
-                onChange={setNotifications}
+                onCheckedChange={setNotifications}
               />
             </Row>
             <Row justify='end'>
-              <LunaButton
+              <Button
                 disabled={savedNotifications === notifications}
                 onClick={() => setSavedNotifications(notifications)}
               >
                 Save changes
-              </LunaButton>
+              </Button>
             </Row>
           </Column>
-        </LunaThemeScope>
+        </Theme>
       </Column>
-    </LunaThemeScope>
+    </Theme>
   )
 }
 

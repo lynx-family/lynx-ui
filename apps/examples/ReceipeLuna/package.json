@@ -20,8 +20,9 @@
     "dev": "rspeedy dev"
   },
   "dependencies": {
+    "@lynx-js/luna-reactlynx": "workspace:*",
     "@lynx-js/luna-styles": "workspace:*",
-    "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/lynx-ui-receipe-luna": "workspace:*",
     "@lynx-js/react": "catalog:"
   },
   "devDependencies": {

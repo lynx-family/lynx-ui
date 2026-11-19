@@ -2,7 +2,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui";
 
 ## Component API {#api}
 
-### LunaThemeScope {#api-luna-theme-scope}
+### Theme {#api-theme}
 
 Props for the view that scopes the LUNA theme stylesheet.
 
@@ -79,13 +79,13 @@ Props for the view that scopes the LUNA theme stylesheet.
     "summary": [
       {
         "kind": "text",
-        "text": "The theme class to apply. Import the LUNA stylesheet once in the app."
+        "text": "Theme used for both scoped CSS and JavaScript token consumers. Import the LUNA stylesheet in the app."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "要应用的主题类名。请在应用中导入一次 LUNA 样式表。"
+        "text": "CSS 与 JavaScript 共用的主题。请在应用中导入 LUNA 样式表。"
       }
     ],
     "defaultValue": "",
@@ -4943,7 +4943,7 @@ A section with vertical breathing room.
   }
 ]}/>
 
-### LunaButton {#api-luna-button}
+### Button {#api-button}
 
 Props for the themed text button.
 
@@ -5082,11 +5082,33 @@ Props for the themed text button.
   }
 ]}/>
 
-### LunaSwitch {#api-luna-switch}
+### Switch {#api-switch}
 
 Props for the themed switch with a built-in track and thumb.
 
 <UIApiTable source={[
+  {
+    "name": "accessibility-label",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Accessible name for the control. Render any visible label separately."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "开关的无障碍名称，可见文字需单独渲染。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
   {
     "name": "checked",
     "type": "boolean",
@@ -5176,29 +5198,7 @@ Props for the themed switch with a built-in track and thumb.
     "docTypeFallback": null
   },
   {
-    "name": "label",
-    "type": "string",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Accessible name for the control. Render any visible label separately."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "开关的无障碍名称，可见文字需单独渲染。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "onChange",
+    "name": "onCheckedChange",
     "type": "(checked: boolean) => void",
     "summary": [
       {

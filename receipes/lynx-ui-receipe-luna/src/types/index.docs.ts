@@ -8,8 +8,8 @@ import type { LunaThemeKey } from '@lynx-js/luna-core'
 import type { CSSProperties, ViewProps } from '@lynx-js/types'
 
 /** Props for the view that scopes the LUNA theme stylesheet. @zh 用于限定 LUNA 主题样式作用域的视图属性。 */
-export interface LunaThemeScopeProps {
-  /** The theme class to apply. Import the LUNA stylesheet once in the app. @zh 要应用的主题类名。请在应用中导入一次 LUNA 样式表。 */
+export interface ThemeProps {
+  /** Theme used for both scoped CSS and JavaScript token consumers. Import the LUNA stylesheet in the app. @zh CSS 与 JavaScript 共用的主题。请在应用中导入 LUNA 样式表。 */
   themeKey: LunaThemeKey
   /** Content that inherits this theme. @zh 继承当前主题的内容。 */
   children?: ReactNode
@@ -20,7 +20,7 @@ export interface LunaThemeScopeProps {
 }
 
 /** Props for the themed text button. @zh 主题文字按钮的属性。 */
-export interface LunaButtonProps {
+export interface ButtonProps {
   /** Visible text label. @zh 可见的按钮文字。 */
   children: string
   /** Visual treatment. @defaultValue "solid" @zh 按钮外观。 */
@@ -36,9 +36,9 @@ export interface LunaButtonProps {
 }
 
 /** Props for the themed switch with a built-in track and thumb. @zh 带内置轨道与滑块的主题开关属性。 */
-export interface LunaSwitchProps {
+export interface SwitchProps {
   /** Accessible name for the control. Render any visible label separately. @zh 开关的无障碍名称，可见文字需单独渲染。 */
-  label: string
+  'accessibility-label': string
   /** Checked state in controlled mode. @zh 受控模式下的选中状态。 */
   checked?: boolean
   /** Initial checked state in uncontrolled mode. @defaultValue false @zh 非受控模式下的初始选中状态。 */
@@ -46,7 +46,7 @@ export interface LunaSwitchProps {
   /** Whether interaction is disabled. @defaultValue false @zh 是否禁用交互。 */
   disabled?: boolean
   /** Called with the next checked state. @zh 状态变化时传入下一选中值。 */
-  onChange?: (checked: boolean) => void
+  onCheckedChange?: (checked: boolean) => void
   /** Additional CSS classes for the root. @zh 根节点的附加 CSS 类名。 */
   className?: string
   /** Styles for the root. @zh 根节点样式。 */

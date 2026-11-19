@@ -629,12 +629,15 @@ importers:
 
   apps/examples/ReceipeLuna:
     dependencies:
+      '@lynx-js/luna-reactlynx':
+        specifier: workspace:*
+        version: link:../../../luna/packages/luna-reactlynx
       '@lynx-js/luna-styles':
         specifier: workspace:*
         version: link:../../../luna/packages/luna-styles
-      '@lynx-js/lynx-ui':
+      '@lynx-js/lynx-ui-receipe-luna':
         specifier: workspace:*
-        version: link:../../../packages/lynx-ui
+        version: link:../../../receipes/lynx-ui-receipe-luna
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
@@ -1566,9 +1569,6 @@ importers:
       '@lynx-js/lynx-ui-radio-group':
         specifier: workspace:*
         version: link:../lynx-ui-radio-group
-      '@lynx-js/lynx-ui-receipe-luna':
-        specifier: workspace:*
-        version: link:../../receipes/lynx-ui-receipe-luna
       '@lynx-js/lynx-ui-scroll-coordinator':
         specifier: workspace:*
         version: link:../lynx-ui-scroll-coordinator
@@ -2401,6 +2401,12 @@ importers:
       '@lynx-js/luna-core':
         specifier: workspace:*
         version: link:../../luna/packages/luna-core
+      '@lynx-js/luna-reactlynx':
+        specifier: workspace:*
+        version: link:../../luna/packages/luna-reactlynx
+      '@lynx-js/luna-tokens':
+        specifier: workspace:*
+        version: link:../../luna/packages/luna-tokens
       '@lynx-js/lynx-ui-button':
         specifier: workspace:*
         version: link:../../packages/lynx-ui-button
@@ -8118,7 +8124,7 @@ snapshots:
       '@changesets/should-skip-package': 1.0.0
       '@changesets/types': 7.0.0
       '@manypkg/get-packages': 3.1.0
-      picomatch: 4.0.4
+      picomatch: 4.0.7
 
   '@changesets/errors@1.0.0': {}
 

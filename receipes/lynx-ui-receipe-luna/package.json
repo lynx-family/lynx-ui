@@ -32,6 +32,8 @@
   },
   "dependencies": {
     "@lynx-js/luna-core": "workspace:*",
+    "@lynx-js/luna-reactlynx": "workspace:*",
+    "@lynx-js/luna-tokens": "workspace:*",
     "@lynx-js/lynx-ui-button": "workspace:*",
     "@lynx-js/lynx-ui-switch": "workspace:*",
     "clsx": "catalog:"
