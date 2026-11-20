@@ -32,6 +32,8 @@ export interface SheetControllerAnimationDeps {
   getResolvedSnapPointValues: () => number[]
   onSnapChangeMT: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
+  onDragStartNotifyMT?: SheetRootProps['main-thread:onDragStart']
+  onSettledMT?: () => void
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
   initialSnap: number
@@ -64,6 +66,8 @@ export function useSheetController(
     getResolvedSnapPointValues,
     onSnapChangeMT,
     onSnapStartMT,
+    onDragStartNotifyMT,
+    onSettledMT,
     enterAnimation,
     exitAnimation,
     initialSnap,
@@ -105,9 +109,11 @@ export function useSheetController(
     if (presenceStateMTRef.current === PresenceState.Entering) {
       onSnapChangeMT(index, value)
       entered()
+      onSettledMT?.()
     } else if (presenceStateMTRef.current === PresenceState.Entered) {
       // Already entered, just update snap index
       onSnapChangeMT(index, value)
+      onSettledMT?.()
     }
     // If Leaving/Left, close animation took over - do nothing
   }
@@ -286,6 +292,7 @@ export function useSheetController(
       // Just stop any running animation
       stopAnimationMT()
     }
+    onDragStartNotifyMT?.()
   }
 
   /**

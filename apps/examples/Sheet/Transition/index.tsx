@@ -90,12 +90,14 @@ function App() {
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
             cornerRadius={panel.fullscreen ? 0 : 24}
-            panelLayout={{ bottomGap: panel.fullscreen ? 0 : 8 }}
+            insets={{
+              left: (viewport.width - width) / 2,
+              right: (viewport.width - width) / 2,
+              bottom: panel.fullscreen ? 0 : 8,
+            }}
             className='sheet-content'
             innerClassName='surface-layout'
             style={{
-              width: `${width}px`,
-              left: `${(viewport.width - width) / 2}px`,
               // This CSS transition has its own clock; it does not follow the snap spring.
               transition: panel.animated
                 ? 'width 280ms ease-out, left 280ms ease-out'

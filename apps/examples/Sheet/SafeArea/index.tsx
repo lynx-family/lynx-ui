@@ -4,7 +4,6 @@
 
 import {
   root,
-  runOnBackground,
   runOnMainThread,
   useEffect,
   useMainThreadRef,
@@ -24,13 +23,12 @@ import {
   screenHeight,
   screenWidth,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef } from '@lynx-js/lynx-ui'
+import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 import {
   animate,
   useMotionValueRef,
   useMotionValueRefEvent,
 } from '@lynx-js/motion/mini'
-import type { MainThread } from '@lynx-js/types'
 
 import { SurfaceRows } from '../shared/SurfaceRows.js'
 import './index.css'
@@ -40,9 +38,10 @@ const viewportInsets = { top: 64, right: 84 }
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const surfaceRef = useMainThreadRef<MainThread.Element | null>(null)
+  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
+    null,
+  )
   const [show, setShow] = useState(true)
-  const [fullscreen, setFullscreen] = useState(false)
   const [viewport, setViewport] = useState({
     width: screenWidth,
     height: screenHeight,
@@ -53,17 +52,22 @@ function App() {
     664,
     Math.max(192, viewport.width - 256),
   )
+  const floatingSideInset = Math.max(0, (viewport.width - floatingWidth) / 2)
   const progress = useMotionValueRef(0)
   const fullscreenTarget = useMainThreadRef(false)
 
   function applyAppearance(value: number) {
     'main thread'
     const amount = Math.max(0, Math.min(1, value))
-    const width = floatingWidth + (viewport.width - floatingWidth) * amount
-    surfaceRef.current?.setStyleProperties({
-      width: `${width}px`,
-      left: `${(viewport.width - width) / 2}px`,
+    const sideInset = floatingSideInset * (1 - amount)
+    const bottomInset = 8 * (1 - amount)
+    const radius = 24 * (1 - amount)
+    surfaceControllerRef.current?.setInsets({
+      left: sideInset,
+      right: sideInset,
+      bottom: bottomInset,
     })
+    surfaceControllerRef.current?.setCornerRadius(radius)
   }
 
   useMotionValueRefEvent(progress, 'change', applyAppearance)
@@ -75,6 +79,11 @@ function App() {
     applyAppearance(0)
   }
 
+  function onDragStart() {
+    'main thread'
+    progress.current.stop()
+  }
+
   function onSnapStart(_index: number, value: number, animated: boolean) {
     'main thread'
     const nextFullscreen = value >= fullscreenHeight
@@ -84,10 +93,8 @@ function App() {
       && (progress.current.isAnimating() || progress.current.get() === target)
     ) return
     fullscreenTarget.current = nextFullscreen
-    runOnBackground(setFullscreen)(nextFullscreen)
     progress.current.stop()
     if (animated) {
-      // Appearance has its own spring; Sheet still owns vertical movement.
       animate(progress.current, target, {
         type: 'spring',
         stiffness: 260,
@@ -98,13 +105,12 @@ function App() {
     }
   }
 
-  // Recompute width on a viewport resize. Snap motion owns width between resizes.
   useEffect(() => {
     runOnMainThread(() => {
       'main thread'
       applyAppearance(progress.current.get())
     })()
-  }, [floatingWidth, viewport.width])
+  }, [floatingSideInset])
 
   useEffect(() => () => {
     runOnMainThread(() => {
@@ -131,7 +137,6 @@ function App() {
           className='action'
           onClick={() => {
             runOnMainThread(resetAppearance)()
-            setFullscreen(false)
             setShow(true)
           }}
         >
@@ -142,23 +147,22 @@ function App() {
         ref={sheetRef}
         show={show}
         onShowChange={setShow}
-        screenHeight={viewport.height}
-        screenWidth={viewport.width}
         snapPoints={['45%', '100%']}
+        main-thread:onDragStart={onDragStart}
         main-thread:onSnapStart={onSnapStart}
       >
         <SheetView className='sheet-viewport'>
-          <SheetPositioner width={viewport.width} height={viewport.height}>
+          <SheetPositioner>
             <SheetBackdrop className='sheet-backdrop' />
             <SheetNestedScrollContent
-              main-thread:surfaceRef={surfaceRef}
+              main-thread:surfaceControllerRef={surfaceControllerRef}
               className='sheet-surface'
               innerClassName='sheet-layout'
-              cornerRadius={fullscreen ? 0 : 24}
-              panelLayout={{ bottomGap: fullscreen ? 0 : 8 }}
-              style={{
-                width: `${floatingWidth}px`,
-                left: `${(viewport.width - floatingWidth) / 2}px`,
+              cornerRadius={24}
+              insets={{
+                left: floatingSideInset,
+                right: floatingSideInset,
+                bottom: 8,
               }}
             >
               {({ scrollGesture }) => (

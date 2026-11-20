@@ -7,7 +7,6 @@ import {
   useEffect,
   useMainThreadRef,
   useMemo,
-  useRef,
 } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
@@ -20,12 +19,11 @@ import type { MainThread } from '@lynx-js/types'
 import type { SheetLayoutRect, SheetPositionerDimensions } from '../context'
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
-import {
-  resolveBottomGap,
-  useSheetSurfaceLayout,
-} from './useSheetSurfaceLayout'
+import { normalizeInset, useSheetSurfaceLayout } from './useSheetSurfaceLayout'
 import type {
   SheetContentProps,
+  SheetCornerRadius,
+  SheetInsets,
   SheetRootProps,
   SheetSide,
   SheetTransition,
@@ -52,8 +50,9 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
-  cornerRadius?: SheetContentProps['cornerRadius']
-  panelLayout?: SheetContentProps['panelLayout']
+  cornerRadius?: SheetCornerRadius
+  insets?: SheetInsets
+  hasController?: boolean
   surfaceStyle?: SheetContentProps['style']
   snapAnimation?: SheetTransition
   side?: SheetSide
@@ -64,6 +63,8 @@ export interface SnapOptions {
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
+  onDragStartMT?: SheetRootProps['main-thread:onDragStart']
+  onPositionChangeMT?: SheetRootProps['main-thread:onPositionChange']
   onDismiss?: () => void
   enterAnimation?: SheetTransition
   exitAnimation?: SheetTransition
@@ -79,7 +80,8 @@ export function useSnap({
   snapPoints = [],
   initialSnap = 0,
   cornerRadius,
-  panelLayout,
+  insets,
+  hasController = false,
   surfaceStyle,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
@@ -90,6 +92,8 @@ export function useSnap({
   rubberBand,
   onSnapChange = noop,
   onSnapStartMT,
+  onDragStartMT: onDragStartNotifyMT,
+  onPositionChangeMT,
   onDismiss,
   enterAnimation = {
     type: 'spring',
@@ -121,19 +125,11 @@ export function useSnap({
   const footerHeightMTRef = useMainThreadRef<number>(-1)
   const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const footerOffsetMTRef = useMainThreadRef<number | null>(null)
-  const footerIdMTRef = useMainThreadRef<string | null>(null)
-  const ownerMounted = useRef(true)
-  useEffect(() => {
-    ownerMounted.current = true
-    return () => {
-      ownerMounted.current = false
-    }
-  }, [])
+  const settleSurfaceCallbackMTRef = useMainThreadRef<(() => void) | null>(null)
   const contentSizeMTRef = useMainThreadRef<number>(0)
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const fitMeasuredMTRef = useMainThreadRef(false)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
-  const animateSurfaceChangesMTRef = useMainThreadRef(true)
   const {
     animateToMT,
     stopAnimationMT,
@@ -154,7 +150,7 @@ export function useSnap({
     ?? 375
   const bottomPanelLimit = Math.max(
     0,
-    screenHeight - resolveBottomGap(panelLayout?.bottomGap),
+    screenHeight - normalizeInset(insets?.bottom),
   )
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
@@ -242,6 +238,7 @@ export function useSnap({
 
   useMotionValueRefEvent(yRef, 'change', v => {
     'main thread'
+    onPositionChangeMT?.(Math.max(0, v))
     if (resolvedSide !== 'bottom') updateFooterPositionMT(v)
     const el = sheetMTRef.current
     if (el) {
@@ -315,10 +312,11 @@ export function useSnap({
       getTargetForSnap,
       getResolvedSnapPointValues,
       onSnapChangeMT,
-      onSnapStartMT: (index, value, animated) => {
+      onSnapStartMT,
+      onDragStartNotifyMT,
+      onSettledMT: () => {
         'main thread'
-        animateSurfaceChangesMTRef.current = animated
-        onSnapStartMT?.(index, value, animated)
+        settleSurfaceCallbackMTRef.current?.()
       },
       enterAnimation,
       exitAnimation,
@@ -393,11 +391,12 @@ export function useSnap({
 
   const surfaceLayout = useSheetSurfaceLayout({
     position: yRef,
-    animateChanges: animateSurfaceChangesMTRef,
     presence: controller.presenceStateMTRef,
     resolvedSide,
+    enableRTL,
     cornerRadius,
-    panelLayout,
+    insets,
+    hasController,
     surfaceStyle,
     screenHeight,
     screenWidth,
@@ -411,7 +410,7 @@ export function useSnap({
     updateFooterPositionMT,
     initialSize: getTargetForSnap,
     initialSnap,
-    snapAnimation,
+    settleCallbackMTRef: settleSurfaceCallbackMTRef,
   })
 
   const { measureBodyParentMT, hasFitBodyMT, updateSurfaceMT } = surfaceLayout
@@ -541,6 +540,7 @@ export function useSnap({
 
   function updateFooterHeightMT(height: number) {
     'main thread'
+    if (!yRef.current) return
     const previousHeight = footerHeightMTRef.current
     footerHeightMTRef.current = height
     if (resolvedSide === 'bottom') updateSurfaceMT()
@@ -554,36 +554,21 @@ export function useSnap({
     }
   }
 
-  function registerFooterMT(id: string, height: number) {
+  function setFooterMTRef(element: MainThread.Element | null) {
     'main thread'
-    const element = sheetMTRef.current?.querySelector(`#${id}`)
-    if (!element || !yRef.current) return
+    if (!yRef.current) return
     if (footerMTRef.current !== element) footerOffsetMTRef.current = null
-    footerIdMTRef.current = id
     footerMTRef.current = element
-    updateFooterHeightMT(height)
+    if (element && footerHeightMTRef.current >= 0) {
+      updateFooterHeightMT(footerHeightMTRef.current)
+    }
   }
-
-  function unregisterFooterMT(id: string) {
-    'main thread'
-    if (footerIdMTRef.current !== id || !yRef.current) return
-    footerIdMTRef.current = null
-    footerMTRef.current = null
-    updateFooterHeightMT(0)
-  }
-
-  const registerFooter = useMemoizedFn((id: string, height: number) => {
-    if (ownerMounted.current) runOnMainThread(registerFooterMT)(id, height)
-  })
-  const unregisterFooter = useMemoizedFn((id: string) => {
-    if (ownerMounted.current) runOnMainThread(unregisterFooterMT)(id)
-  })
 
   return {
     footerContext: {
       resolvedSide,
-      registerFooter,
-      unregisterFooter,
+      setFooterMTRef,
+      updateFooterHeightMT,
     },
     setContentMTRef,
     ...surfaceLayout,

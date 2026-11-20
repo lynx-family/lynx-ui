@@ -2,4 +2,4 @@
 "@lynx-js/lynx-ui": minor
 ---
 
-Export SheetBody and its props from the aggregate entry.
+Export `SheetBody`, `SheetInsets`, `SheetCornerRadius`, `SheetSurfaceController`, and related Sheet props from the aggregate entry.

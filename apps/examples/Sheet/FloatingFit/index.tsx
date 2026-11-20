@@ -41,13 +41,13 @@ function App() {
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
             cornerRadius={24}
-            panelLayout={{ bottomGap: 8 }}
+            insets={{
+              left: (screenWidth - width) / 2,
+              right: (screenWidth - width) / 2,
+              bottom: 8,
+            }}
             className='sheet-content'
             innerClassName='surface-layout'
-            style={{
-              width: `${width}px`,
-              left: `${(screenWidth - width) / 2}px`,
-            }}
           >
             <SheetHandle className='sheet-handle' />
             <SheetBody

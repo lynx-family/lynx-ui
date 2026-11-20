@@ -73,7 +73,7 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   side: SheetSide = 'bottom',
   snapPoints: Array<number | string> = ['50%', '85%'],
-  panelLayout?: Parameters<typeof useSnap>[0]['panelLayout'],
+  insets?: Parameters<typeof useSnap>[0]['insets'],
   cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
 ) {
   const presence = { current: PresenceState.Left }
@@ -92,7 +92,7 @@ function setup(
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
       snapPoints,
-      panelLayout,
+      insets,
       cornerRadius,
       side,
       enableRTL: true,
@@ -336,11 +336,9 @@ describe('Sheet local viewport calculations and resizing', () => {
       transform: 'translateY(0px)',
     })
 
-    // A transient panel width can reflow the text without moving the fit snap.
+    // A transient panel width can reflow the text synchronously without moving the fit snap.
     writeBody.mockClear()
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 240, height: 280 })
-    expect(writeBody).not.toHaveBeenCalled()
-    vi.advanceTimersByTime(16)
     expect(writeBody.mock.calls).toEqual([[{ left: '0px', right: '0px' }]])
     bodyContext.measureIntrinsicBodyMT?.({ width: 240, height: 360 })
     expect(writeBody).toHaveBeenCalledTimes(1)
@@ -361,9 +359,11 @@ describe('Sheet local viewport calculations and resizing', () => {
     writeBody.mockClear()
     bodyContext.setBodyMTRef(null, insets)
     bodyContext.setBodyMTRef(bodyElement, insets)
-    expect(writeBody).not.toHaveBeenCalledWith({ left: '0px', right: '60px' })
-    vi.advanceTimersByTime(16)
-    expect(writeBody).toHaveBeenLastCalledWith({ left: '0px', right: '60px' })
+    expect(writeBody).toHaveBeenLastCalledWith({
+      left: '0px',
+      right: '60px',
+      transform: 'translateY(60px)',
+    })
   })
 
   it.each([undefined, 24])(
@@ -372,7 +372,7 @@ describe('Sheet local viewport calculations and resizing', () => {
       const { render } = setup(
         'bottom',
         ['fit', '80%', '100%'],
-        { bottomGap: 8 },
+        { bottom: 8 },
         cornerRadius,
       )
       const snap = render({ width: 320, height: 400 })
@@ -431,7 +431,7 @@ describe('Sheet local viewport calculations and resizing', () => {
   })
 
   it('recaps the measured fit height after a height-only viewport resize', () => {
-    const { render } = setup('bottom', ['fit'], { bottomGap: 8 })
+    const { render } = setup('bottom', ['fit'], { bottom: 8 })
     const snap = render({ width: 320, height: 400 })
     const node = {
       setStyleProperties: vi.fn(),

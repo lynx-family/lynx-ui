@@ -2,23 +2,49 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { useMemo } from '@lynx-js/react'
+import { useMemo, useState } from '@lynx-js/react'
 
+import type { LayoutChangeEvent } from '@lynx-js/types'
 import { clsx } from 'clsx'
 
 import { SheetPositionerContext } from '../context'
+import type { SheetPositionerDimensions } from '../context'
 import type { SheetPositionerProps } from '../types'
 
-/** Establish local layout and calculation bounds without querying native layout. */
+/** Establish local layout and calculation bounds, synchronously or via auto-measurement. */
 export function SheetPositioner(props: SheetPositionerProps) {
   const { width, height, children, className, style, positionerProps } = props
-  if (
-    !Number.isFinite(width) || width <= 0
-    || !Number.isFinite(height) || height <= 0
-  ) {
-    throw new Error('SheetPositioner width and height must be positive pixels')
+  if (width !== undefined && (!Number.isFinite(width) || width <= 0)) {
+    throw new Error('SheetPositioner width must be a positive pixel number')
   }
-  const dimensions = useMemo(() => ({ width, height }), [width, height])
+  if (height !== undefined && (!Number.isFinite(height) || height <= 0)) {
+    throw new Error('SheetPositioner height must be a positive pixel number')
+  }
+  const [measured, setMeasured] = useState<SheetPositionerDimensions | null>(
+    null,
+  )
+  const resolvedWidth = width ?? measured?.width
+  const resolvedHeight = height ?? measured?.height
+  const dimensions = useMemo<SheetPositionerDimensions | null>(
+    () =>
+      resolvedWidth !== undefined && resolvedHeight !== undefined
+        ? { width: resolvedWidth, height: resolvedHeight }
+        : null,
+    [resolvedWidth, resolvedHeight],
+  )
+  const needsMeasure = width === undefined || height === undefined
+
+  function handleLayoutChange(event: LayoutChangeEvent) {
+    const { width: nextWidth, height: nextHeight } = event.detail
+    if (nextWidth > 0 && nextHeight > 0) {
+      setMeasured(previous =>
+        previous?.width === nextWidth && previous.height === nextHeight
+          ? previous
+          : { width: nextWidth, height: nextHeight }
+      )
+    }
+    positionerProps?.bindlayoutchange?.(event)
+  }
 
   return (
     <SheetPositionerContext.Provider value={dimensions}>
@@ -29,12 +55,17 @@ export function SheetPositioner(props: SheetPositionerProps) {
           position: 'absolute',
           left: 0,
           top: 0,
+          ...(width === undefined ? { right: 0 } : {}),
+          ...(height === undefined ? { bottom: 0 } : {}),
           ...style,
-          width: `${width}px`,
-          height: `${height}px`,
+          ...(width === undefined ? {} : { width: `${width}px` }),
+          ...(height === undefined ? {} : { height: `${height}px` }),
           overflow: 'hidden',
         }}
         event-through={true}
+        bindlayoutchange={needsMeasure
+          ? handleLayoutChange
+          : positionerProps?.bindlayoutchange}
       >
         {children}
       </view>

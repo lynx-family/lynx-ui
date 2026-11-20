@@ -394,6 +394,66 @@ The root component of the Sheet, containing all of its child components.
     "docTypeFallback": null
   },
   {
+    "name": "main-thread:onDragStart",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called on the main thread when the user begins dragging the Sheet,\nincluding interrupting an active snap or close animation.\nUse this to freeze or cancel coordinated consumer animations in place.\nUse the "
+      },
+      {
+        "kind": "code",
+        "text": "`main thread`"
+      },
+      {
+        "kind": "text",
+        "text": " directive in the callback."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当用户开始拖拽 Sheet（包括打断正在进行的吸附或关闭动画）时在主线程触发，可用于原地冻结或取消协同动画。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:onPositionChange",
+    "type": "(position: number) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called on the main thread whenever the Sheet's main-axis position (visible\nsize in logical pixels) changes during drags or animations.\nUse the "
+      },
+      {
+        "kind": "code",
+        "text": "`main thread`"
+      },
+      {
+        "kind": "text",
+        "text": " directive in the callback."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 主轴位置（逻辑像素可见尺寸）在拖拽或动画过程中变化时在主线程触发。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "main-thread:onSnapStart",
     "type": "(index: number, value: number, animated: boolean) => void",
     "summary": [
@@ -1536,8 +1596,8 @@ Controls the Sheet's overlay layer and stacking order.
 ### SheetPositioner {#api-sheet-positioner}
 
 Optional local viewport inside SheetView. Wrap the backdrop and content together.
-Width and height come from the host pane in logical pixels and are available
-before opening. Sheet does not wait for an asynchronous layout query.
+Width and height can be supplied synchronously in logical pixels or omitted to
+auto-measure the positioner's own bounds on layout.
 CSS places the viewport; its origin does not enter snap or drag calculations.
 Updating dimensions preserves the selected snap and active gestures.
 
@@ -1582,17 +1642,17 @@ Updating dimensions preserves the selected snap and active gestures.
     "summary": [
       {
         "kind": "text",
-        "text": "Local viewport height in positive logical pixels. Overrides screenHeight."
+        "text": "Local viewport height in positive logical pixels. Overrides screenHeight; auto-measured when omitted."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "局部视口高度，正逻辑像素，优先于 screenHeight。"
+        "text": "局部视口高度，正逻辑像素，优先于 screenHeight；省略时自动测量。"
       }
     ],
     "defaultValue": "",
-    "isOption": false,
+    "isOption": true,
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
@@ -1648,17 +1708,17 @@ Updating dimensions preserves the selected snap and active gestures.
     "summary": [
       {
         "kind": "text",
-        "text": "Local viewport width in positive logical pixels. Overrides screenWidth."
+        "text": "Local viewport width in positive logical pixels. Overrides screenWidth; auto-measured when omitted."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "局部视口宽度，正逻辑像素，优先于 screenWidth。"
+        "text": "局部视口宽度，正逻辑像素，优先于 screenWidth；省略时自动测量。"
       }
     ],
     "defaultValue": "",
-    "isOption": false,
+    "isOption": true,
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
@@ -1717,14 +1777,35 @@ The main content of the Sheet.
   },
   {
     "name": "cornerRadius",
-    "type": "number | {bottomLeft?: number, bottomRight?: number, topLeft?: number, topRight?: number}",
+    "type": "SheetCornerRadius",
     "summary": [
       {
         "kind": "text",
-        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nChanges between numeric values use the snap animation, together with the\nbottom gap when both change. Zero explicitly makes a corner square."
+        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nProp updates apply immediately; drive animated changes through\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": ". Zero explicitly makes a corner square."
       }
     ],
-    "summary_zh": [],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "面板可见圆角半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。属性变更立即生效，动画变化请通过 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " 驱动。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -1923,34 +2004,104 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
-    "name": "main-thread:surfaceRef",
-    "type": "MainThreadRef<Element | null>",
+    "name": "insets",
+    "type": "SheetInsets",
     "summary": [
       {
         "kind": "text",
-        "text": "A main-thread ref to the painted view styled by "
+        "text": "Edge insets from the local viewport in logical pixels (for example,\n"
       },
       {
         "kind": "code",
-        "text": "`className`"
+        "text": "`{ bottom: 8 }`"
       },
       {
         "kind": "text",
-        "text": " and "
+        "text": " for a floating card gap, or "
       },
       {
         "kind": "code",
-        "text": "`style`"
+        "text": "`{ left: 88, right: 88, bottom: 8 }`"
       },
       {
         "kind": "text",
-        "text": ".\nIts value is set while the view is mounted and cleared on unmount.\nUse it to animate appearance, such as width on a bottom sheet. Give each\nanimated property one owner: avoid updating it through React styles or a\nCSS transition while writing it imperatively.\nSheet owns movement, coverage height, inset positioning, and clipping.\nFor horizontal drawers, Sheet writes the movement transform on this view."
+        "text": "\nfor a centered floating card).\nProp updates apply immediately; drive animated changes through\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": "."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "背景面板的主线程引用，与 className 和 style 作用在同一个节点。\n可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。"
+        "text": "面板相对局部视口各边的间距（逻辑像素），例如 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ bottom: 8 }`"
+      },
+      {
+        "kind": "text",
+        "text": " 或 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ left: 88, right: 88, bottom: 8 }`"
+      },
+      {
+        "kind": "text",
+        "text": "。属性变更立即生效，动画变化请通过 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " 驱动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:surfaceControllerRef",
+    "type": "MainThreadRef<SheetSurfaceController | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse it from main-thread callbacks such as "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onSnapStart`"
+      },
+      {
+        "kind": "text",
+        "text": " or\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onPositionChange`"
+      },
+      {
+        "kind": "text",
+        "text": " to drive insets and corner radii without\nbackground-thread roundtrips or layout cascades."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "挂载期间接收 SheetSurfaceController 的主线程引用，可在主线程回调中同步驱动面板间距和圆角，避免跨线程往返和级联重排。"
       }
     ],
     "defaultValue": "",
@@ -1958,31 +2109,6 @@ The main content of the Sheet.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "panelLayout",
-    "type": "{bottomGap?: number}",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opt into a bounded bottom panel. Omit this to retain the default\nextended surface. The gap is external and excluded from snap sizes.\nThe panel translates and clips to the visible bounds. Numeric and\npercentage snaps share a content viewport sized for the largest snap\nand capped at the space above the gap. "
-      },
-      {
-        "kind": "code",
-        "text": "`fit`"
-      },
-      {
-        "kind": "text",
-        "text": " keeps its intrinsic sizing.\nGap changes use the snap animation."
-      }
-    ],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -2094,7 +2220,7 @@ A body region that can stay inside the local Sheet viewport as the panel moves.
   },
   {
     "name": "viewportInsets",
-    "type": "{bottom?: number, left?: number, right?: number, top?: number}",
+    "type": "{bottom?: number, end?: number, left?: number, right?: number, start?: number, top?: number}",
     "summary": [
       {
         "kind": "text",
@@ -2175,14 +2301,35 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
   },
   {
     "name": "cornerRadius",
-    "type": "number | {bottomLeft?: number, bottomRight?: number, topLeft?: number, topRight?: number}",
+    "type": "SheetCornerRadius",
     "summary": [
       {
         "kind": "text",
-        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nChanges between numeric values use the snap animation, together with the\nbottom gap when both change. Zero explicitly makes a corner square."
+        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nProp updates apply immediately; drive animated changes through\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": ". Zero explicitly makes a corner square."
       }
     ],
-    "summary_zh": [],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "面板可见圆角半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。属性变更立即生效，动画变化请通过 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " 驱动。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -2415,34 +2562,104 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "docTypeFallback": null
   },
   {
-    "name": "main-thread:surfaceRef",
-    "type": "MainThreadRef<Element | null>",
+    "name": "insets",
+    "type": "SheetInsets",
     "summary": [
       {
         "kind": "text",
-        "text": "A main-thread ref to the painted view styled by "
+        "text": "Edge insets from the local viewport in logical pixels (for example,\n"
       },
       {
         "kind": "code",
-        "text": "`className`"
+        "text": "`{ bottom: 8 }`"
       },
       {
         "kind": "text",
-        "text": " and "
+        "text": " for a floating card gap, or "
       },
       {
         "kind": "code",
-        "text": "`style`"
+        "text": "`{ left: 88, right: 88, bottom: 8 }`"
       },
       {
         "kind": "text",
-        "text": ".\nIts value is set while the view is mounted and cleared on unmount.\nUse it to animate appearance, such as width on a bottom sheet. Give each\nanimated property one owner: avoid updating it through React styles or a\nCSS transition while writing it imperatively.\nSheet owns movement, coverage height, inset positioning, and clipping.\nFor horizontal drawers, Sheet writes the movement transform on this view."
+        "text": "\nfor a centered floating card).\nProp updates apply immediately; drive animated changes through\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": "."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "背景面板的主线程引用，与 className 和 style 作用在同一个节点。\n可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。"
+        "text": "面板相对局部视口各边的间距（逻辑像素），例如 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ bottom: 8 }`"
+      },
+      {
+        "kind": "text",
+        "text": " 或 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ left: 88, right: 88, bottom: 8 }`"
+      },
+      {
+        "kind": "text",
+        "text": "。属性变更立即生效，动画变化请通过 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " 驱动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "main-thread:surfaceControllerRef",
+    "type": "MainThreadRef<SheetSurfaceController | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse it from main-thread callbacks such as "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onSnapStart`"
+      },
+      {
+        "kind": "text",
+        "text": " or\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onPositionChange`"
+      },
+      {
+        "kind": "text",
+        "text": " to drive insets and corner radii without\nbackground-thread roundtrips or layout cascades."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "挂载期间接收 SheetSurfaceController 的主线程引用，可在主线程回调中同步驱动面板间距和圆角，避免跨线程往返和级联重排。"
       }
     ],
     "defaultValue": "",
@@ -2450,31 +2667,6 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "panelLayout",
-    "type": "{bottomGap?: number}",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opt into a bounded bottom panel. Omit this to retain the default\nextended surface. The gap is external and excluded from snap sizes.\nThe panel translates and clips to the visible bounds. Numeric and\npercentage snaps share a content viewport sized for the largest snap\nand capped at the space above the gap. "
-      },
-      {
-        "kind": "code",
-        "text": "`fit`"
-      },
-      {
-        "kind": "text",
-        "text": " keeps its intrinsic sizing.\nGap changes use the snap animation."
-      }
-    ],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {

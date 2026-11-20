@@ -101,7 +101,7 @@ function App() {
               ? (
                 <SheetNestedScrollContent
                   className='surface'
-                  panelLayout={{ bottomGap: 8 }}
+                  insets={{ bottom: 8 }}
                   innerStyle={{ display: 'flex', flexDirection: 'column' }}
                 >
                   {({ scrollGesture }) => (
@@ -138,7 +138,7 @@ function App() {
               : (
                 <SheetContent
                   className='surface'
-                  panelLayout={{ bottomGap: 8 }}
+                  insets={{ bottom: 8 }}
                 >
                   <SheetHandle className='handle' />
                   <view className='panel'>

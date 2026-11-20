@@ -21,63 +21,69 @@ import {
   screenHeight,
   screenWidth,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef } from '@lynx-js/lynx-ui'
+import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 import {
   animate,
   useMotionValueRef,
   useMotionValueRefEvent,
 } from '@lynx-js/motion/mini'
-import type { MainThread } from '@lynx-js/types'
 
 import { TriggerButton } from '../shared/index.js'
 import './index.css'
 
 function App() {
   const sheet = useRef<SheetRootRef>(null)
-  const surface = useMainThreadRef<MainThread.Element | null>(null)
+  const surfaceController = useMainThreadRef<SheetSurfaceController | null>(
+    null,
+  )
   const [viewport, setViewport] = useState({
     width: screenWidth,
     height: screenHeight,
   })
   const floatingWidth = Math.min(Math.max(0, viewport.width - 48), 664)
-  const fullscreenWidth = viewport.width
+  const floatingSideInset = Math.max(0, (viewport.width - floatingWidth) / 2)
   const fullscreenHeight = viewport.height
-  const width = useMotionValueRef(floatingWidth)
-  const target = useMainThreadRef({ width: floatingWidth, animated: false })
+  const sideInset = useMotionValueRef(floatingSideInset)
+  const target = useMainThreadRef({ inset: floatingSideInset, animated: false })
 
-  useMotionValueRefEvent(width, 'change', value => {
+  useMotionValueRefEvent(sideInset, 'change', value => {
     'main thread'
-    surface.current?.setStyleProperties({ width: `${value}px` })
+    surfaceController.current?.setInsets({ left: value, right: value })
   })
 
   function resetWidth() {
     'main thread'
-    target.current = { width: floatingWidth, animated: false }
-    width.current.jump(floatingWidth)
+    target.current = { inset: floatingSideInset, animated: false }
+    sideInset.current.jump(floatingSideInset)
+  }
+
+  function onDragStart() {
+    'main thread'
+    sideInset.current.stop()
   }
 
   function onSnapStart(_index: number, size: number, animated: boolean) {
     'main thread'
-    const next = size >= fullscreenHeight ? fullscreenWidth : floatingWidth
+    const next = size >= fullscreenHeight ? 0 : floatingSideInset
     const previous = target.current
-    if (previous.width === next && previous.animated === animated) return
-    target.current = { width: next, animated }
-    width.current.stop()
+    if (previous.inset === next && previous.animated === animated) return
+    target.current = { inset: next, animated }
+    sideInset.current.stop()
     if (animated) {
-      animate(width.current, next, {
+      animate(sideInset.current, next, {
         type: 'spring',
         stiffness: 260,
         damping: 28,
       })
     } else {
-      width.current.jump(next)
+      sideInset.current.jump(next)
     }
   }
 
   useEffect(() => () => {
     runOnMainThread(() => {
       'main thread'
-      width.current?.stop()
+      sideInset.current?.stop()
     })()
   }, [])
 
@@ -100,16 +106,18 @@ function App() {
       <SheetRoot
         ref={sheet}
         snapPoints={['45%', '100%']}
+        screenWidth={viewport.width}
         screenHeight={fullscreenHeight}
+        main-thread:onDragStart={onDragStart}
         main-thread:onSnapStart={onSnapStart}
       >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            main-thread:surfaceRef={surface}
+            main-thread:surfaceControllerRef={surfaceController}
+            insets={{ left: floatingSideInset, right: floatingSideInset }}
             className='sheet-content'
             innerClassName='surface-layout'
-            style={{ alignSelf: 'center', width: `${floatingWidth}px` }}
           >
             <SheetHandle className='sheet-handle' />
             <view className='surface-body'>

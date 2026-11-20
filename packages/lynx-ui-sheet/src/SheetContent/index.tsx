@@ -56,6 +56,7 @@ export function SheetContent(props: SheetContentProps) {
       handleOnly={context.handleOnly}
       snapPoints={snapPoints}
       maxSnapSize={snap.maxSnapSize}
+      screenWidth={snap.screenWidth}
       positioner={positioner}
       footerContext={snap.footerContext}
       bodyContext={snap.bodyContext}
@@ -65,6 +66,8 @@ export function SheetContent(props: SheetContentProps) {
       setViewportMTRef={snap.setViewportMTRef}
       setSheetMTRef={snap.setSheetMTRef}
       setContentMTRef={snap.setContentMTRef}
+      setInsetsMT={snap.setInsetsMT}
+      setCornerRadiusMT={snap.setCornerRadiusMT}
       handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
     />
   )
