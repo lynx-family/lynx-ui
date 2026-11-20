@@ -11,12 +11,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - **`SheetRoot`**: Owns visibility state, side, snap points, drag behavior, and imperative methods.
 - **`SheetView`**: Renders the sheet subtree in the overlay layer and controls mount/unmount.
 - **`SheetPositioner`**: Optionally wraps backdrop and content in a local viewport.
-  Supply positive `width` and `height` in logical pixels from the host pane;
-  use `style` to place it inside `SheetView`. The same dimensions drive layout
-  and snap physics before opening, without an asynchronous measurement query.
-  Keep these props synchronized with the host pane when it resizes. Do not
-  override its dimensions through CSS. Without it, the existing viewport path
-  and opening flow remain unchanged.
+  Supply positive `width` and `height` in logical pixels from the host pane, or
+  omit them to auto-measure the positioner's own bounds on layout. Use `style`
+  to place it inside `SheetView`. Do not override explicit dimensions through
+  CSS. Without it, the existing viewport path and opening flow remain unchanged.
 - **`SheetBackdrop`**: Renders the scrim behind the sheet and optionally closes the sheet on tap.
 - **`SheetContent`**: Renders the moving sheet or drawer surface and receives consumer sizing/styling.
 - **`SheetNestedScrollContent`**: Content layer that coordinates sheet dragging and nested native scrolling. Keep `SheetContent` for the existing raw-touch behavior.
@@ -30,6 +28,8 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Prefer its render prop for a nearby scroll node: bind `scrollGesture` to the outermost vertical scrolling node with `main-thread:gesture`.
 - In deeply nested content, call the argument-free `useSheetScrollGesture()` Hook. It returns the same gesture object created by the nearest `SheetNestedScrollContent`; it does not create or configure another gesture.
 - The ownership rule is fixed and directionally natural: upward drags expand the Sheet to its maximum snap before content scrolls; downward drags scroll content to its start before the Sheet collapses. Handoff can occur without lifting the finger.
+- Native content bounce belongs to the scroll node, not `SheetRoot.rubberBand`. Enable `bounces` on the native node when edge feedback is wanted. Do not layer another resistance transform on the same content movement.
+- When native events report both start and end boundaries, the target has no scroll range and Sheet retains upper resistance. An unknown scroll range preserves the usual maximum-snap handoff; do not infer available scrolling from `getScrollInfo().scrollRange`, whose meaning differs across native implementations.
 - A main-axis content gesture holds an in-progress snap until touch-up or cancellation. If the Sheet takes over the drag, that drag replaces the pending snap. Arrival callbacks run only when the panel reaches its target.
 - Direction recognition belongs to the whole touch: after a main-axis drag starts, reversals across the starting position retain the same recognizers and live scroll boundaries. A new touch can independently select a cross-axis child.
 - The native coordinator uses the same `gestureConfig.minDistance` as the Sheet pan before selecting an axis. It continues observing boundaries during smaller movements so initial touch jitter cannot freeze the boundary before Sheet recognition.
@@ -46,12 +46,28 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Use `className` / `style` to style the painted surface and `innerClassName` / `innerStyle` for content layout. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
 - A background-thread state update followed by a CSS transition has its own clock. It does not synchronize with the Sheet spring. Keep live text and controls unscaled; animating actual width can reflow text and still incurs layout work. Do not expose or mutate the movement ref to implement companion styles.
 
-## Panel Layout
+## Rubber-Band Rules
 
-- Omit `panelLayout` to retain extended background coverage and the original content layout.
-- Set `panelLayout={{ bottomGap: 8 }}` for a bounded bottom panel. The gap is outside the panel and does not count toward a snap size. An empty `panelLayout` uses a zero gap.
-- Updating `bottomGap` uses `snapAnimation` without remounting the content or native scroll view.
-- Put paint and width on surface `className` and `style`. Use `innerClassName` and `innerStyle` for the child layout.
+- Sheet-owned resistance follows raw finger displacement, not a repeatedly compressed motion value. Holding a stationary finger must hold the current stretch; reverse movement unwinds it before ordinary Sheet movement resumes.
+- Recognizer completion or nested handoff is not touch release. Snap selection and rebound belong to touch-up or cancellation, including native touch completion when the Sheet pan no longer owns the recognizer.
+- A fresh swipe toward expansion inside scrollable content can take ownership during the Sheet's rebound from its maximum snap. A new handle drag can still interrupt that rebound and continue the stretch.
+- Resistance geometry is sampled when Sheet acquires a drag. A positioner resize changes the live handoff and release targets without repeatedly remapping an existing stretch. A new ownership segment samples the current geometry; imperative position changes rebase the drag.
+- Keep enabled-rubber gesture regressions: equivalent event partitions, monotonic over-drag, stationary holds, reversals, interrupted stretch, and both touch-completion orders. Mock the runtime, not the resistance configuration.
+
+## Panel and Body Layout
+
+- Omit `insets` and `cornerRadius` to retain extended background coverage and the original content layout.
+- Set `insets={{ bottom: 8 }}` (or `{ left, right, bottom }`) for a bounded floating panel. The bottom inset is external and does not count toward a snap size. Zero insets with zero bottom corners preserve attached coverage without a mode trap.
+- Prop changes on `insets` and `cornerRadius` apply immediately. Drive animated transitions (such as fullscreen widening, gap changes, or corner transitions) on the main thread through `main-thread:surfaceControllerRef` (`setInsets`, `setCornerRadius`), coordinated with `main-thread:onSnapStart`, `main-thread:onDragStart`, and `main-thread:onPositionChange`.
+- `setInsets({ left, right })` updates the painted surface and `SheetBody`'s horizontal safe-area clamping synchronously in one layout pass, avoiding two-pass `layoutchange` cascades.
+- Use `cornerRadius={24}` to round exposed sheet corners, including the clipped bottom edge of a floating sheet. Supply an object with individual corners for asymmetric shapes. Omitted surface corners use CSS; omitted clipped bottom corners are square.
+- All bounded bottom panels translate and clip at a fixed surface height. `clipMTRef`'s bottom hit-test boundary settles at rest rather than resizing on animation frames.
+- In a flex content layout, place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` support `top`, `right`, `bottom`, `left`, plus logical `start`/`end` resolved with `enableRTL`. All four sides use transform + clip during drags to avoid per-frame layout.
+- A bottom `fit` snap with viewport insets measures the body at its safe width. Give the content an intrinsic height. The body is clipped to the visible area during a drag without resizing its layout. A coordinated scrollable at the largest snap uses the space inside the safe area.
+- Inset `fit` uses the compact measurement while an appearance animation changes the panel width. A change to the local viewport width or horizontal insets can establish a new compact size.
+- Use one `SheetBody` per content element. Explicit snaps let the body occupy the remaining space in the content layout. Fit sheets keep the body's intrinsic layout.
+- Bind `scrollGesture` to the same native scroll view inside the body. Moving that body requires no extra pan gesture.
+- Use surface `className` and `style` for paint. Use `innerClassName` and `innerStyle` for child layout.
 
 ## Footer Rules
 
@@ -77,10 +93,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
   and retargets running animations without another snap-start notification.
   Drag positions and native scroll nodes stay intact. Intrinsic `fit` sizing
   still follows content layout; it does not require a positioner query.
-- Positioner placement, the animated `panelLayout.bottomGap` relative to its bottom
-  edge, and content safe-area padding are separate layout concerns.
+- Positioner placement, `insets` relative to the viewport edges, and content
+  safe-area padding are separate layout concerns.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
-- Attached numeric-snap sheets use `maxSnapSize`, the highest resolved `snapPoints` value, as their stable content size. Detached bottom sheets resize the numeric-snap viewport to the visible panel. Pure `'fit'` snap point sheets stay content-driven.
+- Numeric-snap sheets share a stable content size based on the largest snap. A bottom `'fit'` snap resolves from intrinsic content and is capped at the space available above the configured gap. Use a scrollable for content beyond the visible area.
 - `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.
 - Rubber-band over-drag defaults to enabled for `top` / `bottom` and disabled for horizontal modes. Use `rubberBand` to override the default.
 

@@ -11,25 +11,25 @@ import type {
 } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
-import type { MainThread, ViewProps } from '@lynx-js/types'
+import type { ViewProps } from '@lynx-js/types'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
 
 /**
  * Optional local viewport inside SheetView. Wrap the backdrop and content together.
- * Width and height come from the host pane in logical pixels and are available
- * before opening. Sheet does not wait for an asynchronous layout query.
+ * Width and height can be supplied synchronously in logical pixels or omitted to
+ * auto-measure the positioner's own bounds on layout.
  * CSS places the viewport; its origin does not enter snap or drag calculations.
  * Updating dimensions preserves the selected snap and active gestures.
- * @zh SheetView 内可选的局部视口，同时包裹背景遮罩和内容。宽高由宿主区域以逻辑像素提供，
- * 在打开前即可用于计算，无需等待异步布局查询。CSS 控制位置，原点不参与吸附或拖拽计算。
+ * @zh SheetView 内可选的局部视口，同时包裹背景遮罩和内容。宽高可以逻辑像素同步传入，
+ * 也可省略以在布局时自动测量定位容器尺寸。CSS 控制位置，原点不参与吸附或拖拽计算。
  * 更新宽高会保留吸附索引和正在进行的手势。
  */
 export interface SheetPositionerProps extends ComponentBasicProps {
-  /** Local viewport width in positive logical pixels. Overrides screenWidth. @zh 局部视口宽度，正逻辑像素，优先于 screenWidth。 */
-  width: number
-  /** Local viewport height in positive logical pixels. Overrides screenHeight. @zh 局部视口高度，正逻辑像素，优先于 screenHeight。 */
-  height: number
+  /** Local viewport width in positive logical pixels. Overrides screenWidth; auto-measured when omitted. @zh 局部视口宽度，正逻辑像素，优先于 screenWidth；省略时自动测量。 */
+  width?: number
+  /** Local viewport height in positive logical pixels. Overrides screenHeight; auto-measured when omitted. @zh 局部视口高度，正逻辑像素，优先于 screenHeight；省略时自动测量。 */
+  height?: number
   children?: ReactNode
   /**
    * Native properties for the positioner view. Dimensions, clipping, className,
@@ -120,35 +120,77 @@ export interface SheetTransitionTween {
 
 export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
 
+export interface SheetInsets {
+  top?: number
+  right?: number
+  bottom?: number
+  left?: number
+}
+
+export type SheetCornerRadius =
+  | number
+  | {
+    topLeft?: number
+    topRight?: number
+    bottomRight?: number
+    bottomLeft?: number
+  }
+
+/**
+ * Main-thread controller for updating the Sheet surface's geometry and corner shape.
+ * Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on the main thread.
+ * @zh 用于在主线程更新 Sheet 表面几何边界与圆角形态的控制器，原子化同步表面边界、裁剪与 SheetBody 安全区避让。
+ */
+export interface SheetSurfaceController {
+  /**
+   * Update panel edge insets from the local viewport in logical pixels.
+   * @zh 更新面板相对局部视口各边的逻辑像素间距。
+   */
+  setInsets: (insets: SheetInsets) => void
+  /**
+   * Update exposed corner radii in logical pixels. Pass undefined to restore CSS corners.
+   * @zh 更新可见圆角半径（逻辑像素）；传 undefined 恢复 CSS 圆角。
+   */
+  setCornerRadius: (radius: SheetCornerRadius | undefined) => void
+}
+
 /**
  * The main content of the Sheet.
  * @zh Sheet 的主要内容。
  */
 export interface SheetContentProps extends ComponentBasicProps {
   /**
-   * A main-thread ref to the painted view styled by `className` and `style`.
-   * Its value is set while the view is mounted and cleared on unmount.
-   * Use it to animate appearance, such as width on a bottom sheet. Give each
-   * animated property one owner: avoid updating it through React styles or a
-   * CSS transition while writing it imperatively.
-   * Sheet owns movement, coverage height, inset positioning, and clipping.
-   * For horizontal drawers, Sheet writes the movement transform on this view.
+   * A main-thread ref receiving the SheetSurfaceController while mounted.
+   * Use it from main-thread callbacks such as `main-thread:onSnapStart` or
+   * `main-thread:onPositionChange` to drive insets and corner radii without
+   * background-thread roundtrips or layout cascades.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 背景面板的主线程引用，与 className 和 style 作用在同一个节点。
-   * 可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。
+   * @zh 挂载期间接收 SheetSurfaceController 的主线程引用，可在主线程回调中同步驱动面板间距和圆角，避免跨线程往返和级联重排。
    */
-  'main-thread:surfaceRef'?: MainThreadRef<MainThread.Element | null>
+  'main-thread:surfaceControllerRef'?: MainThreadRef<
+    SheetSurfaceController | null
+  >
   /**
-   * Opt into a bounded bottom panel. Omit this to retain the default
-   * extended surface. The gap is external and excluded from snap sizes.
-   * Updating it follows the snap animation without replacing the content.
+   * Radius in logical pixels for the sheet's exposed corners. A number applies
+   * to every exposed corner. Supply individual corners to use different sizes.
+   * Supplied values override surface styles for those corners. Omitted surface
+   * corners use CSS, and omitted clipped bottom corners are square.
+   * Prop updates apply immediately; drive animated changes through
+   * `main-thread:surfaceControllerRef`. Zero explicitly makes a corner square.
+   * @zh 面板可见圆角半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。属性变更立即生效，动画变化请通过 `main-thread:surfaceControllerRef` 驱动。
    */
-  panelLayout?: {
-    /** Space below the panel in local logical pixels. Defaults to zero. */
-    bottomGap?: number
-  }
+  cornerRadius?: SheetCornerRadius
+  /**
+   * Edge insets from the local viewport in logical pixels (for example,
+   * `{ bottom: 8 }` for a floating card gap, or `{ left: 88, right: 88, bottom: 8 }`
+   * for a centered floating card).
+   * Prop updates apply immediately; drive animated changes through
+   * `main-thread:surfaceControllerRef`.
+   * @zh 面板相对局部视口各边的间距（逻辑像素），例如 `{ bottom: 8 }` 或 `{ left: 88, right: 88, bottom: 8 }`。属性变更立即生效，动画变化请通过 `main-thread:surfaceControllerRef` 驱动。
+   */
+  insets?: SheetInsets
   /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。
@@ -279,6 +321,29 @@ export interface SheetNestedScrollContentProps
   gestureRelations?: SheetGestureRelations
 }
 
+/** A body region that can stay inside the local Sheet viewport as the panel moves. */
+export interface SheetBodyProps extends ComponentBasicProps {
+  children?: ReactNode
+  /**
+   * Minimum distance from each supplied physical edge of the local viewport,
+   * in logical pixels. Place the body in the Sheet flex content layout, alongside
+   * any handle that should travel with the panel. Supply at most one body per
+   * SheetContent or SheetNestedScrollContent. Bottom sheets with a `fit` snap
+   * measure the body at its available width. Bottom sheets keep the body's
+   * layout stable during a drag and clip to the visible area. Use intrinsically
+   * sized body content for `fit`. Other sheet sides support viewport insets
+   * with explicit snaps.
+   */
+  viewportInsets?: {
+    top?: number
+    right?: number
+    bottom?: number
+    left?: number
+    start?: number
+    end?: number
+  }
+}
+
 /**
  * The root component of the Sheet, containing all of its child components.
  * @zh Sheet 的根组件，包含其所有子组件。
@@ -312,6 +377,8 @@ export interface SheetRootProps extends ComponentBasicProps {
    *   and relative to screen width for `left` / `right` / `start` / `end`
    * - 'fit' dynamically resolves to the measured content height for `top` / `bottom`,
    *   and the measured content width for `left` / `right` / `start` / `end`
+   * - Bottom 'fit' is capped at the local viewport height above the bottom gap.
+   *   Use scrollable content when the content exceeds that space.
    * @defaultValue ['fit']
    * The index order follows the order of this array.
    * @example snapPoints={['fit', '80%']} // First snap fits content, second is 80% of screen
@@ -353,6 +420,21 @@ export interface SheetRootProps extends ComponentBasicProps {
     animated: boolean,
   ) => void
   /**
+   * Called on the main thread when the user begins dragging the Sheet,
+   * including interrupting an active snap or close animation.
+   * Use this to freeze or cancel coordinated consumer animations in place.
+   * Use the `main thread` directive in the callback.
+   * @zh 当用户开始拖拽 Sheet（包括打断正在进行的吸附或关闭动画）时在主线程触发，可用于原地冻结或取消协同动画。
+   */
+  'main-thread:onDragStart'?: () => void
+  /**
+   * Called on the main thread whenever the Sheet's main-axis position (visible
+   * size in logical pixels) changes during drags or animations.
+   * Use the `main thread` directive in the callback.
+   * @zh Sheet 主轴位置（逻辑像素可见尺寸）在拖拽或动画过程中变化时在主线程触发。
+   */
+  'main-thread:onPositionChange'?: (position: number) => void
+  /**
    * The height of the Sheet container (screen height).
    * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points
    * and dismissal calculations.
@@ -376,12 +458,19 @@ export interface SheetRootProps extends ComponentBasicProps {
    * If false, disables rubber band effect.
    * If number, enables rubber band effect with the specified coefficient.
    * If object, allows specifying coefficient and max distance.
+   * Sheet-owned over-drag follows total finger displacement and holds until
+   * touch-up or cancellation. Its resistance geometry is sampled when the
+   * Sheet acquires the drag. Nested content uses its own native bounce settings
+   * after handoff at the maximum snap; this option does not enable content bounce.
    * @zh 橡皮筋效果配置。
    * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
    * 如果为 true，启用默认橡皮筋效果（系数 0.5）。
    * 如果为 false，禁用橡皮筋效果。
    * 如果为数字，启用指定系数的橡皮筋效果。
    * 如果为对象，允许指定系数和最大距离。
+   * Sheet 的越界阻尼跟随手指累计位移，在抬手或取消前保持拖拽位置。
+   * 阻尼几何参数在 Sheet 接管拖拽时采样。嵌套内容在最大吸附点交接后
+   * 使用自身的原生回弹配置；此选项不会启用内容回弹。
    */
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   /**

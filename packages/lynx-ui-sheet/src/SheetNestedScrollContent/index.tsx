@@ -31,7 +31,11 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
   const activeScrollMTRef = useMainThreadRef<ActiveSheetScrollGesture | null>(
     null,
   )
-  const { gesture: sheetGesture, finishTouchMT } = useSheetPanGesture({
+  const {
+    gesture: sheetGesture,
+    finishTouchMT,
+    sheetDraggingMTRef,
+  } = useSheetPanGesture({
     side: context.side,
     enableRTL: context.enableRTL,
     dragDisabled: context.dragDisabled,
@@ -60,6 +64,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     activeScrollMTRef,
     resolvedSide: context.resolvedSide,
     position: snap.yRef,
+    sheetDraggingMTRef,
     getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
     onScrollEndMT: cancelled => {
       'main thread'
@@ -88,13 +93,18 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         handleOnly={context.handleOnly}
         snapPoints={snapPoints}
         maxSnapSize={snap.maxSnapSize}
+        screenWidth={snap.screenWidth}
         positioner={positioner}
         footerContext={snap.footerContext}
+        bodyContext={snap.bodyContext}
+        measureSurfaceMT={snap.measureSurfaceMT}
         setClipMTRef={snap.setClipMTRef}
         setSurfaceMTRef={snap.setSurfaceMTRef}
         setViewportMTRef={snap.setViewportMTRef}
         setSheetMTRef={snap.setSheetMTRef}
         setContentMTRef={snap.setContentMTRef}
+        setInsetsMT={snap.setInsetsMT}
+        setCornerRadiusMT={snap.setCornerRadiusMT}
         handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
       >
         {resolvedChildren}

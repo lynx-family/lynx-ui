@@ -11,7 +11,12 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetRootProps, SheetSide, SheetTransition } from '../types'
+import type {
+  SheetBodyProps,
+  SheetRootProps,
+  SheetSide,
+  SheetTransition,
+} from '../types'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
@@ -53,6 +58,8 @@ export interface SheetContextValue {
   initialSnap?: number
   onSnapChange?: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
+  onDragStartMT?: SheetRootProps['main-thread:onDragStart']
+  onPositionChangeMT?: SheetRootProps['main-thread:onPositionChange']
   side: SheetSide
   enableRTL: boolean
   resolvedSide: SheetResolvedSide
@@ -70,14 +77,41 @@ export interface SheetContextValue {
 
 export interface SheetFooterContextValue {
   resolvedSide: SheetResolvedSide
-  registerFooter: (id: string, height: number) => void
-  unregisterFooter: (id: string) => void
+  setFooterMTRef: (element: MainThread.Element | null) => void
+  updateFooterHeightMT: (height: number) => void
 }
 
 export interface SheetPositionerDimensions {
   width: number
   height: number
 }
+
+export interface SheetLayoutRect {
+  left: number
+  top: number
+  width: number
+  height: number
+}
+
+export interface SheetBodyContextValue {
+  enabled: boolean
+  intrinsic?: boolean
+  resolvedSide?: SheetResolvedSide
+  enableRTL?: boolean
+  viewportHeight?: number
+  setBodyClipMTRef?: (element: MainThread.Element | null) => void
+  setBodySlotMTRef?: (element: MainThread.Element | null) => void
+  measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
+  setBodyMTRef: (
+    element: MainThread.Element | null,
+    insets: SheetBodyProps['viewportInsets'],
+  ) => void
+  measureBodyMT: (rect: Partial<SheetLayoutRect>) => void
+}
+
+export const SheetBodyContext = createContext<SheetBodyContextValue | null>(
+  null,
+)
 
 export const SheetPositionerContext = createContext<
   SheetPositionerDimensions | null
@@ -115,6 +149,7 @@ export interface ActiveSheetScrollGesture {
   consuming?: boolean
   revision?: number
   atStart?: boolean
+  atEnd?: boolean
 }
 
 export interface SheetGestureContextValue {

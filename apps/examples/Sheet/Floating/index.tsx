@@ -42,13 +42,19 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            panelLayout={bounded ? { bottomGap } : undefined}
-            className='sheet-content surface-card'
+            cornerRadius={bounded ? 24 : { topLeft: 24, topRight: 24 }}
+            insets={bounded
+              ? {
+                left: (screenWidth - width) / 2,
+                right: (screenWidth - width) / 2,
+                bottom: bottomGap,
+              }
+              : {
+                left: (screenWidth - width) / 2,
+                right: (screenWidth - width) / 2,
+              }}
+            className='sheet-content'
             innerClassName='surface-layout'
-            style={{
-              width: `${width}px`,
-              left: `${(screenWidth - width) / 2}px`,
-            }}
           >
             {({ scrollGesture }) => (
               <>

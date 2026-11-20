@@ -16,6 +16,7 @@ This directory contains examples for the Sheet component.
 - **FloatingFit**: A content-sized floating panel that responds to content changes.
 - **SurfaceRef**: A custom Motion spring animates the painted surface width on the main thread.
 - **Transition**: Floating-to-fullscreen styling after snap selection, including an intermediate snap and an immediate snap.
+- **SafeArea**: A moving handle beside a protected `SheetBody`, with simulated top/right viewport insets, a floating bottom gap, coordinated scrolling, and a main-thread fullscreen width/corner spring.
 - **Tablet**: Tablet-friendly Sheet layout.
 - **GestureScrollView**: Default same-finger handoff between Sheet and ScrollView.
 - **GestureList**: Coordinated handoff between the Sheet and native list scrolling.
@@ -30,10 +31,11 @@ This directory contains examples for the Sheet component.
 | Attached background | Attached | Pull past 75%; the lower background continues to cover the viewport. |
 | Floating with or without a gap | Floating | Toggle 0px/8px independently of coverage; the requested panel height does not include the external gap. |
 | Live surface changes | Floating | Scroll, then change coverage; the same native scroll node and content remain mounted. |
-| Intrinsic height | FloatingFit | Toggle more detail; the panel fits its content while keeping the external gap. |
+| Intrinsic height and safe edges | FloatingFit | Toggle more detail to resize the fitted panel. Expand and return to Fit to see how the top and right safe edges affect the same body. |
 | Fullscreen appearance | Transition | Release at 100% or use Fullscreen; 70% remains floating. Close and reopen to restore the initial appearance. |
 | Immediate appearance | Transition | Use Instant fullscreen; both the snap and companion appearance update without animation. |
 | Same-finger handoff | GestureScrollView / Transition | Drag up to the maximum and continue scrolling; reverse to scroll to the start before collapsing. |
+| Protected content | SafeArea | Drag past the top guide, then release at fullscreen: the panel widens past the right guide while the body stays inside it. Use 45% to reverse the width/corner animation. |
 | Native list | GestureList | Repeat the handoff with recycled list content. |
 | Fixed footer | GestureFixedFooter | Scroll to the final item; verify it remains reachable above the fixed actions. |
 | Composed gestures | GestureComposite | Drag the handle, scroll vertically, then swipe the horizontal child. |

@@ -31,12 +31,17 @@ const DEFAULT_TRANSITION: SheetTransition = {
   damping: 60,
 }
 
-export function useSheetContentController(props: SheetContentProps) {
+export function useSheetContentController(
+  props: SheetContentProps,
+) {
   const {
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
-    panelLayout,
+    cornerRadius,
+    insets,
+    'main-thread:surfaceControllerRef': surfaceControllerRef,
+    style,
   } = props
   const context = useSheetContext()
   const positioner = useSheetPositionerContext()
@@ -53,6 +58,8 @@ export function useSheetContentController(props: SheetContentProps) {
     screenWidth,
     onSnapChange,
     onSnapStartMT,
+    onDragStartMT,
+    onPositionChangeMT,
     onShowChange,
     presenceStateMTRef,
     onUnmount,
@@ -77,7 +84,10 @@ export function useSheetContentController(props: SheetContentProps) {
   const snap = useSnap({
     snapPoints,
     initialSnap,
-    panelLayout,
+    cornerRadius,
+    insets,
+    hasController: surfaceControllerRef !== undefined,
+    surfaceStyle: style,
     snapAnimation,
     side,
     enableRTL,
@@ -86,6 +96,8 @@ export function useSheetContentController(props: SheetContentProps) {
     positioner,
     onSnapChange,
     onSnapStartMT,
+    onDragStartMT,
+    onPositionChangeMT,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,
     onEntered: handleEntered,

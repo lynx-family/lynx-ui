@@ -22,7 +22,6 @@ import {
   screenWidth,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
-import clsx from 'clsx'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
@@ -90,15 +89,15 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            panelLayout={{ bottomGap: panel.fullscreen ? 0 : 8 }}
-            className={clsx(
-              'sheet-content',
-              !panel.fullscreen && 'surface-card',
-            )}
+            cornerRadius={panel.fullscreen ? 0 : 24}
+            insets={{
+              left: (viewport.width - width) / 2,
+              right: (viewport.width - width) / 2,
+              bottom: panel.fullscreen ? 0 : 8,
+            }}
+            className='sheet-content'
             innerClassName='surface-layout'
             style={{
-              width: `${width}px`,
-              left: `${(viewport.width - width) / 2}px`,
               // This CSS transition has its own clock; it does not follow the snap spring.
               transition: panel.animated
                 ? 'width 280ms ease-out, left 280ms ease-out'

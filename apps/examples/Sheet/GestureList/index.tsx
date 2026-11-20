@@ -25,7 +25,7 @@ function NestedList() {
       scroll-orientation='vertical'
       list-type='single'
       span-count={1}
-      bounces={false}
+      bounces={true}
       main-thread:gesture={gesture}
     >
       {Array.from(

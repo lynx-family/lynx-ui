@@ -316,6 +316,7 @@ export type {
 
 export {
   SheetRoot,
+  SheetBody,
   SheetContent,
   SheetNestedScrollContent,
   SheetBackdrop,
@@ -328,14 +329,18 @@ export {
 } from '@lynx-js/lynx-ui-sheet'
 export type {
   SheetBackdropProps,
+  SheetBodyProps,
   SheetContentProps,
+  SheetCornerRadius,
   SheetGestureConfig,
+  SheetInsets,
   SheetNestedScrollContentProps,
   SheetNestedScrollRenderProps,
   SheetGestureRelations,
   SheetRootProps,
   SheetRootRef,
   SheetSide,
+  SheetSurfaceController,
   SheetViewProps,
   SheetPositionerProps,
   SheetHandleProps,
