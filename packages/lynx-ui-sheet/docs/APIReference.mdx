@@ -3113,6 +3113,128 @@ The handle of the Sheet.
   }
 ]}/>
 
+### SheetInsets {#api-supporting-types-sheet-insets}
+
+<UIApiTable source={[
+  {
+    "name": "bottom",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "left",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "right",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "top",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetCornerRadius {#api-supporting-types-sheet-corner-radius}
+
+<UIApiTable source={[
+  {
+    "name": "SheetCornerRadius",
+    "type": "number | {bottomLeft?: number, bottomRight?: number, topLeft?: number, topRight?: number}",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetSurfaceController {#api-supporting-types-sheet-surface-controller}
+
+Main-thread controller for updating the Sheet surface's geometry and corner shape.
+Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on the main thread.
+
+<UIApiTable source={[
+  {
+    "name": "setCornerRadius",
+    "type": "(radius: SheetCornerRadius | undefined) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Update exposed corner radii in logical pixels. Pass undefined to restore CSS corners."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "更新可见圆角半径（逻辑像素）；传 undefined 恢复 CSS 圆角。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "setInsets",
+    "type": "(insets: SheetInsets) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Update panel edge insets from the local viewport in logical pixels."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "更新面板相对局部视口各边的逻辑像素间距。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
 ### SheetGestureConfig {#api-supporting-types-sheet-gesture-config}
 
 <UIApiTable source={[
