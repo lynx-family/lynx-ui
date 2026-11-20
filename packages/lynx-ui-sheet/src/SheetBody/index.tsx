@@ -21,6 +21,7 @@ export function SheetBody(
   const context = useContext(SheetBodyContext)
   const elementMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const setBodyMTRef = context?.setBodyMTRef
+  const setBodyClipMTRef = context?.setBodyClipMTRef
   const setBodySlotMTRef = context?.setBodySlotMTRef
   const measureBodyMT = context?.measureBodyMT
   const measureIntrinsicBodyMT = context?.measureIntrinsicBodyMT
@@ -33,6 +34,7 @@ export function SheetBody(
       || Number.isFinite(bottom) || Number.isFinite(left)),
   )
   const intrinsic = enabled && context?.intrinsic === true
+  const clipped = enabled && setBodyClipMTRef !== undefined
 
   function setBodyElementMT(element: MainThread.Element | null) {
     'main thread'
@@ -62,67 +64,93 @@ export function SheetBody(
     })()
   }, [enabled, setBodyMTRef, top, right, bottom, left, elementMTRef])
 
-  if (intrinsic) {
-    return (
-      <view
-        style={{ position: 'relative', height: 0, flexShrink: 0 }}
-        main-thread:ref={setBodySlotMTRef}
-        main-thread:bindlayoutchange={onLayoutMT}
-        event-through={false}
-      >
-        <view
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            overflow: 'hidden',
-          }}
-          main-thread:ref={setBodyElementMT}
-        >
+  const body = (
+    <view
+      className={clipped ? undefined : className}
+      style={enabled
+        ? {
+          ...(clipped ? { pointerEvents: 'auto' } : style),
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          ...(intrinsic ? {} : { bottom: 0 }),
+        }
+        : style}
+      main-thread:ref={enabled ? setBodyElementMT : undefined}
+      implicit-animation={clipped ? 'false' : undefined}
+      event-through={false}
+    >
+      {intrinsic
+        ? (
           <view
             style={{ width: '100%', flexShrink: 0 }}
             main-thread:bindlayoutchange={onIntrinsicLayoutMT}
           >
             <view className={className} style={style}>{children}</view>
           </view>
-        </view>
-      </view>
-    )
-  }
+        )
+        : (clipped
+          ? (
+            <view
+              className={className}
+              style={{
+                ...style,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            >
+              {children}
+            </view>
+          )
+          : children)}
+    </view>
+  )
 
   return (
     <view
-      style={enabled
-        ? {
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-          flexGrow: 1,
-          flexShrink: 1,
-          minWidth: 0,
-          minHeight: 0,
-        }
-        : undefined}
+      style={intrinsic
+        ? { position: 'relative', height: 0, flexShrink: 0 }
+        : (enabled
+          ? {
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            flexGrow: 1,
+            flexShrink: 1,
+            minWidth: 0,
+            minHeight: 0,
+          }
+          : undefined)}
+      main-thread:ref={intrinsic ? setBodySlotMTRef : undefined}
       main-thread:bindlayoutchange={enabled ? onLayoutMT : undefined}
       event-through={false}
     >
-      <view
-        className={className}
-        style={enabled
-          ? {
-            ...style,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }
-          : style}
-        main-thread:ref={enabled ? setBodyElementMT : undefined}
-      >
-        {children}
-      </view>
+      {clipped
+        ? (
+          <view
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              // The intrinsic slot starts at zero during first-screen layout.
+              height: intrinsic ? '100vh' : '100%',
+              overflow: 'hidden',
+              pointerEvents: 'none',
+            }}
+            main-thread:ref={setBodyClipMTRef}
+            flatten={false}
+            implicit-animation='false'
+            event-through={true}
+          >
+            {body}
+          </view>
+        )
+        : body}
     </view>
   )
 }

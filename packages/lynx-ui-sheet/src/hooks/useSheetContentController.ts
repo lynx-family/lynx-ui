@@ -38,7 +38,9 @@ export function useSheetContentController(
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
+    cornerRadius,
     panelLayout,
+    style,
   } = props
   const context = useSheetContext()
   const positioner = useSheetPositionerContext()
@@ -79,7 +81,9 @@ export function useSheetContentController(
   const snap = useSnap({
     snapPoints,
     initialSnap,
+    cornerRadius,
     panelLayout,
+    surfaceStyle: style,
     snapAnimation,
     side,
     enableRTL,

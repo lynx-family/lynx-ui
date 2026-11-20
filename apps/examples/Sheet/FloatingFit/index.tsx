@@ -40,8 +40,9 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            panelLayout={{ bottomGap: 8, bottomCornerRadius: 24 }}
-            className='sheet-content surface-card'
+            cornerRadius={24}
+            panelLayout={{ bottomGap: 8 }}
+            className='sheet-content'
             innerClassName='surface-layout'
             style={{
               width: `${width}px`,

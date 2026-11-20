@@ -52,6 +52,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
+    cornerRadius: _cornerRadius,
     panelLayout: _panelLayout,
     dragHandlers,
     sheetGesture,
