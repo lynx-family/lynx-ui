@@ -25,13 +25,19 @@ export function SheetBody(
   const setBodySlotMTRef = context?.setBodySlotMTRef
   const measureBodyMT = context?.measureBodyMT
   const measureIntrinsicBodyMT = context?.measureIntrinsicBodyMT
+  const resolvedSide = context?.resolvedSide
+  const viewportHeight = context?.viewportHeight
+  const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const top = viewportInsets?.top
   const right = viewportInsets?.right
   const bottom = viewportInsets?.bottom
   const left = viewportInsets?.left
+  const start = viewportInsets?.start
+  const end = viewportInsets?.end
   const enabled = Boolean(
     context?.enabled && (Number.isFinite(top) || Number.isFinite(right)
-      || Number.isFinite(bottom) || Number.isFinite(left)),
+      || Number.isFinite(bottom) || Number.isFinite(left)
+      || Number.isFinite(start) || Number.isFinite(end)),
   )
   const intrinsic = enabled && context?.intrinsic === true
   const clipped = enabled && setBodyClipMTRef !== undefined
@@ -39,7 +45,7 @@ export function SheetBody(
   function setBodyElementMT(element: MainThread.Element | null) {
     'main thread'
     elementMTRef.current = element
-    setBodyMTRef?.(element, { top, right, bottom, left })
+    setBodyMTRef?.(element, { top, right, bottom, left, start, end })
   }
 
   function onLayoutMT(event: MainThread.LayoutChangeEvent) {
@@ -59,10 +65,27 @@ export function SheetBody(
     runOnMainThread(() => {
       'main thread'
       if (elementMTRef.current) {
-        setBodyMTRef(elementMTRef.current, { top, right, bottom, left })
+        setBodyMTRef(elementMTRef.current, {
+          top,
+          right,
+          bottom,
+          left,
+          start,
+          end,
+        })
       }
     })()
-  }, [enabled, setBodyMTRef, top, right, bottom, left, elementMTRef])
+  }, [
+    enabled,
+    setBodyMTRef,
+    top,
+    right,
+    bottom,
+    left,
+    start,
+    end,
+    elementMTRef,
+  ])
 
   const body = (
     <view
@@ -132,16 +155,28 @@ export function SheetBody(
       {clipped
         ? (
           <view
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              // The intrinsic slot starts at zero during first-screen layout.
-              height: intrinsic ? '100vh' : '100%',
-              overflow: 'hidden',
-              pointerEvents: 'none',
-            }}
+            style={horizontal
+              ? {
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                overflow: 'hidden',
+                pointerEvents: 'none',
+              }
+              : {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                // The intrinsic slot starts at zero during first-screen layout.
+                height: intrinsic
+                  ? (viewportHeight ? `${viewportHeight}px` : '100vh')
+                  : '100%',
+                overflow: 'hidden',
+                pointerEvents: 'none',
+              }}
             main-thread:ref={setBodyClipMTRef}
             flatten={false}
             implicit-animation='false'

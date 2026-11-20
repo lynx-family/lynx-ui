@@ -2,10 +2,8 @@
 "@lynx-js/lynx-ui-sheet": minor
 ---
 
-Add SheetBody with optional viewport insets. Keep content within the supplied edges while the Sheet panel and handle move. Bottom sheets using a fit snap measure their content within the available width.
+Add `SheetBody` with four-sided transform-and-clip `viewportInsets` (including RTL `start`/`end`) to keep body content inside safe-area bounds with zero layout writes during steady drags and single-pass horizontal widening.
 
-Move bounded bottom panels with translation and clipping at a fixed surface height. Use `cornerRadius` to round the sheet, including its clipped bottom corners. Radius and gap changes animate together, and the footer stays inside the panel at the largest snap.
+Replace `panelLayout` and `main-thread:surfaceRef` with explicit `insets` (`SheetInsets`), `cornerRadius` (`SheetCornerRadius`), and stateless `main-thread:surfaceControllerRef` (`SheetSurfaceController`) for synchronous main-thread surface and safe-area updates without background-thread round trips.
 
-Keep bottom sheet body layouts stable during vertical motion using translation and clipping. Bound fit snaps to the available panel height so oversized content can scroll within the viewport.
-
-Keep the body inside horizontal viewport insets when a sheet changes width on an immediate snap.
+Expose `main-thread:onDragStart` and `main-thread:onPositionChange` on `SheetRoot`, make `SheetPositioner` `width` and `height` optional with `inset: 0` auto-measurement, wire `SheetFooter` directly on the main thread, eliminate per-frame clip layout during enter/exit/gap animations, and restore dragging across empty vertical surface space below `fit` content.

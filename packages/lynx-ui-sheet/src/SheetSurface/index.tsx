@@ -2,6 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import { runOnMainThread, useEffect } from '@lynx-js/react'
+
 import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { MainThread } from '@lynx-js/types'
 
@@ -16,7 +18,11 @@ import type {
   SheetFooterContextValue,
   SheetPositionerDimensions,
 } from '../context'
-import type { SheetContentProps } from '../types'
+import type {
+  SheetContentProps,
+  SheetCornerRadius,
+  SheetInsets,
+} from '../types'
 
 export interface SheetSurfaceProps extends SheetContentProps {
   dragHandlers: SheetDragContextValue['dragHandlers']
@@ -25,6 +31,7 @@ export interface SheetSurfaceProps extends SheetContentProps {
   handleOnly?: boolean
   snapPoints: Array<number | string>
   maxSnapSize: number
+  screenWidth: number
   positioner?: SheetPositionerDimensions | null
   footerContext: SheetFooterContextValue
   bodyContext: SheetBodyContextValue
@@ -34,6 +41,8 @@ export interface SheetSurfaceProps extends SheetContentProps {
   setViewportMTRef: (element: MainThread.Element) => void
   setSheetMTRef: (element: MainThread.Element | null) => void
   setContentMTRef: (element: MainThread.Element) => void
+  setInsetsMT: (insets: SheetInsets) => void
+  setCornerRadiusMT: (radius: SheetCornerRadius | undefined) => void
   handleSheetLayoutChangeMT: (event: {
     detail?: { height?: number, width?: number }
     params?: { height?: number, width?: number }
@@ -48,18 +57,19 @@ export function SheetSurface(props: SheetSurfaceProps) {
     innerClassName,
     innerStyle,
     innerViewProps,
-    'main-thread:surfaceRef': surfaceRef,
+    'main-thread:surfaceControllerRef': surfaceControllerRef,
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
     cornerRadius: _cornerRadius,
-    panelLayout: _panelLayout,
+    insets,
     dragHandlers,
     sheetGesture,
     resolvedSide,
     handleOnly,
     snapPoints,
     maxSnapSize,
+    screenWidth,
     positioner,
     footerContext,
     bodyContext,
@@ -69,23 +79,55 @@ export function SheetSurface(props: SheetSurfaceProps) {
     setViewportMTRef,
     setSheetMTRef,
     setContentMTRef,
+    setInsetsMT,
+    setCornerRadiusMT,
     handleSheetLayoutChangeMT,
     ...nativeProps
   } = props
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
   const hasFitSnapPoint = snapPoints.some(p => String(p).trim() === 'fit')
-  const dragOnContent = !handleOnly
+  const dragOnContent = isHorizontal && !handleOnly
+  const dragOnSurface = !isHorizontal && !handleOnly
   const sheetDragContext = {
     dragHandlers: sheetGesture && !handleOnly ? {} : dragHandlers,
   }
   const registerSurfaceMT = isHorizontal ? setSheetMTRef : setSurfaceMTRef
 
+  const hasHorizontalInsets = !isHorizontal
+    && (insets?.left !== undefined || insets?.right !== undefined)
+  const initialLeft = hasHorizontalInsets
+    ? Math.max(0, Number.isFinite(insets?.left) ? (insets?.left ?? 0) : 0)
+    : undefined
+  const initialRight = hasHorizontalInsets
+    ? Math.max(0, Number.isFinite(insets?.right) ? (insets?.right ?? 0) : 0)
+    : undefined
+  const initialWidth = hasHorizontalInsets
+    ? Math.max(0, screenWidth - (initialLeft ?? 0) - (initialRight ?? 0))
+    : undefined
+
   function setPaintedViewRefMT(element: MainThread.Element | null) {
     'main thread'
     registerSurfaceMT(element)
-    if (surfaceRef) surfaceRef.current = element
+    if (surfaceControllerRef) {
+      surfaceControllerRef.current = element
+        ? { setInsets: setInsetsMT, setCornerRadius: setCornerRadiusMT }
+        : null
+    }
   }
+
+  useEffect(() => {
+    if (!surfaceControllerRef) return
+    runOnMainThread(() => {
+      'main thread'
+      if (surfaceControllerRef.current) {
+        surfaceControllerRef.current = {
+          setInsets: setInsetsMT,
+          setCornerRadius: setCornerRadiusMT,
+        }
+      }
+    })()
+  }, [surfaceControllerRef, setInsetsMT, setCornerRadiusMT])
 
   const content = (
     <view
@@ -124,9 +166,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
       main-thread:bindlayoutchange={handleSheetLayoutChangeMT}
     >
       <SheetDragContext.Provider value={sheetDragContext}>
-        <SheetFooterContext.Provider
-          value={footerContext}
-        >
+        <SheetFooterContext.Provider value={footerContext}>
           <SheetBodyContext.Provider value={bodyContext}>
             {children}
           </SheetBodyContext.Provider>
@@ -151,7 +191,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
           ...style,
           transition: 'none',
         }}
-        main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSheetMTRef}
+        main-thread:ref={surfaceControllerRef
+          ? setPaintedViewRefMT
+          : setSheetMTRef}
         implicit-animation='false'
         event-through={true}
         main-thread:bindlayoutchange={measureSurfaceMT}
@@ -203,7 +245,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
           className={className}
           style={{
             position: 'relative',
-            width: '100%',
+            width: initialWidth === undefined ? '100%' : `${initialWidth}px`,
+            ...(initialLeft === undefined ? {} : { left: `${initialLeft}px` }),
             ...(isTop
               ? {
                 display: 'flex',
@@ -216,10 +259,20 @@ export function SheetSurface(props: SheetSurfaceProps) {
             overflow: 'hidden',
             pointerEvents: 'auto',
           }}
-          main-thread:ref={surfaceRef ? setPaintedViewRefMT : setSurfaceMTRef}
+          main-thread:ref={surfaceControllerRef
+            ? setPaintedViewRefMT
+            : setSurfaceMTRef}
           main-thread:bindlayoutchange={measureSurfaceMT}
           enable-new-animator={true}
           event-through={false}
+          {...(dragOnSurface
+            ? {
+              'main-thread:gesture': sheetGesture,
+              'main-thread:bindtouchstart': dragHandlers.handleTouchStartMT,
+              'main-thread:bindtouchmove': dragHandlers.handleTouchMoveMT,
+              'main-thread:bindtouchend': dragHandlers.handleTouchEndMT,
+            }
+            : {})}
         >
           <view
             style={{

@@ -49,8 +49,12 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   snapPoints: Array<number | string> = ['fit'],
   onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
-  panelLayout?: Parameters<typeof useSnap>[0]['panelLayout'],
+  insets?: Parameters<typeof useSnap>[0]['insets'],
   cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
+  callbacks?: {
+    onDragStartMT?: () => void
+    onPositionChangeMT?: (position: number) => void
+  },
 ) {
   const state = { current: PresenceState.Left }
   const entered = vi.fn()
@@ -58,7 +62,7 @@ function setup(
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
-    panelLayout,
+    insets,
     cornerRadius,
     screenHeight: 800,
     screenWidth: 400,
@@ -66,6 +70,8 @@ function setup(
     onEntered: entered,
     onSnapChange,
     onSnapStartMT: onSnapStart,
+    onDragStartMT: callbacks?.onDragStartMT,
+    onPositionChangeMT: callbacks?.onPositionChangeMT,
   })
   const styles = vi.fn()
   const element = {
@@ -73,11 +79,27 @@ function setup(
   } as unknown as MainThread.Element
   snap.setSheetMTRef(
     {
-      querySelector: () => element,
       setStyleProperties: () => undefined,
     } as unknown as MainThread.Element,
   )
-  return { snap, state, entered, styles, onSnapChange }
+  function mountFooter(height: number) {
+    snap.footerContext.setFooterMTRef(element)
+    snap.footerContext.updateFooterHeightMT(height)
+  }
+  function unmountFooter() {
+    snap.footerContext.setFooterMTRef(null)
+    snap.footerContext.updateFooterHeightMT(0)
+  }
+  return {
+    snap,
+    state,
+    entered,
+    styles,
+    onSnapChange,
+    element,
+    mountFooter,
+    unmountFooter,
+  }
 }
 
 describe('Sheet intrinsic and footer fit sizing', () => {
@@ -141,7 +163,7 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   })
 
   it('caps plain fit at the space above the gap without changing a percentage snap', () => {
-    const { snap } = setup(['fit', '100%'], undefined, { bottomGap: 8 })
+    const { snap } = setup(['fit', '100%'], undefined, { bottom: 8 })
     snap.handleSheetLayoutChangeMT({ detail: { height: 930 } })
     snap.showMT({ animate: false })
     expect(snap.getResolvedSnapOffsets()).toEqual([792, 800])
@@ -199,13 +221,13 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   it.each([true, false])(
     'resolves measurements with footer first: %s',
     footerFirst => {
-      const { snap } = setup()
+      const { snap, mountFooter } = setup()
       if (footerFirst) {
-        snap.footerContext.registerFooter('footer', 96)
+        mountFooter(96)
       }
       snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
       if (!footerFirst) {
-        snap.footerContext.registerFooter('footer', 96)
+        mountFooter(96)
       }
       expect(snap.getResolvedSnapOffsets()).toEqual([396])
       expect(snap.sheetSizeMTRef.current).toBe(396)
@@ -213,8 +235,8 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   )
 
   it('pins the footer across snaps and follows closing and reversal', () => {
-    const { snap, styles } = setup([400, 750])
-    snap.footerContext.registerFooter('footer', 96)
+    const { snap, styles, mountFooter } = setup([400, 750])
+    mountFooter(96)
     snap.yRef.current.set(400)
     expect(styles).toHaveBeenLastCalledWith({ transform: 'translateY(304px)' })
     snap.yRef.current.set(750)
@@ -228,13 +250,13 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   it.each([undefined, 24])(
     'keeps the footer above the gap at a 100% snap (radius %s)',
     cornerRadius => {
-      const { snap, styles } = setup(
+      const { snap, styles, mountFooter } = setup(
         [400, '100%'],
         undefined,
-        { bottomGap: 8 },
+        { bottom: 8 },
         cornerRadius,
       )
-      snap.footerContext.registerFooter('footer', 96)
+      mountFooter(96)
       snap.showMT({ animate: false })
       expect(styles).toHaveBeenLastCalledWith({
         transform: 'translateY(304px)',
@@ -248,35 +270,27 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   )
 
   it('ignores registration and removal after the native motion value is released', () => {
-    const { snap } = setup([400])
+    const { snap, element } = setup([400])
     Object.assign(snap.yRef, { current: null })
-    expect(() => snap.footerContext.registerFooter('footer', 96)).not.toThrow()
-    expect(() => snap.footerContext.unregisterFooter('footer')).not.toThrow()
-  })
-
-  it('ignores stale removal after another footer has registered', () => {
-    const { snap } = setup()
-    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
-    snap.footerContext.registerFooter('previous', 96)
-    snap.footerContext.registerFooter('current', 140)
-    snap.footerContext.unregisterFooter('previous')
-    expect(snap.getResolvedSnapOffsets()).toEqual([440])
+    expect(() => snap.footerContext.setFooterMTRef(element)).not.toThrow()
+    expect(() => snap.footerContext.updateFooterHeightMT(96)).not.toThrow()
+    expect(() => snap.footerContext.setFooterMTRef(null)).not.toThrow()
   })
 
   it('does not alter numeric and percentage snap sizes', () => {
-    const { snap } = setup([300, '90%'])
+    const { snap, mountFooter } = setup([300, '90%'])
     snap.handleSheetLayoutChangeMT({ detail: { height: 720 } })
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     expect(snap.getResolvedSnapOffsets()).toEqual([300, 720])
     expect(snap.sheetSizeMTRef.current).toBe(720)
   })
 
   it('updates the entry target when footer measurement arrives after body layout', () => {
-    const { snap, state, entered } = setup()
+    const { snap, state, entered, mountFooter } = setup()
     snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
     snap.showMT()
     vi.advanceTimersByTime(32)
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     vi.advanceTimersByTime(3000)
     expect(snap.yRef.current.get()).toBe(396)
     expect(state.current).toBe(PresenceState.Entered)
@@ -284,59 +298,74 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   })
 
   it('updates an open fit snap and removes the height on footer unmount', () => {
-    const { snap, state } = setup()
+    const { snap, state, mountFooter, unmountFooter } = setup()
     snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
     state.current = PresenceState.Entered
     snap.snapToMT(0, { animate: false })
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     expect(snap.yRef.current.get()).toBe(396)
-    snap.footerContext.registerFooter('footer', 140)
+    mountFooter(140)
     expect(snap.yRef.current.get()).toBe(440)
-    snap.footerContext.unregisterFooter('footer')
+    unmountFooter()
     expect(snap.yRef.current.get()).toBe(300)
   })
 
   it('preserves an active drag while updating fit geometry', () => {
-    const { snap, state } = setup()
+    const { snap, state, mountFooter } = setup()
     snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
     state.current = PresenceState.Entered
     snap.snapToMT(0, { animate: false })
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     snap.yRef.current.set(250)
-    snap.footerContext.registerFooter('footer', 140)
+    mountFooter(140)
     expect(snap.getResolvedSnapOffsets()).toEqual([440])
     expect(snap.yRef.current.get()).toBe(250)
   })
 
   it('allows a footer-only fit sheet', () => {
-    const { snap } = setup()
+    const { snap, mountFooter } = setup()
     snap.handleSheetLayoutChangeMT({ detail: { height: 0 } })
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     expect(snap.getResolvedSnapOffsets()).toEqual([96])
   })
 
   it('removes the final footer from an otherwise empty fit sheet', () => {
-    const { snap, state } = setup()
+    const { snap, state, mountFooter, unmountFooter } = setup()
     snap.handleSheetLayoutChangeMT({ detail: { height: 0 } })
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     state.current = PresenceState.Entered
     snap.snapToMT(0, { animate: false })
-    snap.footerContext.unregisterFooter('footer')
+    unmountFooter()
     expect(snap.getResolvedSnapOffsets()).toEqual([0])
     expect(snap.yRef.current.get()).toBe(0)
   })
 
   it('does not resurrect a closing sheet when the footer layout changes', () => {
-    const { snap, state } = setup()
+    const { snap, state, mountFooter } = setup()
     snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
     state.current = PresenceState.Entered
     snap.snapToMT(0, { animate: false })
-    snap.footerContext.registerFooter('footer', 96)
+    mountFooter(96)
     snap.closeMT()
-    snap.footerContext.registerFooter('footer', 140)
+    mountFooter(140)
     expect(state.current).toBe(PresenceState.Leaving)
     vi.advanceTimersByTime(3000)
     expect(snap.yRef.current.get()).toBe(0)
     expect(state.current).toBe(PresenceState.Left)
+  })
+
+  it('notifies main-thread onDragStart and onPositionChange listeners', () => {
+    const onDragStartMT = vi.fn()
+    const onPositionChangeMT = vi.fn()
+    const { snap } = setup([300, 800], undefined, undefined, undefined, {
+      onDragStartMT,
+      onPositionChangeMT,
+    })
+    snap.showMT({ animate: false })
+    expect(onPositionChangeMT).toHaveBeenLastCalledWith(300)
+    snap.onDragStartMT()
+    expect(onDragStartMT).toHaveBeenCalledTimes(1)
+    snap.yRef.current.set(640)
+    expect(onPositionChangeMT).toHaveBeenLastCalledWith(640)
   })
 })

@@ -58,6 +58,8 @@ export interface SheetContextValue {
   initialSnap?: number
   onSnapChange?: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
+  onDragStartMT?: SheetRootProps['main-thread:onDragStart']
+  onPositionChangeMT?: SheetRootProps['main-thread:onPositionChange']
   side: SheetSide
   enableRTL: boolean
   resolvedSide: SheetResolvedSide
@@ -75,8 +77,8 @@ export interface SheetContextValue {
 
 export interface SheetFooterContextValue {
   resolvedSide: SheetResolvedSide
-  registerFooter: (id: string, height: number) => void
-  unregisterFooter: (id: string) => void
+  setFooterMTRef: (element: MainThread.Element | null) => void
+  updateFooterHeightMT: (height: number) => void
 }
 
 export interface SheetPositionerDimensions {
@@ -94,6 +96,9 @@ export interface SheetLayoutRect {
 export interface SheetBodyContextValue {
   enabled: boolean
   intrinsic?: boolean
+  resolvedSide?: SheetResolvedSide
+  enableRTL?: boolean
+  viewportHeight?: number
   setBodyClipMTRef?: (element: MainThread.Element | null) => void
   setBodySlotMTRef?: (element: MainThread.Element | null) => void
   measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
