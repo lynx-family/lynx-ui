@@ -73,6 +73,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   side: SheetSide = 'bottom',
   snapPoints: Array<number | string> = ['50%', '85%'],
+  panelLayout?: Parameters<typeof useSnap>[0]['panelLayout'],
+  cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
 ) {
   const presence = { current: PresenceState.Left }
   const entered = vi.fn()
@@ -90,6 +92,8 @@ function setup(
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
       snapPoints,
+      panelLayout,
+      cornerRadius,
       side,
       enableRTL: true,
       screenHeight: 800,
@@ -267,12 +271,17 @@ describe('Sheet local viewport calculations and resizing', () => {
     const { bodyContext } = snap
     const writeSlot = vi.fn()
     const writeBody = vi.fn()
+    const writeClip = vi.fn()
+    const bodyElement = {
+      setStyleProperties: writeBody,
+    } as unknown as MainThread.Element
+    const insets = { top: 40, right: 60 }
     bodyContext.setBodySlotMTRef?.(
       { setStyleProperties: writeSlot } as unknown as MainThread.Element,
     )
-    bodyContext.setBodyMTRef(
-      { setStyleProperties: writeBody } as unknown as MainThread.Element,
-      { top: 40, right: 60 },
+    bodyContext.setBodyMTRef(bodyElement, insets)
+    bodyContext.setBodyClipMTRef?.(
+      { setStyleProperties: writeClip } as unknown as MainThread.Element,
     )
     snap.showMT({ animate: false })
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 320, height: 0 })
@@ -293,18 +302,26 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(entered).toHaveBeenCalledTimes(1)
 
     writeBody.mockClear()
+    writeClip.mockClear()
     snap.yRef.current.set(340)
     snap.yRef.current.set(380)
-    expect(writeBody).not.toHaveBeenCalled()
+    expect(writeBody.mock.calls.flat()).toEqual([
+      { transform: 'translateY(44px)' },
+      { transform: 'translateY(4px)' },
+    ])
+    expect(writeClip.mock.calls.flat()).toEqual([
+      { transform: 'translateY(-44px)' },
+      { transform: 'translateY(-4px)' },
+    ])
 
     snap.snapToMT(1, { animate: false })
-    expect(writeBody).toHaveBeenLastCalledWith({
+    expect(writeClip).toHaveBeenLastCalledWith({
       transform: 'translateY(16px)',
     })
     snap.yRef.current.set(390)
-    expect(writeBody).toHaveBeenLastCalledWith({ transform: 'translateY(6px)' })
+    expect(writeClip).toHaveBeenLastCalledWith({ transform: 'translateY(6px)' })
     snap.yRef.current.set(400)
-    expect(writeBody).toHaveBeenLastCalledWith({
+    expect(writeClip).toHaveBeenLastCalledWith({
       transform: 'translateY(16px)',
     })
     expect(writeSlot.mock.calls).toEqual([[{ height: '280px' }]])
@@ -312,18 +329,18 @@ describe('Sheet local viewport calculations and resizing', () => {
 
     snap.yRef.current.set(260)
     expect(writeBody).toHaveBeenLastCalledWith({
-      height: '236px',
-      transform: 'translateY(0px)',
+      transform: 'translateY(124px)',
     })
     snap.yRef.current.set(400)
     expect(writeBody).toHaveBeenLastCalledWith({
-      height: 'auto',
-      transform: 'translateY(16px)',
+      transform: 'translateY(0px)',
     })
 
     // A transient panel width can reflow the text without moving the fit snap.
     writeBody.mockClear()
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 240, height: 280 })
+    expect(writeBody).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(16)
     expect(writeBody.mock.calls).toEqual([[{ left: '0px', right: '0px' }]])
     bodyContext.measureIntrinsicBodyMT?.({ width: 240, height: 360 })
     expect(writeBody).toHaveBeenCalledTimes(1)
@@ -339,7 +356,60 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(snap.yRef.current.get()).toBe(400)
     snap.collapseMT({ animate: false })
     expect(snap.yRef.current.get()).toBe(324)
+
+    // The React commit that resizes the panel can reattach its body ref.
+    writeBody.mockClear()
+    bodyContext.setBodyMTRef(null, insets)
+    bodyContext.setBodyMTRef(bodyElement, insets)
+    expect(writeBody).not.toHaveBeenCalledWith({ left: '0px', right: '60px' })
+    vi.advanceTimersByTime(16)
+    expect(writeBody).toHaveBeenLastCalledWith({ left: '0px', right: '60px' })
   })
+
+  it.each([undefined, 24])(
+    'keeps fit and percent stops stable while the panel width animates (radius %s)',
+    cornerRadius => {
+      const { render } = setup(
+        'bottom',
+        ['fit', '80%', '100%'],
+        { bottomGap: 8 },
+        cornerRadius,
+      )
+      const snap = render({ width: 320, height: 400 })
+      const { bodyContext } = snap
+      const writeSlot = vi.fn()
+      bodyContext.setBodySlotMTRef(
+        { setStyleProperties: writeSlot } as unknown as MainThread.Element,
+      )
+      bodyContext.setBodyMTRef(
+        { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+        { top: 40, right: 60 },
+      )
+      snap.showMT({ animate: false })
+      bodyContext.measureBodyMT({ width: 320, top: 24, height: 0 })
+      snap.handleSheetLayoutChangeMT({ detail: { width: 320, height: 24 } })
+      bodyContext.measureIntrinsicBodyMT({ width: 260, height: 200 })
+      bodyContext.measureBodyMT({ width: 320, top: 24, height: 200 })
+      snap.handleSheetLayoutChangeMT({ detail: { width: 320, height: 224 } })
+      expect(snap.yRef.current.get()).toBe(224)
+      expect(snap.getResolvedSnapOffsets()).toEqual([224, 320, 400])
+      writeSlot.mockClear()
+
+      snap.snapToMT(2, { animationConfig: { type: 'tween', duration: 200 } })
+      bodyContext.measureBodyMT({ width: 300, top: 24, height: 200 })
+      bodyContext.measureIntrinsicBodyMT({ width: 260, height: 200 })
+      bodyContext.measureBodyMT({ width: 220, top: 24, height: 200 })
+      bodyContext.measureIntrinsicBodyMT({ width: 220, height: 260 })
+      vi.advanceTimersByTime(1000)
+      expect(snap.yRef.current.get()).toBe(400)
+      expect(writeSlot).not.toHaveBeenCalled()
+
+      snap.snapToMT(1, { animate: false })
+      expect(snap.yRef.current.get()).toBe(320)
+      snap.snapToMT(0, { animate: false })
+      expect(snap.yRef.current.get()).toBe(224)
+    },
+  )
 
   it('resolves fit after the slot settles inside a parent with a fixed height', () => {
     const snap = setup('bottom', ['fit']).render({ width: 320, height: 400 })
@@ -361,7 +431,7 @@ describe('Sheet local viewport calculations and resizing', () => {
   })
 
   it('recaps the measured fit height after a height-only viewport resize', () => {
-    const { render } = setup('bottom', ['fit'])
+    const { render } = setup('bottom', ['fit'], { bottomGap: 8 })
     const snap = render({ width: 320, height: 400 })
     const node = {
       setStyleProperties: vi.fn(),
@@ -375,7 +445,7 @@ describe('Sheet local viewport calculations and resizing', () => {
     bodyContext.measureIntrinsicBodyMT?.({ width: 260, height: 480 })
     snap.handleSheetLayoutChangeMT({ detail: { width: 320, height: 504 } })
     bodyContext.measureBodyMT({ left: 0, top: 24, width: 320, height: 480 })
-    expect(snap.getResolvedSnapOffsets()).toEqual([400])
+    expect(snap.getResolvedSnapOffsets()).toEqual([392])
 
     const resized = render({ width: 320, height: 600 })
     expect(resized.getResolvedSnapOffsets()).toEqual([504])

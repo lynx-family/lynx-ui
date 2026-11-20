@@ -20,7 +20,10 @@ import type { MainThread } from '@lynx-js/types'
 import type { SheetLayoutRect, SheetPositionerDimensions } from '../context'
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
-import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
+import {
+  resolveBottomGap,
+  useSheetSurfaceLayout,
+} from './useSheetSurfaceLayout'
 import type {
   SheetContentProps,
   SheetRootProps,
@@ -49,7 +52,9 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
+  cornerRadius?: SheetContentProps['cornerRadius']
   panelLayout?: SheetContentProps['panelLayout']
+  surfaceStyle?: SheetContentProps['style']
   snapAnimation?: SheetTransition
   side?: SheetSide
   enableRTL?: boolean
@@ -73,7 +78,9 @@ export interface SnapOptions {
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
+  cornerRadius,
   panelLayout,
+  surfaceStyle,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
   enableRTL = false,
@@ -113,6 +120,7 @@ export function useSnap({
   const bodySizeMTRef = useMainThreadRef<number>(-1)
   const footerHeightMTRef = useMainThreadRef<number>(-1)
   const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
+  const footerOffsetMTRef = useMainThreadRef<number | null>(null)
   const footerIdMTRef = useMainThreadRef<string | null>(null)
   const ownerMounted = useRef(true)
   useEffect(() => {
@@ -144,6 +152,10 @@ export function useSnap({
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
+  const bottomPanelLimit = Math.max(
+    0,
+    screenHeight - resolveBottomGap(panelLayout?.bottomGap),
+  )
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
     screenWidth,
@@ -217,16 +229,20 @@ export function useSnap({
 
   function updateFooterPositionMT(visibleHeight: number) {
     'main thread'
-    footerMTRef.current?.setStyleProperties({
-      transform: `translateY(${
-        Math.max(0, visibleHeight - Math.max(0, footerHeightMTRef.current))
-      }px)`,
-    })
+    const footer = footerMTRef.current
+    if (!footer) return
+    const offset = Math.max(
+      0,
+      visibleHeight - Math.max(0, footerHeightMTRef.current),
+    )
+    if (footerOffsetMTRef.current === offset) return
+    footerOffsetMTRef.current = offset
+    footer.setStyleProperties({ transform: `translateY(${offset}px)` })
   }
 
   useMotionValueRefEvent(yRef, 'change', v => {
     'main thread'
-    updateFooterPositionMT(v)
+    if (resolvedSide !== 'bottom') updateFooterPositionMT(v)
     const el = sheetMTRef.current
     if (el) {
       const offsets = getResolvedSnapOffsets()
@@ -314,7 +330,6 @@ export function useSnap({
   function resolveFitSnapMT(
     bodySize: number,
     allowEmptyFit = false,
-    bounded = false,
   ) {
     'main thread'
     const previousOffsets = getResolvedSnapOffsets()
@@ -323,8 +338,8 @@ export function useSnap({
     const measuredSize = bodySize + (resolvedSide === 'bottom'
       ? Math.max(0, footerHeightMTRef.current)
       : 0)
-    const layoutSize = bounded
-      ? Math.min(measuredSize, screenHeight)
+    const layoutSize = resolvedSide === 'bottom'
+      ? Math.min(measuredSize, bottomPanelLimit)
       : measuredSize
     sheetSizeMTRef.current = layoutSize
 
@@ -332,8 +347,10 @@ export function useSnap({
     const innerSnapPointValues = snapPointValues
     const innerSnapOffsets = snapOffsets
 
-    if (!allowEmptyFit && fitSizeMTRef.current === 0 && layoutSize <= 0) return
-    const fitSize = layoutSize > 0 || allowEmptyFit
+    if (!allowEmptyFit && fitSizeMTRef.current === 0 && measuredSize <= 0) {
+      return
+    }
+    const fitSize = measuredSize > 0 || allowEmptyFit
       ? layoutSize
       : fitSizeMTRef.current
     fitSizeMTRef.current = fitSize
@@ -371,7 +388,7 @@ export function useSnap({
 
   function resolveIntrinsicBodyMT(height: number) {
     'main thread'
-    resolveFitSnapMT(height, fitMeasuredMTRef.current, true)
+    resolveFitSnapMT(height, fitMeasuredMTRef.current)
   }
 
   const surfaceLayout = useSheetSurfaceLayout({
@@ -379,7 +396,9 @@ export function useSnap({
     animateChanges: animateSurfaceChangesMTRef,
     presence: controller.presenceStateMTRef,
     resolvedSide,
+    cornerRadius,
     panelLayout,
+    surfaceStyle,
     screenHeight,
     screenWidth,
     allowOverDrag,
@@ -389,6 +408,7 @@ export function useSnap({
     hasFitSnapPoint,
     onFitBodyLayoutMT: resolveIntrinsicBodyMT,
     footerHeightMTRef,
+    updateFooterPositionMT,
     initialSize: getTargetForSnap,
     initialSnap,
     snapAnimation,
@@ -399,7 +419,9 @@ export function useSnap({
   useEffect(() => {
     runOnMainThread((values: number[], nextMax: number, local: boolean) => {
       'main thread'
-      if (hasFitBodyMT() && fitMeasuredMTRef.current) {
+      if (
+        resolvedSide === 'bottom' && hasFitSnapPoint && fitMeasuredMTRef.current
+      ) {
         // A height-only viewport change can update the cap with cached content.
         resolveIntrinsicBodyMT(bodySizeMTRef.current)
         return
@@ -418,7 +440,16 @@ export function useSnap({
       }
       controller.reconcileSnapMT(previousOffsets)
     })(snapPointValues, maxSnapSize, !!positioner)
-  }, [screenWidth, screenHeight, positioner, snapPointValues, maxSnapSize])
+  }, [
+    screenWidth,
+    screenHeight,
+    bottomPanelLimit,
+    hasFitSnapPoint,
+    resolvedSide,
+    positioner,
+    snapPointValues,
+    maxSnapSize,
+  ])
 
   // Controller-delegated MT functions
   function expandMT(opts?: SnappingOptions) {
@@ -512,15 +543,14 @@ export function useSnap({
     'main thread'
     const previousHeight = footerHeightMTRef.current
     footerHeightMTRef.current = height
-    updateFooterPositionMT(yRef.current.get())
+    if (resolvedSide === 'bottom') updateSurfaceMT()
+    else updateFooterPositionMT(yRef.current.get())
     if (hasFitSnapPoint && bodySizeMTRef.current >= 0) {
-      const bounded = hasFitBodyMT()
       resolveFitSnapMT(
         bodySizeMTRef.current,
         previousHeight > 0 && height === 0 && bodySizeMTRef.current === 0,
-        bounded,
       )
-      if (bounded) updateSurfaceMT()
+      if (hasFitBodyMT()) updateSurfaceMT()
     }
   }
 
@@ -528,6 +558,7 @@ export function useSnap({
     'main thread'
     const element = sheetMTRef.current?.querySelector(`#${id}`)
     if (!element || !yRef.current) return
+    if (footerMTRef.current !== element) footerOffsetMTRef.current = null
     footerIdMTRef.current = id
     footerMTRef.current = element
     updateFooterHeightMT(height)

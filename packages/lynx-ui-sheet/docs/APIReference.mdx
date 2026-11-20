@@ -1059,6 +1059,10 @@ The root component of the Sheet, containing all of its child components.
       {
         "kind": "code",
         "text": "`end`"
+      },
+      {
+        "kind": "text",
+        "text": "\n- Bottom 'fit' is capped at the local viewport height above the bottom gap.\n  Use scrollable content when the content exceeds that space."
       }
     ],
     "summary_zh": [
@@ -1712,6 +1716,23 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
+    "name": "cornerRadius",
+    "type": "number | {bottomLeft?: number, bottomRight?: number, topLeft?: number, topRight?: number}",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nChanges between numeric values use the snap animation, together with the\nbottom gap when both change. Zero explicitly makes a corner square."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "enterAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -1941,11 +1962,19 @@ The main content of the Sheet.
   },
   {
     "name": "panelLayout",
-    "type": "{bottomCornerRadius?: number, bottomGap?: number}",
+    "type": "{bottomGap?: number}",
     "summary": [
       {
         "kind": "text",
-        "text": "Opt into a bounded bottom panel. Omit this to retain the default\nextended surface. The gap is external and excluded from snap sizes.\nUpdating it follows the snap animation without replacing the content."
+        "text": "Opt into a bounded bottom panel. Omit this to retain the default\nextended surface. The gap is external and excluded from snap sizes.\nThe panel translates and clips to the visible bounds. Numeric and\npercentage snaps share a content viewport sized for the largest snap\nand capped at the space above the gap. "
+      },
+      {
+        "kind": "code",
+        "text": "`fit`"
+      },
+      {
+        "kind": "text",
+        "text": " keeps its intrinsic sizing.\nGap changes use the snap animation."
       }
     ],
     "summary_zh": [],
@@ -2077,7 +2106,7 @@ A body region that can stay inside the local Sheet viewport as the panel moves.
       },
       {
         "kind": "text",
-        "text": " snap\nmeasure the body at its available width, then constrain its visible area\nindependently of the measured height. Use intrinsically sized body content\nfor "
+        "text": " snap\nmeasure the body at its available width. Bottom sheets keep the body's\nlayout stable during a drag and clip to the visible area. Use intrinsically\nsized body content for "
       },
       {
         "kind": "code",
@@ -2085,7 +2114,7 @@ A body region that can stay inside the local Sheet viewport as the panel moves.
       },
       {
         "kind": "text",
-        "text": ". Other sheet sides support viewport insets with explicit snaps."
+        "text": ". Other sheet sides support viewport insets\nwith explicit snaps."
       }
     ],
     "summary_zh": [],
@@ -2142,6 +2171,23 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "isSupportIOS": true,
     "isSupportAndroid": true,
     "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "cornerRadius",
+    "type": "number | {bottomLeft?: number, bottomRight?: number, topLeft?: number, topRight?: number}",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nChanges between numeric values use the snap animation, together with the\nbottom gap when both change. Zero explicitly makes a corner square."
+      }
+    ],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -2408,11 +2454,19 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
   },
   {
     "name": "panelLayout",
-    "type": "{bottomCornerRadius?: number, bottomGap?: number}",
+    "type": "{bottomGap?: number}",
     "summary": [
       {
         "kind": "text",
-        "text": "Opt into a bounded bottom panel. Omit this to retain the default\nextended surface. The gap is external and excluded from snap sizes.\nUpdating it follows the snap animation without replacing the content."
+        "text": "Opt into a bounded bottom panel. Omit this to retain the default\nextended surface. The gap is external and excluded from snap sizes.\nThe panel translates and clips to the visible bounds. Numeric and\npercentage snaps share a content viewport sized for the largest snap\nand capped at the space above the gap. "
+      },
+      {
+        "kind": "code",
+        "text": "`fit`"
+      },
+      {
+        "kind": "text",
+        "text": " keeps its intrinsic sizing.\nGap changes use the snap animation."
       }
     ],
     "summary_zh": [],

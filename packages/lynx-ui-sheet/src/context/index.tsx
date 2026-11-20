@@ -94,6 +94,7 @@ export interface SheetLayoutRect {
 export interface SheetBodyContextValue {
   enabled: boolean
   intrinsic?: boolean
+  setBodyClipMTRef?: (element: MainThread.Element | null) => void
   setBodySlotMTRef?: (element: MainThread.Element | null) => void
   measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
   setBodyMTRef: (

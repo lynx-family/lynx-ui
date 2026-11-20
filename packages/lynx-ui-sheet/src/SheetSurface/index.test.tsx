@@ -162,3 +162,9 @@ it('keeps the content layout and gesture when only panelLayout is set', () => {
   )
   expect(floating.viewport.props.style.height).toBe('800px')
 })
+
+it('keeps cornerRadius out of the native view props', () => {
+  const { painted, panel } = renderSurface({ cornerRadius: 24 })
+  expect(painted.props).not.toHaveProperty('cornerRadius')
+  expect(panel.props).not.toHaveProperty('cornerRadius')
+})

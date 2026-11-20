@@ -61,9 +61,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Omit `panelLayout` to retain extended background coverage and the original content layout.
 - Set `panelLayout={{ bottomGap: 8 }}` for a bounded bottom panel. The gap is outside the panel and does not count toward a snap size. An empty `panelLayout` opts into bounded coverage with a zero gap.
 - Updating `bottomGap` uses `snapAnimation`. Panel layout works with or without `SheetBody`.
-- Set `panelLayout.bottomCornerRadius` to clip a fixed-height moving panel. Set it to zero for square bottom corners. The Sheet owns the clip path, and radius and gap changes share one animation. Style the top corners on the painted surface.
+- Use `cornerRadius={24}` to round the exposed sheet corners, including the clipped bottom edge of a floating sheet. Supply an object with individual corners for asymmetric shapes. Omitted surface corners use CSS. Omitted clipped bottom corners are square. The gap and numeric corner radii share the snap animation.
+- All bounded bottom panels translate and clip at a fixed surface height. `cornerRadius` leaves the snap and content geometry independent of the corner values.
 - In a flex content layout, place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` are physical edges in logical pixels relative to the Sheet viewport. Use `SheetPositioner` when the host is a local pane.
-- A bottom `fit` snap with viewport insets measures the body at its safe width. Give the content an intrinsic height. The visible body can change height during dragging without changing the fit measurement.
+- A bottom `fit` snap with viewport insets measures the body at its safe width. Give the content an intrinsic height. The body is clipped to the visible area during a drag without resizing its layout. A coordinated scrollable at the largest snap uses the space inside the safe area.
 - Inset `fit` uses the compact measurement while an appearance animation changes the panel width. A change to the local viewport width or horizontal insets can establish a new compact size.
 - Use one `SheetBody` per content element. Explicit snaps let the body occupy the remaining space in the content layout. Fit sheets keep the body's intrinsic layout.
 - Bind `scrollGesture` to the same native scroll view inside the body. Moving that body requires no extra pan gesture.
@@ -96,7 +97,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Positioner placement, the animated `panelLayout.bottomGap` relative to its bottom
   edge, and content safe-area padding are separate layout concerns.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
-- Attached numeric-snap sheets use `maxSnapSize`, the highest resolved `snapPoints` value, as their stable content size. Detached bottom sheets resize the numeric-snap viewport to the visible panel. Pure `'fit'` snap point sheets stay content-driven.
+- Numeric-snap sheets share a stable content size based on the largest snap. A bottom `'fit'` snap resolves from intrinsic content and is capped at the space available above the configured gap. Use a scrollable for content beyond the visible area.
 - `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.
 - Rubber-band over-drag defaults to enabled for `top` / `bottom` and disabled for horizontal modes. Use `rubberBand` to override the default.
 

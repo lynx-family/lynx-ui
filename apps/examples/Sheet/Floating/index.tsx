@@ -42,8 +42,9 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
+            cornerRadius={24}
             panelLayout={bounded ? { bottomGap } : undefined}
-            className='sheet-content surface-card'
+            className='sheet-content'
             innerClassName='surface-layout'
             style={{
               width: `${width}px`,

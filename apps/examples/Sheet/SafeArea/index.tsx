@@ -60,12 +60,9 @@ function App() {
     'main thread'
     const amount = Math.max(0, Math.min(1, value))
     const width = floatingWidth + (viewport.width - floatingWidth) * amount
-    const radius = `${24 * (1 - amount)}px`
     surfaceRef.current?.setStyleProperties({
       width: `${width}px`,
       left: `${(viewport.width - width) / 2}px`,
-      'border-top-left-radius': radius,
-      'border-top-right-radius': radius,
     })
   }
 
@@ -101,13 +98,13 @@ function App() {
     }
   }
 
-  // Restore the current appearance after React commits or viewport resizing.
+  // Recompute width on a viewport resize. Snap motion owns width between resizes.
   useEffect(() => {
     runOnMainThread(() => {
       'main thread'
       applyAppearance(progress.current.get())
     })()
-  })
+  }, [floatingWidth, viewport.width])
 
   useEffect(() => () => {
     runOnMainThread(() => {
@@ -157,10 +154,8 @@ function App() {
               main-thread:surfaceRef={surfaceRef}
               className='sheet-surface'
               innerClassName='sheet-layout'
-              panelLayout={{
-                bottomGap: fullscreen ? 0 : 8,
-                bottomCornerRadius: fullscreen ? 0 : 24,
-              }}
+              cornerRadius={fullscreen ? 0 : 24}
+              panelLayout={{ bottomGap: fullscreen ? 0 : 8 }}
               style={{
                 width: `${floatingWidth}px`,
                 left: `${(viewport.width - floatingWidth) / 2}px`,

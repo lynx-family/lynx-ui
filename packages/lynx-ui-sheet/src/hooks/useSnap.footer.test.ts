@@ -49,6 +49,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   snapPoints: Array<number | string> = ['fit'],
   onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
+  panelLayout?: Parameters<typeof useSnap>[0]['panelLayout'],
+  cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
 ) {
   const state = { current: PresenceState.Left }
   const entered = vi.fn()
@@ -56,6 +58,8 @@ function setup(
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
+    panelLayout,
+    cornerRadius,
     screenHeight: 800,
     screenWidth: 400,
     presenceStateMTRef: state,
@@ -136,6 +140,18 @@ describe('Sheet intrinsic and footer fit sizing', () => {
     expect(snap.yRef.current.get()).toBe(240)
   })
 
+  it('caps plain fit at the space above the gap without changing a percentage snap', () => {
+    const { snap } = setup(['fit', '100%'], undefined, { bottomGap: 8 })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 930 } })
+    snap.showMT({ animate: false })
+    expect(snap.getResolvedSnapOffsets()).toEqual([792, 800])
+    expect(snap.yRef.current.get()).toBe(792)
+
+    snap.handleSheetLayoutChangeMT({ detail: { height: 360 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([360, 800])
+    expect(snap.yRef.current.get()).toBe(360)
+  })
+
   it('preserves a numeric destination while intrinsic body content changes', () => {
     const { snap } = setup(['fit', 600])
     snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
@@ -208,6 +224,28 @@ describe('Sheet intrinsic and footer fit sizing', () => {
     snap.yRef.current.set(300)
     expect(styles).toHaveBeenLastCalledWith({ transform: 'translateY(204px)' })
   })
+
+  it.each([undefined, 24])(
+    'keeps the footer above the gap at a 100% snap (radius %s)',
+    cornerRadius => {
+      const { snap, styles } = setup(
+        [400, '100%'],
+        undefined,
+        { bottomGap: 8 },
+        cornerRadius,
+      )
+      snap.footerContext.registerFooter('footer', 96)
+      snap.showMT({ animate: false })
+      expect(styles).toHaveBeenLastCalledWith({
+        transform: 'translateY(304px)',
+      })
+      snap.snapToMT(1, { animate: false })
+      expect(snap.getResolvedSnapOffsets()).toEqual([400, 800])
+      expect(styles).toHaveBeenLastCalledWith({
+        transform: 'translateY(696px)',
+      })
+    },
+  )
 
   it('ignores registration and removal after the native motion value is released', () => {
     const { snap } = setup([400])

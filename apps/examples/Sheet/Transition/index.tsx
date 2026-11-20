@@ -22,7 +22,6 @@ import {
   screenWidth,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
-import clsx from 'clsx'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
@@ -90,11 +89,9 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
+            cornerRadius={panel.fullscreen ? 0 : 24}
             panelLayout={{ bottomGap: panel.fullscreen ? 0 : 8 }}
-            className={clsx(
-              'sheet-content',
-              !panel.fullscreen && 'surface-card',
-            )}
+            className='sheet-content'
             innerClassName='surface-layout'
             style={{
               width: `${width}px`,

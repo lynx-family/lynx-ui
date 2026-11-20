@@ -4,6 +4,8 @@
 
 Add SheetBody with optional viewport insets. Keep content within the supplied edges while the Sheet panel and handle move. Bottom sheets using a fit snap measure their content within the available width.
 
-Add `panelLayout.bottomCornerRadius` to keep the moving bottom panel at a fixed layout height while clipping the visible bottom corners. Radius and gap changes animate together.
+Move bounded bottom panels with translation and clipping at a fixed surface height. Use `cornerRadius` to round the sheet, including its clipped bottom corners. Radius and gap changes animate together, and the footer stays inside the panel at the largest snap.
 
-Keep the body at its natural height while it fits during vertical motion. Update only the affected axis when a viewport inset changes.
+Keep bottom sheet body layouts stable during vertical motion using translation and clipping. Bound fit snaps to the available panel height so oversized content can scroll within the viewport.
+
+Keep the body inside horizontal viewport insets when a sheet changes width on an immediate snap.

@@ -63,6 +63,7 @@ function setup(
   bottomGap = 8,
   hasFitSnapPoint = false,
   resolvedSide: 'bottom' | 'right' | 'left' | 'top' = 'bottom',
+  maxSnapSize = 800,
 ) {
   const position = { current: createMotionValue(400) }
   const presence = { current: PresenceState.Entered }
@@ -88,7 +89,8 @@ function setup(
   function render(
     nextBounded = bounded,
     nextGap = bottomGap,
-    bottomCornerRadius?: number,
+    cornerRadius?: Parameters<typeof useSheetSurfaceLayout>[0]['cornerRadius'],
+    baseStyle?: Parameters<typeof useSheetSurfaceLayout>[0]['surfaceStyle'],
   ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
@@ -99,15 +101,15 @@ function setup(
       presence,
       animateChanges,
       resolvedSide,
-      panelLayout: nextBounded
-        ? { bottomGap: nextGap, bottomCornerRadius }
-        : undefined,
+      cornerRadius,
+      panelLayout: nextBounded ? { bottomGap: nextGap } : undefined,
+      surfaceStyle: baseStyle,
       screenHeight: 1000,
       screenWidth: 1000,
       allowOverDrag: false,
-      sheetSizeMTRef: { current: 800 },
+      sheetSizeMTRef: { current: maxSnapSize },
       movingSurfaceMTRef,
-      maxSnapSize: 800,
+      maxSnapSize,
       hasFitSnapPoint,
       initialSize: () => 400,
       initialSnap: 0,
@@ -151,61 +153,127 @@ describe('Sheet surface geometry', () => {
 
   it('preserves extended attached coverage and the maximum content size', () => {
     const { position, surfaceStyle, viewportStyle } = setup(false, 0)
-    expect(surfaceStyle).toEqual({ top: '0px', height: '1500px' })
+    expect(surfaceStyle).toEqual({ height: '1500px' })
     expect(viewportStyle.height).toBe('800px')
     position.current.set(850)
     expect(surfaceStyle.height).toBe('1500px')
   })
 
-  it('keeps the external gap at a smaller snap and through rubber banding', () => {
-    const { position, surfaceStyle, viewportStyle } = setup()
-    expect(surfaceStyle).toEqual({ top: '-8px', height: '400px' })
-    expect(viewportStyle.height).toBe('400px')
-    position.current.set(850)
-    const top = 1000 - 850 + Number.parseFloat(surfaceStyle.top)
-    expect(top + Number.parseFloat(surfaceStyle.height)).toBe(992)
-    expect(viewportStyle.height).toBe('850px')
-    position.current.set(300)
-    expect(surfaceStyle.height).toBe('300px')
-  })
+  it.each([undefined, 0, 24])(
+    'keeps panel and viewport geometry independent of the radius (%s)',
+    radius => {
+      const {
+        position,
+        render,
+        surfaceStyle,
+        viewportStyle,
+        movingStyle,
+        clipStyle,
+        animateChanges,
+      } = setup()
+      animateChanges.current = false
+      render(true, 8, radius)
 
-  it('keeps the bounded panel top inside the viewport at the maximum drag even without a body', () => {
-    const { position, render, animateChanges, surfaceStyle, viewportStyle } =
-      setup()
-    position.current.set(1000)
-    expect(surfaceStyle).toEqual({ top: '0px', height: '992px' })
-    expect(viewportStyle.height).toBe('992px')
+      expect(clipStyle.bottom).toBe('8px')
+      expect(movingStyle.transform).toBe('translate(0px, -400px)')
+      expect(surfaceStyle.height).toBe('1500px')
+      expect(surfaceStyle['clip-path']).toBe(
+        `inset(0px 0px 1100px 0px round 0px 0px ${radius ?? 0}px ${
+          radius ?? 0
+        }px)`,
+      )
+      expect(viewportStyle.height).toBe('800px')
+
+      position.current.set(850)
+      expect(movingStyle.transform).toBe('translate(0px, -850px)')
+      expect(surfaceStyle.height).toBe('1500px')
+      expect(viewportStyle.height).toBe('800px')
+
+      position.current.set(1000)
+      expect(movingStyle.transform).toBe('translate(0px, -992px)')
+      expect(surfaceStyle['clip-path']).toBe(
+        `inset(0px 0px 508px 0px round 0px 0px ${radius ?? 0}px ${
+          radius ?? 0
+        }px)`,
+      )
+      expect(viewportStyle.height).toBe('800px')
+    },
+  )
+
+  it('applies independent corners and restores CSS when a corner is omitted', () => {
+    const { render, surfaceStyle, animateChanges } = setup()
+    const baseStyle = { borderTopLeftRadius: '12rpx' }
     animateChanges.current = false
-    render(true, 0)
-    expect(surfaceStyle.height).toBe('1000px')
+    render(true, 8, { topLeft: 20, bottomRight: 12, bottomLeft: 24 }, baseStyle)
+    expect(surfaceStyle).toMatchObject({
+      'border-top-left-radius': '20px',
+      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 24px)',
+    })
+    expect(surfaceStyle).not.toHaveProperty('border-top-right-radius')
+    render(true, 8, { bottomLeft: 24 }, baseStyle)
+    expect(surfaceStyle).toMatchObject({
+      'border-top-left-radius': '12rpx',
+      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 0px 24px)',
+    })
   })
 
-  it('protects the body while the handle moves, without opting into panel layout', () => {
-    const { position, bodyContext, measureBodyParentMT } = setup(false)
-    const write = vi.fn()
-    bodyContext.setBodyMTRef(
-      { setStyleProperties: write } as unknown as MainThread.Element,
-      { top: 82 },
-    )
-    measureBodyParentMT({ left: 0, top: 0, width: 1000, height: 800 })
-    bodyContext.measureBodyMT({ left: 0, top: 24, width: 1000, height: 776 })
-    expect(write).toHaveBeenLastCalledWith({
-      left: '0px',
-      top: '0px',
-      right: '0px',
-      bottom: '0px',
-    })
-    position.current.set(950)
-    expect(write).toHaveBeenLastCalledWith({
-      top: '8px',
-      bottom: '0px',
-    })
-    position.current.set(800)
-    expect(write).toHaveBeenLastCalledWith({
-      top: '0px',
-      bottom: '0px',
-    })
+  it('clears a managed corner without inline CSS so class styles can apply', () => {
+    const { render, surfaceStyle, animateChanges } = setup()
+    animateChanges.current = false
+    render(true, 8, { topLeft: 20, topRight: 18 })
+    expect(surfaceStyle['border-top-left-radius']).toBe('20px')
+
+    render(true, 8, { topRight: 18 })
+    expect(surfaceStyle['border-top-left-radius']).toBeNull()
+    expect(surfaceStyle['border-top-right-radius']).toBe('18px')
   })
+
+  it.each([false, true])(
+    'uses a stable body height through drag and at the largest snap (bounded %s)',
+    bounded => {
+      const { position, bodyContext, measureBodyParentMT } = setup(
+        bounded,
+        8,
+        false,
+        'bottom',
+        1000,
+      )
+      const writeBody = vi.fn()
+      const writeClip = vi.fn()
+      bodyContext.setBodyClipMTRef?.(
+        { setStyleProperties: writeClip } as unknown as MainThread.Element,
+      )
+      bodyContext.setBodyMTRef(
+        { setStyleProperties: writeBody } as unknown as MainThread.Element,
+        { top: 82, bottom: 40 },
+      )
+      const parentHeight = bounded ? 992 : 1000
+      measureBodyParentMT({ width: 1000, height: parentHeight })
+      bodyContext.measureBodyMT({
+        top: 24,
+        width: 1000,
+        height: parentHeight - 24,
+      })
+      expect(writeClip).toHaveBeenLastCalledWith({
+        height: '878px',
+        transform: bounded ? 'translateY(-534px)' : 'translateY(-542px)',
+      })
+      writeBody.mockClear()
+      writeClip.mockClear()
+      position.current.set(900)
+      position.current.set(950)
+      position.current.set(1000)
+      expect(writeClip.mock.calls.flat()).toEqual([
+        { transform: bounded ? 'translateY(-34px)' : 'translateY(-42px)' },
+        { transform: bounded ? 'translateY(16px)' : 'translateY(8px)' },
+        { transform: 'translateY(58px)' },
+      ])
+      expect(writeBody.mock.calls.flat()).toEqual([
+        { transform: bounded ? 'translateY(34px)' : 'translateY(42px)' },
+        { transform: 'translateY(0px)' },
+      ])
+    },
+  )
 
   it.each(['right', 'left'] as const)(
     'protects both horizontal edges of a %s sheet',
@@ -278,8 +346,12 @@ describe('Sheet surface geometry', () => {
     'normalizes shared native layout origins (%s)',
     layoutTop => {
       const { position, bodyContext, measureBodyParentMT, measureSurfaceMT } =
-        setup()
+        setup(true, 8, false, 'bottom', 1000)
       const write = vi.fn()
+      const writeClip = vi.fn()
+      bodyContext.setBodyClipMTRef?.(
+        { setStyleProperties: writeClip } as unknown as MainThread.Element,
+      )
       bodyContext.setBodyMTRef(
         { setStyleProperties: write } as unknown as MainThread.Element,
         { top: 82, right: 0, left: 0 },
@@ -297,14 +369,12 @@ describe('Sheet surface geometry', () => {
       measureBodyParentMT(parent)
       parent.top = 9000
       position.current.set(950)
-      expect(write).toHaveBeenLastCalledWith({
-        top: '16px',
-        bottom: '0px',
+      expect(writeClip).toHaveBeenLastCalledWith({
+        transform: 'translateY(16px)',
       })
       position.current.set(1000)
-      expect(write).toHaveBeenLastCalledWith({
-        top: '58px',
-        bottom: '0px',
+      expect(writeClip).toHaveBeenLastCalledWith({
+        transform: 'translateY(58px)',
       })
     },
   )
@@ -315,45 +385,47 @@ describe('Sheet surface geometry', () => {
     expect(() => setSurfaceMTRef({} as MainThread.Element)).not.toThrow()
   })
 
-  it('supports a bounded surface with no external gap', () => {
-    expect(setup(true, 0).surfaceStyle).toEqual({ top: '0px', height: '400px' })
-  })
+  it.each([undefined, 24])(
+    'applies horizontal insets after an immediate fullscreen resize (radius %s)',
+    radius => {
+      const { render, position, animateChanges } = setup()
+      const { bodyContext, measureBodyParentMT, measureSurfaceMT } = render(
+        true,
+        8,
+        radius,
+      )
+      const write = vi.fn()
+      const writeClip = vi.fn()
+      bodyContext.setBodyClipMTRef?.(
+        { setStyleProperties: writeClip } as unknown as MainThread.Element,
+      )
+      bodyContext.setBodyMTRef(
+        { setStyleProperties: write } as unknown as MainThread.Element,
+        { top: 64, right: 84 },
+      )
+      measureSurfaceMT(
+        { detail: { left: 404, top: 0 } } as MainThread.LayoutChangeEvent,
+      )
+      measureBodyParentMT({ left: 404, width: 192, height: 400 })
+      bodyContext.measureBodyMT({ left: 404, top: 24, width: 192, height: 376 })
+      write.mockClear()
 
-  it('moves and clips a rounded panel without resizing its layout', () => {
-    const {
-      render,
-      surfaceStyle,
-      viewportStyle,
-      clipStyle,
-      movingStyle,
-      position,
-      animateChanges,
-    } = setup()
-    animateChanges.current = false
-    render(true, 8, 24)
-    expect(surfaceStyle).toEqual({
-      top: '0px',
-      height: '1500px',
-      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 24px 24px)',
-    })
-    expect(clipStyle.bottom).toBe('8px')
-    expect(viewportStyle.height).toBe('800px')
-    position.current.set(1000)
-    expect(movingStyle.transform).toBe('translate(0px, -992px)')
-    expect(surfaceStyle.height).toBe('1500px')
-    expect(surfaceStyle['clip-path']).toBe(
-      'inset(0px 0px 508px 0px round 0px 0px 24px 24px)',
-    )
-    expect(viewportStyle.height).toBe('800px')
-    render(true, 0, 0)
-    expect(clipStyle.bottom).toBe('0px')
-    expect(surfaceStyle['clip-path']).toBe(
-      'inset(0px 0px 500px 0px round 0px 0px 0px 0px)',
-    )
-    render(true, 0)
-    expect(surfaceStyle['clip-path']).toBe('none')
-    expect(surfaceStyle.height).toBe('1000px')
-  })
+      animateChanges.current = false
+      position.current.set(1000)
+      measureSurfaceMT(
+        { detail: { left: 0, top: 0 } } as MainThread.LayoutChangeEvent,
+      )
+      measureBodyParentMT({ left: 0, width: 1000, height: 800 })
+      bodyContext.measureBodyMT({ left: 0, top: 24, width: 1000, height: 776 })
+
+      expect(writeClip).toHaveBeenCalledWith({
+        transform: 'translateY(40px)',
+      })
+      expect(write).not.toHaveBeenCalledWith({ left: '0px', right: '84px' })
+      vi.advanceTimersByTime(16)
+      expect(write).toHaveBeenLastCalledWith({ left: '0px', right: '84px' })
+    },
+  )
 
   it('interpolates the clipped radius and gap together during interruption', () => {
     const { render, clipStyle, surfaceStyle, animateChanges } = setup()
@@ -368,6 +440,8 @@ describe('Sheet surface geometry', () => {
     expect(gap).toBeGreaterThan(0)
     expect(gap).toBeLessThan(8)
     expect(radius).toBeCloseTo(gap * 3)
+    expect(Number.parseFloat(surfaceStyle['border-top-left-radius']!))
+      .toBeCloseTo(radius)
     render(true, 8, 24)
     expect(surfaceStyle['clip-path']).toBe(mask)
     vi.advanceTimersByTime(300)
@@ -400,9 +474,14 @@ describe('Sheet surface geometry', () => {
       layout.position.current.set(450)
 
       expect(writeClip).not.toHaveBeenCalled()
-      const expected = bounded ? [[{ height: '450px' }]] : []
-      expect(writeSurface.mock.calls).toEqual(expected)
-      expect(writeViewport.mock.calls).toEqual(expected)
+      expect(writeSurface.mock.calls).toEqual(
+        bounded
+          ? [[{
+            'clip-path': 'inset(0px 0px 1050px 0px round 0px 0px 0px 0px)',
+          }]]
+          : [],
+      )
+      expect(writeViewport).not.toHaveBeenCalled()
     },
   )
 
@@ -413,43 +492,52 @@ describe('Sheet surface geometry', () => {
   })
 
   it('translates a complete card through entry and dismissal', () => {
-    const { position, presence, surfaceStyle } = setup()
+    const { position, presence, surfaceStyle, movingStyle, clipStyle } = setup()
+    const mask = surfaceStyle['clip-path']
     presence.current = PresenceState.Leaving
     position.current.set(100)
-    expect(surfaceStyle).toEqual({ top: '-2px', height: '400px' })
+    expect(clipStyle.bottom).toBe('2px')
+    expect(movingStyle.transform).toBe('translate(0px, -100px)')
+    expect(surfaceStyle['clip-path']).toBe(mask)
     position.current.set(0)
-    expect(surfaceStyle).toEqual({ top: '0px', height: '400px' })
+    expect(clipStyle.bottom).toBe('0px')
+    expect(movingStyle.transform).toBe('translate(0px, 0px)')
+    expect(surfaceStyle['clip-path']).toBe(mask)
     presence.current = PresenceState.Entering
     position.current.set(100)
-    expect(surfaceStyle.height).toBe('400px')
+    expect(clipStyle.bottom).toBe('2px')
+    expect(movingStyle.transform).toBe('translate(0px, -100px)')
+    expect(surfaceStyle['clip-path']).toBe(mask)
   })
 
-  it('redirects a mode transition from its current rendered inset', () => {
-    const { render, surfaceStyle, viewportStyle } = setup()
+  it('redirects a coverage transition from its current gap', () => {
+    const { render, surfaceStyle, viewportStyle, clipStyle } = setup()
     render(false, 0)
-    expect(surfaceStyle.top).toBe('-8px')
+    expect(clipStyle.bottom).toBe('8px')
     vi.advanceTimersByTime(96)
-    const interruptedInset = surfaceStyle.top
-    expect(Number.parseFloat(interruptedInset)).toBeGreaterThan(-8)
-    expect(Number.parseFloat(interruptedInset)).toBeLessThan(0)
+    const interruptedGap = clipStyle.bottom
+    expect(Number.parseFloat(interruptedGap)).toBeGreaterThan(0)
+    expect(Number.parseFloat(interruptedGap)).toBeLessThan(8)
     render(true, 8)
-    expect(surfaceStyle.top).toBe(interruptedInset)
+    expect(clipStyle.bottom).toBe(interruptedGap)
     vi.advanceTimersByTime(500)
-    expect(surfaceStyle).toEqual({ top: '-8px', height: '400px' })
-    expect(viewportStyle.height).toBe('400px')
+    expect(clipStyle.bottom).toBe('8px')
+    expect(surfaceStyle.height).toBe('1500px')
+    expect(viewportStyle.height).toBe('800px')
   })
 
   it('makes an immediate snap appearance change immediate too', () => {
-    const { render, animateChanges, surfaceStyle } = setup()
+    const { render, animateChanges, surfaceStyle, clipStyle } = setup()
     animateChanges.current = false
     render(false, 0)
-    expect(surfaceStyle).toEqual({ top: '0px', height: '1500px' })
+    expect(clipStyle.bottom).toBe('0px')
+    expect(surfaceStyle['clip-path']).toBe('none')
   })
 
   it.each([-8, Number.NaN, Number.POSITIVE_INFINITY])(
-    'normalizes invalid insets: %s',
-    inset => {
-      expect(setup(true, inset).surfaceStyle.top).toBe('0px')
+    'normalizes invalid gaps: %s',
+    gap => {
+      expect(setup(true, gap).clipStyle.bottom).toBe('0px')
     },
   )
 })
