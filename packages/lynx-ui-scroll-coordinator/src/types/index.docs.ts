@@ -4,7 +4,7 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import type { BaseGesture } from '@lynx-js/gesture-runtime'
+import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type {
   ScrollCoordinatorProps as NativeScrollCoordinatorProps,
@@ -228,7 +228,7 @@ export interface ScrollCoordinatorProps extends ComponentBasicProps {
    * @Android
    * @iOS
    */
-  'main-thread:gesture'?: BaseGesture
+  'main-thread:gesture'?: GestureKind
   /**
    * Native properties passed explicitly to the coordinator. Managed properties take precedence.
    * @Android

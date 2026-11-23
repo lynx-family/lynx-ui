@@ -4,7 +4,7 @@
 
 import type { ForwardedRef, ReactElement } from '@lynx-js/react'
 
-import type { BaseGesture } from '@lynx-js/gesture-runtime'
+import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { ListProps, ListRef } from '@lynx-js/lynx-ui-list'
 
 import type { BounceableBasicProps, RefreshProps } from '../hooks/useRefresh'
@@ -97,5 +97,5 @@ export interface FeedListProps extends Omit<ListProps, 'ref'> {
    * @Android
    * @zh 如果您想使用手势，请在此处传递。
    */
-  'main-thread:gesture'?: BaseGesture
+  'main-thread:gesture'?: GestureKind
 }
