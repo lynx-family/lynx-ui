@@ -122,6 +122,7 @@ export function useSheetBodyInsets({
     fitWidth: number
     fitScreenWidth: number
     reservedHeight: number
+    parentBottomOffset: number
     parentHeightBeforeReservation: number
     waitingForParent: boolean
     reportedHeight: number
@@ -143,6 +144,7 @@ export function useSheetBodyInsets({
     fitWidth: -1,
     fitScreenWidth: screenWidth,
     reservedHeight: 0,
+    parentBottomOffset: 0,
     parentHeightBeforeReservation: -1,
     waitingForParent: false,
     reportedHeight: -1,
@@ -229,6 +231,11 @@ export function useSheetBodyInsets({
         : undefined
       body.appliedHorizontal = horizontalKey
 
+      const footer = intrinsic
+        ? Math.max(0, footerHeightMTRef?.current ?? 0)
+        : 0
+      const edgeInset = isBottom ? getBottomInsetMT() : getTopInsetMT()
+
       if (intrinsic) {
         const natural = body.natural
         body.expectedWidth = width - offsets.left - offsets.right
@@ -244,18 +251,34 @@ export function useSheetBodyInsets({
             body.fitWidth = body.expectedWidth
             body.fitScreenWidth = screenWidth
           }
-          if (Math.abs(natural.height - body.reservedHeight) > 0.01) {
-            body.reservedHeight = natural.height
+          if (
+            Math.abs(outer.height - body.reservedHeight) <= 1
+            && (body.reservedHeight === 0
+              || parent.height !== body.parentHeightBeforeReservation)
+          ) {
+            body.parentBottomOffset = Math.max(
+              0,
+              parent.height - (outer.top - (parent.top ?? 0)) - outer.height,
+            )
+          }
+          const bottomReserve = natural.height > 0
+              && resolved.bottom !== undefined
+              && Number.isFinite(resolved.bottom)
+            ? Math.max(
+              0,
+              Math.max(0, resolved.bottom) - edgeInset - footer
+                - body.parentBottomOffset,
+            )
+            : 0
+          const reservedHeight = natural.height + bottomReserve
+          if (Math.abs(reservedHeight - body.reservedHeight) > 0.01) {
+            body.reservedHeight = reservedHeight
             body.parentHeightBeforeReservation = parent.height
-            body.slot.setStyleProperties({ height: `${natural.height}px` })
+            body.slot.setStyleProperties({ height: `${reservedHeight}px` })
           }
         }
       }
 
-      const footer = intrinsic
-        ? Math.max(0, footerHeightMTRef?.current ?? 0)
-        : 0
-      const edgeInset = isBottom ? getBottomInsetMT() : getTopInsetMT()
       const availableSpan = Math.max(0, screenHeight - edgeInset)
       const panelHeight = Math.max(
         0,

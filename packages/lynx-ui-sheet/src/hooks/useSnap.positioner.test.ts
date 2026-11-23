@@ -511,4 +511,116 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(snap.getResolvedSnapOffsets()).toEqual([400, -1])
     expect(snap.yRef.current.get()).toBe(400)
   })
+
+  it('reserves remaining bottom safe area in fit mode without clipping content or double-counting gaps/footers', () => {
+    // Pure fit floating sheet (gap 8, bottom safe area 34 -> reserves 26px)
+    const fitOnlySnap = setup('bottom', ['fit'], { bottom: 8 }).render(
+      { width: 320, height: 800 },
+    )
+    const fitOnlyClipStyle: Record<string, string> = {}
+    const writeFitOnlySlot = vi.fn()
+    const writeFitOnlyClip = vi.fn((style: object) =>
+      Object.assign(fitOnlyClipStyle, style)
+    )
+    fitOnlySnap.bodyContext.setBodySlotMTRef?.(
+      { setStyleProperties: writeFitOnlySlot } as unknown as MainThread.Element,
+    )
+    fitOnlySnap.bodyContext.setBodyMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+      { top: 40, bottom: 34 },
+    )
+    fitOnlySnap.bodyContext.setBodyClipMTRef?.(
+      { setStyleProperties: writeFitOnlyClip } as unknown as MainThread.Element,
+    )
+    fitOnlySnap.showMT({ animate: false })
+    fitOnlySnap.bodyContext.measureBodyMT({
+      left: 0,
+      top: 24,
+      width: 320,
+      height: 0,
+    })
+    fitOnlySnap.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 24 },
+    })
+    fitOnlySnap.bodyContext.measureIntrinsicBodyMT?.({
+      width: 320,
+      height: 200,
+    })
+    expect(writeFitOnlySlot).toHaveBeenLastCalledWith({ height: '226px' })
+
+    fitOnlySnap.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 250 },
+    })
+    fitOnlySnap.bodyContext.measureBodyMT({
+      left: 0,
+      top: 24,
+      width: 320,
+      height: 226,
+    })
+    expect(fitOnlySnap.getResolvedSnapOffsets()).toEqual([250])
+    expect(fitOnlySnap.yRef.current.get()).toBe(250)
+    expect(fitOnlyClipStyle.height).toBe('200px')
+
+    // Adding a 20px footer leaves 6px remaining clearance (34 - 8 - 20 = 6px).
+    fitOnlySnap.footerContext.setFooterMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+    )
+    fitOnlySnap.footerContext.updateFooterHeightMT(20)
+    expect(writeFitOnlySlot).toHaveBeenLastCalledWith({ height: '206px' })
+    fitOnlySnap.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 230 },
+    })
+    fitOnlySnap.bodyContext.measureBodyMT({
+      left: 0,
+      top: 24,
+      width: 320,
+      height: 206,
+    })
+    expect(fitOnlySnap.getResolvedSnapOffsets()).toEqual([250])
+    expect(fitOnlyClipStyle.height).toBe('200px')
+
+    // A 40px footer already clears 34 - 8 = 26px, so bottomReserve drops to 0.
+    fitOnlySnap.footerContext.updateFooterHeightMT(40)
+    expect(writeFitOnlySlot).toHaveBeenLastCalledWith({ height: '200px' })
+  })
+
+  it('reserves remaining bottom safe area in multi-snap fit mode', () => {
+    const multiSnap = setup('bottom', ['fit', '100%'], { bottom: 8 }).render(
+      { width: 320, height: 800 },
+    )
+    const writeMultiSlot = vi.fn()
+    multiSnap.bodyContext.setBodySlotMTRef?.(
+      { setStyleProperties: writeMultiSlot } as unknown as MainThread.Element,
+    )
+    multiSnap.bodyContext.setBodyMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+      { top: 40, bottom: 34 },
+    )
+    multiSnap.showMT({ animate: false })
+    multiSnap.bodyContext.measureBodyMT({
+      left: 0,
+      top: 24,
+      width: 320,
+      height: 0,
+    })
+    multiSnap.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 24 },
+    })
+    multiSnap.bodyContext.measureIntrinsicBodyMT?.({
+      width: 320,
+      height: 200,
+    })
+    expect(writeMultiSlot).toHaveBeenLastCalledWith({ height: '226px' })
+    multiSnap.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 250 },
+    })
+    multiSnap.bodyContext.measureBodyMT({
+      left: 0,
+      top: 24,
+      width: 320,
+      height: 226,
+    })
+    expect(multiSnap.getResolvedSnapOffsets()).toEqual([250, 800])
+    expect(multiSnap.yRef.current.get()).toBe(250)
+  })
 })
