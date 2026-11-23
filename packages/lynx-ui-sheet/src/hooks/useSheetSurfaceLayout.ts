@@ -108,6 +108,10 @@ export function useSheetSurfaceLayout({
   const baseLeft = typeof surfaceStyle?.left === 'number'
     ? `${surfaceStyle.left}px`
     : surfaceStyle?.left ?? null
+  const baseLeftPx = typeof surfaceStyle?.left === 'number'
+      && Number.isFinite(surfaceStyle.left)
+    ? surfaceStyle.left
+    : 0
 
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -152,21 +156,6 @@ export function useSheetSurfaceLayout({
     return geometryMTRef.current.settledBottom
   }
 
-  function getTopInsetMT() {
-    'main thread'
-    return geometryMTRef.current.top
-  }
-
-  function getLeftInsetMT() {
-    'main thread'
-    return geometryMTRef.current.left
-  }
-
-  function getRightInsetMT() {
-    'main thread'
-    return geometryMTRef.current.right
-  }
-
   function getSurfaceHorizontalOverrideMT() {
     'main thread'
     return horizontalOverrideMTRef.current
@@ -180,9 +169,6 @@ export function useSheetSurfaceLayout({
     maxSnapSize,
     hasFitSnapPoint,
     getBottomInsetMT,
-    getTopInsetMT,
-    getLeftInsetMT,
-    getRightInsetMT,
     getSurfaceHorizontalOverrideMT,
     footerHeightMTRef,
     onFitBodyLayoutMT,
@@ -195,7 +181,12 @@ export function useSheetSurfaceLayout({
     const surface = surfaceMTRef.current
     const applied = surfaceStylesMTRef.current
     if (!geo.hasHorizontal) {
+      const hadHorizontalOverride = horizontalOverrideMTRef.current !== null
+        || applied.surfaceWidth !== ''
       horizontalOverrideMTRef.current = null
+      if (hadHorizontalOverride) {
+        bodyInsets.syncSurfaceOriginLeftMT(baseLeftPx)
+      }
       if (surface && applied.surfaceWidth !== '') {
         applied.surfaceWidth = ''
         applied.surfaceLeft = ''
@@ -356,13 +347,18 @@ export function useSheetSurfaceLayout({
         isBottom ? visibleHeight : contentHeight,
       )
     } else if (bodyInsets.hasFitBodyMT()) {
-      bodyInsets.updateBodyRangeMT(
-        surfaceTop + correction,
-        Math.max(
-          0,
-          visibleHeight - Math.max(0, footerHeightMTRef?.current ?? 0),
-        ),
-      )
+      if (isBottom) {
+        bodyInsets.updateBodyRangeMT(
+          surfaceTop + correction,
+          Math.max(
+            0,
+            visibleHeight - Math.max(0, footerHeightMTRef?.current ?? 0),
+          ),
+        )
+      } else {
+        const contentHeight = Math.max(sheetSizeMTRef.current, 0)
+        bodyInsets.updateBodyRangeMT(value - contentHeight, contentHeight)
+      }
     }
   }
 

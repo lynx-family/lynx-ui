@@ -99,7 +99,7 @@ export interface SheetBodyContextValue {
   resolvedSide?: SheetResolvedSide
   enableRTL?: boolean
   viewportHeight?: number
-  setBodyClipMTRef?: (element: MainThread.Element | null) => void
+  setBodyClipMTRef: (element: MainThread.Element | null) => void
   setBodySlotMTRef?: (element: MainThread.Element | null) => void
   measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
   setBodyMTRef: (

@@ -213,9 +213,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
           ...style,
           transition: 'none',
         }}
-        main-thread:ref={surfaceControllerRef
-          ? setPaintedViewRefMT
-          : setSheetMTRef}
+        main-thread:ref={setPaintedViewRefMT}
         implicit-animation='false'
         event-through={true}
         main-thread:bindlayoutchange={measureSurfaceMT}
@@ -281,9 +279,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
             overflow: 'hidden',
             pointerEvents: 'auto',
           }}
-          main-thread:ref={surfaceControllerRef
-            ? setPaintedViewRefMT
-            : setSurfaceMTRef}
+          main-thread:ref={setPaintedViewRefMT}
           main-thread:bindlayoutchange={measureSurfaceMT}
           enable-new-animator={true}
           event-through={false}

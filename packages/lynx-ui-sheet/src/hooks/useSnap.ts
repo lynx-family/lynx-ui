@@ -11,7 +11,7 @@ import {
 import type { MainThreadRef } from '@lynx-js/react'
 
 import { noop, useMemoizedFn } from '@lynx-js/lynx-ui-common'
-import { PresenceState } from '@lynx-js/lynx-ui-presence'
+import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
@@ -295,7 +295,10 @@ export function useSnap({
 
   function getFitLayoutSizeMT(bodySize: number) {
     'main thread'
-    if (resolvedSide !== 'bottom') return bodySize
+    if (isHorizontalSide(resolvedSide)) return bodySize
+    if (resolvedSide !== 'bottom') {
+      return Math.min(bodySize, Math.max(0, screenHeight))
+    }
     return Math.min(
       bodySize + Math.max(0, footerHeightMTRef.current),
       Math.max(0, screenHeight - openingBottomMTRef.current),
@@ -352,7 +355,7 @@ export function useSnap({
       enterAnimation,
       exitAnimation,
       initialSnap,
-      retargetAnimationMT: positioner ? retargetAnimationMT : undefined,
+      retargetAnimationMT,
     },
   )
 
@@ -362,7 +365,6 @@ export function useSnap({
   ) {
     'main thread'
     const previousOffsets = getResolvedSnapOffsets()
-    const previousFit = previousOffsets[currentSnapIndex.current]
     bodySizeMTRef.current = bodySize
     const measuredSize = bodySize + (resolvedSide === 'bottom'
       ? Math.max(0, footerHeightMTRef.current)
@@ -378,28 +380,7 @@ export function useSnap({
       : fitSizeMTRef.current
     storeFitSizeMT(fitSize)
     controller.resolvePendingSnapMT()
-    if (positioner) {
-      controller.reconcileSnapMT(previousOffsets)
-      return
-    }
-    // Intrinsic body and footer changes must resize an idle fit panel too.
-    if (
-      snapPointValues[currentSnapIndex.current] === -1
-      && previousFit !== undefined && previousFit >= 0
-      && Math.abs(fitSize - previousFit) >= 0.5
-    ) {
-      const state = controller.presenceStateMTRef.current
-      if (
-        state === PresenceState.Entered && !yRef.current.isAnimating()
-        && Math.abs(yRef.current.get() - previousFit) < 0.5
-      ) {
-        controller.snapToMT(currentSnapIndex.current, { animate: false })
-      } else if (
-        state === PresenceState.Entering && yRef.current.isAnimating()
-      ) {
-        controller.snapToMT(currentSnapIndex.current, { isEntry: true })
-      }
-    }
+    controller.reconcileSnapMT(previousOffsets)
   }
 
   function resolveIntrinsicBodyMT(height: number) {
@@ -433,16 +414,16 @@ export function useSnap({
   const { measureBodyParentMT, hasFitBodyMT, updateSurfaceMT } = surfaceLayout
 
   useEffect(() => {
-    runOnMainThread((values: number[], nextMax: number, local: boolean) => {
+    runOnMainThread((values: number[], nextMax: number) => {
       'main thread'
       if (
-        resolvedSide === 'bottom' && hasFitSnapPoint && fitMeasuredMTRef.current
+        !isHorizontalSide(resolvedSide) && hasFitSnapPoint
+        && fitMeasuredMTRef.current
       ) {
         // A height-only viewport change can update the cap with cached content.
         resolveIntrinsicBodyMT(bodySizeMTRef.current)
         return
       }
-      if (!local) return
       const previousOffsets = getResolvedSnapOffsets()
       resolvedSnapPointMTRef.current = values.map(value =>
         value === -1 && fitMeasuredMTRef.current
@@ -455,13 +436,12 @@ export function useSnap({
         updateContentSizeMT(nextMax)
       }
       controller.reconcileSnapMT(previousOffsets)
-    })(snapPointValues, maxSnapSize, !!positioner)
+    })(snapPointValues, maxSnapSize)
   }, [
     screenWidth,
     screenHeight,
     hasFitSnapPoint,
     resolvedSide,
-    positioner,
     snapPointValues,
     maxSnapSize,
   ])

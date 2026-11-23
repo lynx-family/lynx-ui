@@ -231,7 +231,7 @@ export function useSheetController(
     }
 
     activeSnapMTRef.current = null
-    if (retargetAnimationMT) pendingSnapMTRef.current = null
+    pendingSnapMTRef.current = null
     stopAnimationMT()
     leave()
     const target = 0
@@ -323,7 +323,7 @@ export function useSheetController(
   function onDragEndCloseMT(opts?: { animationConfig?: SheetTransition }) {
     'main thread'
     activeSnapMTRef.current = null
-    if (retargetAnimationMT) pendingSnapMTRef.current = null
+    pendingSnapMTRef.current = null
     // Transition to close if not already
     if (
       presenceStateMTRef.current !== PresenceState.Leaving

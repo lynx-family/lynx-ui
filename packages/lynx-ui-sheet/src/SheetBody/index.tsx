@@ -40,7 +40,6 @@ export function SheetBody(
       || Number.isFinite(start) || Number.isFinite(end)),
   )
   const intrinsic = enabled && context?.intrinsic === true
-  const clipped = enabled && setBodyClipMTRef !== undefined
 
   function setBodyElementMT(element: MainThread.Element | null) {
     'main thread'
@@ -89,10 +88,10 @@ export function SheetBody(
 
   const body = (
     <view
-      className={clipped ? undefined : className}
+      className={enabled ? undefined : className}
       style={enabled
         ? {
-          ...(clipped ? { pointerEvents: 'auto' } : style),
+          pointerEvents: 'auto',
           position: 'absolute',
           top: 0,
           left: 0,
@@ -101,7 +100,7 @@ export function SheetBody(
         }
         : style}
       main-thread:ref={enabled ? setBodyElementMT : undefined}
-      implicit-animation={clipped ? 'false' : undefined}
+      implicit-animation={enabled ? 'false' : undefined}
       event-through={false}
     >
       {intrinsic
@@ -113,7 +112,7 @@ export function SheetBody(
             <view className={className} style={style}>{children}</view>
           </view>
         )
-        : (clipped
+        : (enabled
           ? (
             <view
               className={className}
@@ -152,7 +151,7 @@ export function SheetBody(
       main-thread:bindlayoutchange={enabled ? onLayoutMT : undefined}
       event-through={false}
     >
-      {clipped
+      {enabled
         ? (
           <view
             style={horizontal

@@ -86,18 +86,20 @@ function setup(
     positioner: SheetPositionerDimensions | null,
     effects = true,
     openingInsets = initialInsets,
+    nextSnapPoints = snapPoints,
+    nextScreenHeight = 800,
   ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
     hooks.effects = []
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
-      snapPoints,
+      snapPoints: nextSnapPoints,
       initialInsets: openingInsets,
       initialCornerRadius,
       side,
       enableRTL: true,
-      screenHeight: 800,
+      screenHeight: nextScreenHeight,
       screenWidth: 400,
       positioner,
       presenceStateMTRef: presence,
@@ -622,5 +624,75 @@ describe('Sheet local viewport calculations and resizing', () => {
     })
     expect(multiSnap.getResolvedSnapOffsets()).toEqual([250, 800])
     expect(multiSnap.yRef.current.get()).toBe(250)
+  })
+
+  it('cancels a pending fit snap on close when SheetPositioner is omitted', () => {
+    const { render, presence } = setup('bottom', ['50%', 'fit'])
+    const snap = render(null, true)
+    snap.showMT({ animate: false })
+    expect(snap.yRef.current.get()).toBe(400)
+
+    snap.snapToMT(1, { animate: false })
+    snap.closeMT({ animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 260 } })
+    expect(presence.current).toBe(PresenceState.Left)
+    expect(snap.yRef.current.get()).toBe(0)
+  })
+
+  it('reconciles open snaps on viewport/snapPoint changes when SheetPositioner is omitted', () => {
+    const { render } = setup('bottom', ['40%', '80%'])
+    const snap = render(null, true)
+    snap.showMT({ animate: false })
+    expect(snap.yRef.current.get()).toBe(320)
+
+    const updated = render(null, true, undefined, ['50%', '90%'], 600)
+    expect(updated.getResolvedSnapOffsets()).toEqual([300, 540])
+    expect(updated.yRef.current.get()).toBe(300)
+  })
+
+  it('reserves remaining top safe area in side="top" fit mode without clipping content', () => {
+    const topFit = setup('top', ['fit']).render({ width: 320, height: 800 })
+    const clipStyle: Record<string, string> = {}
+    const writeSlot = vi.fn()
+    const writeClip = vi.fn((style: object) => Object.assign(clipStyle, style))
+    topFit.bodyContext.setBodySlotMTRef?.(
+      { setStyleProperties: writeSlot } as unknown as MainThread.Element,
+    )
+    topFit.bodyContext.setBodyMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+      { top: 59 },
+    )
+    topFit.bodyContext.setBodyClipMTRef(
+      { setStyleProperties: writeClip } as unknown as MainThread.Element,
+    )
+    topFit.showMT({ animate: false })
+    // 12px spacer above SheetBody leaves 59 - 12 = 47px remaining top clearance
+    topFit.bodyContext.measureBodyMT({
+      left: 0,
+      top: 12,
+      width: 320,
+      height: 0,
+    })
+    topFit.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 28 },
+    })
+    topFit.bodyContext.measureIntrinsicBodyMT?.({
+      width: 320,
+      height: 200,
+    })
+    expect(writeSlot).toHaveBeenLastCalledWith({ height: '247px' })
+
+    topFit.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 320, height: 275 },
+    })
+    topFit.bodyContext.measureBodyMT({
+      left: 0,
+      top: 12,
+      width: 320,
+      height: 247,
+    })
+    expect(topFit.getResolvedSnapOffsets()).toEqual([275])
+    expect(topFit.yRef.current.get()).toBe(275)
+    expect(clipStyle.height).toBe('200px')
   })
 })

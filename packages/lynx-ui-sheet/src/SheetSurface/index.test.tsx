@@ -76,6 +76,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       },
       bodyContext: {
         enabled: true,
+        setBodyClipMTRef: vi.fn(),
         setBodyMTRef: vi.fn(),
         measureBodyMT: vi.fn(),
       },

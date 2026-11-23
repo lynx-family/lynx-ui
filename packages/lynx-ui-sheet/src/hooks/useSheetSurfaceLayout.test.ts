@@ -660,4 +660,128 @@ describe('Sheet surface geometry', () => {
       expect(setup({ bottom: gap }).clipStyle.bottom).toBe('0px')
     },
   )
+
+  it('resets SheetBody surfaceOriginLeft immediately when reopening without horizontal insets', () => {
+    const {
+      render,
+      measureSurfaceMT,
+      measureBodyParentMT,
+      bodyContext,
+      presence,
+    } = setup({ left: 68, right: 68, bottom: 8 }, false, 'bottom', 800, false)
+    const writeBody = vi.fn()
+    bodyContext.setBodyClipMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+    )
+    bodyContext.setBodyMTRef(
+      { setStyleProperties: writeBody } as unknown as MainThread.Element,
+      { top: 40, left: 40, right: 40 },
+    )
+    measureSurfaceMT(
+      { detail: { left: 68, top: 0 } } as MainThread.LayoutChangeEvent,
+    )
+    measureBodyParentMT({ left: 0, top: 0, width: 864, height: 992 })
+    bodyContext.measureBodyMT({ left: 0, top: 24, width: 864, height: 968 })
+    expect(writeBody).toHaveBeenCalledWith(
+      expect.objectContaining({ left: '0px', right: '0px' }),
+    )
+
+    writeBody.mockClear()
+    const { openSurfaceMT } = render({ bottom: 0 }, undefined, undefined, 1000)
+    presence.current = PresenceState.Left
+    openSurfaceMT()
+    measureBodyParentMT({ left: 0, top: 0, width: 1000, height: 1000 })
+    bodyContext.measureBodyMT({ left: 0, top: 24, width: 1000, height: 976 })
+    expect(writeBody).toHaveBeenLastCalledWith(
+      expect.objectContaining({ left: '40px', right: '40px' }),
+    )
+  })
+
+  it('preserves horizontalPadding when child measureBodyMT arrives before parent during setInsets shrink', () => {
+    const {
+      setInsetsMT,
+      bodyContext,
+      measureSurfaceMT,
+      measureBodyParentMT,
+    } = setup({ left: 20, right: 20, bottom: 0 }, false, 'bottom', 1000, false)
+    const writeBody = vi.fn()
+    bodyContext.setBodyClipMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+    )
+    bodyContext.setBodyMTRef(
+      { setStyleProperties: writeBody } as unknown as MainThread.Element,
+      { top: 40, right: 84 },
+    )
+    // Surface width 960, child body has 20px inner padding -> outer width 940 (horizontalPadding = 20).
+    measureSurfaceMT(
+      { detail: { left: 20, top: 0 } } as MainThread.LayoutChangeEvent,
+    )
+    measureBodyParentMT({ left: 0, top: 0, width: 960, height: 1000 })
+    bodyContext.measureBodyMT({ left: 10, top: 24, width: 940, height: 976 })
+
+    // Shrink surface width 960 -> 664; child layout arrives before parent layout.
+    setInsetsMT({ left: 168, right: 168, bottom: 8 })
+    bodyContext.measureBodyMT({ left: 10, top: 24, width: 644, height: 968 })
+    measureBodyParentMT({ left: 0, top: 0, width: 664, height: 992 })
+    writeBody.mockClear()
+
+    // Now widen back 664 -> 960: horizontalPadding (20) is preserved so outer
+    // width is 940 at left=20+10=30 (right edge at 970, 30px from screen right
+    // -> 84 - 30 = 54px right inset instead of 64px or 74px).
+    setInsetsMT({ left: 20, right: 20, bottom: 0 })
+    expect(writeBody).toHaveBeenCalledWith(
+      expect.objectContaining({ left: '0px', right: '54px' }),
+    )
+  })
+
+  it('does not skew top SheetBody safe-area clamping when unapplied initialInsets.top is passed', () => {
+    const topSetup = setup({ top: 20 }, false, 'top', 1000, false)
+    const topClipStyle: Record<string, string> = {}
+    topSetup.bodyContext.setBodyClipMTRef(
+      {
+        setStyleProperties: (style: object) =>
+          Object.assign(topClipStyle, style),
+      } as unknown as MainThread.Element,
+    )
+    topSetup.bodyContext.setBodyMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+      { top: 60 },
+    )
+    topSetup.measureBodyParentMT({ left: 0, top: 0, width: 1000, height: 1000 })
+    topSetup.bodyContext.measureBodyMT({
+      left: 0,
+      top: 0,
+      width: 1000,
+      height: 1000,
+    })
+    expect(topClipStyle.height).toBe('940px')
+  })
+
+  it('does not skew right SheetBody safe-area clamping when unapplied initialInsets.right is passed', () => {
+    const rightSetup = setup({ right: 20 }, false, 'right', 800, false)
+    const rightClipStyle: Record<string, string> = {}
+    rightSetup.bodyContext.setBodyClipMTRef(
+      {
+        setStyleProperties: (style: object) =>
+          Object.assign(rightClipStyle, style),
+      } as unknown as MainThread.Element,
+    )
+    rightSetup.bodyContext.setBodyMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+      { right: 250 },
+    )
+    rightSetup.measureBodyParentMT({
+      left: 0,
+      top: 0,
+      width: 800,
+      height: 1000,
+    })
+    rightSetup.bodyContext.measureBodyMT({
+      left: 0,
+      top: 0,
+      width: 800,
+      height: 1000,
+    })
+    expect(rightClipStyle.width).toBe('550px')
+  })
 })

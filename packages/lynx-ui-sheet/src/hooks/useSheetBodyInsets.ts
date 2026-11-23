@@ -19,9 +19,6 @@ export interface SheetBodyInsetsOptions {
   maxSnapSize: number
   hasFitSnapPoint: boolean
   getBottomInsetMT: () => number
-  getTopInsetMT: () => number
-  getLeftInsetMT: () => number
-  getRightInsetMT: () => number
   getSurfaceHorizontalOverrideMT: () => { left: number, width: number } | null
   footerHeightMTRef?: MainThreadRef<number>
   onFitBodyLayoutMT?: (height: number) => void
@@ -90,16 +87,13 @@ export function useSheetBodyInsets({
   maxSnapSize,
   hasFitSnapPoint,
   getBottomInsetMT,
-  getTopInsetMT,
-  getLeftInsetMT,
-  getRightInsetMT,
   getSurfaceHorizontalOverrideMT,
   footerHeightMTRef,
   onFitBodyLayoutMT,
 }: SheetBodyInsetsOptions) {
   const isBottom = resolvedSide === 'bottom'
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
-  const intrinsic = isBottom && hasFitSnapPoint
+  const intrinsic = !horizontal && hasFitSnapPoint
   const surfaceOriginMTRef = useMainThreadRef({ left: 0, top: 0 })
   const bodyRangeMTRef = useMainThreadRef<
     { start: number, size: number } | null
@@ -111,6 +105,7 @@ export function useSheetBodyInsets({
     outer: SheetLayoutRect
     parent: Partial<SheetLayoutRect>
     horizontalPadding: number
+    outerPendingParentSync: boolean
     appliedHorizontal: string
     appliedVertical: string
     translatedMain: number | null
@@ -133,6 +128,7 @@ export function useSheetBodyInsets({
     outer: { left: 0, top: 0, width: -1, height: -1 },
     parent: {},
     horizontalPadding: 0,
+    outerPendingParentSync: false,
     appliedHorizontal: '',
     appliedVertical: '',
     translatedMain: null,
@@ -231,10 +227,10 @@ export function useSheetBodyInsets({
         : undefined
       body.appliedHorizontal = horizontalKey
 
-      const footer = intrinsic
+      const footer = isBottom && intrinsic
         ? Math.max(0, footerHeightMTRef?.current ?? 0)
         : 0
-      const edgeInset = isBottom ? getBottomInsetMT() : getTopInsetMT()
+      const edgeInset = isBottom ? getBottomInsetMT() : 0
 
       if (intrinsic) {
         const natural = body.natural
@@ -252,7 +248,8 @@ export function useSheetBodyInsets({
             body.fitScreenWidth = screenWidth
           }
           if (
-            Math.abs(outer.height - body.reservedHeight) <= 1
+            isBottom
+            && Math.abs(outer.height - body.reservedHeight) <= 1
             && (body.reservedHeight === 0
               || parent.height !== body.parentHeightBeforeReservation)
           ) {
@@ -261,7 +258,7 @@ export function useSheetBodyInsets({
               parent.height - (outer.top - (parent.top ?? 0)) - outer.height,
             )
           }
-          const bottomReserve = natural.height > 0
+          const bottomReserve = isBottom && natural.height > 0
               && resolved.bottom !== undefined
               && Number.isFinite(resolved.bottom)
             ? Math.max(
@@ -270,7 +267,17 @@ export function useSheetBodyInsets({
                 - body.parentBottomOffset,
             )
             : 0
-          const reservedHeight = natural.height + bottomReserve
+          const parentTopOffset = Math.max(0, outer.top - (parent.top ?? 0))
+          const topReserve = !isBottom && natural.height > 0
+              && resolved.top !== undefined
+              && Number.isFinite(resolved.top)
+            ? Math.max(
+              0,
+              Math.max(0, resolved.top) - edgeInset - parentTopOffset,
+            )
+            : 0
+          const reservedHeight = natural.height
+            + (isBottom ? bottomReserve : topReserve)
           if (Math.abs(reservedHeight - body.reservedHeight) > 0.01) {
             body.reservedHeight = reservedHeight
             body.parentHeightBeforeReservation = parent.height
@@ -341,9 +348,7 @@ export function useSheetBodyInsets({
       : undefined
     body.appliedVertical = verticalKey
 
-    const edgeInset = resolvedSide === 'left'
-      ? getLeftInsetMT()
-      : getRightInsetMT()
+    const edgeInset = 0
     const availableSpan = Math.max(0, screenWidth - edgeInset)
     const panelWidth = Math.max(0, Math.min(availableSpan, maxSnapSize))
     const settledLeft = resolvedSide === 'right'
@@ -403,6 +408,35 @@ export function useSheetBodyInsets({
     applyBodyLayoutMT()
   }
 
+  function syncHorizontalPaddingMT(fromOuter: boolean) {
+    'main thread'
+    const body = bodyMTRef.current
+    const parentWidth = body.parent.width
+    const outerWidth = body.outer.width
+    const horizontalOverride = horizontal
+      ? null
+      : getSurfaceHorizontalOverrideMT()
+    const parentMatches = parentWidth !== undefined
+      && (!horizontalOverride
+        || Math.abs(parentWidth - horizontalOverride.width) <= 1)
+    if (fromOuter) {
+      if (parentMatches && parentWidth >= outerWidth) {
+        body.horizontalPadding = parentWidth - outerWidth
+        body.outerPendingParentSync = false
+      } else {
+        body.outerPendingParentSync = true
+      }
+      return
+    }
+    if (
+      body.outerPendingParentSync && parentMatches && outerWidth >= 0
+      && parentWidth >= outerWidth
+    ) {
+      body.horizontalPadding = parentWidth - outerWidth
+      body.outerPendingParentSync = false
+    }
+  }
+
   function measureBodyParentMT(rect?: Partial<SheetLayoutRect>) {
     'main thread'
     if (!rect) return
@@ -411,6 +445,7 @@ export function useSheetBodyInsets({
     parent.top = rect.top ?? parent.top
     parent.width = rect.width ?? parent.width
     parent.height = rect.height ?? parent.height
+    syncHorizontalPaddingMT(false)
     applyBodyLayoutMT()
   }
 
@@ -424,10 +459,7 @@ export function useSheetBodyInsets({
     outer.top = top
     outer.width = width
     outer.height = height
-    const parentWidth = body.parent.width
-    if (parentWidth !== undefined && parentWidth >= width) {
-      body.horizontalPadding = parentWidth - width
-    }
+    syncHorizontalPaddingMT(true)
     applyBodyLayoutMT()
   }
 
