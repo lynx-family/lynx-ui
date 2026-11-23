@@ -77,6 +77,7 @@ function App() {
     fullscreenTarget.current = false
     progress.current.jump(0)
     applyAppearance(0)
+    surfaceControllerRef.current?.commitInsets()
   }
 
   function onDragStart() {
@@ -99,16 +100,24 @@ function App() {
         type: 'spring',
         stiffness: 260,
         damping: 28,
+        onComplete: () => {
+          'main thread'
+          surfaceControllerRef.current?.commitInsets()
+        },
       })
     } else {
       progress.current.jump(target)
+      surfaceControllerRef.current?.commitInsets()
     }
   }
 
   useEffect(() => {
     runOnMainThread(() => {
       'main thread'
-      applyAppearance(progress.current.get())
+      if (!progress.current.isAnimating()) {
+        applyAppearance(progress.current.get())
+        surfaceControllerRef.current?.commitInsets()
+      }
     })()
   }, [floatingSideInset])
 
@@ -158,8 +167,8 @@ function App() {
               main-thread:surfaceControllerRef={surfaceControllerRef}
               className='sheet-surface'
               innerClassName='sheet-layout'
-              cornerRadius={24}
-              insets={{
+              initialCornerRadius={24}
+              initialInsets={{
                 left: floatingSideInset,
                 right: floatingSideInset,
                 bottom: 8,

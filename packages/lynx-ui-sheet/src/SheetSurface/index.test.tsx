@@ -47,6 +47,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
   const measure = vi.fn()
   const gesture = {} as NonNullable<SheetSurfaceProps['sheetGesture']>
   const setInsetsMT = vi.fn()
+  const commitInsetsMT = vi.fn()
   const setCornerRadiusMT = vi.fn()
   const surface = SheetSurface({
     resolvedSide: 'bottom',
@@ -72,6 +73,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
     setViewportMTRef: vi.fn(),
     setContentMTRef: measure,
     setInsetsMT,
+    commitInsetsMT,
     setCornerRadiusMT,
     handleSheetLayoutChangeMT: vi.fn(),
     ...overrides,
@@ -89,6 +91,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
     measure,
     gesture,
     setInsetsMT,
+    commitInsetsMT,
     setCornerRadiusMT,
   }
 }

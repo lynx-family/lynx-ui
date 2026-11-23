@@ -112,6 +112,7 @@ function setup(
     nextInsets: SheetInsets | undefined = initialInsets,
     cornerRadius?: SheetCornerRadius,
     baseStyle?: Parameters<typeof useSheetSurfaceLayout>[0]['surfaceStyle'],
+    screenWidth = 1000,
   ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
@@ -127,7 +128,7 @@ function setup(
       hasController,
       surfaceStyle: baseStyle,
       screenHeight: 1000,
-      screenWidth: 1000,
+      screenWidth,
       allowOverDrag: false,
       sheetSizeMTRef: { current: maxSnapSize },
       movingSurfaceMTRef,
@@ -555,6 +556,57 @@ describe('Sheet surface geometry', () => {
     const { position, setSurfaceMTRef } = setup()
     Object.assign(position, { current: null })
     expect(() => setSurfaceMTRef({} as MainThread.Element)).not.toThrow()
+  })
+
+  it('preserves the controller frame on resize and uses updated opening values on reopen', () => {
+    const { setInsetsMT, setCornerRadiusMT, render, surfaceStyle, presence } =
+      setup(
+        { left: 120, right: 120, bottom: 8 },
+        false,
+        'bottom',
+        800,
+        false,
+        true,
+      )
+    setInsetsMT({ left: 20, right: 20, bottom: 2 })
+    setCornerRadiusMT(6)
+    const { openSurfaceMT } = render(
+      { left: 60, right: 80, bottom: 12 },
+      16,
+      undefined,
+      900,
+    )
+    expect(surfaceStyle).toMatchObject({
+      left: '20px',
+      width: '860px',
+      'border-top-left-radius': '6px',
+    })
+
+    presence.current = PresenceState.Left
+    openSurfaceMT()
+    expect(surfaceStyle).toMatchObject({
+      left: '60px',
+      width: '760px',
+      'border-top-left-radius': '16px',
+    })
+  })
+
+  it('commits the appearance gap after the vertical snap has already settled', () => {
+    const {
+      setInsetsMT,
+      settleSurfaceMT,
+      commitInsetsMT,
+      clipStyle,
+      viewportStyle,
+    } = setup({ bottom: 0 }, false, 'bottom', 1000, false, true)
+    setInsetsMT({ bottom: 3 })
+    settleSurfaceMT()
+    expect(clipStyle.bottom).toBe('0px')
+    expect(viewportStyle.height).toBe('1000px')
+    setInsetsMT({ bottom: 8 })
+    commitInsetsMT()
+    expect(clipStyle.bottom).toBe('8px')
+    expect(viewportStyle.height).toBe('992px')
   })
 
   it('does not constrain intrinsic fit measurement with the animated viewport', () => {

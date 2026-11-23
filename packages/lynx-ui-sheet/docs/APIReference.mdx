@@ -1781,15 +1781,15 @@ The main content of the Sheet.
     "summary": [
       {
         "kind": "text",
-        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nProp updates apply immediately; drive animated changes through\n"
+        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nProp updates apply immediately in declarative mode. Use\n"
       },
       {
         "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
+        "text": "`initialCornerRadius`"
       },
       {
         "kind": "text",
-        "text": ". Zero explicitly makes a corner square."
+        "text": " with the surface controller. Zero makes a corner square."
       }
     ],
     "summary_zh": [
@@ -1848,6 +1848,66 @@ The main content of the Sheet.
       {
         "kind": "text",
         "text": "Sheet 退出动画配置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialCornerRadius",
+    "type": "SheetCornerRadius",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opening corner radii in logical pixels when using the surface controller.\nRead on each open, including with "
+      },
+      {
+        "kind": "code",
+        "text": "`forceMount`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "使用表面控制器时的初始圆角半径（逻辑像素）。每次打开时读取，包括 forceMount。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialInsets",
+    "type": "SheetInsets",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opening panel insets in logical pixels when using the surface controller.\nRead on each open, including with "
+      },
+      {
+        "kind": "code",
+        "text": "`forceMount`"
+      },
+      {
+        "kind": "text",
+        "text": ". Updates while open take\neffect on the next open."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "使用表面控制器时的初始面板间距（逻辑像素）。每次打开时读取，包括 forceMount；打开期间的变更在下次打开时生效。"
       }
     ],
     "defaultValue": "",
@@ -2025,15 +2085,15 @@ The main content of the Sheet.
       },
       {
         "kind": "text",
-        "text": "\nfor a centered floating card).\nProp updates apply immediately; drive animated changes through\n"
+        "text": "\nfor a centered floating card).\nProp updates apply immediately in declarative mode. Use "
       },
       {
         "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
+        "text": "`initialInsets`"
       },
       {
         "kind": "text",
-        "text": "."
+        "text": "\nwith the surface controller."
       }
     ],
     "summary_zh": [
@@ -2079,23 +2139,23 @@ The main content of the Sheet.
     "summary": [
       {
         "kind": "text",
-        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse it from main-thread callbacks such as "
+        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse "
       },
       {
         "kind": "code",
-        "text": "`main-thread:onSnapStart`"
+        "text": "`initialInsets`"
       },
       {
         "kind": "text",
-        "text": " or\n"
+        "text": " and "
       },
       {
         "kind": "code",
-        "text": "`main-thread:onPositionChange`"
+        "text": "`initialCornerRadius`"
       },
       {
         "kind": "text",
-        "text": " to drive insets and corner radii without\nbackground-thread roundtrips or layout cascades."
+        "text": " for the opening appearance.\nWhile supplied, this controller owns inset and corner updates."
       }
     ],
     "summary_zh": [
@@ -2305,15 +2365,15 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary": [
       {
         "kind": "text",
-        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nProp updates apply immediately; drive animated changes through\n"
+        "text": "Radius in logical pixels for the sheet's exposed corners. A number applies\nto every exposed corner. Supply individual corners to use different sizes.\nSupplied values override surface styles for those corners. Omitted surface\ncorners use CSS, and omitted clipped bottom corners are square.\nProp updates apply immediately in declarative mode. Use\n"
       },
       {
         "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
+        "text": "`initialCornerRadius`"
       },
       {
         "kind": "text",
-        "text": ". Zero explicitly makes a corner square."
+        "text": " with the surface controller. Zero makes a corner square."
       }
     ],
     "summary_zh": [
@@ -2408,6 +2468,66 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       }
     ],
     "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialCornerRadius",
+    "type": "SheetCornerRadius",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opening corner radii in logical pixels when using the surface controller.\nRead on each open, including with "
+      },
+      {
+        "kind": "code",
+        "text": "`forceMount`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "使用表面控制器时的初始圆角半径（逻辑像素）。每次打开时读取，包括 forceMount。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "initialInsets",
+    "type": "SheetInsets",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Opening panel insets in logical pixels when using the surface controller.\nRead on each open, including with "
+      },
+      {
+        "kind": "code",
+        "text": "`forceMount`"
+      },
+      {
+        "kind": "text",
+        "text": ". Updates while open take\neffect on the next open."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "使用表面控制器时的初始面板间距（逻辑像素）。每次打开时读取，包括 forceMount；打开期间的变更在下次打开时生效。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -2583,15 +2703,15 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "text",
-        "text": "\nfor a centered floating card).\nProp updates apply immediately; drive animated changes through\n"
+        "text": "\nfor a centered floating card).\nProp updates apply immediately in declarative mode. Use "
       },
       {
         "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
+        "text": "`initialInsets`"
       },
       {
         "kind": "text",
-        "text": "."
+        "text": "\nwith the surface controller."
       }
     ],
     "summary_zh": [
@@ -2637,23 +2757,23 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary": [
       {
         "kind": "text",
-        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse it from main-thread callbacks such as "
+        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse "
       },
       {
         "kind": "code",
-        "text": "`main-thread:onSnapStart`"
+        "text": "`initialInsets`"
       },
       {
         "kind": "text",
-        "text": " or\n"
+        "text": " and "
       },
       {
         "kind": "code",
-        "text": "`main-thread:onPositionChange`"
+        "text": "`initialCornerRadius`"
       },
       {
         "kind": "text",
-        "text": " to drive insets and corner radii without\nbackground-thread roundtrips or layout cascades."
+        "text": " for the opening appearance.\nWhile supplied, this controller owns inset and corner updates."
       }
     ],
     "summary_zh": [
@@ -3189,6 +3309,28 @@ Main-thread controller for updating the Sheet surface's geometry and corner shap
 Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on the main thread.
 
 <UIApiTable source={[
+  {
+    "name": "commitInsets",
+    "type": "() => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Commit the current insets to the layout and hit-test bounds. Call after\nthe last inset update, including when applying insets without animation."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "将当前间距提交到布局和触摸边界。在最后一次更新间距后调用，包括无动画更新。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
   {
     "name": "setCornerRadius",
     "type": "(radius: SheetCornerRadius | undefined) => void",

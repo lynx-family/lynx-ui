@@ -75,6 +75,7 @@ function setup(
   snapPoints: Array<number | string> = ['50%', '85%'],
   insets?: Parameters<typeof useSnap>[0]['insets'],
   cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
+  hasController = false,
 ) {
   const presence = { current: PresenceState.Left }
   const entered = vi.fn()
@@ -85,6 +86,7 @@ function setup(
   function render(
     positioner: SheetPositionerDimensions | null,
     effects = true,
+    openingInsets = insets,
   ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
@@ -92,8 +94,9 @@ function setup(
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
       snapPoints,
-      insets,
+      insets: openingInsets,
       cornerRadius,
+      hasController,
       side,
       enableRTL: true,
       screenHeight: 800,
@@ -144,6 +147,30 @@ describe('Sheet local viewport calculations and resizing', () => {
     for (const unsubscribe of hooks.subscriptions) unsubscribe()
     vi.useRealTimers()
     vi.unstubAllGlobals()
+  })
+
+  it('resets a mounted surface before an immediate reopen at the latest insets', () => {
+    const { render, surfaceStyle } = setup(
+      'bottom',
+      ['50%'],
+      { left: 30, right: 30 },
+      24,
+      true,
+    )
+    const viewport = { width: 400, height: 800 }
+    const snap = render(viewport)
+    snap.showMT({ animate: false })
+    expect(surfaceStyle.width).toBe('340px')
+    snap.setInsetsMT({ left: 0, right: 0 })
+    snap.setCornerRadiusMT(0)
+
+    const rerendered = render(viewport, true, { left: 40, right: 40 })
+    expect(surfaceStyle.width).toBe('400px')
+    expect(surfaceStyle['border-top-left-radius']).toBe('0px')
+    rerendered.closeMT({ animate: false })
+    rerendered.showMT({ animate: false })
+    expect(surfaceStyle.width).toBe('320px')
+    expect(surfaceStyle['border-top-left-radius']).toBe('24px')
   })
 
   it.each(['top', 'bottom', 'left', 'right', 'start', 'end'] as const)(

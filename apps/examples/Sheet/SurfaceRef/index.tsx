@@ -115,7 +115,10 @@ function App() {
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
             main-thread:surfaceControllerRef={surfaceController}
-            insets={{ left: floatingSideInset, right: floatingSideInset }}
+            initialInsets={{
+              left: floatingSideInset,
+              right: floatingSideInset,
+            }}
             className='sheet-content'
             innerClassName='surface-layout'
           >

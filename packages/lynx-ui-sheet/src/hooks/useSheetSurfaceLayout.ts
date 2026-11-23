@@ -46,7 +46,9 @@ interface SheetSurfaceLayoutOptions {
   initialSize: (index: number) => number
   initialSnap: number
   hasController?: boolean
-  settleCallbackMTRef?: MainThreadRef<(() => void) | null>
+  surfaceLifecycleMTRef?: MainThreadRef<
+    { open: () => void, settle: () => void } | null
+  >
 }
 
 export function normalizeInset(value: number | undefined) {
@@ -87,7 +89,7 @@ export function useSheetSurfaceLayout({
   initialSize,
   initialSnap,
   hasController = false,
-  settleCallbackMTRef,
+  surfaceLifecycleMTRef,
 }: SheetSurfaceLayoutOptions) {
   const isBottom = resolvedSide === 'bottom'
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
@@ -102,6 +104,12 @@ export function useSheetSurfaceLayout({
   const inlineCornerStyles = extractInlineCornerStyles(surfaceStyle)
   const inlineBorderRadius = inlineCornerStyles.borderRadius
   const [inlineTL, inlineTR, inlineBR, inlineBL] = inlineCornerStyles.corners
+  const baseWidth = typeof surfaceStyle?.width === 'number'
+    ? `${surfaceStyle.width}px`
+    : surfaceStyle?.width ?? '100%'
+  const baseLeft = typeof surfaceStyle?.left === 'number'
+    ? `${surfaceStyle.left}px`
+    : surfaceStyle?.left ?? ''
 
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -129,6 +137,7 @@ export function useSheetSurfaceLayout({
     // clipMTRef.bottom never resize per-frame during motion.
     settledBottom: hasController ? 0 : propBottom,
     clipBottomApplied: 0,
+    bottomUpdatePending: false,
   })
   const surfaceStylesMTRef = useMainThreadRef({
     clipBottom: '',
@@ -189,6 +198,13 @@ export function useSheetSurfaceLayout({
     const applied = surfaceStylesMTRef.current
     if (!geo.hasHorizontal) {
       horizontalOverrideMTRef.current = null
+      if (surface && applied.surfaceWidth !== '') {
+        applied.surfaceWidth = ''
+        applied.surfaceLeft = ''
+        if (hasController) {
+          surface.setStyleProperties({ width: baseWidth, left: baseLeft })
+        }
+      }
       return
     }
     const left = geo.left
@@ -241,7 +257,6 @@ export function useSheetSurfaceLayout({
 
   function updateSurfaceMT() {
     'main thread'
-    if (settleCallbackMTRef) settleCallbackMTRef.current = settleSurfaceMT
     const motion = position.current
     if (!motion) return
     const value = Math.max(0, motion.get())
@@ -356,7 +371,7 @@ export function useSheetSurfaceLayout({
    */
   function settleSurfaceMT() {
     'main thread'
-    if (!isBottom) return
+    if (!isBottom || geometryMTRef.current.bottomUpdatePending) return
     const geo = geometryMTRef.current
     const nextSettled = presence.current === PresenceState.Entered
       ? geo.bottom
@@ -401,11 +416,18 @@ export function useSheetSurfaceLayout({
     geo.hasHorizontal = nextHasHorizontal
     // Drop clipMTRef.bottom to 0 once when bottom inset starts animating so
     // subsequent frames incur zero layout writes on clipMTRef.
-    if (isBottom && bottomChanged && geo.clipBottomApplied !== 0) {
-      applyClipBottomMT(0)
+    if (isBottom && bottomChanged) {
+      geo.bottomUpdatePending = true
+      if (geo.clipBottomApplied !== 0) applyClipBottomMT(0)
     }
     applyHorizontalFrameMT()
     updateSurfaceMT()
+  }
+
+  function commitInsetsMT() {
+    'main thread'
+    geometryMTRef.current.bottomUpdatePending = false
+    settleSurfaceMT()
   }
 
   function setCornerRadiusMT(nextRadius: SheetCornerRadius | undefined) {
@@ -425,27 +447,56 @@ export function useSheetSurfaceLayout({
     nextLeft: number,
     nextHasHorizontal: boolean,
     nextRadii: CornerRadii,
+    opening = false,
   ) {
     'main thread'
     const geo = geometryMTRef.current
-    geo.top = nextTop
-    geo.right = nextRight
-    geo.bottom = nextBottom
-    geo.left = nextLeft
-    geo.hasHorizontal = nextHasHorizontal
-    geo.radii = nextRadii
-    if (isBottom && presence.current === PresenceState.Entered) {
-      geo.settledBottom = nextBottom
-      applyClipBottomMT(nextBottom)
-    } else if (isBottom && !hasController) {
-      geo.settledBottom = nextBottom
+    if (!hasController || opening) {
+      geo.top = nextTop
+      geo.right = nextRight
+      geo.bottom = nextBottom
+      geo.left = nextLeft
+      geo.hasHorizontal = nextHasHorizontal
+      geo.radii = nextRadii
+      geo.bottomUpdatePending = false
+      if (isBottom) {
+        geo.settledBottom = hasController ? 0 : nextBottom
+        if (opening || presence.current === PresenceState.Entered) {
+          applyClipBottomMT(geo.settledBottom)
+        }
+      }
     }
     applyHorizontalFrameMT()
     updateCornersMT(true)
     updateSurfaceMT()
   }
 
+  function openSurfaceMT() {
+    'main thread'
+    if (!hasController) return
+    syncPropsMT(
+      propTop,
+      propRight,
+      propBottom,
+      propLeft,
+      propHasHorizontal,
+      [propTL, propTR, propBR, propBL],
+      true,
+    )
+  }
+
+  function registerSurfaceLifecycleMT() {
+    'main thread'
+    if (surfaceLifecycleMTRef) {
+      surfaceLifecycleMTRef.current = {
+        open: openSurfaceMT,
+        settle: settleSurfaceMT,
+      }
+    }
+  }
+
   useEffect(() => {
+    runOnMainThread(registerSurfaceLifecycleMT)()
     runOnMainThread(syncPropsMT)(
       propTop,
       propRight,
@@ -469,6 +520,8 @@ export function useSheetSurfaceLayout({
     inlineTR,
     inlineBR,
     inlineBL,
+    baseWidth,
+    baseLeft,
     screenHeight,
     screenWidth,
     maxSnapSize,
@@ -495,6 +548,7 @@ export function useSheetSurfaceLayout({
   function setSheetMTRef(element: MainThread.Element | null) {
     'main thread'
     if (!movingSurfaceMTRef) return
+    if (element) registerSurfaceLifecycleMT()
     movingSurfaceMTRef.current = element
     if (horizontal) {
       surfaceMTRef.current = element
@@ -533,7 +587,9 @@ export function useSheetSurfaceLayout({
     setSurfaceMTRef,
     setViewportMTRef,
     settleSurfaceMT,
+    openSurfaceMT,
     setInsetsMT,
+    commitInsetsMT,
     setCornerRadiusMT,
     measureBodyParentMT: bodyInsets.measureBodyParentMT,
     measureSurfaceMT: bodyInsets.measureSurfaceMT,

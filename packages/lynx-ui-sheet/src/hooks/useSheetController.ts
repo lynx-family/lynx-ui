@@ -33,6 +33,7 @@ export interface SheetControllerAnimationDeps {
   onSnapChangeMT: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDragStartNotifyMT?: SheetRootProps['main-thread:onDragStart']
+  onOpeningMT?: () => void
   onSettledMT?: () => void
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
@@ -67,6 +68,7 @@ export function useSheetController(
     onSnapChangeMT,
     onSnapStartMT,
     onDragStartNotifyMT,
+    onOpeningMT,
     onSettledMT,
     enterAnimation,
     exitAnimation,
@@ -101,6 +103,12 @@ export function useSheetController(
   >(null)
   const activeSnapMTRef = useMainThreadRef<number | null>(null)
 
+  function beginOpeningMT() {
+    'main thread'
+    if (presenceStateMTRef.current === PresenceState.Left) onOpeningMT?.()
+    enter()
+  }
+
   /**
    * Complete a snap transition - handle state changes after animation
    */
@@ -130,6 +138,8 @@ export function useSheetController(
     },
   ) {
     'main thread'
+    const wasClosed = presenceStateMTRef.current === PresenceState.Left
+    if (wasClosed) onOpeningMT?.()
     const target = getTargetForSnap(index)
     const values = getResolvedSnapPointValues()
 
@@ -147,13 +157,8 @@ export function useSheetController(
 
     // A new snap can interrupt the opening animation before presence reaches
     // Entered. Classify the action itself, not the current presence state.
-    const isEntry = opts?.isEntry === true
-      || presenceStateMTRef.current === PresenceState.Left
-
-    // If called when Left, transition to Entering first
-    if (presenceStateMTRef.current === PresenceState.Left) {
-      enter()
-    }
+    const isEntry = opts?.isEntry === true || wasClosed
+    if (wasClosed) enter()
 
     stopAnimationMT()
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined
@@ -195,7 +200,7 @@ export function useSheetController(
       return
     }
 
-    enter()
+    beginOpeningMT()
     snapToMT(initialSnap, {
       animate: opts?.animate,
       animationConfig: opts?.animationConfig,

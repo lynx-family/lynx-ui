@@ -148,6 +148,12 @@ export interface SheetSurfaceController {
    */
   setInsets: (insets: SheetInsets) => void
   /**
+   * Commit the current insets to the layout and hit-test bounds. Call after
+   * the last inset update, including when applying insets without animation.
+   * @zh 将当前间距提交到布局和触摸边界。在最后一次更新间距后调用，包括无动画更新。
+   */
+  commitInsets: () => void
+  /**
    * Update exposed corner radii in logical pixels. Pass undefined to restore CSS corners.
    * @zh 更新可见圆角半径（逻辑像素）；传 undefined 恢复 CSS 圆角。
    */
@@ -161,9 +167,8 @@ export interface SheetSurfaceController {
 export interface SheetContentProps extends ComponentBasicProps {
   /**
    * A main-thread ref receiving the SheetSurfaceController while mounted.
-   * Use it from main-thread callbacks such as `main-thread:onSnapStart` or
-   * `main-thread:onPositionChange` to drive insets and corner radii without
-   * background-thread roundtrips or layout cascades.
+   * Use `initialInsets` and `initialCornerRadius` for the opening appearance.
+   * While supplied, this controller owns inset and corner updates.
    * @Android
    * @iOS
    * @Harmony
@@ -177,8 +182,8 @@ export interface SheetContentProps extends ComponentBasicProps {
    * to every exposed corner. Supply individual corners to use different sizes.
    * Supplied values override surface styles for those corners. Omitted surface
    * corners use CSS, and omitted clipped bottom corners are square.
-   * Prop updates apply immediately; drive animated changes through
-   * `main-thread:surfaceControllerRef`. Zero explicitly makes a corner square.
+   * Prop updates apply immediately in declarative mode. Use
+   * `initialCornerRadius` with the surface controller. Zero makes a corner square.
    * @zh 面板可见圆角半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。属性变更立即生效，动画变化请通过 `main-thread:surfaceControllerRef` 驱动。
    */
   cornerRadius?: SheetCornerRadius
@@ -186,11 +191,24 @@ export interface SheetContentProps extends ComponentBasicProps {
    * Edge insets from the local viewport in logical pixels (for example,
    * `{ bottom: 8 }` for a floating card gap, or `{ left: 88, right: 88, bottom: 8 }`
    * for a centered floating card).
-   * Prop updates apply immediately; drive animated changes through
-   * `main-thread:surfaceControllerRef`.
+   * Prop updates apply immediately in declarative mode. Use `initialInsets`
+   * with the surface controller.
    * @zh 面板相对局部视口各边的间距（逻辑像素），例如 `{ bottom: 8 }` 或 `{ left: 88, right: 88, bottom: 8 }`。属性变更立即生效，动画变化请通过 `main-thread:surfaceControllerRef` 驱动。
    */
   insets?: SheetInsets
+  /**
+   * Opening panel insets in logical pixels when using the surface controller.
+   * Read on each open, including with `forceMount`. Updates while open take
+   * effect on the next open.
+   * @zh 使用表面控制器时的初始面板间距（逻辑像素）。每次打开时读取，包括 forceMount；打开期间的变更在下次打开时生效。
+   */
+  initialInsets?: SheetInsets
+  /**
+   * Opening corner radii in logical pixels when using the surface controller.
+   * Read on each open, including with `forceMount`.
+   * @zh 使用表面控制器时的初始圆角半径（逻辑像素）。每次打开时读取，包括 forceMount。
+   */
+  initialCornerRadius?: SheetCornerRadius
   /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。

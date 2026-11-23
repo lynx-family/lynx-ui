@@ -42,6 +42,7 @@ export interface SheetSurfaceProps extends SheetContentProps {
   setSheetMTRef: (element: MainThread.Element | null) => void
   setContentMTRef: (element: MainThread.Element) => void
   setInsetsMT: (insets: SheetInsets) => void
+  commitInsetsMT: () => void
   setCornerRadiusMT: (radius: SheetCornerRadius | undefined) => void
   handleSheetLayoutChangeMT: (event: {
     detail?: { height?: number, width?: number }
@@ -63,6 +64,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
     exitAnimation: _exitAnimation,
     cornerRadius: _cornerRadius,
     insets,
+    initialInsets: _initialInsets,
+    initialCornerRadius: _initialCornerRadius,
     dragHandlers,
     sheetGesture,
     resolvedSide,
@@ -80,6 +83,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     setSheetMTRef,
     setContentMTRef,
     setInsetsMT,
+    commitInsetsMT,
     setCornerRadiusMT,
     handleSheetLayoutChangeMT,
     ...nativeProps
@@ -94,7 +98,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
   }
   const registerSurfaceMT = isHorizontal ? setSheetMTRef : setSurfaceMTRef
 
-  const hasHorizontalInsets = !isHorizontal
+  const hasHorizontalInsets = !isHorizontal && !surfaceControllerRef
     && (insets?.left !== undefined || insets?.right !== undefined)
   const initialLeft = hasHorizontalInsets
     ? Math.max(0, Number.isFinite(insets?.left) ? (insets?.left ?? 0) : 0)
@@ -111,7 +115,11 @@ export function SheetSurface(props: SheetSurfaceProps) {
     registerSurfaceMT(element)
     if (surfaceControllerRef) {
       surfaceControllerRef.current = element
-        ? { setInsets: setInsetsMT, setCornerRadius: setCornerRadiusMT }
+        ? {
+          setInsets: setInsetsMT,
+          commitInsets: commitInsetsMT,
+          setCornerRadius: setCornerRadiusMT,
+        }
         : null
     }
   }
@@ -123,11 +131,12 @@ export function SheetSurface(props: SheetSurfaceProps) {
       if (surfaceControllerRef.current) {
         surfaceControllerRef.current = {
           setInsets: setInsetsMT,
+          commitInsets: commitInsetsMT,
           setCornerRadius: setCornerRadiusMT,
         }
       }
     })()
-  }, [surfaceControllerRef, setInsetsMT, setCornerRadiusMT])
+  }, [surfaceControllerRef, setInsetsMT, commitInsetsMT, setCornerRadiusMT])
 
   const content = (
     <view

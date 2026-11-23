@@ -125,7 +125,9 @@ export function useSnap({
   const footerHeightMTRef = useMainThreadRef<number>(-1)
   const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const footerOffsetMTRef = useMainThreadRef<number | null>(null)
-  const settleSurfaceCallbackMTRef = useMainThreadRef<(() => void) | null>(null)
+  const surfaceLifecycleMTRef = useMainThreadRef<
+    { open: () => void, settle: () => void } | null
+  >(null)
   const contentSizeMTRef = useMainThreadRef<number>(0)
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const fitMeasuredMTRef = useMainThreadRef(false)
@@ -148,10 +150,8 @@ export function useSnap({
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
-  const bottomPanelLimit = Math.max(
-    0,
-    screenHeight - normalizeInset(insets?.bottom),
-  )
+  const propBottom = normalizeInset(insets?.bottom)
+  const openingBottomMTRef = useMainThreadRef(propBottom)
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
     screenWidth,
@@ -295,6 +295,30 @@ export function useSnap({
     return getClampedValueMT(offsets[i])
   }
 
+  function getFitLayoutSizeMT(bodySize: number) {
+    'main thread'
+    if (resolvedSide !== 'bottom') return bodySize
+    const bottom = hasController ? openingBottomMTRef.current : propBottom
+    return Math.min(
+      bodySize + Math.max(0, footerHeightMTRef.current),
+      Math.max(0, screenHeight - bottom),
+    )
+  }
+
+  function storeFitSizeMT(size: number) {
+    'main thread'
+    fitSizeMTRef.current = size
+    fitMeasuredMTRef.current = true
+    const values = snapPointValues
+    const offsets = snapOffsets
+    resolvedSnapPointMTRef.current = values.map(value =>
+      value === -1 ? size : value
+    )
+    resolvedSnapOffsetsMTRef.current = offsets.map(offset =>
+      offset === -1 ? size : offset
+    )
+  }
+
   // Create controller with animation dependencies
   const controller = useSheetController(
     {
@@ -314,9 +338,20 @@ export function useSnap({
       onSnapChangeMT,
       onSnapStartMT,
       onDragStartNotifyMT,
+      onOpeningMT: () => {
+        'main thread'
+        if (!hasController) return
+        openingBottomMTRef.current = propBottom
+        if (hasFitSnapPoint && fitMeasuredMTRef.current) {
+          const size = getFitLayoutSizeMT(bodySizeMTRef.current)
+          sheetSizeMTRef.current = size
+          storeFitSizeMT(size)
+        }
+        surfaceLifecycleMTRef.current?.open()
+      },
       onSettledMT: () => {
         'main thread'
-        settleSurfaceCallbackMTRef.current?.()
+        surfaceLifecycleMTRef.current?.settle()
       },
       enterAnimation,
       exitAnimation,
@@ -336,14 +371,8 @@ export function useSnap({
     const measuredSize = bodySize + (resolvedSide === 'bottom'
       ? Math.max(0, footerHeightMTRef.current)
       : 0)
-    const layoutSize = resolvedSide === 'bottom'
-      ? Math.min(measuredSize, bottomPanelLimit)
-      : measuredSize
+    const layoutSize = getFitLayoutSizeMT(bodySize)
     sheetSizeMTRef.current = layoutSize
-
-    // The rename is required, to prevent from xx.map is not a function
-    const innerSnapPointValues = snapPointValues
-    const innerSnapOffsets = snapOffsets
 
     if (!allowEmptyFit && fitSizeMTRef.current === 0 && measuredSize <= 0) {
       return
@@ -351,14 +380,7 @@ export function useSnap({
     const fitSize = measuredSize > 0 || allowEmptyFit
       ? layoutSize
       : fitSizeMTRef.current
-    fitSizeMTRef.current = fitSize
-    fitMeasuredMTRef.current = true
-    resolvedSnapPointMTRef.current = innerSnapPointValues.map(v =>
-      v === -1 ? fitSize : v
-    )
-    resolvedSnapOffsetsMTRef.current = innerSnapOffsets.map(o =>
-      o === -1 ? fitSize : o
-    )
+    storeFitSizeMT(fitSize)
     controller.resolvePendingSnapMT()
     if (positioner) {
       controller.reconcileSnapMT(previousOffsets)
@@ -410,7 +432,7 @@ export function useSnap({
     updateFooterPositionMT,
     initialSize: getTargetForSnap,
     initialSnap,
-    settleCallbackMTRef: settleSurfaceCallbackMTRef,
+    surfaceLifecycleMTRef,
   })
 
   const { measureBodyParentMT, hasFitBodyMT, updateSurfaceMT } = surfaceLayout
@@ -442,7 +464,8 @@ export function useSnap({
   }, [
     screenWidth,
     screenHeight,
-    bottomPanelLimit,
+    hasController,
+    propBottom,
     hasFitSnapPoint,
     resolvedSide,
     positioner,
