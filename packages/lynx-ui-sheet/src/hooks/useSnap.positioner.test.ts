@@ -73,9 +73,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   side: SheetSide = 'bottom',
   snapPoints: Array<number | string> = ['50%', '85%'],
-  insets?: Parameters<typeof useSnap>[0]['insets'],
-  cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
-  hasController = false,
+  initialInsets?: Parameters<typeof useSnap>[0]['initialInsets'],
+  initialCornerRadius?: Parameters<typeof useSnap>[0]['initialCornerRadius'],
 ) {
   const presence = { current: PresenceState.Left }
   const entered = vi.fn()
@@ -86,7 +85,7 @@ function setup(
   function render(
     positioner: SheetPositionerDimensions | null,
     effects = true,
-    openingInsets = insets,
+    openingInsets = initialInsets,
   ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
@@ -94,9 +93,8 @@ function setup(
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
       snapPoints,
-      insets: openingInsets,
-      cornerRadius,
-      hasController,
+      initialInsets: openingInsets,
+      initialCornerRadius,
       side,
       enableRTL: true,
       screenHeight: 800,
@@ -155,7 +153,6 @@ describe('Sheet local viewport calculations and resizing', () => {
       ['50%'],
       { left: 30, right: 30 },
       24,
-      true,
     )
     const viewport = { width: 400, height: 800 }
     const snap = render(viewport)
@@ -171,6 +168,33 @@ describe('Sheet local viewport calculations and resizing', () => {
     rerendered.showMT({ animate: false })
     expect(surfaceStyle.width).toBe('320px')
     expect(surfaceStyle['border-top-left-radius']).toBe('24px')
+  })
+
+  it('resets to updated initialInsets on Leaving reopen while preserving live geometry on drag resurrection', () => {
+    const viewport = { width: 400, height: 800 }
+    const first = setup('bottom', ['50%'], { left: 30, right: 30 }, 24)
+    const snap = first.render(viewport)
+    snap.showMT({ animate: false })
+    snap.setInsetsMT({ left: 0, right: 0 })
+    snap.setCornerRadiusMT(0)
+    const rerendered = first.render(viewport, true, { left: 40, right: 40 })
+    rerendered.closeMT()
+    expect(first.presence.current).toBe(PresenceState.Leaving)
+    rerendered.showMT({ animate: false })
+    expect(first.surfaceStyle.width).toBe('320px')
+    expect(first.surfaceStyle['border-top-left-radius']).toBe('24px')
+
+    // Drag resurrection during Leaving preserves the live geometry under the finger.
+    const second = setup('bottom', ['50%'], { left: 30, right: 30 }, 24)
+    const dragSnap = second.render(viewport)
+    dragSnap.showMT({ animate: false })
+    dragSnap.setInsetsMT({ left: 0, right: 0 })
+    dragSnap.setCornerRadiusMT(0)
+    dragSnap.closeMT()
+    expect(second.presence.current).toBe(PresenceState.Leaving)
+    dragSnap.onDragStartMT()
+    expect(second.surfaceStyle.width).toBe('400px')
+    expect(second.surfaceStyle['border-top-left-radius']).toBe('0px')
   })
 
   it.each(['top', 'bottom', 'left', 'right', 'start', 'end'] as const)(

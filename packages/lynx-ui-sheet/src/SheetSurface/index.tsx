@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { runOnMainThread, useEffect } from '@lynx-js/react'
+import { runOnMainThread, useEffect, useRef } from '@lynx-js/react'
 
 import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { MainThread } from '@lynx-js/types'
@@ -41,8 +41,7 @@ export interface SheetSurfaceProps extends SheetContentProps {
   setViewportMTRef: (element: MainThread.Element) => void
   setSheetMTRef: (element: MainThread.Element | null) => void
   setContentMTRef: (element: MainThread.Element) => void
-  setInsetsMT: (insets: SheetInsets) => void
-  commitInsetsMT: () => void
+  setInsetsMT: (insets: SheetInsets, options?: { animating?: boolean }) => void
   setCornerRadiusMT: (radius: SheetCornerRadius | undefined) => void
   handleSheetLayoutChangeMT: (event: {
     detail?: { height?: number, width?: number }
@@ -62,9 +61,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
-    cornerRadius: _cornerRadius,
-    insets,
-    initialInsets: _initialInsets,
+    initialInsets,
     initialCornerRadius: _initialCornerRadius,
     dragHandlers,
     sheetGesture,
@@ -83,7 +80,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
     setSheetMTRef,
     setContentMTRef,
     setInsetsMT,
-    commitInsetsMT,
     setCornerRadiusMT,
     handleSheetLayoutChangeMT,
     ...nativeProps
@@ -98,17 +94,36 @@ export function SheetSurface(props: SheetSurfaceProps) {
   }
   const registerSurfaceMT = isHorizontal ? setSheetMTRef : setSurfaceMTRef
 
-  const hasHorizontalInsets = !isHorizontal && !surfaceControllerRef
-    && (insets?.left !== undefined || insets?.right !== undefined)
-  const initialLeft = hasHorizontalInsets
-    ? Math.max(0, Number.isFinite(insets?.left) ? (insets?.left ?? 0) : 0)
-    : undefined
-  const initialRight = hasHorizontalInsets
-    ? Math.max(0, Number.isFinite(insets?.right) ? (insets?.right ?? 0) : 0)
-    : undefined
-  const initialWidth = hasHorizontalInsets
-    ? Math.max(0, screenWidth - (initialLeft ?? 0) - (initialRight ?? 0))
-    : undefined
+  const mountHorizontalFrame = useRef<
+    { left: number, width: number } | null | undefined
+  >(undefined)
+  if (mountHorizontalFrame.current === undefined) {
+    const hasHorizontal = !isHorizontal
+      && (initialInsets?.left !== undefined
+        || initialInsets?.right !== undefined)
+    if (hasHorizontal) {
+      const left = Math.max(
+        0,
+        Number.isFinite(initialInsets?.left)
+          ? (initialInsets?.left ?? 0)
+          : 0,
+      )
+      const right = Math.max(
+        0,
+        Number.isFinite(initialInsets?.right)
+          ? (initialInsets?.right ?? 0)
+          : 0,
+      )
+      mountHorizontalFrame.current = {
+        left,
+        width: Math.max(0, screenWidth - left - right),
+      }
+    } else {
+      mountHorizontalFrame.current = null
+    }
+  }
+  const initialLeft = mountHorizontalFrame.current?.left
+  const initialWidth = mountHorizontalFrame.current?.width
 
   function setPaintedViewRefMT(element: MainThread.Element | null) {
     'main thread'
@@ -117,7 +132,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
       surfaceControllerRef.current = element
         ? {
           setInsets: setInsetsMT,
-          commitInsets: commitInsetsMT,
           setCornerRadius: setCornerRadiusMT,
         }
         : null
@@ -131,12 +145,11 @@ export function SheetSurface(props: SheetSurfaceProps) {
       if (surfaceControllerRef.current) {
         surfaceControllerRef.current = {
           setInsets: setInsetsMT,
-          commitInsets: commitInsetsMT,
           setCornerRadius: setCornerRadiusMT,
         }
       }
     })()
-  }, [surfaceControllerRef, setInsetsMT, commitInsetsMT, setCornerRadiusMT])
+  }, [surfaceControllerRef, setInsetsMT, setCornerRadiusMT])
 
   const content = (
     <view

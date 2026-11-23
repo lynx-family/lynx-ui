@@ -9,8 +9,18 @@ import type { SheetSurfaceController } from '../types'
 import { SheetSurface } from './index'
 import type { SheetSurfaceProps } from './index'
 
+const refs = vi.hoisted(() => ({
+  slots: [] as Array<{ current: unknown }>,
+  cursor: 0,
+}))
+
 vi.mock('@lynx-js/react', () => ({
   useEffect: vi.fn(),
+  useRef: <T,>(initialValue: T) => {
+    const index = refs.cursor++
+    refs.slots[index] ??= { current: initialValue }
+    return refs.slots[index] as { current: T }
+  },
   runOnMainThread: <T,>(fn: T) => fn,
 }))
 
@@ -44,55 +54,62 @@ interface ViewProps {
 }
 
 function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
+  refs.slots = []
+  refs.cursor = 0
   const measure = vi.fn()
   const gesture = {} as NonNullable<SheetSurfaceProps['sheetGesture']>
   const setInsetsMT = vi.fn()
-  const commitInsetsMT = vi.fn()
   const setCornerRadiusMT = vi.fn()
-  const surface = SheetSurface({
-    resolvedSide: 'bottom',
-    snapPoints: [400, 800],
-    maxSnapSize: 800,
-    screenWidth: 1000,
-    dragHandlers: {},
-    sheetGesture: gesture,
-    footerContext: {
+  const buildTree = (nextOverrides: Partial<SheetSurfaceProps> = {}) => {
+    refs.cursor = 0
+    const surface = SheetSurface({
       resolvedSide: 'bottom',
-      setFooterMTRef: vi.fn(),
-      updateFooterHeightMT: vi.fn(),
-    },
-    bodyContext: {
-      enabled: true,
-      setBodyMTRef: vi.fn(),
-      measureBodyMT: vi.fn(),
-    },
-    setSheetMTRef: vi.fn(),
-    measureSurfaceMT: vi.fn(),
-    setClipMTRef: vi.fn(),
-    setSurfaceMTRef: vi.fn(),
-    setViewportMTRef: vi.fn(),
-    setContentMTRef: measure,
-    setInsetsMT,
-    commitInsetsMT,
-    setCornerRadiusMT,
-    handleSheetLayoutChangeMT: vi.fn(),
-    ...overrides,
-  }) as unknown as { props: ViewProps }
-  const movement = surface.props.children as { props: ViewProps }
-  const painted = movement.props.children as { props: ViewProps }
-  const viewport = painted.props.children as { props: ViewProps }
-  const panel = viewport.props.children as { props: ViewProps }
+      snapPoints: [400, 800],
+      maxSnapSize: 800,
+      screenWidth: 1000,
+      dragHandlers: {},
+      sheetGesture: gesture,
+      footerContext: {
+        resolvedSide: 'bottom',
+        setFooterMTRef: vi.fn(),
+        updateFooterHeightMT: vi.fn(),
+      },
+      bodyContext: {
+        enabled: true,
+        setBodyMTRef: vi.fn(),
+        measureBodyMT: vi.fn(),
+      },
+      setSheetMTRef: vi.fn(),
+      measureSurfaceMT: vi.fn(),
+      setClipMTRef: vi.fn(),
+      setSurfaceMTRef: vi.fn(),
+      setViewportMTRef: vi.fn(),
+      setContentMTRef: measure,
+      setInsetsMT,
+      setCornerRadiusMT,
+      handleSheetLayoutChangeMT: vi.fn(),
+      ...overrides,
+      ...nextOverrides,
+    }) as unknown as { props: ViewProps }
+    const movement = surface.props.children as { props: ViewProps }
+    const painted = movement.props.children as { props: ViewProps }
+    const viewport = painted.props.children as { props: ViewProps }
+    const panel = viewport.props.children as { props: ViewProps }
+    return {
+      surface,
+      movement,
+      painted,
+      viewport,
+      panel,
+      measure,
+      gesture,
+      setInsetsMT,
+      setCornerRadiusMT,
+    }
+  }
   return {
-    surface,
-    movement,
-    painted,
-    viewport,
-    panel,
-    measure,
-    gesture,
-    setInsetsMT,
-    commitInsetsMT,
-    setCornerRadiusMT,
+    ...buildTree(),
+    rerender: buildTree,
   }
 }
 
@@ -213,15 +230,15 @@ describe('Sheet surface composition', () => {
     )
   })
 
-  it('computes initial horizontal surface bounds from insets without leaking insets to native props', () => {
+  it('computes initial horizontal surface bounds from initialInsets without leaking to native props', () => {
     const child = { type: 'scroll-view' }
     const attached = renderSurface({ children: child })
     const floating = renderSurface({
-      insets: { left: 88, right: 88, bottom: 8 },
+      initialInsets: { left: 88, right: 88, bottom: 8 },
       screenWidth: 840,
       children: child,
     })
-    expect(floating.painted.props).not.toHaveProperty('insets')
+    expect(floating.painted.props).not.toHaveProperty('initialInsets')
     expect(floating.painted.props.style.left).toBe('88px')
     expect(floating.painted.props.style.width).toBe('664px')
     expect(floating.painted.props['main-thread:gesture']).toBe(floating.gesture)
@@ -230,9 +247,29 @@ describe('Sheet surface composition', () => {
     expect(floating.viewport.props.style.height).toBe('800px')
   })
 
-  it('keeps cornerRadius out of the native view props', () => {
-    const { painted, panel } = renderSurface({ cornerRadius: 24 })
-    expect(painted.props).not.toHaveProperty('cornerRadius')
-    expect(panel.props).not.toHaveProperty('cornerRadius')
+  it('seeds Frame-0 horizontal bounds with surfaceControllerRef and freezes JSX styles across rerenders', () => {
+    const surfaceControllerRef = {
+      current: null as SheetSurfaceController | null,
+    }
+    const mounted = renderSurface({
+      'main-thread:surfaceControllerRef': surfaceControllerRef,
+      initialInsets: { left: 60, right: 80, bottom: 8 },
+      screenWidth: 1000,
+    })
+    expect(mounted.painted.props.style.left).toBe('60px')
+    expect(mounted.painted.props.style.width).toBe('860px')
+
+    const updated = mounted.rerender({
+      initialInsets: { left: 10, right: 10, bottom: 0 },
+      screenWidth: 1000,
+    })
+    expect(updated.painted.props.style.left).toBe('60px')
+    expect(updated.painted.props.style.width).toBe('860px')
+  })
+
+  it('keeps initialCornerRadius out of the native view props', () => {
+    const { painted, panel } = renderSurface({ initialCornerRadius: 24 })
+    expect(painted.props).not.toHaveProperty('initialCornerRadius')
+    expect(panel.props).not.toHaveProperty('initialCornerRadius')
   })
 })

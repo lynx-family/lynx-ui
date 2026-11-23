@@ -49,8 +49,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   snapPoints: Array<number | string> = ['fit'],
   onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
-  insets?: Parameters<typeof useSnap>[0]['insets'],
-  cornerRadius?: Parameters<typeof useSnap>[0]['cornerRadius'],
+  initialInsets?: Parameters<typeof useSnap>[0]['initialInsets'],
+  initialCornerRadius?: Parameters<typeof useSnap>[0]['initialCornerRadius'],
   callbacks?: {
     onDragStartMT?: () => void
     onPositionChangeMT?: (position: number) => void
@@ -62,8 +62,8 @@ function setup(
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
-    insets,
-    cornerRadius,
+    initialInsets,
+    initialCornerRadius,
     screenHeight: 800,
     screenWidth: 400,
     presenceStateMTRef: state,

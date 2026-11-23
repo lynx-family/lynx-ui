@@ -50,9 +50,8 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
-  cornerRadius?: SheetCornerRadius
-  insets?: SheetInsets
-  hasController?: boolean
+  initialCornerRadius?: SheetCornerRadius
+  initialInsets?: SheetInsets
   surfaceStyle?: SheetContentProps['style']
   snapAnimation?: SheetTransition
   side?: SheetSide
@@ -79,9 +78,8 @@ export interface SnapOptions {
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
-  cornerRadius,
-  insets,
-  hasController = false,
+  initialCornerRadius,
+  initialInsets,
   surfaceStyle,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
@@ -150,7 +148,7 @@ export function useSnap({
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
-  const propBottom = normalizeInset(insets?.bottom)
+  const propBottom = normalizeInset(initialInsets?.bottom)
   const openingBottomMTRef = useMainThreadRef(propBottom)
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
@@ -298,10 +296,9 @@ export function useSnap({
   function getFitLayoutSizeMT(bodySize: number) {
     'main thread'
     if (resolvedSide !== 'bottom') return bodySize
-    const bottom = hasController ? openingBottomMTRef.current : propBottom
     return Math.min(
       bodySize + Math.max(0, footerHeightMTRef.current),
-      Math.max(0, screenHeight - bottom),
+      Math.max(0, screenHeight - openingBottomMTRef.current),
     )
   }
 
@@ -340,7 +337,6 @@ export function useSnap({
       onDragStartNotifyMT,
       onOpeningMT: () => {
         'main thread'
-        if (!hasController) return
         openingBottomMTRef.current = propBottom
         if (hasFitSnapPoint && fitMeasuredMTRef.current) {
           const size = getFitLayoutSizeMT(bodySizeMTRef.current)
@@ -416,9 +412,8 @@ export function useSnap({
     presence: controller.presenceStateMTRef,
     resolvedSide,
     enableRTL,
-    cornerRadius,
-    insets,
-    hasController,
+    initialCornerRadius,
+    initialInsets,
     surfaceStyle,
     screenHeight,
     screenWidth,
@@ -464,8 +459,6 @@ export function useSnap({
   }, [
     screenWidth,
     screenHeight,
-    hasController,
-    propBottom,
     hasFitSnapPoint,
     resolvedSide,
     positioner,

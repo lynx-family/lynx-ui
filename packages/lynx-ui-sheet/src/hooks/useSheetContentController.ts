@@ -38,11 +38,8 @@ export function useSheetContentController(
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
-    cornerRadius,
-    insets,
     initialCornerRadius,
     initialInsets,
-    'main-thread:surfaceControllerRef': surfaceControllerRef,
     style,
   } = props
   const context = useSheetContext()
@@ -71,7 +68,6 @@ export function useSheetContentController(
   } = context
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const isInternalChangeRef = useRef(false)
-  const hasController = surfaceControllerRef !== undefined
 
   const handleBeforeDismiss = useMemoizedFn(() => {
     isInternalChangeRef.current = true
@@ -87,9 +83,8 @@ export function useSheetContentController(
   const snap = useSnap({
     snapPoints,
     initialSnap,
-    cornerRadius: hasController ? initialCornerRadius : cornerRadius,
-    insets: hasController ? initialInsets : insets,
-    hasController,
+    initialCornerRadius,
+    initialInsets,
     surfaceStyle: style,
     snapAnimation,
     side,

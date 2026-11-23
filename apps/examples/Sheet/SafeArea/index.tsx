@@ -56,28 +56,33 @@ function App() {
   const progress = useMotionValueRef(0)
   const fullscreenTarget = useMainThreadRef(false)
 
-  function applyAppearance(value: number) {
+  function applyAppearance(value: number, animating = false) {
     'main thread'
     const amount = Math.max(0, Math.min(1, value))
     const sideInset = floatingSideInset * (1 - amount)
     const bottomInset = 8 * (1 - amount)
     const radius = 24 * (1 - amount)
-    surfaceControllerRef.current?.setInsets({
-      left: sideInset,
-      right: sideInset,
-      bottom: bottomInset,
-    })
+    surfaceControllerRef.current?.setInsets(
+      {
+        left: sideInset,
+        right: sideInset,
+        bottom: bottomInset,
+      },
+      animating ? { animating: true } : undefined,
+    )
     surfaceControllerRef.current?.setCornerRadius(radius)
   }
 
-  useMotionValueRefEvent(progress, 'change', applyAppearance)
+  useMotionValueRefEvent(progress, 'change', value => {
+    'main thread'
+    applyAppearance(value, progress.current.isAnimating())
+  })
 
   function resetAppearance() {
     'main thread'
     fullscreenTarget.current = false
     progress.current.jump(0)
     applyAppearance(0)
-    surfaceControllerRef.current?.commitInsets()
   }
 
   function onDragStart() {
@@ -102,12 +107,12 @@ function App() {
         damping: 28,
         onComplete: () => {
           'main thread'
-          surfaceControllerRef.current?.commitInsets()
+          applyAppearance(target)
         },
       })
     } else {
       progress.current.jump(target)
-      surfaceControllerRef.current?.commitInsets()
+      applyAppearance(target)
     }
   }
 
@@ -116,7 +121,6 @@ function App() {
       'main thread'
       if (!progress.current.isAnimating()) {
         applyAppearance(progress.current.get())
-        surfaceControllerRef.current?.commitInsets()
       }
     })()
   }, [floatingSideInset])

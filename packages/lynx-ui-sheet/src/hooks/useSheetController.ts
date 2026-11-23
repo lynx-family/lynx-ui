@@ -105,7 +105,12 @@ export function useSheetController(
 
   function beginOpeningMT() {
     'main thread'
-    if (presenceStateMTRef.current === PresenceState.Left) onOpeningMT?.()
+    if (
+      presenceStateMTRef.current === PresenceState.Left
+      || presenceStateMTRef.current === PresenceState.Leaving
+    ) {
+      onOpeningMT?.()
+    }
     enter()
   }
 
@@ -138,8 +143,9 @@ export function useSheetController(
     },
   ) {
     'main thread'
-    const wasClosed = presenceStateMTRef.current === PresenceState.Left
-    if (wasClosed) onOpeningMT?.()
+    const wasClosingOrClosed = presenceStateMTRef.current === PresenceState.Left
+      || presenceStateMTRef.current === PresenceState.Leaving
+    if (wasClosingOrClosed) onOpeningMT?.()
     const target = getTargetForSnap(index)
     const values = getResolvedSnapPointValues()
 
@@ -157,8 +163,8 @@ export function useSheetController(
 
     // A new snap can interrupt the opening animation before presence reaches
     // Entered. Classify the action itself, not the current presence state.
-    const isEntry = opts?.isEntry === true || wasClosed
-    if (wasClosed) enter()
+    const isEntry = opts?.isEntry === true || wasClosingOrClosed
+    if (wasClosingOrClosed) enter()
 
     stopAnimationMT()
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined

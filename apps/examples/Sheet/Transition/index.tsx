@@ -6,6 +6,7 @@ import {
   root,
   runOnBackground,
   runOnMainThread,
+  useEffect,
   useMainThreadRef,
   useRef,
   useState,
@@ -21,7 +22,7 @@ import {
   screenHeight,
   screenWidth,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef } from '@lynx-js/lynx-ui'
+import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
@@ -29,6 +30,9 @@ import './index.css'
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
+  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
+    null,
+  )
   const [panel, setPanel] = useState({ fullscreen: false, animated: false })
   const panelTarget = useMainThreadRef({ fullscreen: false, animated: false })
   const [viewport, setViewport] = useState({
@@ -37,7 +41,19 @@ function App() {
   })
   const fullscreenHeight = viewport.height
   const floatingWidth = Math.min(viewport.width - 48, 664)
-  const width = panel.fullscreen ? viewport.width : floatingWidth
+  const floatingSideInset = (viewport.width - floatingWidth) / 2
+
+  function applyPanelSurface(fullscreen: boolean) {
+    'main thread'
+    const nextWidth = fullscreen ? viewport.width : floatingWidth
+    const nextSideInset = (viewport.width - nextWidth) / 2
+    surfaceControllerRef.current?.setInsets({
+      left: nextSideInset,
+      right: nextSideInset,
+      bottom: fullscreen ? 0 : 8,
+    })
+    surfaceControllerRef.current?.setCornerRadius(fullscreen ? 0 : 24)
+  }
 
   function updatePanel(fullscreen: boolean, animated: boolean) {
     setPanel({ fullscreen, animated })
@@ -46,6 +62,7 @@ function App() {
   function resetPanelTarget() {
     'main thread'
     panelTarget.current = { fullscreen: false, animated: false }
+    applyPanelSurface(false)
   }
 
   function onSnapStart(_index: number, value: number, animated: boolean) {
@@ -59,6 +76,10 @@ function App() {
     panelTarget.current = { fullscreen, animated }
     runOnBackground(updatePanel)(fullscreen, animated)
   }
+
+  useEffect(() => {
+    runOnMainThread(applyPanelSurface)(panel.fullscreen)
+  }, [panel, viewport.width, floatingWidth])
 
   return (
     <view
@@ -89,11 +110,12 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            cornerRadius={panel.fullscreen ? 0 : 24}
-            insets={{
-              left: (viewport.width - width) / 2,
-              right: (viewport.width - width) / 2,
-              bottom: panel.fullscreen ? 0 : 8,
+            main-thread:surfaceControllerRef={surfaceControllerRef}
+            initialCornerRadius={24}
+            initialInsets={{
+              left: floatingSideInset,
+              right: floatingSideInset,
+              bottom: 8,
             }}
             className='sheet-content'
             innerClassName='surface-layout'

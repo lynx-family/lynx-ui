@@ -144,15 +144,15 @@ export type SheetCornerRadius =
 export interface SheetSurfaceController {
   /**
    * Update panel edge insets from the local viewport in logical pixels.
-   * @zh 更新面板相对局部视口各边的逻辑像素间距。
+   * Pass `{ animating: true }` on intermediate animation frames to defer
+   * committing bottom clip and viewport layout bounds until the final update
+   * (when `animating` is omitted or `false`).
+   * @zh 更新面板相对局部视口各边的逻辑像素间距。动画中间帧可传入 `{ animating: true }`，将底部裁剪和视口布局边界推迟到最终更新（省略或传 `false`）时统一提交。
    */
-  setInsets: (insets: SheetInsets) => void
-  /**
-   * Commit the current insets to the layout and hit-test bounds. Call after
-   * the last inset update, including when applying insets without animation.
-   * @zh 将当前间距提交到布局和触摸边界。在最后一次更新间距后调用，包括无动画更新。
-   */
-  commitInsets: () => void
+  setInsets: (
+    insets: SheetInsets,
+    options?: { animating?: boolean },
+  ) => void
   /**
    * Update exposed corner radii in logical pixels. Pass undefined to restore CSS corners.
    * @zh 更新可见圆角半径（逻辑像素）；传 undefined 恢复 CSS 圆角。
@@ -167,46 +167,37 @@ export interface SheetSurfaceController {
 export interface SheetContentProps extends ComponentBasicProps {
   /**
    * A main-thread ref receiving the SheetSurfaceController while mounted.
-   * Use `initialInsets` and `initialCornerRadius` for the opening appearance.
-   * While supplied, this controller owns inset and corner updates.
+   * Use `initialInsets` and `initialCornerRadius` for the opening appearance,
+   * and drive live updates while open through this controller on the main thread
+   * (for example in `main-thread:onSnapStart`, `main-thread:onDragStart`, or
+   * `main-thread:onPositionChange`).
    * @Android
    * @iOS
    * @Harmony
-   * @zh 挂载期间接收 SheetSurfaceController 的主线程引用，可在主线程回调中同步驱动面板间距和圆角，避免跨线程往返和级联重排。
+   * @zh 挂载期间接收 SheetSurfaceController 的主线程引用。使用 `initialInsets` 和 `initialCornerRadius` 设置打开时的初始外观，打开期间的实时变更请在主线程通过该控制器驱动（例如在 `main-thread:onSnapStart`、`main-thread:onDragStart` 或 `main-thread:onPositionChange` 中）。
    */
   'main-thread:surfaceControllerRef'?: MainThreadRef<
     SheetSurfaceController | null
   >
   /**
-   * Radius in logical pixels for the sheet's exposed corners. A number applies
-   * to every exposed corner. Supply individual corners to use different sizes.
-   * Supplied values override surface styles for those corners. Omitted surface
-   * corners use CSS, and omitted clipped bottom corners are square.
-   * Prop updates apply immediately in declarative mode. Use
-   * `initialCornerRadius` with the surface controller. Zero makes a corner square.
-   * @zh 面板可见圆角半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。属性变更立即生效，动画变化请通过 `main-thread:surfaceControllerRef` 驱动。
-   */
-  cornerRadius?: SheetCornerRadius
-  /**
-   * Edge insets from the local viewport in logical pixels (for example,
-   * `{ bottom: 8 }` for a floating card gap, or `{ left: 88, right: 88, bottom: 8 }`
-   * for a centered floating card).
-   * Prop updates apply immediately in declarative mode. Use `initialInsets`
-   * with the surface controller.
-   * @zh 面板相对局部视口各边的间距（逻辑像素），例如 `{ bottom: 8 }` 或 `{ left: 88, right: 88, bottom: 8 }`。属性变更立即生效，动画变化请通过 `main-thread:surfaceControllerRef` 驱动。
-   */
-  insets?: SheetInsets
-  /**
-   * Opening panel insets in logical pixels when using the surface controller.
-   * Read on each open, including with `forceMount`. Updates while open take
-   * effect on the next open.
-   * @zh 使用表面控制器时的初始面板间距（逻辑像素）。每次打开时读取，包括 forceMount；打开期间的变更在下次打开时生效。
+   * Opening panel edge insets from the local viewport in logical pixels (for
+   * example, `{ bottom: 8 }` for a floating card gap, or
+   * `{ left: 88, right: 88, bottom: 8 }` for a centered floating card).
+   * Applied on mount and on each open, including with `forceMount`; updates while
+   * open take effect on the next open. Drive live changes while open through
+   * `main-thread:surfaceControllerRef`.
+   * @zh 打开时的面板相对局部视口各边初始间距（逻辑像素，例如 `{ bottom: 8 }` 或 `{ left: 88, right: 88, bottom: 8 }`）。在挂载和每次打开时应用（包括 `forceMount`），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 `main-thread:surfaceControllerRef` 驱动。
    */
   initialInsets?: SheetInsets
   /**
-   * Opening corner radii in logical pixels when using the surface controller.
-   * Read on each open, including with `forceMount`.
-   * @zh 使用表面控制器时的初始圆角半径（逻辑像素）。每次打开时读取，包括 forceMount。
+   * Opening corner radii in logical pixels for the sheet's exposed corners. A
+   * number applies to every exposed corner; supply an object for asymmetric
+   * corners. Applied on mount and on each open, including with `forceMount`;
+   * updates while open take effect on the next open. Drive live changes while
+   * open through `main-thread:surfaceControllerRef`. Zero explicitly makes a
+   * corner square, and omitted corners fall back to CSS (or square on clipped
+   * bottom corners).
+   * @zh 打开时的面板可见圆角初始半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。在挂载和每次打开时应用（包括 `forceMount`），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 `main-thread:surfaceControllerRef` 驱动。传 0 显式设为直角，省略的角沿用 CSS（被裁剪的底角默认为直角）。
    */
   initialCornerRadius?: SheetCornerRadius
   /**

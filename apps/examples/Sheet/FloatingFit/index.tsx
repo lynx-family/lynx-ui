@@ -40,8 +40,8 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            cornerRadius={24}
-            insets={{
+            initialCornerRadius={24}
+            initialInsets={{
               left: (screenWidth - width) / 2,
               right: (screenWidth - width) / 2,
               bottom: 8,

@@ -76,7 +76,7 @@ function setup(
   resolvedSide: 'bottom' | 'right' | 'left' | 'top' = 'bottom',
   maxSnapSize = 800,
   enableRTL = false,
-  hasController = false,
+  initialCornerRadius?: SheetCornerRadius,
 ) {
   const initialInsets = insets ?? undefined
   const position = { current: createMotionValue(400) }
@@ -110,7 +110,7 @@ function setup(
 
   function render(
     nextInsets: SheetInsets | undefined = initialInsets,
-    cornerRadius?: SheetCornerRadius,
+    cornerRadius: SheetCornerRadius | undefined = initialCornerRadius,
     baseStyle?: Parameters<typeof useSheetSurfaceLayout>[0]['surfaceStyle'],
     screenWidth = 1000,
   ) {
@@ -123,9 +123,8 @@ function setup(
       presence,
       resolvedSide,
       enableRTL,
-      cornerRadius,
-      insets: nextInsets,
-      hasController,
+      initialCornerRadius: cornerRadius,
+      initialInsets: nextInsets,
       surfaceStyle: baseStyle,
       screenHeight: 1000,
       screenWidth,
@@ -177,14 +176,21 @@ describe('Sheet surface geometry', () => {
   })
 
   it('preserves extended attached coverage with no empty-object mode trap', () => {
-    const { position, surfaceStyle, viewportStyle, render } = setup(null)
+    const {
+      position,
+      surfaceStyle,
+      viewportStyle,
+      setInsetsMT,
+      setCornerRadiusMT,
+    } = setup(null)
     expect(surfaceStyle).toEqual({ height: '1500px' })
     expect(viewportStyle.height).toBe('800px')
     position.current.set(850)
     expect(surfaceStyle.height).toBe('1500px')
 
     // Explicit zero insets and zero radius stay attached (no clip-path).
-    render({ bottom: 0 }, 0)
+    setInsetsMT({ bottom: 0 })
+    setCornerRadiusMT(0)
     expect(surfaceStyle['clip-path']).toBeUndefined()
   })
 
@@ -193,13 +199,11 @@ describe('Sheet surface geometry', () => {
     radius => {
       const {
         position,
-        render,
         surfaceStyle,
         viewportStyle,
         movingStyle,
         clipStyle,
-      } = setup()
-      render({ bottom: 8 }, radius)
+      } = setup({ bottom: 8 }, false, 'bottom', 800, false, radius)
 
       expect(clipStyle.bottom).toBe('8px')
       expect(movingStyle.transform).toBe('translate(0px, -400px)')
@@ -230,17 +234,14 @@ describe('Sheet surface geometry', () => {
   it('applies independent corners immediately and restores CSS when a corner is omitted', () => {
     const { render, surfaceStyle } = setup()
     const baseStyle = { borderTopLeftRadius: '12rpx' }
-    render(
-      { bottom: 8 },
-      { topLeft: 20, bottomRight: 12, bottomLeft: 24 },
-      baseStyle,
-    )
+    const { setCornerRadiusMT } = render({ bottom: 8 }, undefined, baseStyle)
+    setCornerRadiusMT({ topLeft: 20, bottomRight: 12, bottomLeft: 24 })
     expect(surfaceStyle).toMatchObject({
       'border-top-left-radius': '20px',
       'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 24px)',
     })
     expect(surfaceStyle).not.toHaveProperty('border-top-right-radius')
-    render({ bottom: 8 }, { bottomLeft: 24 }, baseStyle)
+    setCornerRadiusMT({ bottomLeft: 24 })
     expect(surfaceStyle).toMatchObject({
       'border-top-left-radius': '12rpx',
       'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 0px 24px)',
@@ -248,11 +249,11 @@ describe('Sheet surface geometry', () => {
   })
 
   it('clears a managed corner without inline CSS so class styles can apply', () => {
-    const { render, surfaceStyle } = setup()
-    render({ bottom: 8 }, { topLeft: 20, topRight: 18 })
+    const { setCornerRadiusMT, surfaceStyle } = setup()
+    setCornerRadiusMT({ topLeft: 20, topRight: 18 })
     expect(surfaceStyle['border-top-left-radius']).toBe('20px')
 
-    render({ bottom: 8 }, { topRight: 18 })
+    setCornerRadiusMT({ topRight: 18 })
     expect(surfaceStyle['border-top-left-radius']).toBeNull()
     expect(surfaceStyle['border-top-right-radius']).toBe('18px')
   })
@@ -455,7 +456,6 @@ describe('Sheet surface geometry', () => {
       'bottom',
       1000,
       false,
-      true,
     )
     const writeBody = vi.fn()
     const writeClip = vi.fn()
@@ -502,7 +502,7 @@ describe('Sheet surface geometry', () => {
       setInsetsMT,
       setCornerRadiusMT,
       settleSurfaceMT,
-    } = setup({ bottom: 8 }, false, 'bottom', 1000, false, true)
+    } = setup({ bottom: 8 }, false, 'bottom', 1000, false)
     const initialMask = surfaceStyle['clip-path']
 
     // Leave animation: clip.bottom drops to 0 once, then ZERO clip layout writes per frame.
@@ -537,19 +537,21 @@ describe('Sheet surface geometry', () => {
     expect(movingStyle.transform).toBe('translate(0px, -400px)')
 
     // Animated bottom gap via controller (8 -> 0): drops clip.bottom once, then 0 layout writes.
-    setInsetsMT({ bottom: 6 })
+    setInsetsMT({ bottom: 6 }, { animating: true })
     setCornerRadiusMT(18)
     clipSpy.mockClear()
     viewportSpy.mockClear()
-    setInsetsMT({ bottom: 4 })
+    setInsetsMT({ bottom: 4 }, { animating: true })
     setCornerRadiusMT(12)
-    setInsetsMT({ bottom: 2 })
+    setInsetsMT({ bottom: 2 }, { animating: true })
     setCornerRadiusMT(6)
-    setInsetsMT({ bottom: 0 })
+    setInsetsMT({ bottom: 0 }, { animating: true })
     setCornerRadiusMT(0)
     assertNoLayoutWrites(clipSpy)
     assertNoLayoutWrites(viewportSpy)
     expect(surfaceStyle['clip-path']).toBe('none')
+    setInsetsMT({ bottom: 0 })
+    expect(clipStyle.bottom).toBe('0px')
   })
 
   it('allows native refs to attach before the motion value is initialized', () => {
@@ -566,7 +568,6 @@ describe('Sheet surface geometry', () => {
         'bottom',
         800,
         false,
-        true,
       )
     setInsetsMT({ left: 20, right: 20, bottom: 2 })
     setCornerRadiusMT(6)
@@ -591,22 +592,60 @@ describe('Sheet surface geometry', () => {
     })
   })
 
-  it('commits the appearance gap after the vertical snap has already settled', () => {
+  it('settles bottom gap immediately on one-shot setInsets and defers while animating', () => {
     const {
+      position,
       setInsetsMT,
       settleSurfaceMT,
-      commitInsetsMT,
       clipStyle,
       viewportStyle,
-    } = setup({ bottom: 0 }, false, 'bottom', 1000, false, true)
-    setInsetsMT({ bottom: 3 })
+    } = setup({ bottom: 0 }, false, 'bottom', 1000, false)
+
+    // Animated frames keep clip/viewport bounds frozen until the final update.
+    setInsetsMT({ bottom: 3 }, { animating: true })
     settleSurfaceMT()
     expect(clipStyle.bottom).toBe('0px')
     expect(viewportStyle.height).toBe('1000px')
+    setInsetsMT({ bottom: 8 }, { animating: true })
+    expect(clipStyle.bottom).toBe('0px')
     setInsetsMT({ bottom: 8 })
-    commitInsetsMT()
     expect(clipStyle.bottom).toBe('8px')
     expect(viewportStyle.height).toBe('992px')
+
+    // One-shot update settles immediately when position is idle.
+    setInsetsMT({ bottom: 0 })
+    expect(clipStyle.bottom).toBe('0px')
+    expect(viewportStyle.height).toBe('1000px')
+
+    // Mid-snap updates defer layout writes until the vertical snap settles.
+    const animatingSpy = vi
+      .spyOn(position.current, 'isAnimating')
+      .mockReturnValue(true)
+    setInsetsMT({ bottom: 8 })
+    expect(clipStyle.bottom).toBe('0px')
+    expect(viewportStyle.height).toBe('1000px')
+    animatingSpy.mockRestore()
+    settleSurfaceMT()
+    expect(clipStyle.bottom).toBe('8px')
+    expect(viewportStyle.height).toBe('992px')
+  })
+
+  it('clears left with null and restores baseWidth when reopening without horizontal insets', () => {
+    const { render, surfaceStyle, presence } = setup(
+      { left: 20, right: 20 },
+      false,
+      'bottom',
+      800,
+      false,
+    )
+    expect(surfaceStyle.left).toBe('20px')
+    expect(surfaceStyle.width).toBe('960px')
+
+    const { openSurfaceMT } = render({}, undefined, undefined, 1000)
+    presence.current = PresenceState.Left
+    openSurfaceMT()
+    expect(surfaceStyle.width).toBe('100%')
+    expect(surfaceStyle.left).toBeNull()
   })
 
   it('does not constrain intrinsic fit measurement with the animated viewport', () => {

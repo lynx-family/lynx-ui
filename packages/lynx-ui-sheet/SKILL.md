@@ -56,11 +56,12 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 ## Panel and Body Layout
 
-- Omit `insets` and `cornerRadius` to retain extended background coverage and the original content layout.
-- Set `insets={{ bottom: 8 }}` (or `{ left, right, bottom }`) for a bounded floating panel. The bottom inset is external and does not count toward a snap size. Zero insets with zero bottom corners preserve attached coverage without a mode trap.
-- Use `insets` and `cornerRadius` for immediate declarative updates. With `main-thread:surfaceControllerRef`, use `initialInsets` and `initialCornerRadius` for the start of each opening, then drive the live appearance with `setInsets` and `setCornerRadius`. Call `commitInsets` after the last inset update so layout and hit-test bounds settle with the appearance animation.
+- Omit `initialInsets` and `initialCornerRadius` to retain extended background coverage and the original content layout.
+- Set `initialInsets={{ bottom: 8 }}` (or `{ left, right, bottom }`) for a bounded floating panel. The bottom inset is external and does not count toward a snap size. Zero insets with zero bottom corners preserve attached coverage without a mode trap.
+- `initialInsets` and `initialCornerRadius` seed mount geometry and reset on each open (including `forceMount`). Drive live updates while open on the main thread through `main-thread:surfaceControllerRef` (`setInsets`, `setCornerRadius`), coordinated with `main-thread:onSnapStart`, `main-thread:onDragStart`, and `main-thread:onPositionChange`.
+- Pass `{ animating: true }` to `setInsets(insets, { animating: true })` during intermediate animation frames when animating `bottom` so `clipMTRef` and viewport bounds do not re-layout per frame; omit `{ animating: true }` on the final frame or one-shot updates so layout and hit-test bounds commit safely.
 - `setInsets({ left, right })` updates the painted surface and `SheetBody`'s horizontal safe-area clamping synchronously in one layout pass, avoiding two-pass `layoutchange` cascades.
-- Use `cornerRadius={24}` to round exposed sheet corners, including the clipped bottom edge of a floating sheet. Supply an object with individual corners for asymmetric shapes. Omitted surface corners use CSS; omitted clipped bottom corners are square.
+- Use `initialCornerRadius={24}` (or `setCornerRadius(24)`) to round exposed sheet corners, including the clipped bottom edge of a floating sheet. Supply an object with individual corners for asymmetric shapes. Omitted surface corners use CSS; omitted clipped bottom corners are square.
 - All bounded bottom panels translate and clip at a fixed surface height. `clipMTRef`'s bottom hit-test boundary settles at rest rather than resizing on animation frames.
 - In a flex content layout, place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` support `top`, `right`, `bottom`, `left`, plus logical `start`/`end` resolved with `enableRTL`. All four sides use transform + clip during drags to avoid per-frame layout.
 - A bottom `fit` snap with viewport insets measures the body at its safe width. Give the content an intrinsic height. The body is clipped to the visible area during a drag without resizing its layout. A coordinated scrollable at the largest snap uses the space inside the safe area.
@@ -93,7 +94,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
   and retargets running animations without another snap-start notification.
   Drag positions and native scroll nodes stay intact. Intrinsic `fit` sizing
   still follows content layout; it does not require a positioner query.
-- Positioner placement, `insets` relative to the viewport edges, and content
+- Positioner placement, `initialInsets` relative to the viewport edges, and content
   safe-area padding are separate layout concerns.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
 - Numeric-snap sheets share a stable content size based on the largest snap. A bottom `'fit'` snap resolves from intrinsic content and is capped at the space available above the configured gap. Use a scrollable for content beyond the visible area.

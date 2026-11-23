@@ -67,7 +67,6 @@ export function SheetContent(props: SheetContentProps) {
       setSheetMTRef={snap.setSheetMTRef}
       setContentMTRef={snap.setContentMTRef}
       setInsetsMT={snap.setInsetsMT}
-      commitInsetsMT={snap.commitInsetsMT}
       setCornerRadiusMT={snap.setCornerRadiusMT}
       handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
     />

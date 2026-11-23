@@ -30,8 +30,8 @@ interface SheetSurfaceLayoutOptions {
   presence: MainThreadRef<PresenceState>
   resolvedSide: SheetResolvedSide
   enableRTL: boolean
-  cornerRadius?: SheetCornerRadius
-  insets?: SheetInsets
+  initialCornerRadius?: SheetCornerRadius
+  initialInsets?: SheetInsets
   surfaceStyle?: SheetContentProps['style']
   screenHeight: number
   screenWidth: number
@@ -45,7 +45,6 @@ interface SheetSurfaceLayoutOptions {
   updateFooterPositionMT?: (visibleHeight: number) => void
   initialSize: (index: number) => number
   initialSnap: number
-  hasController?: boolean
   surfaceLifecycleMTRef?: MainThreadRef<
     { open: () => void, settle: () => void } | null
   >
@@ -73,8 +72,8 @@ export function useSheetSurfaceLayout({
   presence,
   resolvedSide,
   enableRTL,
-  cornerRadius,
-  insets,
+  initialCornerRadius,
+  initialInsets,
   surfaceStyle,
   screenHeight,
   screenWidth,
@@ -88,18 +87,17 @@ export function useSheetSurfaceLayout({
   updateFooterPositionMT,
   initialSize,
   initialSnap,
-  hasController = false,
   surfaceLifecycleMTRef,
 }: SheetSurfaceLayoutOptions) {
   const isBottom = resolvedSide === 'bottom'
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
-  const propTop = normalizeInset(insets?.top)
-  const propRight = normalizeInset(insets?.right)
-  const propBottom = normalizeInset(insets?.bottom)
-  const propLeft = normalizeInset(insets?.left)
+  const propTop = normalizeInset(initialInsets?.top)
+  const propRight = normalizeInset(initialInsets?.right)
+  const propBottom = normalizeInset(initialInsets?.bottom)
+  const propLeft = normalizeInset(initialInsets?.left)
   const propHasHorizontal = !horizontal
-    && (insets?.left !== undefined || insets?.right !== undefined)
-  const propRadii = normalizeCornerRadii(cornerRadius)
+    && (initialInsets?.left !== undefined || initialInsets?.right !== undefined)
+  const propRadii = normalizeCornerRadii(initialCornerRadius)
   const [propTL, propTR, propBR, propBL] = propRadii
   const inlineCornerStyles = extractInlineCornerStyles(surfaceStyle)
   const inlineBorderRadius = inlineCornerStyles.borderRadius
@@ -109,7 +107,7 @@ export function useSheetSurfaceLayout({
     : surfaceStyle?.width ?? '100%'
   const baseLeft = typeof surfaceStyle?.left === 'number'
     ? `${surfaceStyle.left}px`
-    : surfaceStyle?.left ?? ''
+    : surfaceStyle?.left ?? null
 
   const clipMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const surfaceMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -135,7 +133,7 @@ export function useSheetSurfaceLayout({
     radii: propRadii,
     // Keep settledBottom separate from animated bottom so viewport height and
     // clipMTRef.bottom never resize per-frame during motion.
-    settledBottom: hasController ? 0 : propBottom,
+    settledBottom: propBottom,
     clipBottomApplied: 0,
     bottomUpdatePending: false,
   })
@@ -201,9 +199,12 @@ export function useSheetSurfaceLayout({
       if (surface && applied.surfaceWidth !== '') {
         applied.surfaceWidth = ''
         applied.surfaceLeft = ''
-        if (hasController) {
-          surface.setStyleProperties({ width: baseWidth, left: baseLeft })
-        }
+        // The runtime accepts null to remove an inline value and restore the
+        // stylesheet cascade. The public worklet declaration only lists strings.
+        surface.setStyleProperties({
+          width: baseWidth,
+          left: baseLeft,
+        } as Record<string, string>)
       }
       return
     }
@@ -371,7 +372,7 @@ export function useSheetSurfaceLayout({
    */
   function settleSurfaceMT() {
     'main thread'
-    if (!isBottom || geometryMTRef.current.bottomUpdatePending) return
+    if (!isBottom || geometryMTRef.current.bottomUpdatePending) return false
     const geo = geometryMTRef.current
     const nextSettled = presence.current === PresenceState.Entered
       ? geo.bottom
@@ -383,9 +384,13 @@ export function useSheetSurfaceLayout({
       applyClipBottomMT(nextSettled)
     }
     if (changed) updateSurfaceMT()
+    return changed
   }
 
-  function setInsetsMT(nextInsets: SheetInsets) {
+  function setInsetsMT(
+    nextInsets: SheetInsets,
+    options?: { animating?: boolean },
+  ) {
     'main thread'
     const geo = geometryMTRef.current
     const nextTop = nextInsets.top === undefined
@@ -403,31 +408,48 @@ export function useSheetSurfaceLayout({
     const nextHasHorizontal = !horizontal
       && (geo.hasHorizontal || nextInsets.left !== undefined
         || nextInsets.right !== undefined)
-    if (
-      geo.top === nextTop && geo.right === nextRight
-      && geo.bottom === nextBottom && geo.left === nextLeft
-      && geo.hasHorizontal === nextHasHorizontal
-    ) return
+    const changed = geo.top !== nextTop
+      || geo.right !== nextRight
+      || geo.bottom !== nextBottom
+      || geo.left !== nextLeft
+      || geo.hasHorizontal !== nextHasHorizontal
+    const animating = options?.animating === true
     const bottomChanged = geo.bottom !== nextBottom
-    geo.top = nextTop
-    geo.right = nextRight
-    geo.bottom = nextBottom
-    geo.left = nextLeft
-    geo.hasHorizontal = nextHasHorizontal
-    // Drop clipMTRef.bottom to 0 once when bottom inset starts animating so
-    // subsequent frames incur zero layout writes on clipMTRef.
-    if (isBottom && bottomChanged) {
-      geo.bottomUpdatePending = true
-      if (geo.clipBottomApplied !== 0) applyClipBottomMT(0)
+    if (changed) {
+      geo.top = nextTop
+      geo.right = nextRight
+      geo.bottom = nextBottom
+      geo.left = nextLeft
+      geo.hasHorizontal = nextHasHorizontal
+      applyHorizontalFrameMT()
     }
-    applyHorizontalFrameMT()
-    updateSurfaceMT()
-  }
-
-  function commitInsetsMT() {
-    'main thread'
-    geometryMTRef.current.bottomUpdatePending = false
-    settleSurfaceMT()
+    let settled = false
+    if (isBottom) {
+      if (animating) {
+        if (bottomChanged || geo.clipBottomApplied !== 0) {
+          geo.bottomUpdatePending = true
+          if (geo.clipBottomApplied !== 0) applyClipBottomMT(0)
+        }
+      } else {
+        const hadPending = geo.bottomUpdatePending
+        geo.bottomUpdatePending = false
+        if (position.current?.isAnimating()) {
+          if (bottomChanged && geo.clipBottomApplied !== 0) {
+            applyClipBottomMT(0)
+          }
+        } else if (
+          hadPending || bottomChanged
+          || (presence.current === PresenceState.Entered
+            && (geo.settledBottom !== nextBottom
+              || geo.clipBottomApplied !== nextBottom))
+        ) {
+          settled = settleSurfaceMT()
+        }
+      }
+    }
+    if (changed && !settled) {
+      updateSurfaceMT()
+    }
   }
 
   function setCornerRadiusMT(nextRadius: SheetCornerRadius | undefined) {
@@ -440,32 +462,8 @@ export function useSheetSurfaceLayout({
 
   useMotionValueRefEvent(position, 'change', updateSurfaceMT)
 
-  function syncPropsMT(
-    nextTop: number,
-    nextRight: number,
-    nextBottom: number,
-    nextLeft: number,
-    nextHasHorizontal: boolean,
-    nextRadii: CornerRadii,
-    opening = false,
-  ) {
+  function syncPropsMT() {
     'main thread'
-    const geo = geometryMTRef.current
-    if (!hasController || opening) {
-      geo.top = nextTop
-      geo.right = nextRight
-      geo.bottom = nextBottom
-      geo.left = nextLeft
-      geo.hasHorizontal = nextHasHorizontal
-      geo.radii = nextRadii
-      geo.bottomUpdatePending = false
-      if (isBottom) {
-        geo.settledBottom = hasController ? 0 : nextBottom
-        if (opening || presence.current === PresenceState.Entered) {
-          applyClipBottomMT(geo.settledBottom)
-        }
-      }
-    }
     applyHorizontalFrameMT()
     updateCornersMT(true)
     updateSurfaceMT()
@@ -473,16 +471,21 @@ export function useSheetSurfaceLayout({
 
   function openSurfaceMT() {
     'main thread'
-    if (!hasController) return
-    syncPropsMT(
-      propTop,
-      propRight,
-      propBottom,
-      propLeft,
-      propHasHorizontal,
-      [propTL, propTR, propBR, propBL],
-      true,
-    )
+    const geo = geometryMTRef.current
+    geo.top = propTop
+    geo.right = propRight
+    geo.bottom = propBottom
+    geo.left = propLeft
+    geo.hasHorizontal = propHasHorizontal
+    geo.radii = [propTL, propTR, propBR, propBL]
+    geo.bottomUpdatePending = false
+    if (isBottom) {
+      geo.settledBottom = propBottom
+      applyClipBottomMT(0)
+    }
+    applyHorizontalFrameMT()
+    updateCornersMT(true)
+    updateSurfaceMT()
   }
 
   function registerSurfaceLifecycleMT() {
@@ -497,14 +500,7 @@ export function useSheetSurfaceLayout({
 
   useEffect(() => {
     runOnMainThread(registerSurfaceLifecycleMT)()
-    runOnMainThread(syncPropsMT)(
-      propTop,
-      propRight,
-      propBottom,
-      propLeft,
-      propHasHorizontal,
-      [propTL, propTR, propBR, propBL],
-    )
+    runOnMainThread(syncPropsMT)()
   }, [
     propTop,
     propRight,
@@ -527,7 +523,6 @@ export function useSheetSurfaceLayout({
     maxSnapSize,
     hasFitSnapPoint,
     resolvedSide,
-    hasController,
   ])
 
   function setSurfaceMTRef(element: MainThread.Element | null) {
@@ -589,7 +584,6 @@ export function useSheetSurfaceLayout({
     settleSurfaceMT,
     openSurfaceMT,
     setInsetsMT,
-    commitInsetsMT,
     setCornerRadiusMT,
     measureBodyParentMT: bodyInsets.measureBodyParentMT,
     measureSurfaceMT: bodyInsets.measureSurfaceMT,

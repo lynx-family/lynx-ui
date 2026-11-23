@@ -3,4 +3,4 @@
 "@lynx-example/lynx-ui-sheet": patch
 ---
 
-Set opening geometry with `initialInsets` and `initialCornerRadius` when using the Sheet surface controller. Commit inset animations at their own completion so the visible gap and layout bounds settle together.
+Expose `initialInsets` and `initialCornerRadius` with `main-thread:surfaceControllerRef` for Sheet surface geometry, and replace `commitInsets()` with safe-by-default `setInsets(insets, { animating })` deferred settlement during animations.
