@@ -4,7 +4,7 @@
 
 import type { ReactElement, ReactNode } from '@lynx-js/react'
 
-import type { BaseGesture } from '@lynx-js/gesture-runtime'
+import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type {
   BaseScrollEvents,
   BaseUIExposureEvents,
@@ -276,7 +276,7 @@ export interface ScrollViewProps
    * @iOS
    * @Android
    */
-  'main-thread:gesture'?: BaseGesture
+  'main-thread:gesture'?: GestureKind
 
   /**
    * Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time.
