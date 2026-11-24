@@ -31,6 +31,11 @@ import {
 import { TriggerButton } from '../shared/index.js'
 import './index.css'
 
+const FLOATING_FRAME = {
+  insets: { left: 24, right: 24 },
+  maxWidth: 664,
+}
+
 function App() {
   const sheet = useRef<SheetRootRef>(null)
   const surfaceController = useMainThreadRef<SheetSurfaceController | null>(
@@ -40,50 +45,56 @@ function App() {
     width: screenWidth,
     height: screenHeight,
   })
-  const floatingWidth = Math.min(Math.max(0, viewport.width - 48), 664)
-  const floatingSideInset = Math.max(0, (viewport.width - floatingWidth) / 2)
   const fullscreenHeight = viewport.height
-  const sideInset = useMotionValueRef(floatingSideInset)
-  const target = useMainThreadRef({ inset: floatingSideInset, animated: false })
+  const progress = useMotionValueRef(0)
+  const target = useMainThreadRef({ value: 0, animated: false })
 
-  useMotionValueRefEvent(sideInset, 'change', value => {
+  useMotionValueRefEvent(progress, 'change', value => {
     'main thread'
-    surfaceController.current?.setInsets({ left: value, right: value })
+    const surface = surfaceController.current
+    if (!surface) return
+    const { width: viewportWidth } = surface.getViewportSize()
+    const startWidth = Math.min(Math.max(0, viewportWidth - 48), 664)
+    const amount = Math.max(0, Math.min(1, value))
+    surface.setFrame({
+      width: startWidth + (viewportWidth - startWidth) * amount,
+    })
   })
 
   function resetWidth() {
     'main thread'
-    target.current = { inset: floatingSideInset, animated: false }
-    sideInset.current.jump(floatingSideInset)
+    target.current = { value: 0, animated: false }
+    progress.current.jump(0)
+    surfaceController.current?.setFrame(FLOATING_FRAME)
   }
 
   function onDragStart() {
     'main thread'
-    sideInset.current.stop()
+    progress.current.stop()
   }
 
   function onSnapStart(_index: number, size: number, animated: boolean) {
     'main thread'
-    const next = size >= fullscreenHeight ? 0 : floatingSideInset
+    const next = size >= fullscreenHeight ? 1 : 0
     const previous = target.current
-    if (previous.inset === next && previous.animated === animated) return
-    target.current = { inset: next, animated }
-    sideInset.current.stop()
+    if (previous.value === next && previous.animated === animated) return
+    target.current = { value: next, animated }
+    progress.current.stop()
     if (animated) {
-      animate(sideInset.current, next, {
+      animate(progress.current, next, {
         type: 'spring',
         stiffness: 260,
         damping: 28,
       })
     } else {
-      sideInset.current.jump(next)
+      progress.current.jump(next)
     }
   }
 
   useEffect(() => () => {
     runOnMainThread(() => {
       'main thread'
-      sideInset.current?.stop()
+      progress.current?.stop()
     })()
   }, [])
 
@@ -115,10 +126,7 @@ function App() {
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
             main-thread:surfaceControllerRef={surfaceController}
-            initialInsets={{
-              left: floatingSideInset,
-              right: floatingSideInset,
-            }}
+            initialFrame={FLOATING_FRAME}
             className='sheet-content'
             innerClassName='surface-layout'
           >

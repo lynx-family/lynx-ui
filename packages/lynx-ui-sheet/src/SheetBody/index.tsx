@@ -23,9 +23,11 @@ export function SheetBody(
   const setBodyMTRef = context?.setBodyMTRef
   const setBodyClipMTRef = context?.setBodyClipMTRef
   const setBodySlotMTRef = context?.setBodySlotMTRef
+  const setBodyIntrinsicMTRef = context?.setBodyIntrinsicMTRef
   const measureBodyMT = context?.measureBodyMT
   const measureIntrinsicBodyMT = context?.measureIntrinsicBodyMT
   const resolvedSide = context?.resolvedSide
+  const viewportWidth = context?.viewportWidth
   const viewportHeight = context?.viewportHeight
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const top = viewportInsets?.top
@@ -86,18 +88,36 @@ export function SheetBody(
     elementMTRef,
   ])
 
+  const intrinsicBodyStyle = horizontal
+    ? {
+      pointerEvents: 'auto' as const,
+      position: 'absolute' as const,
+      top: 0,
+      bottom: 0,
+      left: 0,
+    }
+    : {
+      pointerEvents: 'auto' as const,
+      position: 'absolute' as const,
+      top: 0,
+      left: 0,
+      right: 0,
+    }
+
   const body = (
     <view
       className={enabled ? undefined : className}
       style={enabled
-        ? {
-          pointerEvents: 'auto',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          ...(intrinsic ? {} : { bottom: 0 }),
-        }
+        ? (intrinsic
+          ? intrinsicBodyStyle
+          : {
+            pointerEvents: 'auto',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          })
         : style}
       main-thread:ref={enabled ? setBodyElementMT : undefined}
       implicit-animation={enabled ? 'false' : undefined}
@@ -106,7 +126,10 @@ export function SheetBody(
       {intrinsic
         ? (
           <view
-            style={{ width: '100%', flexShrink: 0 }}
+            style={horizontal
+              ? { height: '100%', flexShrink: 0 }
+              : { width: '100%', flexShrink: 0 }}
+            main-thread:ref={setBodyIntrinsicMTRef}
             main-thread:bindlayoutchange={onIntrinsicLayoutMT}
           >
             <view className={className} style={style}>{children}</view>
@@ -135,7 +158,9 @@ export function SheetBody(
   return (
     <view
       style={intrinsic
-        ? { position: 'relative', height: 0, flexShrink: 0 }
+        ? (horizontal
+          ? { position: 'relative', width: 0, height: '100%', flexShrink: 0 }
+          : { position: 'relative', height: 0, flexShrink: 0 })
         : (enabled
           ? {
             position: 'relative',
@@ -160,7 +185,10 @@ export function SheetBody(
                 top: 0,
                 bottom: 0,
                 left: 0,
-                width: '100%',
+                // The intrinsic slot starts at zero width during first-screen layout.
+                width: intrinsic
+                  ? (viewportWidth ? `${viewportWidth}px` : '100vw')
+                  : '100%',
                 overflow: 'hidden',
                 pointerEvents: 'none',
               }

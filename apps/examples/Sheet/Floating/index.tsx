@@ -17,7 +17,6 @@ import {
   SheetNestedScrollContent,
   SheetRoot,
   SheetView,
-  screenWidth,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 
@@ -32,21 +31,17 @@ function App() {
   )
   const [bounded, setBounded] = useState(true)
   const [bottomGap, setBottomGap] = useState(8)
-  const width = Math.min(screenWidth - 32, 664)
-  const sideInset = (screenWidth - width) / 2
   const openingCornerRadius = bounded ? 24 : { topLeft: 24, topRight: 24 }
-  const openingInsets = {
-    left: sideInset,
-    right: sideInset,
-    bottom: bounded ? bottomGap : 0,
+  const openingFrame = {
+    insets: { left: 16, right: 16, bottom: bounded ? bottomGap : 0 },
+    maxWidth: 664,
   }
 
   function applySurface(nextBounded: boolean, nextGap: number) {
     'main thread'
-    surfaceControllerRef.current?.setInsets({
-      left: sideInset,
-      right: sideInset,
-      bottom: nextBounded ? nextGap : 0,
+    surfaceControllerRef.current?.setFrame({
+      insets: { left: 16, right: 16, bottom: nextBounded ? nextGap : 0 },
+      maxWidth: 664,
     })
     surfaceControllerRef.current?.setCornerRadius(
       nextBounded ? 24 : { topLeft: 24, topRight: 24 },
@@ -72,7 +67,7 @@ function App() {
           <SheetNestedScrollContent
             main-thread:surfaceControllerRef={surfaceControllerRef}
             initialCornerRadius={openingCornerRadius}
-            initialInsets={openingInsets}
+            initialFrame={openingFrame}
             className='sheet-content'
             innerClassName='surface-layout'
           >

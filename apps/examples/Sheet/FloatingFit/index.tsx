@@ -12,7 +12,6 @@ import {
   SheetHandle,
   SheetRoot,
   SheetView,
-  screenWidth,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
@@ -22,7 +21,6 @@ import './index.css'
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
   const [details, setDetails] = useState(false)
-  const width = Math.min(screenWidth - 32, 480)
   return (
     <view className='demo-container surface-stage lunaris-dark'>
       <view className='surface-launcher'>
@@ -41,10 +39,9 @@ function App() {
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
             initialCornerRadius={24}
-            initialInsets={{
-              left: (screenWidth - width) / 2,
-              right: (screenWidth - width) / 2,
-              bottom: 8,
+            initialFrame={{
+              insets: { left: 16, right: 16, bottom: 8 },
+              maxWidth: 480,
             }}
             className='sheet-content'
             innerClassName='surface-layout'

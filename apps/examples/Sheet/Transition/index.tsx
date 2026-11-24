@@ -20,13 +20,17 @@ import {
   SheetRoot,
   SheetView,
   screenHeight,
-  screenWidth,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
 import './index.css'
+
+const FLOATING_FRAME = {
+  insets: { left: 24, right: 24, bottom: 8 },
+  maxWidth: 664,
+}
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -35,23 +39,15 @@ function App() {
   )
   const [panel, setPanel] = useState({ fullscreen: false, animated: false })
   const panelTarget = useMainThreadRef({ fullscreen: false, animated: false })
-  const [viewport, setViewport] = useState({
-    width: screenWidth,
-    height: screenHeight,
-  })
-  const fullscreenHeight = viewport.height
-  const floatingWidth = Math.min(viewport.width - 48, 664)
-  const floatingSideInset = (viewport.width - floatingWidth) / 2
+  const [fullscreenHeight, setFullscreenHeight] = useState(screenHeight)
 
   function applyPanelSurface(fullscreen: boolean) {
     'main thread'
-    const nextWidth = fullscreen ? viewport.width : floatingWidth
-    const nextSideInset = (viewport.width - nextWidth) / 2
-    surfaceControllerRef.current?.setInsets({
-      left: nextSideInset,
-      right: nextSideInset,
-      bottom: fullscreen ? 0 : 8,
-    })
+    surfaceControllerRef.current?.setFrame(
+      fullscreen
+        ? { insets: { bottom: 0 } }
+        : FLOATING_FRAME,
+    )
     surfaceControllerRef.current?.setCornerRadius(fullscreen ? 0 : 24)
   }
 
@@ -79,13 +75,14 @@ function App() {
 
   useEffect(() => {
     runOnMainThread(applyPanelSurface)(panel.fullscreen)
-  }, [panel, viewport.width, floatingWidth])
+  }, [panel])
 
   return (
     <view
       className='demo-container surface-stage lunaris-dark'
-      bindlayoutchange={event =>
-        setViewport({ width: event.detail.width, height: event.detail.height })}
+      bindlayoutchange={event => {
+        if (event.detail.height > 0) setFullscreenHeight(event.detail.height)
+      }}
     >
       <view className='surface-launcher'>
         <text className='surface-title'>Room to read</text>
@@ -112,11 +109,7 @@ function App() {
           <SheetNestedScrollContent
             main-thread:surfaceControllerRef={surfaceControllerRef}
             initialCornerRadius={24}
-            initialInsets={{
-              left: floatingSideInset,
-              right: floatingSideInset,
-              bottom: 8,
-            }}
+            initialFrame={FLOATING_FRAME}
             className='sheet-content'
             innerClassName='surface-layout'
             style={{

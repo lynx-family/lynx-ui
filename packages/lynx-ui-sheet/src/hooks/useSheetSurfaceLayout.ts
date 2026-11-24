@@ -13,7 +13,9 @@ import type { MainThread } from '@lynx-js/types'
 import type {
   SheetContentProps,
   SheetCornerRadius,
-  SheetInsets,
+  SheetSurfaceAlign,
+  SheetSurfaceFrame,
+  SheetViewportSize,
 } from '../types'
 import type { SheetResolvedSide } from '../utils'
 import { useSheetBodyInsets } from './useSheetBodyInsets'
@@ -24,6 +26,17 @@ import {
   normalizeCornerRadiiMT,
 } from './useSheetCornerStyle'
 import type { CornerRadii } from './useSheetCornerStyle'
+import {
+  equalSurfaceSizeMT,
+  normalizeInset,
+  normalizeInsetMT,
+  parseSurfaceSize,
+  parseSurfaceSizeMT,
+  resolveHorizontalBounds,
+  resolveHorizontalBoundsMT,
+} from '../utils/surfaceFrame'
+
+export { normalizeInset }
 
 interface SheetSurfaceLayoutOptions {
   position: MainThreadRef<MotionValue<number>>
@@ -31,7 +44,7 @@ interface SheetSurfaceLayoutOptions {
   resolvedSide: SheetResolvedSide
   enableRTL: boolean
   initialCornerRadius?: SheetCornerRadius
-  initialInsets?: SheetInsets
+  initialFrame?: SheetSurfaceFrame
   surfaceStyle?: SheetContentProps['style']
   screenHeight: number
   screenWidth: number
@@ -40,6 +53,8 @@ interface SheetSurfaceLayoutOptions {
   movingSurfaceMTRef?: MainThreadRef<MainThread.Element | null>
   maxSnapSize: number
   hasFitSnapPoint: boolean
+  fitMinSize?: number
+  fitMaxSize?: number
   onFitBodyLayoutMT?: (height: number) => void
   footerHeightMTRef?: MainThreadRef<number>
   updateFooterPositionMT?: (visibleHeight: number) => void
@@ -48,19 +63,6 @@ interface SheetSurfaceLayoutOptions {
   surfaceLifecycleMTRef?: MainThreadRef<
     { open: () => void, settle: () => void } | null
   >
-}
-
-export function normalizeInset(value: number | undefined) {
-  return value !== undefined && Number.isFinite(value)
-    ? Math.max(0, value)
-    : 0
-}
-
-function normalizeInsetMT(value: number | undefined) {
-  'main thread'
-  return value !== undefined && Number.isFinite(value)
-    ? Math.max(0, value)
-    : 0
 }
 
 /**
@@ -73,7 +75,7 @@ export function useSheetSurfaceLayout({
   resolvedSide,
   enableRTL,
   initialCornerRadius,
-  initialInsets,
+  initialFrame,
   surfaceStyle,
   screenHeight,
   screenWidth,
@@ -82,6 +84,8 @@ export function useSheetSurfaceLayout({
   movingSurfaceMTRef,
   maxSnapSize,
   hasFitSnapPoint,
+  fitMinSize,
+  fitMaxSize,
   onFitBodyLayoutMT,
   footerHeightMTRef,
   updateFooterPositionMT,
@@ -91,12 +95,29 @@ export function useSheetSurfaceLayout({
 }: SheetSurfaceLayoutOptions) {
   const isBottom = resolvedSide === 'bottom'
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
-  const propTop = normalizeInset(initialInsets?.top)
-  const propRight = normalizeInset(initialInsets?.right)
-  const propBottom = normalizeInset(initialInsets?.bottom)
-  const propLeft = normalizeInset(initialInsets?.left)
+  const propTop = normalizeInset(initialFrame?.insets?.top)
+  const propRight = normalizeInset(initialFrame?.insets?.right)
+  const propBottom = normalizeInset(initialFrame?.insets?.bottom)
+  const propLeft = normalizeInset(initialFrame?.insets?.left)
+  const propWidth = parseSurfaceSize(initialFrame?.width)
+  const propMaxWidth = parseSurfaceSize(initialFrame?.maxWidth)
+  const propAlign: SheetSurfaceAlign = initialFrame?.align ?? 'center'
   const propHasHorizontal = !horizontal
-    && (initialInsets?.left !== undefined || initialInsets?.right !== undefined)
+    && (initialFrame?.insets?.left !== undefined
+      || initialFrame?.insets?.right !== undefined
+      || propWidth !== null
+      || propMaxWidth !== null)
+  const propHorizontalBounds = propHasHorizontal
+    ? resolveHorizontalBounds(
+      propLeft,
+      propRight,
+      propWidth,
+      propMaxWidth,
+      propAlign,
+      screenWidth,
+      enableRTL,
+    )
+    : null
   const propRadii = normalizeCornerRadii(initialCornerRadius)
   const [propTL, propTR, propBR, propBL] = propRadii
   const inlineCornerStyles = extractInlineCornerStyles(surfaceStyle)
@@ -118,21 +139,21 @@ export function useSheetSurfaceLayout({
   const viewportMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const appliedRadiiMTRef = useMainThreadRef<CornerRadii | null>(null)
   const panelHeightMTRef = useMainThreadRef(0)
+  const viewportSizeMTRef = useMainThreadRef<SheetViewportSize>({
+    width: screenWidth,
+    height: screenHeight,
+  })
   const horizontalOverrideMTRef = useMainThreadRef<
     { left: number, width: number } | null
-  >(
-    propHasHorizontal
-      ? {
-        left: propLeft,
-        width: Math.max(0, screenWidth - propLeft - propRight),
-      }
-      : null,
-  )
+  >(propHorizontalBounds)
   const geometryMTRef = useMainThreadRef({
     top: propTop,
     right: propRight,
     bottom: propBottom,
     left: propLeft,
+    width: propWidth,
+    maxWidth: propMaxWidth,
+    align: propAlign,
     hasHorizontal: propHasHorizontal,
     radii: propRadii,
     // Keep settledBottom separate from animated bottom so viewport height and
@@ -140,6 +161,8 @@ export function useSheetSurfaceLayout({
     settledBottom: propBottom,
     clipBottomApplied: 0,
     bottomUpdatePending: false,
+    animatingToken: 0,
+    settleCheckScheduled: false,
   })
   const surfaceStylesMTRef = useMainThreadRef({
     clipBottom: '',
@@ -168,11 +191,19 @@ export function useSheetSurfaceLayout({
     screenHeight,
     maxSnapSize,
     hasFitSnapPoint,
+    fitMinSize,
+    fitMaxSize,
     getBottomInsetMT,
     getSurfaceHorizontalOverrideMT,
     footerHeightMTRef,
     onFitBodyLayoutMT,
   })
+
+  function getViewportSizeMT(): SheetViewportSize {
+    'main thread'
+    const size = viewportSizeMTRef.current
+    return { width: size.width, height: size.height }
+  }
 
   function applyHorizontalFrameMT() {
     'main thread'
@@ -180,12 +211,16 @@ export function useSheetSurfaceLayout({
     const geo = geometryMTRef.current
     const surface = surfaceMTRef.current
     const applied = surfaceStylesMTRef.current
+    const currentScreenWidth = viewportSizeMTRef.current.width
     if (!geo.hasHorizontal) {
       const hadHorizontalOverride = horizontalOverrideMTRef.current !== null
         || applied.surfaceWidth !== ''
       horizontalOverrideMTRef.current = null
       if (hadHorizontalOverride) {
-        bodyInsets.syncSurfaceOriginLeftMT(baseLeftPx)
+        const pendingWidth = baseWidth === '100%' && baseLeft === null
+          ? currentScreenWidth
+          : undefined
+        bodyInsets.syncSurfaceOriginLeftMT(baseLeftPx, pendingWidth)
       }
       if (surface && applied.surfaceWidth !== '') {
         applied.surfaceWidth = ''
@@ -199,8 +234,15 @@ export function useSheetSurfaceLayout({
       }
       return
     }
-    const left = geo.left
-    const width = Math.max(0, screenWidth - left - geo.right)
+    const { left, width } = resolveHorizontalBoundsMT(
+      geo.left,
+      geo.right,
+      geo.width,
+      geo.maxWidth,
+      geo.align,
+      currentScreenWidth,
+      enableRTL,
+    )
     horizontalOverrideMTRef.current = { left, width }
     bodyInsets.syncSurfaceOriginLeftMT(left)
     const leftStyle = `${left}px`
@@ -255,9 +297,12 @@ export function useSheetSurfaceLayout({
     if (horizontal) {
       const opened = Math.max(sheetSizeMTRef.current, maxSnapSize)
       const extent = allowOverDrag ? value : Math.min(value, opened)
+      const panelSize = hasFitSnapPoint && bodyInsets.hasFitBodyMT()
+        ? Math.max(sheetSizeMTRef.current, maxSnapSize)
+        : maxSnapSize
       bodyInsets.updateBodyRangeMT(
-        resolvedSide === 'right' ? screenWidth - extent : extent - maxSnapSize,
-        maxSnapSize,
+        resolvedSide === 'right' ? screenWidth - extent : extent - panelSize,
+        panelSize,
       )
       return
     }
@@ -383,31 +428,61 @@ export function useSheetSurfaceLayout({
     return changed
   }
 
-  function setInsetsMT(
-    nextInsets: SheetInsets,
+  function scheduleAutoSettleMT() {
+    'main thread'
+    const geo = geometryMTRef.current
+    if (
+      geo.settleCheckScheduled || typeof requestAnimationFrame !== 'function'
+    ) {
+      return
+    }
+    const token = geo.animatingToken
+    geo.settleCheckScheduled = true
+    requestAnimationFrame(() => {
+      'main thread'
+      requestAnimationFrame(() => {
+        'main thread'
+        const current = geometryMTRef.current
+        current.settleCheckScheduled = false
+        if (!current.bottomUpdatePending) return
+        if (current.animatingToken !== token) {
+          scheduleAutoSettleMT()
+          return
+        }
+        current.bottomUpdatePending = false
+        if (!position.current?.isAnimating()) {
+          settleSurfaceMT()
+        }
+      })
+    })
+  }
+
+  function setFrameMT(
+    nextFrame: SheetSurfaceFrame,
     options?: { animating?: boolean },
   ) {
     'main thread'
     const geo = geometryMTRef.current
-    const nextTop = nextInsets.top === undefined
-      ? geo.top
-      : normalizeInsetMT(nextInsets.top)
-    const nextRight = nextInsets.right === undefined
-      ? geo.right
-      : normalizeInsetMT(nextInsets.right)
-    const nextBottom = nextInsets.bottom === undefined
-      ? geo.bottom
-      : normalizeInsetMT(nextInsets.bottom)
-    const nextLeft = nextInsets.left === undefined
-      ? geo.left
-      : normalizeInsetMT(nextInsets.left)
+    const nextInsets = nextFrame.insets
+    const nextTop = normalizeInsetMT(nextInsets?.top)
+    const nextRight = normalizeInsetMT(nextInsets?.right)
+    const nextBottom = normalizeInsetMT(nextInsets?.bottom)
+    const nextLeft = normalizeInsetMT(nextInsets?.left)
+    const nextWidth = parseSurfaceSizeMT(nextFrame.width)
+    const nextMaxWidth = parseSurfaceSizeMT(nextFrame.maxWidth)
+    const nextAlign: SheetSurfaceAlign = nextFrame.align ?? 'center'
     const nextHasHorizontal = !horizontal
-      && (geo.hasHorizontal || nextInsets.left !== undefined
-        || nextInsets.right !== undefined)
+      && (nextInsets?.left !== undefined
+        || nextInsets?.right !== undefined
+        || nextWidth !== null
+        || nextMaxWidth !== null)
     const changed = geo.top !== nextTop
       || geo.right !== nextRight
       || geo.bottom !== nextBottom
       || geo.left !== nextLeft
+      || !equalSurfaceSizeMT(geo.width, nextWidth)
+      || !equalSurfaceSizeMT(geo.maxWidth, nextMaxWidth)
+      || geo.align !== nextAlign
       || geo.hasHorizontal !== nextHasHorizontal
     const animating = options?.animating === true
     const bottomChanged = geo.bottom !== nextBottom
@@ -416,6 +491,9 @@ export function useSheetSurfaceLayout({
       geo.right = nextRight
       geo.bottom = nextBottom
       geo.left = nextLeft
+      geo.width = nextWidth
+      geo.maxWidth = nextMaxWidth
+      geo.align = nextAlign
       geo.hasHorizontal = nextHasHorizontal
       applyHorizontalFrameMT()
     }
@@ -426,9 +504,14 @@ export function useSheetSurfaceLayout({
           geo.bottomUpdatePending = true
           if (geo.clipBottomApplied !== 0) applyClipBottomMT(0)
         }
+        if (geo.bottomUpdatePending) {
+          geo.animatingToken += 1
+          scheduleAutoSettleMT()
+        }
       } else {
         const hadPending = geo.bottomUpdatePending
         geo.bottomUpdatePending = false
+        geo.animatingToken += 1
         if (position.current?.isAnimating()) {
           if (bottomChanged && geo.clipBottomApplied !== 0) {
             applyClipBottomMT(0)
@@ -460,6 +543,7 @@ export function useSheetSurfaceLayout({
 
   function syncPropsMT() {
     'main thread'
+    viewportSizeMTRef.current = { width: screenWidth, height: screenHeight }
     applyHorizontalFrameMT()
     updateCornersMT(true)
     updateSurfaceMT()
@@ -472,9 +556,13 @@ export function useSheetSurfaceLayout({
     geo.right = propRight
     geo.bottom = propBottom
     geo.left = propLeft
+    geo.width = propWidth
+    geo.maxWidth = propMaxWidth
+    geo.align = propAlign
     geo.hasHorizontal = propHasHorizontal
     geo.radii = [propTL, propTR, propBR, propBL]
     geo.bottomUpdatePending = false
+    geo.animatingToken += 1
     if (isBottom) {
       geo.settledBottom = propBottom
       applyClipBottomMT(0)
@@ -494,6 +582,11 @@ export function useSheetSurfaceLayout({
     }
   }
 
+  const propWidthKind = propWidth?.kind
+  const propWidthValue = propWidth?.value
+  const propMaxWidthKind = propMaxWidth?.kind
+  const propMaxWidthValue = propMaxWidth?.value
+
   useEffect(() => {
     runOnMainThread(registerSurfaceLifecycleMT)()
     runOnMainThread(syncPropsMT)()
@@ -502,6 +595,11 @@ export function useSheetSurfaceLayout({
     propRight,
     propBottom,
     propLeft,
+    propWidthKind,
+    propWidthValue,
+    propMaxWidthKind,
+    propMaxWidthValue,
+    propAlign,
     propHasHorizontal,
     propTL,
     propTR,
@@ -518,7 +616,10 @@ export function useSheetSurfaceLayout({
     screenWidth,
     maxSnapSize,
     hasFitSnapPoint,
+    fitMinSize,
+    fitMaxSize,
     resolvedSide,
+    enableRTL,
   ])
 
   function setSurfaceMTRef(element: MainThread.Element | null) {
@@ -579,8 +680,9 @@ export function useSheetSurfaceLayout({
     setViewportMTRef,
     settleSurfaceMT,
     openSurfaceMT,
-    setInsetsMT,
+    setFrameMT,
     setCornerRadiusMT,
+    getViewportSizeMT,
     measureBodyParentMT: bodyInsets.measureBodyParentMT,
     measureSurfaceMT: bodyInsets.measureSurfaceMT,
     hasFitBodyMT: bodyInsets.hasFitBodyMT,
@@ -590,9 +692,11 @@ export function useSheetSurfaceLayout({
       intrinsic: bodyInsets.intrinsic,
       resolvedSide,
       enableRTL,
+      viewportWidth: screenWidth,
       viewportHeight: screenHeight,
       setBodyClipMTRef: bodyInsets.setBodyClipMTRef,
       setBodySlotMTRef,
+      setBodyIntrinsicMTRef: bodyInsets.setBodyIntrinsicMTRef,
       measureIntrinsicBodyMT: bodyInsets.measureIntrinsicBodyMT,
       setBodyMTRef: bodyInsets.setBodyMTRef,
       measureBodyMT: bodyInsets.measureBodyMT,

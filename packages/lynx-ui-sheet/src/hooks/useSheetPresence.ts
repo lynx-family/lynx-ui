@@ -6,6 +6,8 @@ import type { MainThreadRef } from '@lynx-js/react'
 
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
 
+import type { SheetPresenceState } from '../types'
+
 // Define valid state transitions to enforce state machine correctness
 const VALID_TRANSITIONS: Record<PresenceState, PresenceState[]> = {
   [PresenceState.Initial]: [PresenceState.Entering, PresenceState.Left],
@@ -21,6 +23,25 @@ export interface SheetPresenceCallbacks {
   onDismiss?: () => void
   onUnmount?: () => void
   onBeforeDismiss?: () => void
+  onPresenceChangeMT?: (state: SheetPresenceState) => void
+}
+
+function mapPresenceStateMT(
+  state: PresenceState,
+): SheetPresenceState | null {
+  'main thread'
+  switch (state) {
+    case PresenceState.Entering:
+      return 'entering'
+    case PresenceState.Entered:
+      return 'entered'
+    case PresenceState.Leaving:
+      return 'leaving'
+    case PresenceState.Left:
+      return 'left'
+    default:
+      return null
+  }
 }
 
 export function useSheetPresence(
@@ -32,7 +53,13 @@ export function useSheetPresence(
   )
   const presenceStateMTRef = externalRef ?? internalRef
 
-  const { onEntered, onDismiss, onUnmount, onBeforeDismiss } = callbacks
+  const {
+    onEntered,
+    onDismiss,
+    onUnmount,
+    onBeforeDismiss,
+    onPresenceChangeMT,
+  } = callbacks
 
   const transitionTo = (next: PresenceState) => {
     'main thread'
@@ -54,6 +81,10 @@ export function useSheetPresence(
     }
 
     presenceStateMTRef.current = next
+    const mapped = mapPresenceStateMT(next)
+    if (mapped) {
+      onPresenceChangeMT?.(mapped)
+    }
 
     switch (next) {
       case PresenceState.Entered:

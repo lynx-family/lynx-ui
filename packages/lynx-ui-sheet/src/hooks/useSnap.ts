@@ -23,15 +23,17 @@ import { normalizeInset, useSheetSurfaceLayout } from './useSheetSurfaceLayout'
 import type {
   SheetContentProps,
   SheetCornerRadius,
-  SheetInsets,
   SheetRootProps,
   SheetSide,
+  SheetSnapPoint,
+  SheetSurfaceFrame,
   SheetTransition,
 } from '../types'
 import {
   clamp,
   findNearestSnap,
   getDefaultRubberBand,
+  getFitSnapBounds,
   getMainAxisLayoutSize,
   getMainAxisSize,
   getMaxSnapSize,
@@ -40,6 +42,7 @@ import {
   resolveSheetSide,
   toPxJS,
 } from '../utils'
+import { resolveSurfaceSize } from '../utils/surfaceFrame'
 
 export interface SnappingOptions {
   animate?: boolean
@@ -48,10 +51,10 @@ export interface SnappingOptions {
 }
 
 export interface SnapOptions {
-  snapPoints: Array<number | string>
+  snapPoints: SheetSnapPoint[]
   initialSnap?: number
   initialCornerRadius?: SheetCornerRadius
-  initialInsets?: SheetInsets
+  initialFrame?: SheetSurfaceFrame
   surfaceStyle?: SheetContentProps['style']
   snapAnimation?: SheetTransition
   side?: SheetSide
@@ -64,6 +67,7 @@ export interface SnapOptions {
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDragStartMT?: SheetRootProps['main-thread:onDragStart']
   onPositionChangeMT?: SheetRootProps['main-thread:onPositionChange']
+  onPresenceChangeMT?: SheetRootProps['main-thread:onPresenceChange']
   onDismiss?: () => void
   enterAnimation?: SheetTransition
   exitAnimation?: SheetTransition
@@ -79,7 +83,7 @@ export function useSnap({
   snapPoints = [],
   initialSnap = 0,
   initialCornerRadius,
-  initialInsets,
+  initialFrame,
   surfaceStyle,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
@@ -92,6 +96,7 @@ export function useSnap({
   onSnapStartMT,
   onDragStartMT: onDragStartNotifyMT,
   onPositionChangeMT,
+  onPresenceChangeMT,
   onDismiss,
   enterAnimation = {
     type: 'spring',
@@ -148,7 +153,7 @@ export function useSnap({
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
-  const propBottom = normalizeInset(initialInsets?.bottom)
+  const propBottom = normalizeInset(initialFrame?.insets?.bottom)
   const openingBottomMTRef = useMainThreadRef(propBottom)
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
@@ -158,16 +163,61 @@ export function useSnap({
   // Track resolved snapPoints (for 'fit' support)
   const resolvedSnapPointMTRef = useMainThreadRef<number[]>([])
   const resolvedSnapOffsetsMTRef = useMainThreadRef<number[]>([])
-  const hasFitSnapPoint = useMemo(
-    () => snapPoints.some(p => String(p).trim() === 'fit'),
-    [snapPoints],
-  )
-  // Keep snap points order stable: indices should match `snapPoints` order.
-  const { snapPointValues, snapOffsets } = useMemo(() => {
-    const values = snapPoints.map(p => toPxJS(p, viewportSize))
-    const offsets = values.map(p => (p === -1 ? -1 : p))
-    return { snapPointValues: values, snapOffsets: offsets }
-  }, [snapPoints, viewportSize])
+  const snapPointsKey = snapPoints
+    .map(point => {
+      const value = toPxJS(point, viewportSize)
+      const bounds = getFitSnapBounds(point)
+      const min = value === -1
+        ? resolveSurfaceSize(bounds?.min, viewportSize) ?? -1
+        : -1
+      const max = value === -1
+        ? resolveSurfaceSize(bounds?.max, viewportSize) ?? -1
+        : -1
+      return `${value}:${min}:${max}`
+    })
+    .join('|')
+  // Keep snap points order and value equality stable for inline fit descriptors.
+  const {
+    hasFitSnapPoint,
+    snapPointValues,
+    snapOffsets,
+    fitMinValues,
+    fitMaxValues,
+    fitMinSize,
+    fitMaxSize,
+    maxSnapSize,
+  } = useMemo(() => {
+    const entries = snapPointsKey
+      ? snapPointsKey.split('|').map(item => {
+        const [value, min, max] = item.split(':').map(Number)
+        return { value, min, max }
+      })
+      : []
+    const values = entries.map(entry => entry.value)
+    const offsets = values.map(value => (value === -1 ? -1 : value))
+    const mins = entries.map(entry => entry.min)
+    const maxes = entries.map(entry => entry.max)
+    const fitIndices = entries.flatMap((entry, index) =>
+      entry.value === -1 ? [index] : []
+    )
+    const hasFit = fitIndices.length > 0
+    const allMinsDefined = hasFit && fitIndices.every(i => mins[i] >= 0)
+    const allMaxesDefined = hasFit && fitIndices.every(i => maxes[i] >= 0)
+    return {
+      hasFitSnapPoint: hasFit,
+      snapPointValues: values,
+      snapOffsets: offsets,
+      fitMinValues: mins,
+      fitMaxValues: maxes,
+      fitMinSize: allMinsDefined
+        ? Math.min(...fitIndices.map(i => mins[i]))
+        : undefined,
+      fitMaxSize: allMaxesDefined
+        ? Math.max(...fitIndices.map(i => maxes[i]))
+        : undefined,
+      maxSnapSize: getMaxSnapSize(values),
+    }
+  }, [snapPointsKey])
 
   const validOffsets = snapOffsets.filter(o => o !== -1)
   const minOffset = validOffsets.length > 0
@@ -176,7 +226,6 @@ export function useSnap({
   const maxOffset = validOffsets.length > 0
     ? Math.max(...validOffsets)
     : 0
-  const maxSnapSize = getMaxSnapSize(snapPointValues)
 
   function getResolvedSnapOffsets() {
     'main thread'
@@ -293,30 +342,49 @@ export function useSnap({
     return getClampedValueMT(offsets[i])
   }
 
-  function getFitLayoutSizeMT(bodySize: number) {
+  function getFitLayoutSizeMT(
+    bodySize: number,
+    minLimit = -1,
+    maxLimit = -1,
+  ) {
     'main thread'
-    if (isHorizontalSide(resolvedSide)) return bodySize
-    if (resolvedSide !== 'bottom') {
-      return Math.min(bodySize, Math.max(0, screenHeight))
-    }
-    return Math.min(
-      bodySize + Math.max(0, footerHeightMTRef.current),
-      Math.max(0, screenHeight - openingBottomMTRef.current),
-    )
+    const rawTotal = resolvedSide === 'bottom'
+      ? bodySize + Math.max(0, footerHeightMTRef.current)
+      : bodySize
+    const viewportCap = isHorizontalSide(resolvedSide)
+      ? Math.max(0, screenWidth)
+      : (resolvedSide === 'bottom'
+        ? Math.max(0, screenHeight - openingBottomMTRef.current)
+        : Math.max(0, screenHeight))
+    const maxCap = maxLimit >= 0
+      ? Math.min(viewportCap, maxLimit)
+      : viewportCap
+    const minFloor = minLimit >= 0
+      ? Math.min(maxCap, minLimit)
+      : 0
+    return Math.max(minFloor, Math.min(maxCap, rawTotal))
   }
 
-  function storeFitSizeMT(size: number) {
+  function resolveFitOffsetsMT(bodySize: number) {
     'main thread'
-    fitSizeMTRef.current = size
-    fitMeasuredMTRef.current = true
-    const values = snapPointValues
-    const offsets = snapOffsets
-    resolvedSnapPointMTRef.current = values.map(value =>
-      value === -1 ? size : value
-    )
-    resolvedSnapOffsetsMTRef.current = offsets.map(offset =>
-      offset === -1 ? size : offset
-    )
+    let maxFit = 0
+    const nextValues = snapPointValues.slice()
+    const nextOffsets = snapOffsets.slice()
+    for (let i = 0; i < snapPointValues.length; i++) {
+      if (snapPointValues[i] === -1) {
+        const size = getFitLayoutSizeMT(
+          bodySize,
+          fitMinValues[i],
+          fitMaxValues[i],
+        )
+        nextValues[i] = size
+        if (size > maxFit) maxFit = size
+      }
+      if (snapOffsets[i] === -1) {
+        nextOffsets[i] = nextValues[i]
+      }
+    }
+    return { maxFit, nextValues, nextOffsets }
   }
 
   // Create controller with animation dependencies
@@ -327,6 +395,7 @@ export function useSnap({
       onUnmount,
       onBeforeDismiss,
       onResurrected,
+      onPresenceChangeMT,
       presenceStateMTRef: presenceStateMTRefProp,
     },
     {
@@ -342,9 +411,13 @@ export function useSnap({
         'main thread'
         openingBottomMTRef.current = propBottom
         if (hasFitSnapPoint && fitMeasuredMTRef.current) {
-          const size = getFitLayoutSizeMT(bodySizeMTRef.current)
-          sheetSizeMTRef.current = size
-          storeFitSizeMT(size)
+          const { maxFit, nextValues, nextOffsets } = resolveFitOffsetsMT(
+            bodySizeMTRef.current,
+          )
+          fitSizeMTRef.current = maxFit
+          sheetSizeMTRef.current = maxFit
+          resolvedSnapPointMTRef.current = nextValues
+          resolvedSnapOffsetsMTRef.current = nextOffsets
         }
         surfaceLifecycleMTRef.current?.open()
       },
@@ -369,16 +442,27 @@ export function useSnap({
     const measuredSize = bodySize + (resolvedSide === 'bottom'
       ? Math.max(0, footerHeightMTRef.current)
       : 0)
-    const layoutSize = getFitLayoutSizeMT(bodySize)
-    sheetSizeMTRef.current = layoutSize
+    const { maxFit, nextValues, nextOffsets } = resolveFitOffsetsMT(bodySize)
+    sheetSizeMTRef.current = maxFit
 
     if (!allowEmptyFit && fitSizeMTRef.current === 0 && measuredSize <= 0) {
       return
     }
-    const fitSize = measuredSize > 0 || allowEmptyFit
-      ? layoutSize
-      : fitSizeMTRef.current
-    storeFitSizeMT(fitSize)
+    if (measuredSize > 0 || allowEmptyFit) {
+      fitSizeMTRef.current = maxFit
+      fitMeasuredMTRef.current = true
+      resolvedSnapPointMTRef.current = nextValues
+      resolvedSnapOffsetsMTRef.current = nextOffsets
+    } else {
+      const prev = fitSizeMTRef.current
+      fitMeasuredMTRef.current = true
+      resolvedSnapPointMTRef.current = snapPointValues.map(value =>
+        value === -1 ? prev : value
+      )
+      resolvedSnapOffsetsMTRef.current = snapOffsets.map(offset =>
+        offset === -1 ? prev : offset
+      )
+    }
     controller.resolvePendingSnapMT()
     controller.reconcileSnapMT(previousOffsets)
   }
@@ -394,7 +478,7 @@ export function useSnap({
     resolvedSide,
     enableRTL,
     initialCornerRadius,
-    initialInsets,
+    initialFrame,
     surfaceStyle,
     screenHeight,
     screenWidth,
@@ -403,6 +487,8 @@ export function useSnap({
     movingSurfaceMTRef: sheetMTRef,
     maxSnapSize,
     hasFitSnapPoint,
+    fitMinSize,
+    fitMaxSize,
     onFitBodyLayoutMT: resolveIntrinsicBodyMT,
     footerHeightMTRef,
     updateFooterPositionMT,
@@ -416,11 +502,8 @@ export function useSnap({
   useEffect(() => {
     runOnMainThread((values: number[], nextMax: number) => {
       'main thread'
-      if (
-        !isHorizontalSide(resolvedSide) && hasFitSnapPoint
-        && fitMeasuredMTRef.current
-      ) {
-        // A height-only viewport change can update the cap with cached content.
+      if (hasFitSnapPoint && fitMeasuredMTRef.current) {
+        // A viewport or fit-bound change can update the cap with cached content.
         resolveIntrinsicBodyMT(bodySizeMTRef.current)
         return
       }
@@ -441,6 +524,10 @@ export function useSnap({
     screenWidth,
     screenHeight,
     hasFitSnapPoint,
+    fitMinSize,
+    fitMaxSize,
+    fitMinValues,
+    fitMaxValues,
     resolvedSide,
     snapPointValues,
     maxSnapSize,
@@ -591,6 +678,7 @@ export function useSnap({
     minOffset,
     maxOffset,
     maxSnapSize,
+    fitMaxSize,
     getClampedValueMT,
     animateToMT,
     interruptAnimationMT,

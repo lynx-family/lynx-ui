@@ -9,7 +9,7 @@ import type { MainThread } from '@lynx-js/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { SheetPositionerDimensions } from '../context'
-import type { SheetSide } from '../types'
+import type { SheetSide, SheetSnapPoint } from '../types'
 import { useSnap } from './useSnap'
 
 const hooks = vi.hoisted(() => ({
@@ -72,8 +72,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 
 function setup(
   side: SheetSide = 'bottom',
-  snapPoints: Array<number | string> = ['50%', '85%'],
-  initialInsets?: Parameters<typeof useSnap>[0]['initialInsets'],
+  snapPoints: SheetSnapPoint[] = ['50%', '85%'],
+  initialFrame?: Parameters<typeof useSnap>[0]['initialFrame'],
   initialCornerRadius?: Parameters<typeof useSnap>[0]['initialCornerRadius'],
 ) {
   const presence = { current: PresenceState.Left }
@@ -85,7 +85,7 @@ function setup(
   function render(
     positioner: SheetPositionerDimensions | null,
     effects = true,
-    openingInsets = initialInsets,
+    openingFrame = initialFrame,
     nextSnapPoints = snapPoints,
     nextScreenHeight = 800,
   ) {
@@ -95,7 +95,7 @@ function setup(
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
       snapPoints: nextSnapPoints,
-      initialInsets: openingInsets,
+      initialFrame: openingFrame,
       initialCornerRadius,
       side,
       enableRTL: true,
@@ -149,21 +149,23 @@ describe('Sheet local viewport calculations and resizing', () => {
     vi.unstubAllGlobals()
   })
 
-  it('resets a mounted surface before an immediate reopen at the latest insets', () => {
+  it('resets a mounted surface before an immediate reopen at the latest frame', () => {
     const { render, surfaceStyle } = setup(
       'bottom',
       ['50%'],
-      { left: 30, right: 30 },
+      { insets: { left: 30, right: 30 } },
       24,
     )
     const viewport = { width: 400, height: 800 }
     const snap = render(viewport)
     snap.showMT({ animate: false })
     expect(surfaceStyle.width).toBe('340px')
-    snap.setInsetsMT({ left: 0, right: 0 })
+    snap.setFrameMT({ insets: { left: 0, right: 0 } })
     snap.setCornerRadiusMT(0)
 
-    const rerendered = render(viewport, true, { left: 40, right: 40 })
+    const rerendered = render(viewport, true, {
+      insets: { left: 40, right: 40 },
+    })
     expect(surfaceStyle.width).toBe('400px')
     expect(surfaceStyle['border-top-left-radius']).toBe('0px')
     rerendered.closeMT({ animate: false })
@@ -172,14 +174,21 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(surfaceStyle['border-top-left-radius']).toBe('24px')
   })
 
-  it('resets to updated initialInsets on Leaving reopen while preserving live geometry on drag resurrection', () => {
+  it('resets to updated initialFrame on Leaving reopen while preserving live geometry on drag resurrection', () => {
     const viewport = { width: 400, height: 800 }
-    const first = setup('bottom', ['50%'], { left: 30, right: 30 }, 24)
+    const first = setup(
+      'bottom',
+      ['50%'],
+      { insets: { left: 30, right: 30 } },
+      24,
+    )
     const snap = first.render(viewport)
     snap.showMT({ animate: false })
-    snap.setInsetsMT({ left: 0, right: 0 })
+    snap.setFrameMT({ insets: { left: 0, right: 0 } })
     snap.setCornerRadiusMT(0)
-    const rerendered = first.render(viewport, true, { left: 40, right: 40 })
+    const rerendered = first.render(viewport, true, {
+      insets: { left: 40, right: 40 },
+    })
     rerendered.closeMT()
     expect(first.presence.current).toBe(PresenceState.Leaving)
     rerendered.showMT({ animate: false })
@@ -187,10 +196,15 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(first.surfaceStyle['border-top-left-radius']).toBe('24px')
 
     // Drag resurrection during Leaving preserves the live geometry under the finger.
-    const second = setup('bottom', ['50%'], { left: 30, right: 30 }, 24)
+    const second = setup(
+      'bottom',
+      ['50%'],
+      { insets: { left: 30, right: 30 } },
+      24,
+    )
     const dragSnap = second.render(viewport)
     dragSnap.showMT({ animate: false })
-    dragSnap.setInsetsMT({ left: 0, right: 0 })
+    dragSnap.setFrameMT({ insets: { left: 0, right: 0 } })
     dragSnap.setCornerRadiusMT(0)
     dragSnap.closeMT()
     expect(second.presence.current).toBe(PresenceState.Leaving)
@@ -425,7 +439,7 @@ describe('Sheet local viewport calculations and resizing', () => {
       const { render } = setup(
         'bottom',
         ['fit', '80%', '100%'],
-        { bottom: 8 },
+        { insets: { bottom: 8 } },
         cornerRadius,
       )
       const snap = render({ width: 320, height: 400 })
@@ -484,7 +498,7 @@ describe('Sheet local viewport calculations and resizing', () => {
   })
 
   it('recaps the measured fit height after a height-only viewport resize', () => {
-    const { render } = setup('bottom', ['fit'], { bottom: 8 })
+    const { render } = setup('bottom', ['fit'], { insets: { bottom: 8 } })
     const snap = render({ width: 320, height: 400 })
     const node = {
       setStyleProperties: vi.fn(),
@@ -516,9 +530,10 @@ describe('Sheet local viewport calculations and resizing', () => {
 
   it('reserves remaining bottom safe area in fit mode without clipping content or double-counting gaps/footers', () => {
     // Pure fit floating sheet (gap 8, bottom safe area 34 -> reserves 26px)
-    const fitOnlySnap = setup('bottom', ['fit'], { bottom: 8 }).render(
-      { width: 320, height: 800 },
-    )
+    const fitOnlySnap = setup('bottom', ['fit'], { insets: { bottom: 8 } })
+      .render(
+        { width: 320, height: 800 },
+      )
     const fitOnlyClipStyle: Record<string, string> = {}
     const writeFitOnlySlot = vi.fn()
     const writeFitOnlyClip = vi.fn((style: object) =>
@@ -587,7 +602,9 @@ describe('Sheet local viewport calculations and resizing', () => {
   })
 
   it('reserves remaining bottom safe area in multi-snap fit mode', () => {
-    const multiSnap = setup('bottom', ['fit', '100%'], { bottom: 8 }).render(
+    const multiSnap = setup('bottom', ['fit', '100%'], {
+      insets: { bottom: 8 },
+    }).render(
       { width: 320, height: 800 },
     )
     const writeMultiSlot = vi.fn()
@@ -694,5 +711,138 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(topFit.getResolvedSnapOffsets()).toEqual([275])
     expect(topFit.yRef.current.get()).toBe(275)
     expect(clipStyle.height).toBe('200px')
+  })
+
+  it.each(['right', 'left'] as const)(
+    'resolves horizontal fit drawer width and drives zero-write drag transforms for side="%s"',
+    side => {
+      const sideFit = setup(side, ['fit']).render({ width: 800, height: 1000 })
+      const clipStyle: Record<string, string> = {}
+      const writeSlot = vi.fn()
+      const writeBody = vi.fn()
+      const writeClip = vi.fn((style: object) =>
+        Object.assign(clipStyle, style)
+      )
+      sideFit.bodyContext.setBodySlotMTRef?.(
+        { setStyleProperties: writeSlot } as unknown as MainThread.Element,
+      )
+      sideFit.bodyContext.setBodyMTRef(
+        { setStyleProperties: writeBody } as unknown as MainThread.Element,
+        side === 'right' ? { top: 20, right: 64 } : { top: 20, left: 64 },
+      )
+      sideFit.bodyContext.setBodyClipMTRef(
+        { setStyleProperties: writeClip } as unknown as MainThread.Element,
+      )
+      sideFit.showMT({ animate: false })
+
+      // 24px sibling on the open side leaves 64 - 24 = 40px remaining edge clearance.
+      sideFit.bodyContext.measureBodyMT({
+        left: side === 'left' ? 24 : 0,
+        top: 0,
+        width: 0,
+        height: 1000,
+      })
+      sideFit.handleSheetLayoutChangeMT({
+        detail: { left: 0, top: 0, width: 24, height: 1000 },
+      })
+      sideFit.bodyContext.measureIntrinsicBodyMT?.({
+        width: 220,
+        height: 980,
+      })
+      expect(writeSlot).toHaveBeenLastCalledWith({ width: '260px' })
+
+      sideFit.handleSheetLayoutChangeMT({
+        detail: { left: 0, top: 0, width: 284, height: 1000 },
+      })
+      sideFit.bodyContext.measureBodyMT({
+        left: side === 'left' ? 24 : 0,
+        top: 0,
+        width: 260,
+        height: 1000,
+      })
+      expect(sideFit.getResolvedSnapOffsets()).toEqual([284])
+      expect(sideFit.yRef.current.get()).toBe(284)
+      expect(clipStyle.width).toBe('220px')
+
+      writeBody.mockClear()
+      writeClip.mockClear()
+      sideFit.yRef.current.set(160)
+      sideFit.yRef.current.set(284)
+      for (const spy of [writeClip, writeBody]) {
+        for (const [style] of spy.mock.calls) {
+          expect(style).not.toHaveProperty('width')
+          expect(style).not.toHaveProperty('height')
+        }
+      }
+      expect(writeClip.mock.calls).toEqual(
+        side === 'right'
+          ? [
+            [{ transform: 'translateX(-124px)' }],
+            [{ transform: 'translateX(0px)' }],
+          ]
+          : [],
+      )
+      expect(writeBody).toHaveBeenLastCalledWith({
+        transform: 'translateX(0px)',
+      })
+    },
+  )
+
+  it('resolves bounded fit snap points from local viewport size and stays stable across inline re-renders', () => {
+    const controller = setup('bottom', [{ fit: { min: 166, max: '73%' } }])
+    const first = controller.render({ width: 400, height: 800 })
+    const writeSlot = vi.fn()
+    first.bodyContext.setBodySlotMTRef?.(
+      { setStyleProperties: writeSlot } as unknown as MainThread.Element,
+    )
+    first.bodyContext.setBodyMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+      { bottom: 34 },
+    )
+    first.bodyContext.setBodyClipMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+    )
+    first.showMT({ animate: false })
+    first.bodyContext.measureBodyMT({ left: 0, top: 0, width: 400, height: 0 })
+    first.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 400, height: 0 },
+    })
+    first.bodyContext.measureIntrinsicBodyMT?.({ width: 400, height: 60 })
+    expect(writeSlot).toHaveBeenLastCalledWith({ height: '166px' })
+    first.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 400, height: 166 },
+    })
+    first.bodyContext.measureBodyMT({
+      left: 0,
+      top: 0,
+      width: 400,
+      height: 166,
+    })
+    expect(first.fitMaxSize).toBe(584)
+    expect(first.getResolvedSnapOffsets()).toEqual([166])
+
+    first.bodyContext.measureIntrinsicBodyMT?.({ width: 400, height: 700 })
+    expect(writeSlot).toHaveBeenLastCalledWith({ height: '584px' })
+    first.handleSheetLayoutChangeMT({
+      detail: { left: 0, top: 0, width: 400, height: 584 },
+    })
+    first.bodyContext.measureBodyMT({
+      left: 0,
+      top: 0,
+      width: 400,
+      height: 584,
+    })
+    expect(first.getResolvedSnapOffsets()).toEqual([584])
+
+    // Fresh inline object reference with equal bounds keeps the resolved fit state stable.
+    const rerendered = controller.render(
+      { width: 400, height: 800 },
+      true,
+      undefined,
+      [{ fit: { min: 166, max: '73%' } }],
+    )
+    expect(rerendered.fitMaxSize).toBe(584)
+    expect(rerendered.getResolvedSnapOffsets()).toEqual([584])
+    expect(rerendered.yRef.current.get()).toBe(584)
   })
 })

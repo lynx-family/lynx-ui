@@ -10,11 +10,16 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 - **`SheetRoot`**: Owns visibility state, side, snap points, drag behavior, and imperative methods.
 - **`SheetView`**: Renders the sheet subtree in the overlay layer and controls mount/unmount.
-- **`SheetPositioner`**: Optionally wraps backdrop and content in a local viewport.
-  Supply positive `width` and `height` in logical pixels from the host pane, or
-  omit them to auto-measure the positioner's own bounds on layout. Use `style`
-  to place it inside `SheetView`. Do not override explicit dimensions through
-  CSS. Without it, the existing viewport path and opening flow remain unchanged.
+- **`SheetPositioner`**: Optionally establishes a local viewport. Wrap
+  `SheetBackdrop` and content together for a localized scrim, or place
+  `SheetBackdrop` as a sibling inside `SheetView` for a full-screen scrim with a
+  constrained sheet viewport (such as asymmetric safe areas). Supply positive
+  `width` and `height` in logical pixels from the host pane, or omit them to
+  auto-measure the positioner's own bounds on layout. Pass `onSizeChange` to
+  observe resolved local viewport bounds for custom snap formulas without
+  duplicating layout listeners. Use `style` to place it
+  inside `SheetView`. Do not override explicit dimensions through CSS. Without
+  it, the existing viewport path and opening flow remain unchanged.
 - **`SheetBackdrop`**: Renders the scrim behind the sheet and optionally closes the sheet on tap.
 - **`SheetContent`**: Renders the moving sheet or drawer surface and receives consumer sizing/styling.
 - **`SheetNestedScrollContent`**: Content layer that coordinates sheet dragging and nested native scrolling. Keep `SheetContent` for the existing raw-touch behavior.
@@ -56,15 +61,16 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 
 ## Panel and Body Layout
 
-- Omit `initialInsets` and `initialCornerRadius` to retain extended background coverage and the original content layout.
-- Set `initialInsets={{ bottom: 8 }}` (or `{ left, right, bottom }`) for a bounded floating panel. The bottom inset is external and does not count toward a snap size. Zero insets with zero bottom corners preserve attached coverage without a mode trap.
-- `initialInsets` and `initialCornerRadius` seed mount geometry and reset on each open (including `forceMount`). Drive live updates while open on the main thread through `main-thread:surfaceControllerRef` (`setInsets`, `setCornerRadius`), coordinated with `main-thread:onSnapStart`, `main-thread:onDragStart`, and `main-thread:onPositionChange`.
-- Pass `{ animating: true }` to `setInsets(insets, { animating: true })` during intermediate animation frames when animating `bottom` so `clipMTRef` and viewport bounds do not re-layout per frame; omit `{ animating: true }` on the final frame or one-shot updates so layout and hit-test bounds commit safely.
-- `setInsets({ left, right })` updates the painted surface and `SheetBody`'s horizontal safe-area clamping synchronously in one layout pass, avoiding two-pass `layoutchange` cascades.
+- Omit `initialFrame` and `initialCornerRadius` to retain extended background coverage and the original content layout.
+- Set `initialFrame={{ insets: { bottom: 8 } }}` (or `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`) for a bounded floating panel. `insets` define minimum edge margins, `width` and `maxWidth` accept logical pixels or `%` strings of the local viewport width clamped to `screenWidth - left - right`, and `align` (`'start' | 'center' | 'end'`, default `'center'`) distributes remaining horizontal slack (respecting `enableRTL`). The bottom inset is external and does not count toward a snap size. Zero insets with zero bottom corners preserve attached coverage without a mode trap.
+- `initialFrame` and `initialCornerRadius` seed mount geometry and reset on each open (including `forceMount`). Drive live updates while open on the main thread through `main-thread:surfaceControllerRef` (`setFrame`, `setCornerRadius`, `getViewportSize`), coordinated with `main-thread:onSnapStart`, `main-thread:onDragStart`, and `main-thread:onPositionChange`. `setFrame` replaces the full geometry frame (`insets`, `width`, `maxWidth`, `align`), so omitted or `undefined` fields reset to defaults while corners stay independent; use `getViewportSize()` when interpolating mixed pixel/percentage endpoints without mirroring viewport state in React.
+- Pass `{ animating: true }` to `setFrame(frame, { animating: true })` during intermediate animation frames when animating `bottom` so `clipMTRef` and viewport bounds do not re-layout per frame; omit `{ animating: true }` on the final frame or one-shot updates so layout and hit-test bounds commit safely (with an automatic 2-frame idle fallback settle if interrupted without a final non-animating call).
+- Use `main-thread:onPresenceChange` to reset or stop coordinated main-thread companion animations cleanly across open (`'entering'` / `'entered'`), close (`'leaving'` / `'left'`), and drag resurrection (`'leaving'` -> `'entering'`, emitted before `main-thread:onDragStart`).
+- `setFrame` horizontal changes update the painted surface and `SheetBody`'s horizontal safe-area clamping synchronously in one layout pass, avoiding two-pass `layoutchange` cascades.
 - Use `initialCornerRadius={24}` (or `setCornerRadius(24)`) to round exposed sheet corners, including the clipped bottom edge of a floating sheet. Supply an object with individual corners for asymmetric shapes. Omitted surface corners use CSS; omitted clipped bottom corners are square.
 - All bounded bottom panels translate and clip at a fixed surface height. `clipMTRef`'s bottom hit-test boundary settles at rest rather than resizing on animation frames.
-- In a flex content layout, place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` support `top`, `right`, `bottom`, `left`, plus logical `start`/`end` resolved with `enableRTL`. All four sides use transform + clip during drags to avoid per-frame layout.
-- A bottom `fit` snap with viewport insets measures the body at its safe width. Give the content an intrinsic height. The body is clipped to the visible area during a drag without resizing its layout. A coordinated scrollable at the largest snap uses the space inside the safe area.
+- In a flex content layout, place `SheetBody` next to a handle that should keep moving when the body reaches a viewport boundary. Its optional `viewportInsets` support `top`, `right`, `bottom`, `left`, plus logical `start`/`end` resolved with `enableRTL`. All four sides (including horizontal `'fit'` drawers) support transform + clip and safe-area reservation with zero per-frame layout during drags.
+- A `'fit'` snap with `SheetBody` viewport insets measures along the cross axis at its safe size and reserves remaining edge safe-area clearance on the open edge. Use `snapPoints={[{ fit: { min, max } }]}` (in pixels or viewport `%`) to bound total `'fit'` panel size (including safe-area reserve and `SheetFooter`) without manually subtracting safe-area overlap in CSS or resolving `150vh` percentages.
 - Inset `fit` uses the compact measurement while an appearance animation changes the panel width. A change to the local viewport width or horizontal insets can establish a new compact size.
 - Use one `SheetBody` per content element. Explicit snaps let the body occupy the remaining space in the content layout. Fit sheets keep the body's intrinsic layout.
 - Bind `scrollGesture` to the same native scroll view inside the body. Moving that body requires no extra pan gesture.
@@ -94,7 +100,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
   and retargets running animations without another snap-start notification.
   Drag positions and native scroll nodes stay intact. Intrinsic `fit` sizing
   still follows content layout; it does not require a positioner query.
-- Positioner placement, `initialInsets` relative to the viewport edges, and content
+- Positioner placement, `initialFrame` relative to the viewport edges, and content
   safe-area padding are separate layout concerns.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
 - Numeric-snap sheets share a stable content size based on the largest snap. A bottom `'fit'` snap resolves from intrinsic content and is capped at the space available above the configured gap. Use a scrollable for content beyond the visible area.

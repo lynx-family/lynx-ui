@@ -61,6 +61,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
         width: '100%',
         height: '100%',
         position: 'absolute',
+        pointerEvents: 'auto',
         opacity: 0,
         ...style,
       }}

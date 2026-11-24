@@ -3,27 +3,56 @@
 // LICENSE file in the root directory of this source tree.
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetSide } from '../types'
+import type {
+  SheetFitBounds,
+  SheetFitSnapPoint,
+  SheetSide,
+  SheetSnapPoint,
+} from '../types'
 
 export type SheetResolvedSide = 'top' | 'bottom' | 'left' | 'right'
 
-export function toPxJS(value: number | string, viewportSize: number): number {
+export function isFitSnapPoint(
+  value: SheetSnapPoint,
+): value is 'fit' | SheetFitSnapPoint {
+  if (typeof value === 'string') {
+    return value.trim() === 'fit'
+  }
+  return (
+    typeof value === 'object'
+    && value !== null
+    && 'fit' in value
+    && typeof value.fit === 'object'
+    && value.fit !== null
+  )
+}
+
+export function getFitSnapBounds(
+  value: SheetSnapPoint,
+): SheetFitBounds | undefined {
+  if (!isFitSnapPoint(value) || typeof value === 'string') return undefined
+  return value.fit
+}
+
+export function toPxJS(value: SheetSnapPoint, viewportSize: number): number {
   if (typeof value === 'number') return value
-  const s = String(value).trim()
-  if (s === 'fit') return -1
-  const m = /^\d+(?:\.\d+)?%$/.exec(s)
-  if (m) {
-    return (Number.parseFloat(m[0]) / 100) * viewportSize
+  if (isFitSnapPoint(value)) return -1
+  if (typeof value === 'string') {
+    const s = value.trim()
+    const m = /^\d+(?:\.\d+)?%$/.exec(s)
+    if (m) {
+      return (Number.parseFloat(m[0]) / 100) * viewportSize
+    }
+    const px = /^\d+(?:\.\d+)?px$/.exec(s)
+    if (px) {
+      return Number.parseFloat(px[0])
+    }
+    const num = /^\d+(?:\.\d+)?$/.exec(s)
+    if (num) {
+      return Number.parseFloat(num[0])
+    }
   }
-  const px = /^\d+(?:\.\d+)?px$/.exec(s)
-  if (px) {
-    return Number.parseFloat(px[0])
-  }
-  const num = /^\d+(?:\.\d+)?$/.exec(s)
-  if (num) {
-    return Number.parseFloat(num[0])
-  }
-  throw new Error(`[Sheet] Invalid snap point: ${value}`)
+  throw new Error(`[Sheet] Invalid snap point: ${String(value)}`)
 }
 
 const DEFAULT_VERTICAL_CLAIMED_GESTURE_ANGLES: [number, number][] = [

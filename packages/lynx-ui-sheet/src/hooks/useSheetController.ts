@@ -17,6 +17,7 @@ export interface SheetControllerOptions {
   onUnmount?: () => void
   onBeforeDismiss?: () => void
   onResurrected?: () => void
+  onPresenceChangeMT?: SheetRootProps['main-thread:onPresenceChange']
   presenceStateMTRef?: MainThreadRef<PresenceState>
 }
 
@@ -56,6 +57,7 @@ export function useSheetController(
     onUnmount,
     onBeforeDismiss,
     onResurrected,
+    onPresenceChangeMT,
     presenceStateMTRef: presenceStateMTRefProp,
   } = options
 
@@ -88,6 +90,7 @@ export function useSheetController(
       onDismiss,
       onUnmount,
       onBeforeDismiss,
+      onPresenceChangeMT,
     },
     presenceStateMTRefProp,
   )

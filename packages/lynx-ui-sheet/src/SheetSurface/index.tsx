@@ -21,16 +21,22 @@ import type {
 import type {
   SheetContentProps,
   SheetCornerRadius,
-  SheetInsets,
+  SheetSnapPoint,
+  SheetSurfaceFrame,
+  SheetViewportSize,
 } from '../types'
+import { isFitSnapPoint } from '../utils/direction'
+import { resolveSurfaceHorizontalFrame } from '../utils/surfaceFrame'
 
 export interface SheetSurfaceProps extends SheetContentProps {
   dragHandlers: SheetDragContextValue['dragHandlers']
   sheetGesture?: GestureKind
   resolvedSide: 'top' | 'bottom' | 'left' | 'right'
+  enableRTL: boolean
   handleOnly?: boolean
-  snapPoints: Array<number | string>
+  snapPoints: SheetSnapPoint[]
   maxSnapSize: number
+  fitMaxSize?: number
   screenWidth: number
   positioner?: SheetPositionerDimensions | null
   footerContext: SheetFooterContextValue
@@ -41,8 +47,12 @@ export interface SheetSurfaceProps extends SheetContentProps {
   setViewportMTRef: (element: MainThread.Element) => void
   setSheetMTRef: (element: MainThread.Element | null) => void
   setContentMTRef: (element: MainThread.Element) => void
-  setInsetsMT: (insets: SheetInsets, options?: { animating?: boolean }) => void
+  setFrameMT: (
+    frame: SheetSurfaceFrame,
+    options?: { animating?: boolean },
+  ) => void
   setCornerRadiusMT: (radius: SheetCornerRadius | undefined) => void
+  getViewportSizeMT: () => SheetViewportSize
   handleSheetLayoutChangeMT: (event: {
     detail?: { height?: number, width?: number }
     params?: { height?: number, width?: number }
@@ -61,14 +71,16 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
-    initialInsets,
+    initialFrame,
     initialCornerRadius: _initialCornerRadius,
     dragHandlers,
     sheetGesture,
     resolvedSide,
+    enableRTL,
     handleOnly,
     snapPoints,
     maxSnapSize,
+    fitMaxSize,
     screenWidth,
     positioner,
     footerContext,
@@ -79,14 +91,15 @@ export function SheetSurface(props: SheetSurfaceProps) {
     setViewportMTRef,
     setSheetMTRef,
     setContentMTRef,
-    setInsetsMT,
+    setFrameMT,
     setCornerRadiusMT,
+    getViewportSizeMT,
     handleSheetLayoutChangeMT,
     ...nativeProps
   } = props
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
-  const hasFitSnapPoint = snapPoints.some(p => String(p).trim() === 'fit')
+  const hasFitSnapPoint = snapPoints.some(point => isFitSnapPoint(point))
   const dragOnContent = isHorizontal && !handleOnly
   const dragOnSurface = !isHorizontal && !handleOnly
   const sheetDragContext = {
@@ -98,29 +111,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
     { left: number, width: number } | null | undefined
   >(undefined)
   if (mountHorizontalFrame.current === undefined) {
-    const hasHorizontal = !isHorizontal
-      && (initialInsets?.left !== undefined
-        || initialInsets?.right !== undefined)
-    if (hasHorizontal) {
-      const left = Math.max(
-        0,
-        Number.isFinite(initialInsets?.left)
-          ? (initialInsets?.left ?? 0)
-          : 0,
-      )
-      const right = Math.max(
-        0,
-        Number.isFinite(initialInsets?.right)
-          ? (initialInsets?.right ?? 0)
-          : 0,
-      )
-      mountHorizontalFrame.current = {
-        left,
-        width: Math.max(0, screenWidth - left - right),
-      }
-    } else {
-      mountHorizontalFrame.current = null
-    }
+    mountHorizontalFrame.current = isHorizontal
+      ? null
+      : resolveSurfaceHorizontalFrame(initialFrame, screenWidth, enableRTL)
   }
   const initialLeft = mountHorizontalFrame.current?.left
   const initialWidth = mountHorizontalFrame.current?.width
@@ -131,8 +124,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
     if (surfaceControllerRef) {
       surfaceControllerRef.current = element
         ? {
-          setInsets: setInsetsMT,
+          setFrame: setFrameMT,
           setCornerRadius: setCornerRadiusMT,
+          getViewportSize: getViewportSizeMT,
         }
         : null
     }
@@ -144,12 +138,13 @@ export function SheetSurface(props: SheetSurfaceProps) {
       'main thread'
       if (surfaceControllerRef.current) {
         surfaceControllerRef.current = {
-          setInsets: setInsetsMT,
+          setFrame: setFrameMT,
           setCornerRadius: setCornerRadiusMT,
+          getViewportSize: getViewportSizeMT,
         }
       }
     })()
-  }, [surfaceControllerRef, setInsetsMT, setCornerRadiusMT])
+  }, [surfaceControllerRef, setFrameMT, setCornerRadiusMT, getViewportSizeMT])
 
   const content = (
     <view
@@ -163,6 +158,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
           bottom: 0,
           ...(resolvedSide === 'left' ? { right: 0 } : { left: 0 }),
           height: '100%',
+          ...(hasFitSnapPoint && maxSnapSize === 0 && fitMaxSize !== undefined
+            ? { maxWidth: `${fitMaxSize}px` }
+            : {}),
           ...innerStyle,
           ...(hasFitSnapPoint ? {} : { width: `${maxSnapSize}px` }),
         }
@@ -170,6 +168,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
           width: '100%',
           position: 'relative',
           pointerEvents: 'auto',
+          ...(hasFitSnapPoint && maxSnapSize === 0 && fitMaxSize !== undefined
+            ? { maxHeight: `${fitMaxSize}px` }
+            : {}),
           ...innerStyle,
           ...(hasFitSnapPoint ? {} : { height: '100%' }),
         }}
@@ -261,6 +262,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
         event-through={true}
       >
         <view
+          implicit-animation='false'
           {...nativeProps}
           className={className}
           style={{

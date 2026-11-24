@@ -454,6 +454,156 @@ The root component of the Sheet, containing all of its child components.
     "docTypeFallback": null
   },
   {
+    "name": "main-thread:onPresenceChange",
+    "type": "(state: SheetPresenceState) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called on the main thread when the Sheet transitions between presence states\n("
+      },
+      {
+        "kind": "code",
+        "text": "`'entering'`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`'entered'`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`'leaving'`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`'left'`"
+      },
+      {
+        "kind": "text",
+        "text": "), including drag resurrection\nfrom "
+      },
+      {
+        "kind": "code",
+        "text": "`'leaving'`"
+      },
+      {
+        "kind": "text",
+        "text": " to "
+      },
+      {
+        "kind": "code",
+        "text": "`'entering'`"
+      },
+      {
+        "kind": "text",
+        "text": " (emitted before "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onDragStart`"
+      },
+      {
+        "kind": "text",
+        "text": ").\nUse the "
+      },
+      {
+        "kind": "code",
+        "text": "`main thread`"
+      },
+      {
+        "kind": "text",
+        "text": " directive in the callback."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 在主线程切换生命周期状态（"
+      },
+      {
+        "kind": "code",
+        "text": "`'entering'`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`'entered'`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`'leaving'`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`'left'`"
+      },
+      {
+        "kind": "text",
+        "text": "）时触发，\n包含从 "
+      },
+      {
+        "kind": "code",
+        "text": "`'leaving'`"
+      },
+      {
+        "kind": "text",
+        "text": " 拖拽恢复至 "
+      },
+      {
+        "kind": "code",
+        "text": "`'entering'`"
+      },
+      {
+        "kind": "text",
+        "text": "（在 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onDragStart`"
+      },
+      {
+        "kind": "text",
+        "text": " 之前触发）。请在回调中使用 "
+      },
+      {
+        "kind": "code",
+        "text": "`main thread`"
+      },
+      {
+        "kind": "text",
+        "text": " 指令。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "main-thread:onSnapStart",
     "type": "(index: number, value: number, animated: boolean) => void",
     "summary": [
@@ -1022,11 +1172,27 @@ The root component of the Sheet, containing all of its child components.
   },
   {
     "name": "snapPoints",
-    "type": "(string | number)[]",
+    "type": "SheetSnapPoint[]",
     "summary": [
       {
         "kind": "text",
-        "text": "The snap points of the Sheet. Can be pixel numbers, percentages, or 'fit'.\n- Numbers are treated as pixel values\n- Percentages (e.g., '50%') are relative to screen height for "
+        "text": "The snap points of the Sheet. Can be pixel numbers, percentages, "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": ",\nor a bounded fit entry "
+      },
+      {
+        "kind": "code",
+        "text": "`{ fit: { min?, max? } }`"
+      },
+      {
+        "kind": "text",
+        "text": ".\n- Numbers are treated as pixel values\n- Percentages (e.g., '50%') are relative to screen height for "
       },
       {
         "kind": "code",
@@ -1074,7 +1240,15 @@ The root component of the Sheet, containing all of its child components.
       },
       {
         "kind": "text",
-        "text": "\n- 'fit' dynamically resolves to the measured content height for "
+        "text": "\n- "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " dynamically resolves to the measured content height for "
       },
       {
         "kind": "code",
@@ -1122,13 +1296,61 @@ The root component of the Sheet, containing all of its child components.
       },
       {
         "kind": "text",
-        "text": "\n- Bottom 'fit' is capped at the local viewport height above the bottom gap.\n  Use scrollable content when the content exceeds that space."
+        "text": "\n- "
+      },
+      {
+        "kind": "code",
+        "text": "`{ fit: { min?, max? } }`"
+      },
+      {
+        "kind": "text",
+        "text": " resolves "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " with main-axis bounds on the total\n  panel size (including bottom safe-area reserve and "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetFooter`"
+      },
+      {
+        "kind": "text",
+        "text": " height)\n- Bottom "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " is capped at the local viewport height above the bottom gap.\n  Use scrollable content when the content exceeds that space."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "Sheet 的吸附点。可以是像素数值、百分比或 'fit'。\n- 数字被视为像素值\n- 百分比（例如 '50%'）在 "
+        "text": "Sheet 的吸附点。可以是像素数值、百分比、"
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 或 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ fit: { min?, max? } }`"
+      },
+      {
+        "kind": "text",
+        "text": "。\n- 数字被视为像素值\n- 百分比（例如 '50%'）在 "
       },
       {
         "kind": "code",
@@ -1176,7 +1398,15 @@ The root component of the Sheet, containing all of its child components.
       },
       {
         "kind": "text",
-        "text": " 模式下相对于屏幕宽度\n- 'fit' 在 "
+        "text": " 模式下相对于屏幕宽度\n- "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 在 "
       },
       {
         "kind": "code",
@@ -1224,7 +1454,31 @@ The root component of the Sheet, containing all of its child components.
       },
       {
         "kind": "text",
-        "text": " 模式下动态解析为测量的内容宽度\n索引顺序与该数组顺序一致。"
+        "text": " 模式下动态解析为测量的内容宽度\n- "
+      },
+      {
+        "kind": "code",
+        "text": "`{ fit: { min?, max? } }`"
+      },
+      {
+        "kind": "text",
+        "text": " 为 "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 指定包含安全区预留与 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetFooter`"
+      },
+      {
+        "kind": "text",
+        "text": " 的整体面板主轴上下限\n索引顺序与该数组顺序一致。"
       }
     ],
     "defaultValue": "['fit']",
@@ -1519,7 +1773,7 @@ Controls the Sheet's overlay layer and stacking order.
   },
   {
     "name": "nativeProps",
-    "type": "ViewProps | OverlayViewProps",
+    "type": "ViewProps | OverlayProps & {cut-out-mode?: boolean, event-through?: boolean, events-pass-through?: boolean, ios-follow-mode-edge?: boolean}",
     "summary": [
       {
         "kind": "text",
@@ -1595,7 +1849,10 @@ Controls the Sheet's overlay layer and stacking order.
 
 ### SheetPositioner {#api-sheet-positioner}
 
-Optional local viewport inside SheetView. Wrap the backdrop and content together.
+Optional local viewport inside SheetView. Wrap the backdrop and content
+together for a localized backdrop, or place SheetBackdrop as a sibling inside
+SheetView for a full-screen backdrop with a constrained sheet viewport (such as
+asymmetric safe areas).
 Width and height can be supplied synchronously in logical pixels or omitted to
 auto-measure the positioner's own bounds on layout.
 CSS places the viewport; its origin does not enter snap or drag calculations.
@@ -1649,6 +1906,44 @@ Updating dimensions preserves the selected snap and active gestures.
       {
         "kind": "text",
         "text": "局部视口高度，正逻辑像素，优先于 screenHeight；省略时自动测量。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onSizeChange",
+    "type": "(size: SheetViewportSize) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Called whenever resolved local viewport dimensions become available or change.\nFires for both explicit "
+      },
+      {
+        "kind": "code",
+        "text": "`width`"
+      },
+      {
+        "kind": "text",
+        "text": "/"
+      },
+      {
+        "kind": "code",
+        "text": "`height`"
+      },
+      {
+        "kind": "text",
+        "text": " props and auto-measured bounds."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当局部视口尺寸首次可用或发生变化时触发，同时覆盖显式传入宽高和自动测量场景。"
       }
     ],
     "defaultValue": "",
@@ -1874,16 +2169,16 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
-    "name": "initialInsets",
-    "type": "SheetInsets",
+    "name": "initialFrame",
+    "type": "SheetSurfaceFrame",
     "summary": [
       {
         "kind": "text",
-        "text": "Opening panel edge insets from the local viewport in logical pixels (for\nexample, "
+        "text": "Opening panel surface constraint frame inside the local viewport (for\nexample, "
       },
       {
         "kind": "code",
-        "text": "`{ bottom: 8 }`"
+        "text": "`{ insets: { bottom: 8 } }`"
       },
       {
         "kind": "text",
@@ -1891,11 +2186,11 @@ The main content of the Sheet.
       },
       {
         "kind": "code",
-        "text": "`{ left: 88, right: 88, bottom: 8 }`"
+        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
       },
       {
         "kind": "text",
-        "text": " for a centered floating card).\nApplied on mount and on each open, including with "
+        "text": " for a\ncentered floating card).\nApplied on mount and on each open, including with "
       },
       {
         "kind": "code",
@@ -1917,11 +2212,11 @@ The main content of the Sheet.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "打开时的面板相对局部视口各边初始间距（逻辑像素，例如 "
+        "text": "打开时的面板在局部视口内的初始约束框（例如 "
       },
       {
         "kind": "code",
-        "text": "`{ bottom: 8 }`"
+        "text": "`{ insets: { bottom: 8 } }`"
       },
       {
         "kind": "text",
@@ -1929,7 +2224,7 @@ The main content of the Sheet.
       },
       {
         "kind": "code",
-        "text": "`{ left: 88, right: 88, bottom: 8 }`"
+        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
       },
       {
         "kind": "text",
@@ -2115,7 +2410,7 @@ The main content of the Sheet.
       },
       {
         "kind": "code",
-        "text": "`initialInsets`"
+        "text": "`initialFrame`"
       },
       {
         "kind": "text",
@@ -2161,7 +2456,7 @@ The main content of the Sheet.
       },
       {
         "kind": "code",
-        "text": "`initialInsets`"
+        "text": "`initialFrame`"
       },
       {
         "kind": "text",
@@ -2528,16 +2823,16 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "docTypeFallback": null
   },
   {
-    "name": "initialInsets",
-    "type": "SheetInsets",
+    "name": "initialFrame",
+    "type": "SheetSurfaceFrame",
     "summary": [
       {
         "kind": "text",
-        "text": "Opening panel edge insets from the local viewport in logical pixels (for\nexample, "
+        "text": "Opening panel surface constraint frame inside the local viewport (for\nexample, "
       },
       {
         "kind": "code",
-        "text": "`{ bottom: 8 }`"
+        "text": "`{ insets: { bottom: 8 } }`"
       },
       {
         "kind": "text",
@@ -2545,11 +2840,11 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "code",
-        "text": "`{ left: 88, right: 88, bottom: 8 }`"
+        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
       },
       {
         "kind": "text",
-        "text": " for a centered floating card).\nApplied on mount and on each open, including with "
+        "text": " for a\ncentered floating card).\nApplied on mount and on each open, including with "
       },
       {
         "kind": "code",
@@ -2571,11 +2866,11 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "summary_zh": [
       {
         "kind": "text",
-        "text": "打开时的面板相对局部视口各边初始间距（逻辑像素，例如 "
+        "text": "打开时的面板在局部视口内的初始约束框（例如 "
       },
       {
         "kind": "code",
-        "text": "`{ bottom: 8 }`"
+        "text": "`{ insets: { bottom: 8 } }`"
       },
       {
         "kind": "text",
@@ -2583,7 +2878,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "code",
-        "text": "`{ left: 88, right: 88, bottom: 8 }`"
+        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
       },
       {
         "kind": "text",
@@ -2769,7 +3064,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "code",
-        "text": "`initialInsets`"
+        "text": "`initialFrame`"
       },
       {
         "kind": "text",
@@ -2815,7 +3110,7 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       },
       {
         "kind": "code",
-        "text": "`initialInsets`"
+        "text": "`initialFrame`"
       },
       {
         "kind": "text",
@@ -3305,6 +3600,440 @@ The handle of the Sheet.
   }
 ]}/>
 
+### SheetFitBounds {#api-supporting-types-sheet-fit-bounds}
+
+Main-axis bounds for a bounded `'fit'` snap point inside `snapPoints`,
+applied to the total `'fit'` panel size (including bottom safe-area reserve
+and `SheetFooter` height). Values accept logical pixels or local-viewport percentages.
+
+<UIApiTable source={[
+  {
+    "name": "max",
+    "type": "SheetSurfaceSize",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Maximum total panel size along the main axis in logical pixels or viewport percentage."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主轴方向的整体面板最大尺寸，支持逻辑像素数值或局部视口百分比字符串。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "min",
+    "type": "SheetSurfaceSize",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum total panel size along the main axis in logical pixels or viewport percentage."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主轴方向的整体面板最小尺寸，支持逻辑像素数值或局部视口百分比字符串。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetFitSnapPoint {#api-supporting-types-sheet-fit-snap-point}
+
+Bounded `'fit'` snap point entry for `snapPoints`. Passing `{ fit: {} }` is
+equivalent to `'fit'`.
+
+<UIApiTable source={[
+  {
+    "name": "fit",
+    "type": "SheetFitBounds",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Minimum and maximum bounds for this "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " snap point."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "该 "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 吸附点的最小/最大尺寸约束。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetSnapPoint {#api-supporting-types-sheet-snap-point}
+
+<UIApiTable source={[
+  {
+    "name": "SheetSnapPoint",
+    "type": "number | string | SheetFitSnapPoint",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "A snap point entry accepted by "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetRoot.snapPoints`"
+      },
+      {
+        "kind": "text",
+        "text": ".\nAccepts logical pixel numbers, "
+      },
+      {
+        "kind": "code",
+        "text": "`'%'`"
+      },
+      {
+        "kind": "text",
+        "text": " / "
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " strings, "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": ", or "
+      },
+      {
+        "kind": "code",
+        "text": "`{ fit: { min?, max? } }`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "code",
+        "text": "`SheetRoot.snapPoints`"
+      },
+      {
+        "kind": "text",
+        "text": " 支持的吸附点项：像素数值、百分比/"
+      },
+      {
+        "kind": "code",
+        "text": "`px`"
+      },
+      {
+        "kind": "text",
+        "text": " 字符串、"
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": " 或 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ fit: { min?, max? } }`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "number | string | SheetFitSnapPoint"
+        }
+      ]
+    }
+  }
+]}/>
+
+### SheetPresenceState {#api-supporting-types-sheet-presence-state}
+
+<UIApiTable source={[
+  {
+    "name": "SheetPresenceState",
+    "type": "entering | entered | leaving | left",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Presence lifecycle states emitted on the main thread while opening or closing the Sheet."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 打开或关闭过程中在主线程派发的生命周期状态。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetSurfaceFrame {#api-supporting-types-sheet-surface-frame}
+
+Surface frame constraint box inside the local viewport.
+`insets` define minimum edge margins, `width`/`maxWidth` are clamped to the
+available horizontal corridor (`screenWidth - left - right`), and `align`
+distributes remaining horizontal slack. When passed to `setFrame`, omitted or
+`undefined` fields reset to their defaults.
+
+<UIApiTable source={[
+  {
+    "name": "align",
+    "type": "SheetSurfaceAlign",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "insets",
+    "type": "SheetInsets",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "maxWidth",
+    "type": "SheetSurfaceSize",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "SheetSurfaceSize",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetSurfaceSize {#api-supporting-types-sheet-surface-size}
+
+<UIApiTable source={[
+  {
+    "name": "SheetSurfaceSize",
+    "type": "number | `${number}%`",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Panel width or maximum width inside the local viewport, expressed either in\nlogical pixels or as a percentage string of the local viewport width."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "局部视口内的面板宽度或最大宽度，支持逻辑像素数值或相对局部视口宽度的百分比字符串。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "number | "
+        },
+        {
+          "kind": "code",
+          "text": "`${number}%`"
+        }
+      ]
+    }
+  }
+]}/>
+
+### SheetSurfaceAlign {#api-supporting-types-sheet-surface-align}
+
+<UIApiTable source={[
+  {
+    "name": "SheetSurfaceAlign",
+    "type": "start | center | end",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Horizontal alignment of the sheet surface within the available corridor left\nby "
+      },
+      {
+        "kind": "code",
+        "text": "`insets`"
+      },
+      {
+        "kind": "text",
+        "text": ". "
+      },
+      {
+        "kind": "code",
+        "text": "`'start'`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`'end'`"
+      },
+      {
+        "kind": "text",
+        "text": " respect "
+      },
+      {
+        "kind": "code",
+        "text": "`enableRTL`"
+      },
+      {
+        "kind": "text",
+        "text": ". Defaults to "
+      },
+      {
+        "kind": "code",
+        "text": "`'center'`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "面板在 "
+      },
+      {
+        "kind": "code",
+        "text": "`insets`"
+      },
+      {
+        "kind": "text",
+        "text": " 预留可用空间内的水平对齐方式；"
+      },
+      {
+        "kind": "code",
+        "text": "`'start'`"
+      },
+      {
+        "kind": "text",
+        "text": " 与 "
+      },
+      {
+        "kind": "code",
+        "text": "`'end'`"
+      },
+      {
+        "kind": "text",
+        "text": " 会跟随 "
+      },
+      {
+        "kind": "code",
+        "text": "`enableRTL`"
+      },
+      {
+        "kind": "text",
+        "text": "，默认为 "
+      },
+      {
+        "kind": "code",
+        "text": "`'center'`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
 ### SheetInsets {#api-supporting-types-sheet-insets}
 
 <UIApiTable source={[
@@ -3375,12 +4104,82 @@ The handle of the Sheet.
   }
 ]}/>
 
+### SheetViewportSize {#api-supporting-types-sheet-viewport-size}
+
+Current local viewport dimensions (from `SheetPositioner` when mounted, or
+fallback `screenWidth`/`screenHeight`) in logical pixels.
+
+<UIApiTable source={[
+  {
+    "name": "height",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "width",
+    "type": "number",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
 ### SheetSurfaceController {#api-supporting-types-sheet-surface-controller}
 
-Main-thread controller for updating the Sheet surface's geometry and corner shape.
+Main-thread controller for updating the Sheet surface's constraint frame and corner shape.
 Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on the main thread.
 
 <UIApiTable source={[
+  {
+    "name": "getViewportSize",
+    "type": "() => SheetViewportSize",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Read the current local viewport dimensions ("
+      },
+      {
+        "kind": "code",
+        "text": "`{ width, height }`"
+      },
+      {
+        "kind": "text",
+        "text": ") on the main thread."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "在主线程读取当前局部视口尺寸（"
+      },
+      {
+        "kind": "code",
+        "text": "`{ width, height }`"
+      },
+      {
+        "kind": "text",
+        "text": "）。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
   {
     "name": "setCornerRadius",
     "type": "(radius: SheetCornerRadius | undefined) => void",
@@ -3404,12 +4203,28 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
     "docTypeFallback": null
   },
   {
-    "name": "setInsets",
-    "type": "(insets: SheetInsets, options?: {animating?: boolean}) => void",
+    "name": "setFrame",
+    "type": "(frame: SheetSurfaceFrame, options?: {animating?: boolean}) => void",
     "summary": [
       {
         "kind": "text",
-        "text": "Update panel edge insets from the local viewport in logical pixels.\nPass "
+        "text": "Replace the panel surface constraint frame inside the local viewport in logical pixels.\nAny omitted or "
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": " field resets to its default (0 insets, full available width,\nno max-width cap, "
+      },
+      {
+        "kind": "code",
+        "text": "`'center'`"
+      },
+      {
+        "kind": "text",
+        "text": " alignment). Pass "
       },
       {
         "kind": "code",
@@ -3417,7 +4232,7 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": " on intermediate animation frames to defer\ncommitting bottom clip and viewport layout bounds until the final update\n(when "
+        "text": " on intermediate animation\nframes to defer committing bottom clip and viewport layout bounds until the final update\n(when "
       },
       {
         "kind": "code",
@@ -3439,7 +4254,15 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
     "summary_zh": [
       {
         "kind": "text",
-        "text": "更新面板相对局部视口各边的逻辑像素间距。动画中间帧可传入 "
+        "text": "全量替换局部视口内的面板约束框（逻辑像素）。省略或为 "
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": " 的字段将恢复默认值\n（零边距、占满可用宽度、无最大宽度限制、居中对齐）。动画中间帧可传入 "
       },
       {
         "kind": "code",
@@ -3447,7 +4270,7 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": "，将底部裁剪和视口布局边界推迟到最终更新（省略或传 "
+        "text": "，\n将底部裁剪和视口布局边界推迟到最终更新（省略或传 "
       },
       {
         "kind": "code",

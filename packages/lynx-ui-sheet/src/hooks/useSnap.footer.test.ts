@@ -8,6 +8,7 @@ import type * as MotionMini from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { SheetSnapPoint } from '../types'
 import { useSnap } from './useSnap'
 
 vi.mock('@lynx-js/react', () => ({
@@ -47,13 +48,14 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 }))
 
 function setup(
-  snapPoints: Array<number | string> = ['fit'],
+  snapPoints: SheetSnapPoint[] = ['fit'],
   onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
-  initialInsets?: Parameters<typeof useSnap>[0]['initialInsets'],
+  initialFrame?: Parameters<typeof useSnap>[0]['initialFrame'],
   initialCornerRadius?: Parameters<typeof useSnap>[0]['initialCornerRadius'],
   callbacks?: {
     onDragStartMT?: () => void
     onPositionChangeMT?: (position: number) => void
+    onPresenceChangeMT?: Parameters<typeof useSnap>[0]['onPresenceChangeMT']
   },
 ) {
   const state = { current: PresenceState.Left }
@@ -62,7 +64,7 @@ function setup(
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
-    initialInsets,
+    initialFrame,
     initialCornerRadius,
     screenHeight: 800,
     screenWidth: 400,
@@ -72,6 +74,7 @@ function setup(
     onSnapStartMT: onSnapStart,
     onDragStartMT: callbacks?.onDragStartMT,
     onPositionChangeMT: callbacks?.onPositionChangeMT,
+    onPresenceChangeMT: callbacks?.onPresenceChangeMT,
   })
   const styles = vi.fn()
   const element = {
@@ -163,7 +166,9 @@ describe('Sheet intrinsic and footer fit sizing', () => {
   })
 
   it('caps plain fit at the space above the gap without changing a percentage snap', () => {
-    const { snap } = setup(['fit', '100%'], undefined, { bottom: 8 })
+    const { snap } = setup(['fit', '100%'], undefined, {
+      insets: { bottom: 8 },
+    })
     snap.handleSheetLayoutChangeMT({ detail: { height: 930 } })
     snap.showMT({ animate: false })
     expect(snap.getResolvedSnapOffsets()).toEqual([792, 800])
@@ -253,7 +258,7 @@ describe('Sheet intrinsic and footer fit sizing', () => {
       const { snap, styles, mountFooter } = setup(
         [400, '100%'],
         undefined,
-        { bottom: 8 },
+        { insets: { bottom: 8 } },
         cornerRadius,
       )
       mountFooter(96)
@@ -367,5 +372,47 @@ describe('Sheet intrinsic and footer fit sizing', () => {
     expect(onDragStartMT).toHaveBeenCalledTimes(1)
     snap.yRef.current.set(640)
     expect(onPositionChangeMT).toHaveBeenLastCalledWith(640)
+  })
+
+  it('applies bounded fit min and max without capping larger explicit snaps and treats empty fit objects like fit', () => {
+    const { snap, mountFooter } = setup(
+      [{ fit: { min: 166, max: '73%' } }, '100%'],
+      undefined,
+      { insets: { bottom: 8 } },
+    )
+    snap.handleSheetLayoutChangeMT({ detail: { height: 60 } })
+    mountFooter(40)
+    expect(snap.getResolvedSnapOffsets()).toEqual([166, 800])
+
+    snap.handleSheetLayoutChangeMT({ detail: { height: 700 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([584, 800])
+
+    const emptyBounds = setup([{ fit: {} }])
+    emptyBounds.snap.handleSheetLayoutChangeMT({ detail: { height: 240 } })
+    expect(emptyBounds.snap.getResolvedSnapOffsets()).toEqual([240])
+    expect(emptyBounds.snap.fitMaxSize).toBeUndefined()
+  })
+
+  it('notifies main-thread onPresenceChange across open, close, and drag resurrection', () => {
+    const events: string[] = []
+    const { snap } = setup([300, 600], undefined, undefined, undefined, {
+      onPresenceChangeMT: state => events.push(`presence:${state}`),
+      onDragStartMT: () => events.push('dragStart'),
+    })
+    snap.showMT({ animate: false })
+    expect(events).toEqual(['presence:entering', 'presence:entered'])
+
+    events.length = 0
+    snap.closeMT()
+    expect(events).toEqual(['presence:leaving'])
+
+    // Dragging during close emits presence:entering before onDragStart.
+    events.length = 0
+    snap.onDragStartMT()
+    expect(events).toEqual(['presence:entering', 'dragStart'])
+
+    events.length = 0
+    snap.closeMT({ animate: false })
+    expect(events).toEqual(['presence:leaving', 'presence:left'])
   })
 })

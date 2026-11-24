@@ -90,9 +90,11 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         dragHandlers={{ gesture: dragEnabled ? sheetGesture : undefined }}
         sheetGesture={dragEnabled ? sheetGesture : undefined}
         resolvedSide={context.resolvedSide}
+        enableRTL={context.enableRTL}
         handleOnly={context.handleOnly}
         snapPoints={snapPoints}
         maxSnapSize={snap.maxSnapSize}
+        fitMaxSize={snap.fitMaxSize}
         screenWidth={snap.screenWidth}
         positioner={positioner}
         footerContext={snap.footerContext}
@@ -103,8 +105,9 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         setViewportMTRef={snap.setViewportMTRef}
         setSheetMTRef={snap.setSheetMTRef}
         setContentMTRef={snap.setContentMTRef}
-        setInsetsMT={snap.setInsetsMT}
+        setFrameMT={snap.setFrameMT}
         setCornerRadiusMT={snap.setCornerRadiusMT}
+        getViewportSizeMT={snap.getViewportSizeMT}
         handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
       >
         {resolvedChildren}

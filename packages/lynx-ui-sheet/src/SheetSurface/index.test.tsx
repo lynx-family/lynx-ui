@@ -58,12 +58,14 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
   refs.cursor = 0
   const measure = vi.fn()
   const gesture = {} as NonNullable<SheetSurfaceProps['sheetGesture']>
-  const setInsetsMT = vi.fn()
+  const setFrameMT = vi.fn()
   const setCornerRadiusMT = vi.fn()
+  const getViewportSizeMT = vi.fn(() => ({ width: 1000, height: 800 }))
   const buildTree = (nextOverrides: Partial<SheetSurfaceProps> = {}) => {
     refs.cursor = 0
     const surface = SheetSurface({
       resolvedSide: 'bottom',
+      enableRTL: false,
       snapPoints: [400, 800],
       maxSnapSize: 800,
       screenWidth: 1000,
@@ -86,8 +88,9 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       setSurfaceMTRef: vi.fn(),
       setViewportMTRef: vi.fn(),
       setContentMTRef: measure,
-      setInsetsMT,
+      setFrameMT,
       setCornerRadiusMT,
+      getViewportSizeMT,
       handleSheetLayoutChangeMT: vi.fn(),
       ...overrides,
       ...nextOverrides,
@@ -104,8 +107,9 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       panel,
       measure,
       gesture,
-      setInsetsMT,
+      setFrameMT,
       setCornerRadiusMT,
+      getViewportSizeMT,
     }
   }
   return {
@@ -121,7 +125,13 @@ describe('Sheet surface composition', () => {
     }
     const setSurfaceMTRef = vi.fn()
     const setSheetMTRef = vi.fn()
-    const { painted, movement, setInsetsMT, setCornerRadiusMT } = renderSurface(
+    const {
+      painted,
+      movement,
+      setFrameMT,
+      setCornerRadiusMT,
+      getViewportSizeMT,
+    } = renderSurface(
       {
         'main-thread:surfaceControllerRef': surfaceControllerRef,
         setSurfaceMTRef,
@@ -136,10 +146,19 @@ describe('Sheet surface composition', () => {
     expect(setSheetMTRef).toHaveBeenCalledWith(movementElement)
     expect(setSurfaceMTRef).toHaveBeenCalledWith(element)
     expect(surfaceControllerRef.current).not.toBeNull()
-    surfaceControllerRef.current?.setInsets({ bottom: 0, left: 0, right: 0 })
+    surfaceControllerRef.current?.setFrame({
+      insets: { bottom: 0, left: 0, right: 0 },
+    })
     surfaceControllerRef.current?.setCornerRadius(0)
-    expect(setInsetsMT).toHaveBeenCalledWith({ bottom: 0, left: 0, right: 0 })
+    expect(setFrameMT).toHaveBeenCalledWith({
+      insets: { bottom: 0, left: 0, right: 0 },
+    })
     expect(setCornerRadiusMT).toHaveBeenCalledWith(0)
+    expect(surfaceControllerRef.current?.getViewportSize()).toEqual({
+      width: 1000,
+      height: 800,
+    })
+    expect(getViewportSizeMT).toHaveBeenCalledTimes(1)
     expect(painted.props).not.toHaveProperty('main-thread:surfaceControllerRef')
 
     painted.props['main-thread:ref'](null)
@@ -231,21 +250,53 @@ describe('Sheet surface composition', () => {
     )
   })
 
-  it('computes initial horizontal surface bounds from initialInsets without leaking to native props', () => {
+  it('computes initial horizontal surface bounds from initialFrame without leaking to native props', () => {
     const child = { type: 'scroll-view' }
     const attached = renderSurface({ children: child })
     const floating = renderSurface({
-      initialInsets: { left: 88, right: 88, bottom: 8 },
+      initialFrame: { insets: { left: 88, right: 88, bottom: 8 } },
       screenWidth: 840,
       children: child,
     })
-    expect(floating.painted.props).not.toHaveProperty('initialInsets')
+    expect(floating.painted.props).not.toHaveProperty('initialFrame')
     expect(floating.painted.props.style.left).toBe('88px')
     expect(floating.painted.props.style.width).toBe('664px')
     expect(floating.painted.props['main-thread:gesture']).toBe(floating.gesture)
     expect(floating.panel.props['main-thread:gesture']).toBeUndefined()
     expect(floating.panel.props.style).toEqual(attached.panel.props.style)
     expect(floating.viewport.props.style.height).toBe('800px')
+
+    const maxCard = renderSurface({
+      initialFrame: {
+        insets: { left: 16, right: 16, bottom: 8 },
+        maxWidth: 664,
+      },
+      screenWidth: 1000,
+      children: child,
+    })
+    expect(maxCard.painted.props.style.left).toBe('168px')
+    expect(maxCard.painted.props.style.width).toBe('664px')
+
+    const percentCard = renderSurface({
+      initialFrame: { width: '80%' },
+      screenWidth: 500,
+      children: child,
+    })
+    expect(percentCard.painted.props.style.left).toBe('50px')
+    expect(percentCard.painted.props.style.width).toBe('400px')
+
+    const rtlAligned = renderSurface({
+      initialFrame: {
+        insets: { left: 20, right: 40 },
+        width: 500,
+        align: 'start',
+      },
+      screenWidth: 1000,
+      enableRTL: true,
+      children: child,
+    })
+    expect(rtlAligned.painted.props.style.left).toBe('460px')
+    expect(rtlAligned.painted.props.style.width).toBe('500px')
   })
 
   it('seeds Frame-0 horizontal bounds with surfaceControllerRef and freezes JSX styles across rerenders', () => {
@@ -254,14 +305,14 @@ describe('Sheet surface composition', () => {
     }
     const mounted = renderSurface({
       'main-thread:surfaceControllerRef': surfaceControllerRef,
-      initialInsets: { left: 60, right: 80, bottom: 8 },
+      initialFrame: { insets: { left: 60, right: 80, bottom: 8 } },
       screenWidth: 1000,
     })
     expect(mounted.painted.props.style.left).toBe('60px')
     expect(mounted.painted.props.style.width).toBe('860px')
 
     const updated = mounted.rerender({
-      initialInsets: { left: 10, right: 10, bottom: 0 },
+      initialFrame: { insets: { left: 10, right: 10, bottom: 0 } },
       screenWidth: 1000,
     })
     expect(updated.painted.props.style.left).toBe('60px')
@@ -272,5 +323,45 @@ describe('Sheet surface composition', () => {
     const { painted, panel } = renderSurface({ initialCornerRadius: 24 })
     expect(painted.props).not.toHaveProperty('initialCornerRadius')
     expect(panel.props).not.toHaveProperty('initialCornerRadius')
+  })
+
+  it('disables host implicit-animation on the painted surface by default and applies fitMaxSize for fit-only sheets', () => {
+    const verticalFit = renderSurface({
+      resolvedSide: 'bottom',
+      snapPoints: [{ fit: { max: 520 } }],
+      maxSnapSize: 0,
+      fitMaxSize: 520,
+    })
+    expect(
+      (verticalFit.painted.props as Record<string, unknown>)[
+        'implicit-animation'
+      ],
+    ).toBe('false')
+    expect(verticalFit.panel.props.style.maxHeight).toBe('520px')
+
+    const multiSnap = renderSurface({
+      resolvedSide: 'bottom',
+      snapPoints: [{ fit: { max: 520 } }, '100%'],
+      maxSnapSize: 800,
+      fitMaxSize: 520,
+    })
+    expect(multiSnap.panel.props.style.maxHeight).toBeUndefined()
+
+    const horizontalFit = renderSurface({
+      resolvedSide: 'right',
+      snapPoints: [{ fit: { max: 420 } }],
+      maxSnapSize: 0,
+      fitMaxSize: 420,
+    })
+    expect(horizontalFit.movement.props.style.maxWidth).toBe('420px')
+
+    const customImplicit = renderSurface({
+      ...({ 'implicit-animation': true } as Partial<SheetSurfaceProps>),
+    })
+    expect(
+      (customImplicit.painted.props as Record<string, unknown>)[
+        'implicit-animation'
+      ],
+    ).toBe(true)
   })
 })

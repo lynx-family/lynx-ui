@@ -20,10 +20,12 @@ import {
   SheetPositioner,
   SheetRoot,
   SheetView,
-  screenHeight,
-  screenWidth,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
+import type {
+  SheetRootRef,
+  SheetSurfaceController,
+  SheetSurfaceFrame,
+} from '@lynx-js/lynx-ui'
 import {
   animate,
   useMotionValueRef,
@@ -35,6 +37,11 @@ import './index.css'
 
 // These fixed viewport boundaries stay unchanged as the panel moves and widens.
 const viewportInsets = { top: 64, right: 84 }
+const FLOATING_FRAME: SheetSurfaceFrame = {
+  insets: { bottom: 8 },
+  width: '50%',
+  maxWidth: 664,
+}
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -42,35 +49,31 @@ function App() {
     null,
   )
   const [show, setShow] = useState(true)
-  const [viewport, setViewport] = useState({
-    width: screenWidth,
-    height: screenHeight,
-  })
-  const fullscreenHeight = viewport.height
-  const floatingWidth = Math.min(
-    viewport.width,
-    664,
-    Math.max(192, viewport.width - 256),
-  )
-  const floatingSideInset = Math.max(0, (viewport.width - floatingWidth) / 2)
   const progress = useMotionValueRef(0)
   const fullscreenTarget = useMainThreadRef(false)
 
   function applyAppearance(value: number, animating = false) {
     'main thread'
+    const surface = surfaceControllerRef.current
+    if (!surface) return
     const amount = Math.max(0, Math.min(1, value))
-    const sideInset = floatingSideInset * (1 - amount)
-    const bottomInset = 8 * (1 - amount)
     const radius = 24 * (1 - amount)
-    surfaceControllerRef.current?.setInsets(
-      {
-        left: sideInset,
-        right: sideInset,
-        bottom: bottomInset,
-      },
-      animating ? { animating: true } : undefined,
-    )
-    surfaceControllerRef.current?.setCornerRadius(radius)
+    if (!animating && (amount === 0 || amount === 1)) {
+      surface.setFrame(
+        amount === 1 ? { insets: { bottom: 0 } } : FLOATING_FRAME,
+      )
+    } else {
+      const { width: viewportWidth } = surface.getViewportSize()
+      const startWidth = Math.min(664, viewportWidth * 0.5)
+      surface.setFrame(
+        {
+          insets: { bottom: 8 * (1 - amount) },
+          width: startWidth + (viewportWidth - startWidth) * amount,
+        },
+        animating ? { animating: true } : undefined,
+      )
+    }
+    surface.setCornerRadius(radius)
   }
 
   useMotionValueRefEvent(progress, 'change', value => {
@@ -92,7 +95,9 @@ function App() {
 
   function onSnapStart(_index: number, value: number, animated: boolean) {
     'main thread'
-    const nextFullscreen = value >= fullscreenHeight
+    const fullscreenHeight =
+      surfaceControllerRef.current?.getViewportSize().height ?? 0
+    const nextFullscreen = fullscreenHeight > 0 && value >= fullscreenHeight
     const target = nextFullscreen ? 1 : 0
     if (
       fullscreenTarget.current === nextFullscreen
@@ -116,15 +121,6 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    runOnMainThread(() => {
-      'main thread'
-      if (!progress.current.isAnimating()) {
-        applyAppearance(progress.current.get())
-      }
-    })()
-  }, [floatingSideInset])
-
   useEffect(() => () => {
     runOnMainThread(() => {
       'main thread'
@@ -133,13 +129,7 @@ function App() {
   }, [])
 
   return (
-    <view
-      className='demo-container luna-light'
-      bindlayoutchange={event => {
-        const { width, height } = event.detail
-        if (width > 0 && height > 0) setViewport({ width, height })
-      }}
-    >
+    <view className='demo-container luna-light'>
       <view className='launcher'>
         <text className='title'>Room for the content</text>
         <text className='description'>
@@ -172,11 +162,7 @@ function App() {
               className='sheet-surface'
               innerClassName='sheet-layout'
               initialCornerRadius={24}
-              initialInsets={{
-                left: floatingSideInset,
-                right: floatingSideInset,
-                bottom: 8,
-              }}
+              initialFrame={FLOATING_FRAME}
             >
               {({ scrollGesture }) => (
                 <>

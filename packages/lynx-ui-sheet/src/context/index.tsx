@@ -15,6 +15,7 @@ import type {
   SheetBodyProps,
   SheetRootProps,
   SheetSide,
+  SheetSnapPoint,
   SheetTransition,
 } from '../types'
 import type { SheetResolvedSide } from '../utils'
@@ -54,12 +55,13 @@ export interface SheetContextValue {
   sheetProgress: MainThreadRef<MotionValue<number>>
   registerMethods: (methods: SheetMethods | null) => void
   // Physics
-  snapPoints?: Array<number | string>
+  snapPoints?: SheetSnapPoint[]
   initialSnap?: number
   onSnapChange?: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDragStartMT?: SheetRootProps['main-thread:onDragStart']
   onPositionChangeMT?: SheetRootProps['main-thread:onPositionChange']
+  onPresenceChangeMT?: SheetRootProps['main-thread:onPresenceChange']
   side: SheetSide
   enableRTL: boolean
   resolvedSide: SheetResolvedSide
@@ -98,9 +100,11 @@ export interface SheetBodyContextValue {
   intrinsic?: boolean
   resolvedSide?: SheetResolvedSide
   enableRTL?: boolean
+  viewportWidth?: number
   viewportHeight?: number
   setBodyClipMTRef: (element: MainThread.Element | null) => void
   setBodySlotMTRef?: (element: MainThread.Element | null) => void
+  setBodyIntrinsicMTRef?: (element: MainThread.Element | null) => void
   measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
   setBodyMTRef: (
     element: MainThread.Element | null,
