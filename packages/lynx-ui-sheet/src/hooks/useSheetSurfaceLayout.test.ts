@@ -120,6 +120,10 @@ function setup(
     baseStyle?: Parameters<typeof useSheetSurfaceLayout>[0]['surfaceStyle'],
     screenWidth = 1000,
     screenHeight = 1000,
+    controlled?: {
+      frame?: SheetSurfaceFrame
+      cornerRadius?: SheetCornerRadius
+    },
   ) {
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
@@ -130,6 +134,8 @@ function setup(
       presence,
       resolvedSide,
       enableRTL,
+      frame: controlled?.frame,
+      cornerRadius: controlled?.cornerRadius,
       initialCornerRadius: cornerRadius,
       initialFrame: nextFrame,
       surfaceStyle: baseStyle,
@@ -248,7 +254,7 @@ describe('Sheet surface geometry', () => {
     },
   )
 
-  it('applies independent corners immediately and restores CSS when a corner is omitted', () => {
+  it('merges partial corner updates and restores CSS on explicit null or undefined', () => {
     const { render, surfaceStyle } = setup()
     const baseStyle = { borderTopLeftRadius: '12rpx' }
     const { setCornerRadiusMT } = render(
@@ -262,19 +268,34 @@ describe('Sheet surface geometry', () => {
       'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 24px)',
     })
     expect(surfaceStyle).not.toHaveProperty('border-top-right-radius')
-    setCornerRadiusMT({ bottomLeft: 24 })
+
+    // Partial update preserves existing topLeft / bottomRight while updating bottomLeft.
+    setCornerRadiusMT({ bottomLeft: 18 })
+    expect(surfaceStyle).toMatchObject({
+      'border-top-left-radius': '20px',
+      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 18px)',
+    })
+
+    // Explicit null restores topLeft to baseStyle while keeping bottomRight/bottomLeft intact.
+    setCornerRadiusMT({ topLeft: null })
     expect(surfaceStyle).toMatchObject({
       'border-top-left-radius': '12rpx',
-      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 0px 24px)',
+      'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 18px)',
     })
+
+    // Undefined resets all corners to CSS.
+    setCornerRadiusMT(undefined)
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 1100px 0px round 0px 0px 0px 0px)',
+    )
   })
 
-  it('clears a managed corner without inline CSS so class styles can apply', () => {
+  it('clears a corner explicitly set to null without inline CSS so class styles can apply', () => {
     const { setCornerRadiusMT, surfaceStyle } = setup()
     setCornerRadiusMT({ topLeft: 20, topRight: 18 })
     expect(surfaceStyle['border-top-left-radius']).toBe('20px')
 
-    setCornerRadiusMT({ topRight: 18 })
+    setCornerRadiusMT({ topLeft: null })
     expect(surfaceStyle['border-top-left-radius']).toBeNull()
     expect(surfaceStyle['border-top-right-radius']).toBe('18px')
   })
@@ -1169,5 +1190,95 @@ describe('Sheet surface geometry', () => {
     // Tall content (900px > max 450px) clamps slot cleanly to 450 + 26 = 476px (+24px handle = 500px).
     minSetup.bodyContext.measureIntrinsicBodyMT?.({ width: 320, height: 900 })
     expect(minSlot.height).toBe('476px')
+  })
+
+  it('parses px strings in width and maxWidth while rejecting invalid strings', () => {
+    const { setFrameMT, surfaceStyle } = setup({
+      insets: { left: 16, right: 16, bottom: 8 },
+      maxWidth: '664px',
+    })
+    expect(surfaceStyle.left).toBe('168px')
+    expect(surfaceStyle.width).toBe('664px')
+
+    setFrameMT({ width: '500px' })
+    expect(surfaceStyle.left).toBe('250px')
+    expect(surfaceStyle.width).toBe('500px')
+
+    setFrameMT({
+      width: 'px' as unknown as `${number}px`,
+      maxWidth: '50%px' as unknown as `${number}px`,
+    })
+    expect(surfaceStyle.width).toBe('100%')
+  })
+
+  it('updates surface geometry, bottom clip, corners, and SheetBody clamping reactively for controlled frame and cornerRadius', () => {
+    const {
+      render,
+      bodyContext,
+      measureSurfaceMT,
+      measureBodyParentMT,
+      surfaceStyle,
+      clipStyle,
+      viewportStyle,
+    } = setup(undefined, false, 'bottom', 800, false)
+
+    const writeBody = vi.fn()
+    bodyContext.setBodyClipMTRef(
+      { setStyleProperties: vi.fn() } as unknown as MainThread.Element,
+    )
+    bodyContext.setBodyMTRef(
+      { setStyleProperties: writeBody } as unknown as MainThread.Element,
+      { right: 84 },
+    )
+    render(
+      undefined,
+      undefined,
+      undefined,
+      1000,
+      1000,
+      {
+        frame: { insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 },
+        cornerRadius: 26,
+      },
+    )
+    expect(surfaceStyle.left).toBe('168px')
+    expect(surfaceStyle.width).toBe('664px')
+    expect(clipStyle.bottom).toBe('8px')
+    expect(surfaceStyle['border-top-left-radius']).toBe('26px')
+    expect(surfaceStyle['clip-path']).toContain('round 0px 0px 26px 26px')
+
+    measureSurfaceMT(
+      { detail: { left: 168, top: 0 } } as MainThread.LayoutChangeEvent,
+    )
+    measureBodyParentMT({ left: 0, top: 0, width: 664, height: 992 })
+    bodyContext.measureBodyMT({ left: 0, top: 0, width: 664, height: 992 })
+    writeBody.mockClear()
+
+    // Controlled prop update widens to full screen immediately and clamps SheetBody in the same tick.
+    render(
+      undefined,
+      undefined,
+      undefined,
+      1000,
+      1000,
+      {
+        frame: { insets: { bottom: 0 } },
+        cornerRadius: {
+          topLeft: 18,
+          topRight: 18,
+          bottomLeft: 0,
+          bottomRight: 0,
+        },
+      },
+    )
+    expect(surfaceStyle.width).toBe('100%')
+    expect(surfaceStyle.left).toBeNull()
+    expect(clipStyle.bottom).toBe('0px')
+    expect(viewportStyle.height).toBe('800px')
+    expect(surfaceStyle['border-top-left-radius']).toBe('18px')
+    expect(surfaceStyle['clip-path']).toBe('none')
+    expect(writeBody).toHaveBeenCalledWith(
+      expect.objectContaining({ right: '84px' }),
+    )
   })
 })

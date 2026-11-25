@@ -213,6 +213,26 @@ describe('Sheet local viewport calculations and resizing', () => {
     expect(second.surfaceStyle['border-top-left-radius']).toBe('0px')
   })
 
+  it('subtracts positioner pre-measure insets from fallback screen dimensions on Frame 0', () => {
+    const { render } = setup('bottom', ['50%'])
+    const preMeasure = render({ insetX: 60, insetY: 100 }, false)
+    expect(preMeasure.screenWidth).toBe(340)
+    expect(preMeasure.screenHeight).toBe(700)
+    preMeasure.showMT({ animate: false })
+    expect(preMeasure.yRef.current.get()).toBe(350)
+  })
+
+  it('supports px string bounds inside SheetFitBounds', () => {
+    const { render } = setup('bottom', [{ fit: { min: '166px', max: '73%' } }])
+    const snap = render({ width: 400, height: 1000 })
+    snap.showMT({ animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { width: 400, height: 80 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([166])
+
+    snap.handleSheetLayoutChangeMT({ detail: { width: 400, height: 900 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([730])
+  })
+
   it.each(['top', 'bottom', 'left', 'right', 'start', 'end'] as const)(
     'opens %s from local dimensions without a layout event or effect',
     side => {

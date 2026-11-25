@@ -23,8 +23,8 @@ export interface InlineCornerStyles {
   ]
 }
 
-export function normalizeCornerRadius(radius: number | undefined) {
-  return radius !== undefined && Number.isFinite(radius)
+export function normalizeCornerRadius(radius: number | null | undefined) {
+  return radius != null && Number.isFinite(radius)
     ? Math.max(0, radius)
     : null
 }
@@ -42,9 +42,9 @@ export function normalizeCornerRadii(
   ]
 }
 
-function normalizeCornerRadiusMT(radius: number | undefined) {
+function normalizeCornerRadiusMT(radius: number | null | undefined) {
   'main thread'
-  return radius !== undefined && Number.isFinite(radius)
+  return radius != null && Number.isFinite(radius)
     ? Math.max(0, radius)
     : null
 }
@@ -60,6 +60,33 @@ export function normalizeCornerRadiiMT(
     normalizeCornerRadiusMT(corners?.topRight ?? scalar),
     normalizeCornerRadiusMT(corners?.bottomRight ?? scalar),
     normalizeCornerRadiusMT(corners?.bottomLeft ?? scalar),
+  ]
+}
+
+/** Merge a partial object update onto the current corner radii, preserving omitted corners. */
+export function mergeCornerRadiiMT(
+  current: CornerRadii,
+  cornerRadius: SheetCornerRadius | undefined,
+): CornerRadii {
+  'main thread'
+  if (cornerRadius === undefined) return [null, null, null, null]
+  if (typeof cornerRadius === 'number') {
+    const value = normalizeCornerRadiusMT(cornerRadius)
+    return [value, value, value, value]
+  }
+  return [
+    cornerRadius.topLeft === undefined
+      ? current[0]
+      : normalizeCornerRadiusMT(cornerRadius.topLeft),
+    cornerRadius.topRight === undefined
+      ? current[1]
+      : normalizeCornerRadiusMT(cornerRadius.topRight),
+    cornerRadius.bottomRight === undefined
+      ? current[2]
+      : normalizeCornerRadiusMT(cornerRadius.bottomRight),
+    cornerRadius.bottomLeft === undefined
+      ? current[3]
+      : normalizeCornerRadiusMT(cornerRadius.bottomLeft),
   ]
 }
 

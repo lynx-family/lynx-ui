@@ -21,12 +21,15 @@ export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
  * SheetView for a full-screen backdrop with a constrained sheet viewport (such as
  * asymmetric safe areas).
  * Width and height can be supplied synchronously in logical pixels or omitted to
- * auto-measure the positioner's own bounds on layout.
+ * auto-measure the positioner's own bounds on layout. Supply `insets` to place
+ * edge offsets in CSS and seed initial fallback viewport bounds before layout
+ * measurement completes.
  * CSS places the viewport; its origin does not enter snap or drag calculations.
  * Updating dimensions preserves the selected snap and active gestures.
  * @zh SheetView 内可选的局部视口。可同时包裹背景遮罩与内容实现局部遮罩，
  * 也可与 SheetBackdrop 在 SheetView 内并列放置，保留全屏遮罩并将面板视口约束在安全区域内。
- * 宽高可以逻辑像素同步传入，也可省略以在布局时自动测量定位容器尺寸。
+ * 宽高可以逻辑像素同步传入，也可省略以在布局时自动测量定位容器尺寸。传入 `insets`
+ * 可在 CSS 中设置边距，并在首次布局测量完成前预先扣除初始回退视口尺寸。
  * CSS 控制位置，原点不参与吸附或拖拽计算。更新宽高会保留吸附索引和正在进行的手势。
  */
 export interface SheetPositionerProps extends ComponentBasicProps {
@@ -34,6 +37,13 @@ export interface SheetPositionerProps extends ComponentBasicProps {
   width?: number
   /** Local viewport height in positive logical pixels. Overrides screenHeight; auto-measured when omitted. @zh 局部视口高度，正逻辑像素，优先于 screenHeight；省略时自动测量。 */
   height?: number
+  /**
+   * Edge offsets inside `SheetView` in logical pixels. Applied as default CSS edge
+   * offsets (`left`/`top`/`right`/`bottom`) and subtracted from fallback viewport
+   * bounds before `SheetPositioner` completes its first layout measurement.
+   * @zh 相对 `SheetView` 四边的偏移量（逻辑像素）。会作为默认 CSS 边距应用，并在首次布局测量完成前从回退视口尺寸中预先扣除。
+   */
+  insets?: SheetInsets
   /**
    * Called whenever resolved local viewport dimensions become available or change.
    * Fires for both explicit `width`/`height` props and auto-measured bounds.
@@ -138,12 +148,12 @@ export interface SheetInsets {
 }
 
 /**
- * Panel width or maximum width inside the local viewport, expressed either in
- * logical pixels or as a percentage string of the local viewport width.
- * @docTypeFallback number | `${number}%`
- * @zh 局部视口内的面板宽度或最大宽度，支持逻辑像素数值或相对局部视口宽度的百分比字符串。
+ * Panel width, maximum width, or fit bound inside the local viewport, expressed
+ * in logical pixels, a `'px'` string, or a percentage string of the local viewport.
+ * @docTypeFallback number | `${number}%` | `${number}px`
+ * @zh 局部视口内的面板宽度、最大宽度或 fit 尺寸约束，支持逻辑像素数值、`'px'` 字符串或相对局部视口尺寸的百分比字符串。
  */
-export type SheetSurfaceSize = number | `${number}%`
+export type SheetSurfaceSize = number | `${number}%` | `${number}px`
 
 /**
  * Horizontal alignment of the sheet surface within the available corridor left
@@ -187,18 +197,19 @@ export type SheetPresenceState = 'entering' | 'entered' | 'leaving' | 'left'
 /**
  * Main-axis bounds for a bounded `'fit'` snap point inside `snapPoints`,
  * applied to the total `'fit'` panel size (including bottom safe-area reserve
- * and `SheetFooter` height). Values accept logical pixels or local-viewport percentages.
- * @zh 有界 `'fit'` 吸附点的主轴尺寸上下限（作用于包含底部安全区预留与 `SheetFooter` 的整体面板高度/宽度），支持逻辑像素或基于局部视口主轴尺寸的百分比字符串。
+ * and `SheetFooter` height). Values accept logical pixels, `'px'` strings, or
+ * local-viewport percentages.
+ * @zh 有界 `'fit'` 吸附点的主轴尺寸上下限（作用于包含底部安全区预留与 `SheetFooter` 的整体面板高度/宽度），支持逻辑像素数值、`'px'` 字符串或基于局部视口主轴尺寸的百分比字符串。
  */
 export interface SheetFitBounds {
   /**
-   * Minimum total panel size along the main axis in logical pixels or viewport percentage.
-   * @zh 主轴方向的整体面板最小尺寸，支持逻辑像素数值或局部视口百分比字符串。
+   * Minimum total panel size along the main axis in logical pixels, `'px'` string, or viewport percentage.
+   * @zh 主轴方向的整体面板最小尺寸，支持逻辑像素数值、`'px'` 字符串或局部视口百分比字符串。
    */
   min?: SheetSurfaceSize
   /**
-   * Maximum total panel size along the main axis in logical pixels or viewport percentage.
-   * @zh 主轴方向的整体面板最大尺寸，支持逻辑像素数值或局部视口百分比字符串。
+   * Maximum total panel size along the main axis in logical pixels, `'px'` string, or viewport percentage.
+   * @zh 主轴方向的整体面板最大尺寸，支持逻辑像素数值、`'px'` 字符串或局部视口百分比字符串。
    */
   max?: SheetSurfaceSize
 }
@@ -227,10 +238,10 @@ export type SheetSnapPoint = number | string | SheetFitSnapPoint
 export type SheetCornerRadius =
   | number
   | {
-    topLeft?: number
-    topRight?: number
-    bottomRight?: number
-    bottomLeft?: number
+    topLeft?: number | null
+    topRight?: number | null
+    bottomRight?: number | null
+    bottomLeft?: number | null
   }
 
 /**
@@ -254,8 +265,11 @@ export interface SheetSurfaceController {
     options?: { animating?: boolean },
   ) => void
   /**
-   * Update exposed corner radii in logical pixels. Pass undefined to restore CSS corners.
-   * @zh 更新可见圆角半径（逻辑像素）；传 undefined 恢复 CSS 圆角。
+   * Update exposed corner radii in logical pixels. Passing a number sets all four corners;
+   * passing an object merges only the specified corners while keeping omitted (`undefined`)
+   * corners intact (pass `null` for an individual corner to restore its CSS radius). Passing
+   * `undefined` restores CSS corners on all four corners.
+   * @zh 更新可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象仅合并指定的角并保留省略（`undefined`）的角（对单个角传 `null` 可恢复其 CSS 圆角）；传入 `undefined` 将恢复四角的 CSS 圆角。
    */
   setCornerRadius: (radius: SheetCornerRadius | undefined) => void
   /**
@@ -284,6 +298,22 @@ export interface SheetContentProps extends ComponentBasicProps {
   'main-thread:surfaceControllerRef'?: MainThreadRef<
     SheetSurfaceController | null
   >
+  /**
+   * Controlled panel surface constraint frame inside the local viewport. Applied on
+   * mount, on each open, and reactively whenever its resolved values change while open
+   * (takes precedence over `initialFrame`). Use `initialFrame` with
+   * `main-thread:surfaceControllerRef` instead when driving per-frame animations.
+   * @zh 受控的局部视口面板约束框。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 `initialFrame`）。如需在主线程逐帧驱动动画，请改用 `initialFrame` 配合 `main-thread:surfaceControllerRef`。
+   */
+  frame?: SheetSurfaceFrame
+  /**
+   * Controlled corner radii in logical pixels for the sheet's exposed corners.
+   * Applied on mount, on each open, and reactively whenever its resolved values change
+   * while open (takes precedence over `initialCornerRadius`). Use `initialCornerRadius`
+   * with `main-thread:surfaceControllerRef` instead when driving per-frame animations.
+   * @zh 受控的面板可见圆角半径（逻辑像素）。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 `initialCornerRadius`）。如需在主线程逐帧驱动动画，请改用 `initialCornerRadius` 配合 `main-thread:surfaceControllerRef`。
+   */
+  cornerRadius?: SheetCornerRadius
   /**
    * Opening panel surface constraint frame inside the local viewport (for
    * example, `{ insets: { bottom: 8 } }` for a floating card gap, or

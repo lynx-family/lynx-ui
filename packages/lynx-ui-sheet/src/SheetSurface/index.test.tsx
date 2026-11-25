@@ -325,6 +325,21 @@ describe('Sheet surface composition', () => {
     expect(panel.props).not.toHaveProperty('initialCornerRadius')
   })
 
+  it('seeds Frame-0 horizontal bounds from controlled frame without leaking frame or cornerRadius to native props', () => {
+    const mounted = renderSurface({
+      frame: { insets: { left: 16, right: 16, bottom: 8 }, maxWidth: '664px' },
+      cornerRadius: 24,
+      positioner: { insetX: 60, insetY: 0 },
+      screenWidth: 840,
+    })
+    expect(mounted.painted.props).not.toHaveProperty('frame')
+    expect(mounted.painted.props).not.toHaveProperty('cornerRadius')
+    expect(mounted.painted.props.style.left).toBe('88px')
+    expect(mounted.painted.props.style.width).toBe('664px')
+    expect(mounted.painted.props.style.height).toBe('150vh')
+    expect(mounted.movement.props.style.height).toBe('150vh')
+  })
+
   it('disables host implicit-animation on the painted surface by default and applies fitMaxSize for fit-only sheets', () => {
     const verticalFit = renderSurface({
       resolvedSide: 'bottom',

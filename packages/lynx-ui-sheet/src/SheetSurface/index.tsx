@@ -71,6 +71,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
+    frame,
+    cornerRadius: _cornerRadius,
     initialFrame,
     initialCornerRadius: _initialCornerRadius,
     dragHandlers,
@@ -113,7 +115,11 @@ export function SheetSurface(props: SheetSurfaceProps) {
   if (mountHorizontalFrame.current === undefined) {
     mountHorizontalFrame.current = isHorizontal
       ? null
-      : resolveSurfaceHorizontalFrame(initialFrame, screenWidth, enableRTL)
+      : resolveSurfaceHorizontalFrame(
+        frame ?? initialFrame,
+        screenWidth,
+        enableRTL,
+      )
   }
   const initialLeft = mountHorizontalFrame.current?.left
   const initialWidth = mountHorizontalFrame.current?.width
@@ -208,8 +214,8 @@ export function SheetSurface(props: SheetSurfaceProps) {
           ...(resolvedSide === 'left'
             ? { right: '100%' }
             : { left: '100%' }),
-          width: positioner ? `${positioner.width * 1.5}px` : '150vw',
-          height: positioner ? `${positioner.height}px` : '100vh',
+          width: positioner?.width ? `${positioner.width * 1.5}px` : '150vw',
+          height: positioner?.height ? `${positioner.height}px` : '100vh',
           overflow: 'hidden',
           ...style,
           transition: 'none',
@@ -252,7 +258,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
             }
             : { top: '100%' }),
           width: '100%',
-          height: positioner ? `${positioner.height * 1.5}px` : '150vh',
+          height: positioner?.height ? `${positioner.height * 1.5}px` : '150vh',
           overflow: 'visible',
           pointerEvents: 'none',
           transition: 'none',
@@ -277,7 +283,9 @@ export function SheetSurface(props: SheetSurfaceProps) {
               }
               : {}),
             ...style,
-            height: positioner ? `${positioner.height * 1.5}px` : '150vh',
+            height: positioner?.height
+              ? `${positioner.height * 1.5}px`
+              : '150vh',
             overflow: 'hidden',
             pointerEvents: 'auto',
           }}

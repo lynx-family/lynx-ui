@@ -22,8 +22,8 @@ import { useSheetBodyInsets } from './useSheetBodyInsets'
 import {
   applySurfaceCornersMT,
   extractInlineCornerStyles,
+  mergeCornerRadiiMT,
   normalizeCornerRadii,
-  normalizeCornerRadiiMT,
 } from './useSheetCornerStyle'
 import type { CornerRadii } from './useSheetCornerStyle'
 import {
@@ -43,6 +43,8 @@ interface SheetSurfaceLayoutOptions {
   presence: MainThreadRef<PresenceState>
   resolvedSide: SheetResolvedSide
   enableRTL: boolean
+  frame?: SheetSurfaceFrame
+  cornerRadius?: SheetCornerRadius
   initialCornerRadius?: SheetCornerRadius
   initialFrame?: SheetSurfaceFrame
   surfaceStyle?: SheetContentProps['style']
@@ -74,6 +76,8 @@ export function useSheetSurfaceLayout({
   presence,
   resolvedSide,
   enableRTL,
+  frame,
+  cornerRadius,
   initialCornerRadius,
   initialFrame,
   surfaceStyle,
@@ -95,16 +99,20 @@ export function useSheetSurfaceLayout({
 }: SheetSurfaceLayoutOptions) {
   const isBottom = resolvedSide === 'bottom'
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
-  const propTop = normalizeInset(initialFrame?.insets?.top)
-  const propRight = normalizeInset(initialFrame?.insets?.right)
-  const propBottom = normalizeInset(initialFrame?.insets?.bottom)
-  const propLeft = normalizeInset(initialFrame?.insets?.left)
-  const propWidth = parseSurfaceSize(initialFrame?.width)
-  const propMaxWidth = parseSurfaceSize(initialFrame?.maxWidth)
-  const propAlign: SheetSurfaceAlign = initialFrame?.align ?? 'center'
+  const isControlledFrame = frame !== undefined
+  const isControlledCornerRadius = cornerRadius !== undefined
+  const activeFrame = frame ?? initialFrame
+  const activeCornerRadius = cornerRadius ?? initialCornerRadius
+  const propTop = normalizeInset(activeFrame?.insets?.top)
+  const propRight = normalizeInset(activeFrame?.insets?.right)
+  const propBottom = normalizeInset(activeFrame?.insets?.bottom)
+  const propLeft = normalizeInset(activeFrame?.insets?.left)
+  const propWidth = parseSurfaceSize(activeFrame?.width)
+  const propMaxWidth = parseSurfaceSize(activeFrame?.maxWidth)
+  const propAlign: SheetSurfaceAlign = activeFrame?.align ?? 'center'
   const propHasHorizontal = !horizontal
-    && (initialFrame?.insets?.left !== undefined
-      || initialFrame?.insets?.right !== undefined
+    && (activeFrame?.insets?.left !== undefined
+      || activeFrame?.insets?.right !== undefined
       || propWidth !== null
       || propMaxWidth !== null)
   const propHorizontalBounds = propHasHorizontal
@@ -118,7 +126,7 @@ export function useSheetSurfaceLayout({
       enableRTL,
     )
     : null
-  const propRadii = normalizeCornerRadii(initialCornerRadius)
+  const propRadii = normalizeCornerRadii(activeCornerRadius)
   const [propTL, propTR, propBR, propBL] = propRadii
   const inlineCornerStyles = extractInlineCornerStyles(surfaceStyle)
   const inlineBorderRadius = inlineCornerStyles.borderRadius
@@ -533,7 +541,7 @@ export function useSheetSurfaceLayout({
 
   function setCornerRadiusMT(nextRadius: SheetCornerRadius | undefined) {
     'main thread'
-    const radii = normalizeCornerRadiiMT(nextRadius)
+    const radii = mergeCornerRadiiMT(geometryMTRef.current.radii, nextRadius)
     geometryMTRef.current.radii = radii
     updateCornersMT()
     updateSurfaceMT()
@@ -544,6 +552,32 @@ export function useSheetSurfaceLayout({
   function syncPropsMT() {
     'main thread'
     viewportSizeMTRef.current = { width: screenWidth, height: screenHeight }
+    const geo = geometryMTRef.current
+    if (isControlledFrame) {
+      geo.top = propTop
+      geo.right = propRight
+      geo.bottom = propBottom
+      geo.left = propLeft
+      geo.width = propWidth
+      geo.maxWidth = propMaxWidth
+      geo.align = propAlign
+      geo.hasHorizontal = propHasHorizontal
+      if (isBottom) {
+        geo.bottomUpdatePending = false
+        geo.animatingToken += 1
+        if (!position.current?.isAnimating()) {
+          geo.settledBottom = propBottom
+          if (presence.current === PresenceState.Entered) {
+            applyClipBottomMT(propBottom)
+          }
+        } else if (geo.clipBottomApplied !== 0) {
+          applyClipBottomMT(0)
+        }
+      }
+    }
+    if (isControlledCornerRadius) {
+      geo.radii = [propTL, propTR, propBR, propBL]
+    }
     applyHorizontalFrameMT()
     updateCornersMT(true)
     updateSurfaceMT()
@@ -591,6 +625,8 @@ export function useSheetSurfaceLayout({
     runOnMainThread(registerSurfaceLifecycleMT)()
     runOnMainThread(syncPropsMT)()
   }, [
+    isControlledFrame,
+    isControlledCornerRadius,
     propTop,
     propRight,
     propBottom,

@@ -36,13 +36,22 @@ export function parseSurfaceSize(
   }
   if (typeof size === 'string') {
     const trimmed = size.trim()
-    if (!trimmed.endsWith('%') || trimmed.length <= 1) return null
-    const raw = trimmed.slice(0, -1).trim()
-    if (!raw) return null
-    const num = Number(raw)
-    return Number.isFinite(num)
-      ? { kind: 'percent', value: Math.max(0, num) }
-      : null
+    if (trimmed.endsWith('%') && trimmed.length > 1) {
+      const raw = trimmed.slice(0, -1).trim()
+      if (!raw) return null
+      const num = Number(raw)
+      return Number.isFinite(num)
+        ? { kind: 'percent', value: Math.max(0, num) }
+        : null
+    }
+    if (trimmed.endsWith('px') && trimmed.length > 2) {
+      const raw = trimmed.slice(0, -2).trim()
+      if (!raw) return null
+      const num = Number(raw)
+      return Number.isFinite(num)
+        ? { kind: 'px', value: Math.max(0, num) }
+        : null
+    }
   }
   return null
 }
@@ -58,13 +67,22 @@ export function parseSurfaceSizeMT(
   }
   if (typeof size === 'string') {
     const trimmed = size.trim()
-    if (!trimmed.endsWith('%') || trimmed.length <= 1) return null
-    const raw = trimmed.slice(0, -1).trim()
-    if (!raw) return null
-    const num = Number(raw)
-    return Number.isFinite(num)
-      ? { kind: 'percent', value: Math.max(0, num) }
-      : null
+    if (trimmed.endsWith('%') && trimmed.length > 1) {
+      const raw = trimmed.slice(0, -1).trim()
+      if (!raw) return null
+      const num = Number(raw)
+      return Number.isFinite(num)
+        ? { kind: 'percent', value: Math.max(0, num) }
+        : null
+    }
+    if (trimmed.endsWith('px') && trimmed.length > 2) {
+      const raw = trimmed.slice(0, -2).trim()
+      if (!raw) return null
+      const num = Number(raw)
+      return Number.isFinite(num)
+        ? { kind: 'px', value: Math.max(0, num) }
+        : null
+    }
   }
   return null
 }

@@ -84,8 +84,10 @@ export interface SheetFooterContextValue {
 }
 
 export interface SheetPositionerDimensions {
-  width: number
-  height: number
+  width?: number
+  height?: number
+  insetX?: number
+  insetY?: number
 }
 
 export interface SheetLayoutRect {

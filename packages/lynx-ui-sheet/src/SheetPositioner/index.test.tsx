@@ -157,6 +157,55 @@ describe('SheetPositioner', () => {
     })
   })
 
+  it('applies insets in CSS and seeds pre-measure context without firing onSizeChange', () => {
+    hooks.state = null
+    hooks.refs = []
+    hooks.refCursor = 0
+    hooks.setState.mockClear()
+    const onSizeChange = vi.fn()
+    const renderInsetAuto = () => {
+      hooks.refCursor = 0
+      return SheetPositioner({
+        insets: { left: 40, right: 20, top: 10 },
+        onSizeChange,
+      }) as unknown as {
+        props: {
+          value: {
+            width?: number
+            height?: number
+            insetX?: number
+            insetY?: number
+          } | null
+          children: {
+            props: {
+              style: Record<string, unknown>
+              bindlayoutchange: (
+                event: { detail: { width: number, height: number } },
+              ) => void
+            }
+          }
+        }
+      }
+    }
+    const initial = renderInsetAuto()
+    expect(initial.props.value).toEqual({ insetX: 60, insetY: 10 })
+    expect(onSizeChange).not.toHaveBeenCalled()
+    expect(initial.props.children.props.style).toMatchObject({
+      left: '40px',
+      top: '10px',
+      right: '20px',
+      bottom: 0,
+    })
+
+    initial.props.children.props.bindlayoutchange({
+      detail: { width: 780, height: 1014 },
+    })
+    const measured = renderInsetAuto()
+    expect(measured.props.value).toEqual({ width: 780, height: 1014 })
+    expect(onSizeChange).toHaveBeenCalledTimes(1)
+    expect(onSizeChange).toHaveBeenLastCalledWith({ width: 780, height: 1014 })
+  })
+
   it('throws when an explicit dimension is non-positive', () => {
     hooks.refs = []
     hooks.refCursor = 0

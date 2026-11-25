@@ -1854,7 +1854,9 @@ together for a localized backdrop, or place SheetBackdrop as a sibling inside
 SheetView for a full-screen backdrop with a constrained sheet viewport (such as
 asymmetric safe areas).
 Width and height can be supplied synchronously in logical pixels or omitted to
-auto-measure the positioner's own bounds on layout.
+auto-measure the positioner's own bounds on layout. Supply `insets` to place
+edge offsets in CSS and seed initial fallback viewport bounds before layout
+measurement completes.
 CSS places the viewport; its origin does not enter snap or drag calculations.
 Updating dimensions preserves the selected snap and active gestures.
 
@@ -1906,6 +1908,84 @@ Updating dimensions preserves the selected snap and active gestures.
       {
         "kind": "text",
         "text": "局部视口高度，正逻辑像素，优先于 screenHeight；省略时自动测量。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "insets",
+    "type": "SheetInsets",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Edge offsets inside "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetView`"
+      },
+      {
+        "kind": "text",
+        "text": " in logical pixels. Applied as default CSS edge\noffsets ("
+      },
+      {
+        "kind": "code",
+        "text": "`left`"
+      },
+      {
+        "kind": "text",
+        "text": "/"
+      },
+      {
+        "kind": "code",
+        "text": "`top`"
+      },
+      {
+        "kind": "text",
+        "text": "/"
+      },
+      {
+        "kind": "code",
+        "text": "`right`"
+      },
+      {
+        "kind": "text",
+        "text": "/"
+      },
+      {
+        "kind": "code",
+        "text": "`bottom`"
+      },
+      {
+        "kind": "text",
+        "text": ") and subtracted from fallback viewport\nbounds before "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetPositioner`"
+      },
+      {
+        "kind": "text",
+        "text": " completes its first layout measurement."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "相对 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetView`"
+      },
+      {
+        "kind": "text",
+        "text": " 四边的偏移量（逻辑像素）。会作为默认 CSS 边距应用，并在首次布局测量完成前从回退视口尺寸中预先扣除。"
       }
     ],
     "defaultValue": "",
@@ -2071,6 +2151,76 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
+    "name": "cornerRadius",
+    "type": "SheetCornerRadius",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Controlled corner radii in logical pixels for the sheet's exposed corners.\nApplied on mount, on each open, and reactively whenever its resolved values change\nwhile open (takes precedence over "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": "). Use "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": "\nwith "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " instead when driving per-frame animations."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "受控的面板可见圆角半径（逻辑像素）。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": "）。如需在主线程逐帧驱动动画，请改用 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": " 配合 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "enterAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -2105,6 +2255,76 @@ The main content of the Sheet.
       {
         "kind": "text",
         "text": "Sheet 退出动画配置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "frame",
+    "type": "SheetSurfaceFrame",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Controlled panel surface constraint frame inside the local viewport. Applied on\nmount, on each open, and reactively whenever its resolved values change while open\n(takes precedence over "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": "). Use "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": " with\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " instead when driving per-frame animations."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "受控的局部视口面板约束框。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": "）。如需在主线程逐帧驱动动画，请改用 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": " 配合 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
       }
     ],
     "defaultValue": "",
@@ -2691,6 +2911,76 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "docTypeFallback": null
   },
   {
+    "name": "cornerRadius",
+    "type": "SheetCornerRadius",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Controlled corner radii in logical pixels for the sheet's exposed corners.\nApplied on mount, on each open, and reactively whenever its resolved values change\nwhile open (takes precedence over "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": "). Use "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": "\nwith "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " instead when driving per-frame animations."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "受控的面板可见圆角半径（逻辑像素）。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": "）。如需在主线程逐帧驱动动画，请改用 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": " 配合 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
     "name": "enterAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -2725,6 +3015,76 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       {
         "kind": "text",
         "text": "Sheet 退出动画配置。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "frame",
+    "type": "SheetSurfaceFrame",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Controlled panel surface constraint frame inside the local viewport. Applied on\nmount, on each open, and reactively whenever its resolved values change while open\n(takes precedence over "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": "). Use "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": " with\n"
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": " instead when driving per-frame animations."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "受控的局部视口面板约束框。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": "）。如需在主线程逐帧驱动动画，请改用 "
+      },
+      {
+        "kind": "code",
+        "text": "`initialFrame`"
+      },
+      {
+        "kind": "text",
+        "text": " 配合 "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:surfaceControllerRef`"
+      },
+      {
+        "kind": "text",
+        "text": "。"
       }
     ],
     "defaultValue": "",
@@ -3604,7 +3964,8 @@ The handle of the Sheet.
 
 Main-axis bounds for a bounded `'fit'` snap point inside `snapPoints`,
 applied to the total `'fit'` panel size (including bottom safe-area reserve
-and `SheetFooter` height). Values accept logical pixels or local-viewport percentages.
+and `SheetFooter` height). Values accept logical pixels, `'px'` strings, or
+local-viewport percentages.
 
 <UIApiTable source={[
   {
@@ -3613,13 +3974,29 @@ and `SheetFooter` height). Values accept logical pixels or local-viewport percen
     "summary": [
       {
         "kind": "text",
-        "text": "Maximum total panel size along the main axis in logical pixels or viewport percentage."
+        "text": "Maximum total panel size along the main axis in logical pixels, "
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " string, or viewport percentage."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "主轴方向的整体面板最大尺寸，支持逻辑像素数值或局部视口百分比字符串。"
+        "text": "主轴方向的整体面板最大尺寸，支持逻辑像素数值、"
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " 字符串或局部视口百分比字符串。"
       }
     ],
     "defaultValue": "",
@@ -3635,13 +4012,29 @@ and `SheetFooter` height). Values accept logical pixels or local-viewport percen
     "summary": [
       {
         "kind": "text",
-        "text": "Minimum total panel size along the main axis in logical pixels or viewport percentage."
+        "text": "Minimum total panel size along the main axis in logical pixels, "
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " string, or viewport percentage."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "主轴方向的整体面板最小尺寸，支持逻辑像素数值或局部视口百分比字符串。"
+        "text": "主轴方向的整体面板最小尺寸，支持逻辑像素数值、"
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " 字符串或局部视口百分比字符串。"
       }
     ],
     "defaultValue": "",
@@ -3893,17 +4286,33 @@ distributes remaining horizontal slack. When passed to `setFrame`, omitted or
 <UIApiTable source={[
   {
     "name": "SheetSurfaceSize",
-    "type": "number | `${number}%`",
+    "type": "number | `${number}%` | `${number}px`",
     "summary": [
       {
         "kind": "text",
-        "text": "Panel width or maximum width inside the local viewport, expressed either in\nlogical pixels or as a percentage string of the local viewport width."
+        "text": "Panel width, maximum width, or fit bound inside the local viewport, expressed\nin logical pixels, a "
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " string, or a percentage string of the local viewport."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "局部视口内的面板宽度或最大宽度，支持逻辑像素数值或相对局部视口宽度的百分比字符串。"
+        "text": "局部视口内的面板宽度、最大宽度或 fit 尺寸约束，支持逻辑像素数值、"
+      },
+      {
+        "kind": "code",
+        "text": "`'px'`"
+      },
+      {
+        "kind": "text",
+        "text": " 字符串或相对局部视口尺寸的百分比字符串。"
       }
     ],
     "defaultValue": "",
@@ -3921,6 +4330,14 @@ distributes remaining horizontal slack. When passed to `setFrame`, omitted or
         {
           "kind": "code",
           "text": "`${number}%`"
+        },
+        {
+          "kind": "text",
+          "text": " | "
+        },
+        {
+          "kind": "code",
+          "text": "`${number}px`"
         }
       ]
     }
@@ -4092,7 +4509,7 @@ distributes remaining horizontal slack. When passed to `setFrame`, omitted or
 <UIApiTable source={[
   {
     "name": "SheetCornerRadius",
-    "type": "number | {bottomLeft?: number, bottomRight?: number, topLeft?: number, topRight?: number}",
+    "type": "number | {bottomLeft?: number | null, bottomRight?: number | null, topLeft?: number | null, topRight?: number | null}",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -4186,13 +4603,61 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
     "summary": [
       {
         "kind": "text",
-        "text": "Update exposed corner radii in logical pixels. Pass undefined to restore CSS corners."
+        "text": "Update exposed corner radii in logical pixels. Passing a number sets all four corners;\npassing an object merges only the specified corners while keeping omitted ("
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": ")\ncorners intact (pass "
+      },
+      {
+        "kind": "code",
+        "text": "`null`"
+      },
+      {
+        "kind": "text",
+        "text": " for an individual corner to restore its CSS radius). Passing\n"
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": " restores CSS corners on all four corners."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "更新可见圆角半径（逻辑像素）；传 undefined 恢复 CSS 圆角。"
+        "text": "更新可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象仅合并指定的角并保留省略（"
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": "）的角（对单个角传 "
+      },
+      {
+        "kind": "code",
+        "text": "`null`"
+      },
+      {
+        "kind": "text",
+        "text": " 可恢复其 CSS 圆角）；传入 "
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": " 将恢复四角的 CSS 圆角。"
       }
     ],
     "defaultValue": "",

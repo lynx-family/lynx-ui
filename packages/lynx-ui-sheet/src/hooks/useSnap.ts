@@ -53,6 +53,8 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: SheetSnapPoint[]
   initialSnap?: number
+  frame?: SheetSurfaceFrame
+  cornerRadius?: SheetCornerRadius
   initialCornerRadius?: SheetCornerRadius
   initialFrame?: SheetSurfaceFrame
   surfaceStyle?: SheetContentProps['style']
@@ -82,6 +84,8 @@ export interface SnapOptions {
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
+  frame,
+  cornerRadius,
   initialCornerRadius,
   initialFrame,
   surfaceStyle,
@@ -144,16 +148,20 @@ export function useSnap({
   } = useSheetAnimation(yRef, snapAnimation)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const screenHeight: number = positioner?.height ?? userScreenHeight
+  const fallbackScreenHeight: number = userScreenHeight
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenHeight
     ?? 500
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const screenWidth: number = positioner?.width ?? userScreenWidth
+  const fallbackScreenWidth: number = userScreenWidth
     // @ts-expect-error expected
     ?? lynx.__globalProps?.screenWidth
     ?? 375
-  const propBottom = normalizeInset(initialFrame?.insets?.bottom)
+  const screenHeight = positioner?.height
+    ?? Math.max(0, fallbackScreenHeight - (positioner?.insetY ?? 0))
+  const screenWidth = positioner?.width
+    ?? Math.max(0, fallbackScreenWidth - (positioner?.insetX ?? 0))
+  const propBottom = normalizeInset((frame ?? initialFrame)?.insets?.bottom)
   const openingBottomMTRef = useMainThreadRef(propBottom)
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
@@ -477,6 +485,8 @@ export function useSnap({
     presence: controller.presenceStateMTRef,
     resolvedSide,
     enableRTL,
+    frame,
+    cornerRadius,
     initialCornerRadius,
     initialFrame,
     surfaceStyle,
