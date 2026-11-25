@@ -5,6 +5,7 @@
 import { createContext, useContext } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
+import type { GestureKind, StateManager } from '@lynx-js/gesture-runtime'
 import { noop } from '@lynx-js/lynx-ui-common'
 import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
@@ -66,12 +67,46 @@ export interface SheetContextValue {
   presenceStateMTRef?: MainThreadRef<PresenceState>
 }
 
+export interface SheetFooterContextValue {
+  resolvedSide: SheetResolvedSide
+  registerFooter: (id: string, height: number) => void
+  unregisterFooter: (id: string) => void
+}
+
+export const SheetFooterContext = createContext<SheetFooterContextValue | null>(
+  null,
+)
+
+export function useSheetFooterContext() {
+  const context = useContext(SheetFooterContext)
+  if (context?.resolvedSide !== 'bottom') {
+    throw new Error(
+      'SheetFooter requires bottom SheetContent or SheetNestedScrollContent',
+    )
+  }
+  return context
+}
+
 export interface SheetDragContextValue {
   dragHandlers: {
-    handleTouchStartMT: (e: MainThread.TouchEvent) => void
-    handleTouchMoveMT: (e: MainThread.TouchEvent) => void
-    handleTouchEndMT: (e: MainThread.TouchEvent) => void
+    handleTouchStartMT?: (e: MainThread.TouchEvent) => void
+    handleTouchMoveMT?: (e: MainThread.TouchEvent) => void
+    handleTouchEndMT?: (e: MainThread.TouchEvent) => void
+    gesture?: GestureKind
   }
+}
+
+export interface ActiveSheetScrollGesture {
+  manager: StateManager | null
+  consuming?: boolean
+  revision?: number
+  atStart?: boolean
+}
+
+export interface SheetGestureContextValue {
+  sheetGesture?: GestureKind
+  scrollGesture?: GestureKind
+  activeScrollMTRef?: MainThreadRef<ActiveSheetScrollGesture | null>
 }
 
 // @ts-expect-error MT initialize is useless
@@ -89,9 +124,6 @@ export const SheetContext = createContext<SheetContextValue>({
 
 export function useSheetContext() {
   const context = useContext(SheetContext)
-  // Context is optional for some components, but mandatory for Handle
-  // If we want to allow SheetHandle to be used without context (safe fallback), we can return null or empty handlers.
-  // But typically it should be inside a SheetContent.
   if (!context) {
     throw new Error(
       'SheetRoot should be placed at the root of the component tree',
@@ -105,4 +137,10 @@ export const SheetDragContext = createContext<SheetDragContextValue>({})
 
 export function useSheetDragContext() {
   return useContext(SheetDragContext)
+}
+
+export const SheetGestureContext = createContext<SheetGestureContextValue>({})
+
+export function useSheetGestureContext() {
+  return useContext(SheetGestureContext)
 }

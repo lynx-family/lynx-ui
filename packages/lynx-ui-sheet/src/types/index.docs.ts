@@ -4,6 +4,11 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
+import type {
+  GestureKind,
+  NativeGesture,
+  PanGestureConfig,
+} from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
@@ -147,6 +152,69 @@ export interface SheetContentProps extends ComponentBasicProps {
    * @Harmony
    */
   children?: ReactNode
+}
+
+export type SheetGestureConfig = Pick<
+  PanGestureConfig,
+  'enabled' | 'minDistance'
+>
+
+/**
+ * An optional action region pinned to the visible bottom sheet boundary.
+ * Place one SheetFooter directly inside SheetContent or SheetNestedScrollContent,
+ * outside any scrolling node. Supports side="bottom" only. Its intrinsic height
+ * contributes to 'fit' snap points; numeric and percentage snaps stay unchanged.
+ * Do not include the footer height again in the body's intrinsic 'fit' height.
+ * Position, transform, and transition are managed by the Sheet.
+ */
+export interface SheetFooterProps extends ComponentBasicProps {
+  /** Footer content. */
+  children?: ReactNode
+  /**
+   * Reports the measured height on layout changes and zero on unmount, not animation frames.
+   * Use it to reserve bottom padding in a custom scroll container. SheetFooter
+   * does not modify scroll padding or automatically handle keyboard/safe-area insets.
+   */
+  onHeightChange?: (height: number) => void
+}
+
+export interface SheetGestureRelations {
+  simultaneousWith?: GestureKind[]
+  /**
+   * Gestures that take priority over the Sheet pan. To isolate a same-axis
+   * native scroll region, bind its own NativeGesture and enable native
+   * consumption with manager.consumeGesture(true) in its onBegin callback.
+   */
+  waitFor?: GestureKind[]
+  continueWith?: GestureKind[]
+}
+
+export interface SheetNestedScrollRenderProps {
+  /**
+   * The coordinated native gesture to bind to the outermost vertical scrolling
+   * node. This is the same object returned by useSheetScrollGesture().
+   */
+  scrollGesture: NativeGesture
+}
+
+/**
+ * A SheetContent replacement that coordinates sheet dragging and native scrolling;
+ * all other parts are reused.
+ * Requires enableNewGesture: true and LynxSDK 3.2 or newer.
+ */
+export interface SheetNestedScrollContentProps
+  extends Omit<SheetContentProps, 'children'>
+{
+  /**
+   * Regular content or a render function receiving the coordinated scroll
+   * gesture. Deep descendants can access the same gesture with
+   * useSheetScrollGesture().
+   */
+  children?: ReactNode | ((props: SheetNestedScrollRenderProps) => ReactNode)
+  /** Native pan recognition thresholds. */
+  gestureConfig?: SheetGestureConfig
+  /** Relationships between the Sheet pan and external gestures. */
+  gestureRelations?: SheetGestureRelations
 }
 
 /**

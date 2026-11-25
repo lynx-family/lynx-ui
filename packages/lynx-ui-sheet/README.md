@@ -44,6 +44,9 @@ The `Sheet` component is composed of several specialized sub-components to give 
 - **`SheetView`**: The viewport container for the sheet components.
 - **`SheetBackdrop`**: The dimmed overlay behind the sheet. Can be configured to close the sheet on tap.
 - **`SheetContent`**: The actual sliding panel that contains your content.
+- **`SheetNestedScrollContent`**: A replacement for `SheetContent` that coordinates
+  sheet dragging with nested native scrolling.
+- **`SheetFooter`**: An optional measured action region pinned to the visible bottom sheet.
 - **`SheetHandle`**: (Optional) A draggable visual indicator (usually a small bar) at the top of the sheet content.
 
 ## About @lynx-js/lynx-ui

@@ -12,6 +12,10 @@ const defaultConfig = exampleConfig(
     SheetControlled: './Controlled/index.tsx',
     SheetDirectional: './Directional/index.tsx',
     SheetImperative: './Imperative/index.tsx',
+    SheetGestureScrollView: './GestureScrollView/index.tsx',
+    SheetGestureList: './GestureList/index.tsx',
+    SheetGestureFixedFooter: './GestureFixedFooter/index.tsx',
+    SheetGestureComposite: './GestureComposite/index.tsx',
     // For Internal Tests
     // Uncomment entries below when running internal tests for Sheet.
     /*     SheetControlledOpen: './ControlledOpen/index.tsx',
