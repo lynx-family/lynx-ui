@@ -36,6 +36,11 @@ export interface SheetMethods {
   ) => void
 }
 
+export interface SheetViewportSize {
+  height?: number
+  width?: number
+}
+
 export interface SheetContextValue {
   show: boolean
   forceMount: boolean
@@ -98,6 +103,12 @@ export function useSheetContext() {
     )
   }
   return context
+}
+
+export const SheetViewportContext = createContext<SheetViewportSize>({})
+
+export function useSheetViewport() {
+  return useContext(SheetViewportContext)
 }
 
 // @ts-expect-error MT initialize is useless

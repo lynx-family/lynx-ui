@@ -4,13 +4,16 @@
 import {
   runOnBackground,
   runOnMainThread,
+  useEffect,
   useMainThreadRef,
   useMemo,
+  useRef,
 } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
 import { noop, useMemoizedFn } from '@lynx-js/lynx-ui-common'
-import type { PresenceState } from '@lynx-js/lynx-ui-presence'
+import { PresenceState } from '@lynx-js/lynx-ui-presence'
+import type { PresenceState as PresenceStateType } from '@lynx-js/lynx-ui-presence'
 import {
   animate,
   useMotionValueRef,
@@ -31,6 +34,7 @@ import {
   getSheetTransform,
   isHorizontalSide,
   resolveSheetSide,
+  resolveSnapAxisSize,
   toPxJS,
 } from '../utils'
 
@@ -48,6 +52,8 @@ export interface SnapOptions {
   enableRTL?: boolean
   screenHeight?: number
   screenWidth?: number
+  measuredScreenHeight?: number
+  measuredScreenWidth?: number
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
   onDismiss?: () => void
@@ -58,7 +64,7 @@ export interface SnapOptions {
   sheetProgress?: MainThreadRef<MotionValue<number>>
   onUnmount?: () => void
   onResurrected?: () => void
-  presenceStateMTRef?: MainThreadRef<PresenceState>
+  presenceStateMTRef?: MainThreadRef<PresenceStateType>
 }
 
 export function useSnap({
@@ -69,6 +75,8 @@ export function useSnap({
   enableRTL = false,
   screenHeight: userScreenHeight,
   screenWidth: userScreenWidth,
+  measuredScreenHeight,
+  measuredScreenWidth,
   rubberBand,
   onSnapChange = noop,
   onDismiss,
@@ -103,15 +111,23 @@ export function useSnap({
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const screenHeight: number = userScreenHeight
+  const fallbackScreenHeight: number =
     // @ts-expect-error expected
-    ?? lynx.__globalProps?.screenHeight
-    ?? 500
+    lynx.__globalProps?.screenHeight ?? 500
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const screenWidth: number = userScreenWidth
+  const fallbackScreenWidth: number =
     // @ts-expect-error expected
-    ?? lynx.__globalProps?.screenWidth
-    ?? 375
+    lynx.__globalProps?.screenWidth ?? 375
+  const screenHeight = resolveSnapAxisSize(
+    userScreenHeight,
+    measuredScreenHeight,
+    fallbackScreenHeight,
+  )
+  const screenWidth = resolveSnapAxisSize(
+    userScreenWidth,
+    measuredScreenWidth,
+    fallbackScreenWidth,
+  )
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
     screenWidth,
@@ -287,6 +303,46 @@ export function useSnap({
       initialSnap,
     },
   )
+
+  const appliedViewportSize = useRef<number | undefined>(undefined)
+
+  function realignOpenSnapMT() {
+    'main thread'
+    if (hasFitSnapPoint) {
+      const fitSize = fitSizeMTRef.current
+      if (fitSize > 0) {
+        resolvedSnapPointMTRef.current = snapPointValues.map(value =>
+          value === -1 ? fitSize : value
+        )
+        resolvedSnapOffsetsMTRef.current = snapOffsets.map(offset =>
+          offset === -1 ? fitSize : offset
+        )
+      }
+    } else {
+      updateContentSizeMT(maxSnapSize)
+    }
+
+    const state = controller.presenceStateMTRef.current
+    if (
+      state !== PresenceState.Entered
+      && state !== PresenceState.Entering
+    ) {
+      return
+    }
+    controller.snapToMT(currentSnapIndex.current, { animate: false })
+  }
+
+  useEffect(() => {
+    const previousViewportSize = appliedViewportSize.current
+    appliedViewportSize.current = viewportSize
+    if (
+      previousViewportSize === undefined
+      || previousViewportSize === viewportSize
+    ) {
+      return
+    }
+    runOnMainThread(realignOpenSnapMT)()
+  }, [viewportSize])
 
   // Controller-delegated MT functions
   function expandMT(opts?: SnappingOptions) {
