@@ -20,11 +20,11 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - Use `side="top"` for top sheets.
 - Use `side="left"` or `side="right"` for drawer-style panels that should stay on a physical edge.
 - Use `side="start"` or `side="end"` for drawer-style panels that should follow writing direction. These resolve to the physical edge from `enableRTL`.
-- In `top` and `bottom` mode, percentage snap points resolve against the vertical main-axis basis: `screenHeight` when provided, otherwise viewport height.
-- In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against the horizontal main-axis basis: `screenWidth` when provided, otherwise viewport width.
+- In `top` and `bottom` mode, percentage snap points resolve against the measured sheet viewport height. `screenHeight` overrides that measurement. Before the viewport is measured, the host screen height is only a fallback.
+- In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against the measured sheet viewport width. `screenWidth` overrides that measurement. Before the viewport is measured, the host screen width is only a fallback.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
 - The inner layout uses `maxSnapSize`, the highest resolved `snapPoints` value, as its stable main-axis size so `flex: 1` children have a snap-related height/width basis. Pure `'fit'` snap point sheets stay content-driven.
-- `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.
+- `screenHeight` overrides the measured height basis for `top` / `bottom`; `screenWidth` overrides the measured width basis for horizontal modes. Leave them unset so percentage snaps follow the sheet viewport instead of the host screen size. On Android the host screen height includes the system navigation bar.
 - Rubber-band over-drag defaults to enabled for `top` / `bottom` and disabled for horizontal modes. Use `rubberBand` to override the default.
 
 ## State Model

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from '@lynx-js/react'
 
 import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
 
-import { SheetDragContext, useSheetContext } from '../context'
+import { SheetDragContext, useSheetContext, useSheetViewport } from '../context'
 import { useSnap, useSnapTouches } from '../hooks'
 import type { SheetContentProps, SheetTransition } from '../types'
 import { getDefaultRubberBand } from '../utils'
@@ -54,6 +54,7 @@ export function SheetContent(props: SheetContentProps) {
     onClose,
     show: showFromContext,
   } = useSheetContext()
+  const measuredViewport = useSheetViewport()
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
@@ -113,6 +114,8 @@ export function SheetContent(props: SheetContentProps) {
     enableRTL,
     screenHeight,
     screenWidth,
+    measuredScreenHeight: measuredViewport.height,
+    measuredScreenWidth: measuredViewport.width,
     onSnapChange,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,

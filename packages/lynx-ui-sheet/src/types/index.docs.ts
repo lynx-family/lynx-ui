@@ -205,18 +205,22 @@ export interface SheetRootProps extends ComponentBasicProps {
    */
   onSnapChange?: (index: number, value: number) => void
   /**
-   * The height of the Sheet container (screen height).
-   * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points
-   * and dismissal calculations.
-   * @zh Sheet 容器的高度（屏幕高度）。
-   * 在垂直模式（`top` / `bottom`）下，用于计算百分比吸附点和关闭阈值。
+   * Override the measured viewport height used for percentage snap points
+   * and dismissal calculations in vertical mode (`top` / `bottom`).
+   * When omitted, Sheet measures its viewport. The host screen height is only
+   * used before that measurement arrives.
+   * @zh 覆盖垂直模式（`top` / `bottom`）下用于百分比吸附点和关闭阈值的视口高度。
+   * 未传入时，Sheet 会测量自身视口。宿主屏幕高度只在测量完成前作为回退。
    */
   screenHeight?: number
   /**
-   * The width of the Sheet container (screen width).
-   * Used in horizontal drawer mode (`left` / `right` / `start` / `end`) for percentage snap points
-   * and dismissal calculations.
-   * @zh Sheet 容器的宽度（屏幕宽度）。在水平抽屉模式（`left` / `right` / `start` / `end`）中用于百分比吸附点和关闭计算。
+   * Override the measured viewport width used for percentage snap points
+   * and dismissal calculations in horizontal mode
+   * (`left` / `right` / `start` / `end`).
+   * When omitted, Sheet measures its viewport. The host screen width is only
+   * used before that measurement arrives.
+   * @zh 覆盖水平模式（`left` / `right` / `start` / `end`）下用于百分比吸附点和关闭阈值的视口宽度。
+   * 未传入时，Sheet 会测量自身视口。宿主屏幕宽度只在测量完成前作为回退。
    */
   screenWidth?: number
   /**

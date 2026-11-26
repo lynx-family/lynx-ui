@@ -75,6 +75,23 @@ export function getMainAxisSize(
     : dimensions.screenHeight
 }
 
+// Percentage snap points use the measured sheet viewport when the caller does
+// not pass an explicit size. The host screen size is only a pre-layout
+// fallback. An explicit size always wins, including over a measured viewport.
+export function resolveSnapAxisSize(
+  explicitSize: number | undefined,
+  measuredSize: number | undefined,
+  fallbackSize: number,
+): number {
+  if (typeof explicitSize === 'number' && explicitSize > 0) {
+    return explicitSize
+  }
+  if (typeof measuredSize === 'number' && measuredSize > 0) {
+    return measuredSize
+  }
+  return fallbackSize
+}
+
 export function getMainAxisLayoutSize(
   side: SheetResolvedSide,
   event: {

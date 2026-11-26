@@ -8,12 +8,13 @@ export {
   getDefaultRubberBand,
   getMainAxisLayoutSize,
   getMainAxisSize,
-  getMaxSnapSize,
   getMainAxisTouchCoordinate,
+  getMaxSnapSize,
   getNextMainAxisOffset,
   getSheetTransform,
   isHorizontalSide,
   resolveSheetSide,
+  resolveSnapAxisSize,
   toPxJS,
 } from './direction'
 export type { SheetResolvedSide } from './direction'

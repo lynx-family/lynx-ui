@@ -13,6 +13,7 @@ import {
   getNextMainAxisOffset,
   getSheetTransform,
   resolveSheetSide,
+  resolveSnapAxisSize,
   toPxJS,
 } from './direction'
 
@@ -34,6 +35,14 @@ describe('sheet side utils', () => {
 
   it('resolves percent snap points against width for drawers', () => {
     expect(toPxJS('75%', 360)).toBe(270)
+  })
+
+  it('prefers the measured viewport over the host screen size', () => {
+    expect(resolveSnapAxisSize(undefined, 700, 800)).toBe(700)
+    expect(resolveSnapAxisSize(900, 700, 800)).toBe(900)
+    expect(resolveSnapAxisSize(undefined, 0, 800)).toBe(800)
+    expect(resolveSnapAxisSize(undefined, undefined, 800)).toBe(800)
+    expect(toPxJS('100%', resolveSnapAxisSize(undefined, 700, 800))).toBe(700)
   })
 
   it('reads the correct viewport basis for each resolved side', () => {
