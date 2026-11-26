@@ -229,7 +229,7 @@ function InputImpl(props: InputProps, ref: ForwardedRef<InputRef>) {
       ref={inputRef}
       id={id}
       readonly={readonly}
-      ignore-focus={true}
+      ignore-focus={false}
       placeholder={placeholder}
       confirm-type={confirmType}
       type={type}
