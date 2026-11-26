@@ -235,7 +235,7 @@ function TextAreaImpl(props: TextAreaProps, ref: ForwardedRef<TextAreaRef>) {
       line-spacing={lineSpacing}
       bounces={bounces}
       maxlines={maxLines}
-      ignore-focus={true}
+      ignore-focus={false}
       placeholder={placeholder}
       confirm-type={confirmType}
       // @ts-expect-error TODO: update type-lynx
