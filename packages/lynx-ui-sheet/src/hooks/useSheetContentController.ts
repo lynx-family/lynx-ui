@@ -11,6 +11,19 @@ import type { SheetContentProps, SheetTransition } from '../types'
 import { getDefaultRubberBand } from '../utils'
 import { useSnap } from './useSnap'
 
+function toSnappingOptions(opts?: {
+  animate?: boolean
+  snapAnimation?: SheetTransition
+  isEntry?: boolean
+}) {
+  if (!opts) return undefined
+  return {
+    animate: opts.animate,
+    animationConfig: opts.snapAnimation,
+    isEntry: opts.isEntry,
+  }
+}
+
 const DEFAULT_SNAP_POINTS: Array<number | string> = ['fit']
 const DEFAULT_TRANSITION: SheetTransition = {
   type: 'spring',
@@ -23,6 +36,7 @@ export function useSheetContentController(props: SheetContentProps) {
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
+    panelLayout,
   } = props
   const context = useSheetContext()
   const {
@@ -37,36 +51,47 @@ export function useSheetContentController(props: SheetContentProps) {
     screenHeight,
     screenWidth,
     onSnapChange,
+    onSnapStartMT,
     onShowChange,
     presenceStateMTRef,
+    openEpochMTRef,
+    isCurrentOpenEpoch,
     onUnmount,
     onOpen,
     onClose,
     show: showFromContext,
+    autoOpen,
   } = context
+  const initialOpen = autoOpen ?? showFromContext
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
-  const isInternalChangeRef = useRef(false)
+  const pendingInternalShowRef = useRef<boolean | null>(null)
 
-  const handleBeforeDismiss = useMemoizedFn(() => {
-    isInternalChangeRef.current = true
+  const handleBeforeDismiss = useMemoizedFn((leavingEpoch?: number) => {
+    if (isCurrentOpenEpoch && !isCurrentOpenEpoch(leavingEpoch)) {
+      return
+    }
+    pendingInternalShowRef.current = false
     onShowChange?.(false)
   })
   const handleDismissed = useMemoizedFn(() => onClose?.())
   const handleEntered = useMemoizedFn(() => onOpen?.())
   const handleResurrected = useMemoizedFn(() => {
-    isInternalChangeRef.current = true
+    pendingInternalShowRef.current = true
     onShowChange?.(true)
   })
 
   const snap = useSnap({
     snapPoints,
     initialSnap,
+    initialOpen,
+    panelLayout,
     snapAnimation,
     side,
     enableRTL,
     screenHeight,
     screenWidth,
     onSnapChange,
+    onSnapStartMT,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,
     onEntered: handleEntered,
@@ -75,40 +100,44 @@ export function useSheetContentController(props: SheetContentProps) {
     rubberBand: effectiveRubberBand,
     sheetProgress,
     presenceStateMTRef,
+    openEpochMTRef,
     onUnmount,
     onResurrected: handleResurrected,
   })
 
-  const prevShowRef = useRef(false)
+  // Seed to `showFromContext` so cold prop-driven opens don't double-fire `snap.show()`,
+  // and imperative `ref.current.open(opts)` / `snapTo(index, opts)` aren't overwritten by `snap.show()`.
+  const prevShowRef = useRef(Boolean(showFromContext))
+  const isLepus = typeof __LEPUS__ !== 'undefined' && __LEPUS__
+  if (!isLepus) {
+    registerMethods({
+      snapTo: (index, opts) => snap.snapTo(index, toSnappingOptions(opts)),
+      expand: opts => snap.expand(toSnappingOptions(opts)),
+      collapse: opts => snap.collapse(toSnappingOptions(opts)),
+      close: opts => snap.close(toSnappingOptions(opts)),
+      show: opts => snap.show(toSnappingOptions(opts)),
+    })
+  }
+  useEffect(() => () => registerMethods(null), [registerMethods])
+
   useEffect(() => {
+    const pendingInternal = pendingInternalShowRef.current
+    pendingInternalShowRef.current = null
     if (prevShowRef.current === showFromContext) return
-    if (isInternalChangeRef.current) {
-      isInternalChangeRef.current = false
-    } else if (showFromContext) {
+    prevShowRef.current = showFromContext
+    if (pendingInternal === showFromContext) {
+      return
+    }
+    if (showFromContext) {
       snap.show()
     } else {
       snap.close()
     }
-    prevShowRef.current = showFromContext
   }, [showFromContext, snap.show, snap.close])
 
   useEffect(() => {
-    registerMethods({
-      snapTo: snap.snapTo,
-      expand: snap.expand,
-      collapse: snap.collapse,
-      close: snap.close,
-      show: snap.show,
-    })
-    return () => registerMethods(null)
-  }, [
-    registerMethods,
-    snap.snapTo,
-    snap.expand,
-    snap.collapse,
-    snap.close,
-    snap.show,
-  ])
+    pendingInternalShowRef.current = null
+  })
 
   return {
     context,

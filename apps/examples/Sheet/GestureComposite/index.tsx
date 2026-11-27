@@ -14,7 +14,7 @@ import {
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
-import { TriggerButton } from '../shared/index.js'
+import { SnapButton, TriggerButton } from '../shared/index.js'
 import './index.css'
 
 const categories = ['Overview', 'Activity', 'Insights', 'Settings']
@@ -94,6 +94,16 @@ function App() {
               <view className='sheet-handle' />
               <text className='handle-label'>Drag handle</text>
             </SheetHandle>
+            <view className='gesture-controls'>
+              <SnapButton
+                text='45%'
+                onClick={() => sheetRef.current?.collapse()}
+              />
+              <SnapButton
+                text='90%'
+                onClick={() => sheetRef.current?.expand()}
+              />
+            </view>
             <FoldLikeContent />
           </SheetNestedScrollContent>
         </SheetView>

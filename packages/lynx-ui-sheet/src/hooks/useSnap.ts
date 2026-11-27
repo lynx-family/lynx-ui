@@ -13,13 +13,19 @@ import type { MainThreadRef } from '@lynx-js/react'
 
 import { noop, useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
-import { useMotionValueRef, useMotionValueRefEvent } from '@lynx-js/motion/mini'
+import { createMotionValue, useMotionValueRef } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
-import type { SheetSide, SheetTransition } from '../types'
+import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
+import type {
+  SheetContentProps,
+  SheetRootProps,
+  SheetSide,
+  SheetTransition,
+} from '../types'
 import {
   clamp,
   findNearestSnap,
@@ -42,6 +48,8 @@ export interface SnappingOptions {
 export interface SnapOptions {
   snapPoints: Array<number | string>
   initialSnap?: number
+  initialOpen?: boolean
+  panelLayout?: SheetContentProps['panelLayout']
   snapAnimation?: SheetTransition
   side?: SheetSide
   enableRTL?: boolean
@@ -49,20 +57,24 @@ export interface SnapOptions {
   screenWidth?: number
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   onSnapChange?: (index: number, value: number) => void
+  onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDismiss?: () => void
   enterAnimation?: SheetTransition
   exitAnimation?: SheetTransition
-  onBeforeDismiss?: () => void
+  onBeforeDismiss?: (leavingEpoch?: number) => void
   onEntered?: () => void
   sheetProgress?: MainThreadRef<MotionValue<number>>
-  onUnmount?: () => void
+  onUnmount?: (closedEpoch?: number) => void
   onResurrected?: () => void
   presenceStateMTRef?: MainThreadRef<PresenceState>
+  openEpochMTRef?: MainThreadRef<number>
 }
 
 export function useSnap({
   snapPoints = [],
   initialSnap = 0,
+  initialOpen = false,
+  panelLayout,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
   enableRTL = false,
@@ -70,6 +82,7 @@ export function useSnap({
   screenWidth: userScreenWidth,
   rubberBand,
   onSnapChange = noop,
+  onSnapStartMT,
   onDismiss,
   enterAnimation = {
     type: 'spring',
@@ -89,6 +102,7 @@ export function useSnap({
   onUnmount,
   onResurrected,
   presenceStateMTRef: presenceStateMTRefProp,
+  openEpochMTRef,
 }: SnapOptions) {
   const resolvedSide = resolveSheetSide(side, enableRTL)
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
@@ -96,7 +110,10 @@ export function useSnap({
   const sheetMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const contentMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const yRef = useMotionValueRef<number>(0)
-  const sheetSizeMTRef = useMainThreadRef<number>(0)
+  const autoOpenedMTRef = useMainThreadRef(false)
+  const closedBeforeOpenMTRef = useMainThreadRef(false)
+  const btsReadyMTRef = useMainThreadRef(false)
+  const hasQueuedBtsReadyRef = useRef(false)
   const bodySizeMTRef = useMainThreadRef<number>(-1)
   const footerHeightMTRef = useMainThreadRef<number>(-1)
   const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
@@ -111,6 +128,7 @@ export function useSnap({
   }, [])
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const currentSnapIndex = useMainThreadRef<number>(initialSnap)
+  const animateSurfaceChangesMTRef = useMainThreadRef(true)
   const {
     animateToMT,
     stopAnimationMT,
@@ -133,19 +151,19 @@ export function useSnap({
     screenWidth,
   })
 
-  // Track resolved snapPoints (for 'fit' support)
-  const resolvedSnapPointMTRef = useMainThreadRef<number[]>([])
-  const resolvedSnapOffsetsMTRef = useMainThreadRef<number[]>([])
   const hasFitSnapPoint = useMemo(
     () => snapPoints.some(p => String(p).trim() === 'fit'),
     [snapPoints],
   )
+  const snapPointsKey = snapPoints
+    .map(p => `${toPxJS(p, viewportSize)}`)
+    .join('|')
   // Keep snap points order stable: indices should match `snapPoints` order.
   const { snapPointValues, snapOffsets } = useMemo(() => {
-    const values = snapPoints.map(p => toPxJS(p, viewportSize))
+    const values = snapPointsKey ? snapPointsKey.split('|').map(Number) : []
     const offsets = values.map(p => (p === -1 ? -1 : p))
     return { snapPointValues: values, snapOffsets: offsets }
-  }, [snapPoints, viewportSize])
+  }, [snapPointsKey])
 
   const validOffsets = snapOffsets.filter(o => o !== -1)
   const minOffset = validOffsets.length > 0
@@ -155,6 +173,13 @@ export function useSnap({
     ? Math.max(...validOffsets)
     : 0
   const maxSnapSize = getMaxSnapSize(snapPointValues)
+  // Seed initial resolved snap values so MTS can open immediately on ref attach
+  // without waiting for a BTS useEffect -> runOnMainThread round-trip.
+  const sheetSizeMTRef = useMainThreadRef<number>(
+    hasFitSnapPoint ? 0 : maxSnapSize,
+  )
+  const resolvedSnapPointMTRef = useMainThreadRef<number[]>(snapPointValues)
+  const resolvedSnapOffsetsMTRef = useMainThreadRef<number[]>(snapOffsets)
   const contentSizeMTRef = useMainThreadRef<number>(
     hasFitSnapPoint ? 0 : maxSnapSize,
   )
@@ -181,11 +206,6 @@ export function useSnap({
     return clamp(targetY, Math.max(sheetSizeMTRef.current, maxSnap))
   }
 
-  function setSheetMTRef(el: MainThread.Element) {
-    'main thread'
-    sheetMTRef.current = el
-  }
-
   function setContentMTRef(el: MainThread.Element) {
     'main thread'
     contentMTRef.current = el
@@ -200,7 +220,7 @@ export function useSnap({
       el.setStyleProperties({
         width: `${size}px`,
       })
-    } else {
+    } else if (hasFitSnapPoint) {
       el.setStyleProperties({
         height: `${size}px`,
       })
@@ -222,7 +242,7 @@ export function useSnap({
     })
   }
 
-  useMotionValueRefEvent(yRef, 'change', v => {
+  function handleMotionValueChangeMT(v: number) {
     'main thread'
     updateFooterPositionMT(v)
     const el = sheetMTRef.current
@@ -233,10 +253,15 @@ export function useSnap({
       const transformValue = isHorizontalSide(resolvedSide) && !allowOverDrag
         ? Math.min(v, opened)
         : v
-      el.setStyleProperties({
-        transform: getSheetTransform(resolvedSide, transformValue),
-      })
-      if (sheetProgress?.current) {
+      if (isHorizontalSide(resolvedSide)) {
+        el.setStyleProperties({
+          transform: getSheetTransform(resolvedSide, transformValue),
+        })
+      }
+      if (sheetProgress) {
+        if (!sheetProgress.current) {
+          sheetProgress.current = createMotionValue(0)
+        }
         const closed = 0
         let progress = 1
         if (v < opened && opened > 0) {
@@ -245,7 +270,7 @@ export function useSnap({
         sheetProgress.current.set(Math.max(0, Math.min(1, progress)))
       }
     }
-  })
+  }
 
   function onSnapChangeMT(index: number, value: number) {
     'main thread'
@@ -287,19 +312,106 @@ export function useSnap({
       onBeforeDismiss,
       onResurrected,
       presenceStateMTRef: presenceStateMTRefProp,
+      openEpochMTRef,
     },
     {
-      yRef,
       animateToMT,
+      yRef,
       stopAnimationMT,
       getTargetForSnap,
       getResolvedSnapPointValues,
       onSnapChangeMT,
+      onSnapStartMT: (index, value, animated) => {
+        'main thread'
+        animateSurfaceChangesMTRef.current = animated
+        onSnapStartMT?.(index, value, animated)
+      },
+      onOpeningMT: () => {
+        'main thread'
+        closedBeforeOpenMTRef.current = false
+      },
+      onClosedBeforeEntryMT: () => {
+        'main thread'
+        closedBeforeOpenMTRef.current = true
+      },
       enterAnimation,
       exitAnimation,
       initialSnap,
     },
   )
+
+  function onSurfaceReadyMT() {
+    'main thread'
+    if (!initialOpen) {
+      autoOpenedMTRef.current = false
+      return
+    }
+    if (
+      !btsReadyMTRef.current
+      || autoOpenedMTRef.current
+      || closedBeforeOpenMTRef.current
+    ) {
+      return
+    }
+    autoOpenedMTRef.current = true
+    controller.showMT()
+  }
+
+  const surfaceLayout = useSheetSurfaceLayout({
+    position: yRef,
+    animateChanges: animateSurfaceChangesMTRef,
+    presence: controller.presenceStateMTRef,
+    resolvedSide,
+    panelLayout,
+    screenHeight,
+    maxSnapSize,
+    hasFitSnapPoint,
+    movingSurfaceMTRef: sheetMTRef,
+    initialSize: getTargetForSnap,
+    initialSnap,
+    snapAnimation,
+    onSurfaceReadyMT,
+    onMotionValueChangeMT: handleMotionValueChangeMT,
+  })
+
+  function markBtsReadyMT() {
+    'main thread'
+    btsReadyMTRef.current = true
+    if (surfaceLayout.isSurfaceReadyMT()) {
+      onSurfaceReadyMT()
+    }
+  }
+
+  const isLepus = typeof __LEPUS__ !== 'undefined' && __LEPUS__
+  if (!hasQueuedBtsReadyRef.current && !isLepus) {
+    hasQueuedBtsReadyRef.current = true
+    runOnMainThread(markBtsReadyMT)()
+  }
+
+  const snapSyncKey = `${viewportSize}|${
+    String(hasFitSnapPoint)
+  }|${snapPointsKey}|${maxSnapSize}`
+  const lastSnapSyncKeyRef = useRef(snapSyncKey)
+
+  useEffect(() => {
+    if (lastSnapSyncKeyRef.current === snapSyncKey) {
+      return
+    }
+    lastSnapSyncKeyRef.current = snapSyncKey
+    runOnMainThread((values: number[], nextMax: number) => {
+      'main thread'
+      resolvedSnapPointMTRef.current = values.map(value =>
+        value === -1 && fitSizeMTRef.current > 0
+          ? fitSizeMTRef.current
+          : value
+      )
+      resolvedSnapOffsetsMTRef.current = resolvedSnapPointMTRef.current
+      if (!hasFitSnapPoint) {
+        sheetSizeMTRef.current = nextMax
+        updateContentSizeMT(nextMax)
+      }
+    })(snapPointValues, maxSnapSize)
+  }, [snapSyncKey, hasFitSnapPoint, snapPointValues, maxSnapSize])
 
   // Controller-delegated MT functions
   function expandMT(opts?: SnappingOptions) {
@@ -324,6 +436,13 @@ export function useSnap({
     if (idx !== -1) {
       controller.snapToMT(idx, opts)
     }
+  }
+
+  function releaseAtMaxSnapMT(index: number) {
+    'main thread'
+    // The content owns the gesture, so the Sheet has no release velocity.
+    yRef.current.updateVelocity(0)
+    controller.snapToMT(index)
   }
 
   // Background wrappers
@@ -369,11 +488,14 @@ export function useSnap({
   ) {
     'main thread'
 
+    const previousFit = getResolvedSnapOffsets()[currentSnapIndex.current]
     const bodySize = getMainAxisLayoutSize(resolvedSide, e)
     bodySizeMTRef.current = bodySize
-    const layoutSize = bodySize + (hasFitSnapPoint && resolvedSide === 'bottom'
-      ? Math.max(0, footerHeightMTRef.current)
-      : 0)
+    const layoutSize = !hasFitSnapPoint && !isHorizontalSide(resolvedSide)
+      ? maxSnapSize
+      : bodySize + (hasFitSnapPoint && resolvedSide === 'bottom'
+        ? Math.max(0, footerHeightMTRef.current)
+        : 0)
     sheetSizeMTRef.current = layoutSize
 
     // The rename is required, to prevent from xx.map is not a function
@@ -396,24 +518,12 @@ export function useSnap({
       )
       // Resolve any pending snap operation
       controller.resolvePendingSnapMT()
-    } else if (contentSizeMTRef.current !== maxSnapSize) {
-      updateContentSizeMT(maxSnapSize)
-    }
-  }
-
-  function updateFooterHeightMT(height: number) {
-    'main thread'
-    const previousFit = getResolvedSnapOffsets()[currentSnapIndex.current]
-    const previousHeight = footerHeightMTRef.current
-    footerHeightMTRef.current = height
-    updateFooterPositionMT(yRef.current.get())
-    if (hasFitSnapPoint && bodySizeMTRef.current >= 0) {
-      handleSheetLayoutChangeMT(
-        { detail: { height: bodySizeMTRef.current } },
-        previousHeight > 0 && height === 0 && bodySizeMTRef.current === 0,
-      )
-      // Reconcile a fit snap when intrinsic footer content changes after opening.
-      if (snapPointValues[currentSnapIndex.current] === -1) {
+      // Intrinsic body and footer changes must resize an idle fit panel too.
+      if (
+        snapPointValues[currentSnapIndex.current] === -1
+        && previousFit !== undefined && previousFit >= 0
+        && Math.abs(fitSize - previousFit) >= 0.5
+      ) {
         const state = controller.presenceStateMTRef.current
         if (
           state === PresenceState.Entered && !yRef.current.isAnimating()
@@ -426,6 +536,21 @@ export function useSnap({
           controller.snapToMT(currentSnapIndex.current, { isEntry: true })
         }
       }
+    } else if (contentSizeMTRef.current !== maxSnapSize) {
+      updateContentSizeMT(maxSnapSize)
+    }
+  }
+
+  function updateFooterHeightMT(height: number) {
+    'main thread'
+    const previousHeight = footerHeightMTRef.current
+    footerHeightMTRef.current = height
+    updateFooterPositionMT(yRef.current.get())
+    if (hasFitSnapPoint && bodySizeMTRef.current >= 0) {
+      handleSheetLayoutChangeMT(
+        { detail: { height: bodySizeMTRef.current } },
+        previousHeight > 0 && height === 0 && bodySizeMTRef.current === 0,
+      )
     }
   }
 
@@ -461,8 +586,8 @@ export function useSnap({
       registerFooter,
       unregisterFooter,
     },
-    setSheetMTRef,
     setContentMTRef,
+    ...surfaceLayout,
     snapTo,
     expand,
     collapse,
@@ -491,7 +616,6 @@ export function useSnap({
     interruptAnimationMT,
     resumeAnimationMT,
     nearestSnapMT,
-    onSnapChangeMT,
     sheetHeightMTRef: sheetSizeMTRef,
     sheetSizeMTRef,
     // Getters for resolved snapPoints (after 'fit' is resolved)
@@ -503,5 +627,6 @@ export function useSnap({
     onDragStartMT: controller.onDragStartMT,
     onDragEndSnapMT: controller.onDragEndSnapMT,
     onDragEndCloseMT: controller.onDragEndCloseMT,
+    releaseAtMaxSnapMT,
   }
 }

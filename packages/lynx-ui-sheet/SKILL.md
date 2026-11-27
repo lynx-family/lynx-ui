@@ -29,6 +29,23 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - To isolate a same-axis native scrolling region, bind its own `NativeGesture`, call `manager.consumeGesture(true)` in its `onBegin` callback, and include it in `SheetNestedScrollContent.gestureRelations.waitFor`. An unbound region still participates in the ancestor pan.
 - Use `gestureConfig` and `gestureRelations` on `SheetNestedScrollContent` only for recognition thresholds and external gesture relationships. Do not replace the Sheet pan or add per-scroll ownership policies.
 
+## Snap Start Rules
+
+- Use `main-thread:onSnapStart(index, value, animated)` on `SheetRoot` to react to the selected target before Sheet starts moving. It fires on drag release and imperative snaps, including same-point releases and handoff to nested scrolling at the maximum snap.
+- The callback does not fire for opening or closing. `animated` is false for an immediate snap. It reports a target, not per-frame animation progress or completed arrival.
+- Use `onSnapChange` for a settled snap index change. After a nested scroll handoff, the Sheet waits for touch-up before reporting the final snap.
+- Intrinsic content changes resize an idle `'fit'` panel with an immediate snap; this also notifies `onSnapStart` with `animated={false}`. Active drags, numeric destinations, and closing panels retain their current motion.
+- Fullscreen is a consumer policy. Compare the resolved target with the consumer's fullscreen size; the largest snap need not be fullscreen.
+- Use `className` / `style` to style the painted surface and `innerClassName` / `innerStyle` for content layout. For independently timed CSS transitions, update the target once after `onSnapStart`; initialize the opening style and handle interrupted transitions in the consumer.
+- A background-thread state update followed by a CSS transition has its own clock. It does not synchronize with the Sheet spring. Keep live text and controls unscaled; animating actual width can reflow text and still incurs layout work. Do not expose or mutate the movement ref to implement companion styles.
+
+## Panel Layout
+
+- Omit `panelLayout` to retain extended background coverage and the original content layout.
+- Set `panelLayout={{ bottomGap: 8 }}` for a bounded bottom panel. The gap is outside the panel and does not count toward a snap size. An empty `panelLayout` uses a zero gap.
+- Updating `bottomGap` uses `snapAnimation` without remounting the content or native scroll view.
+- Put paint and width on surface `className` and `style`. Use `innerClassName` and `innerStyle` for the child layout.
+
 ## Footer Rules
 
 - `SheetFooter` supports `side="bottom"`; use ordinary layout content for other sides.
@@ -47,7 +64,7 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - In `top` and `bottom` mode, percentage snap points resolve against the vertical main-axis basis: `screenHeight` when provided, otherwise viewport height.
 - In horizontal modes (`left`, `right`, `start`, `end`), percentage snap points resolve against the horizontal main-axis basis: `screenWidth` when provided, otherwise viewport width.
 - The `'fit'` snap point resolves to measured content height for `top` / `bottom`, and measured content width for horizontal modes.
-- The inner layout uses `maxSnapSize`, the highest resolved `snapPoints` value, as its stable main-axis size so `flex: 1` children have a snap-related height/width basis. Pure `'fit'` snap point sheets stay content-driven.
+- Attached numeric-snap sheets use `maxSnapSize`, the highest resolved `snapPoints` value, as their stable content size. Detached bottom sheets resize the numeric-snap viewport to the visible panel. Pure `'fit'` snap point sheets stay content-driven.
 - `screenHeight` can override the height basis for `top` / `bottom`; `screenWidth` can override the width basis for horizontal modes.
 - Rubber-band over-drag defaults to enabled for `top` / `bottom` and disabled for horizontal modes. Use `rubberBand` to override the default.
 
@@ -62,8 +79,10 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 ## Styling Rules
 
 - Keep `Sheet` headless: do not add default visual classes or styles in the component package.
-- Put visual surface styles such as background, radius, and shadow on `SheetContent`.
-- Use `innerClassName` / `innerStyle` for content layout, padding, and panel sizing.
+- Put visual surface styles such as background, radius, and shadow on `SheetContent`, or use `innerClassName` / `innerStyle` when the inner panel needs independent styling or width.
+- Use `innerViewProps` for native inner-panel view attributes. Sheet retains its measurement, gestures, class name, and style; use `innerStyle` and `innerClassName` for styling.
+- The Sheet controls the inner panel size on the snap axis.
+- A narrower inner panel needs Lynx SDK 3.5 or newer for taps outside it to reach the backdrop. On older SDKs, constrain the outer surface instead.
 - For horizontal drawers, set the drawer width with `innerClassName` / `innerStyle` so `'fit'` can resolve from the measured drawer width.
 - Horizontal drawers should usually be full height and use inner padding for safe-area or visual breathing room.
 - Put custom handle visuals inside `SheetHandle` instead of layering a separate invisible hit target over a visual handle.

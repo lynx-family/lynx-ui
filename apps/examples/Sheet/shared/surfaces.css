@@ -1,0 +1,93 @@
+@import "@lynx-js/luna-styles/index.css";
+@import "./base.css";
+
+.surface-stage {
+  padding: 32px;
+  background: linear-gradient(160deg, var(--gradient-a), var(--gradient-b));
+}
+
+.surface-launcher {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  border-radius: 24px;
+  background-color: var(--canvas);
+  gap: 16px;
+}
+
+.surface-title {
+  color: var(--content);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.surface-copy {
+  color: var(--content-muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.surface-body {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px 32px;
+  gap: 16px;
+}
+
+.surface-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.surface-action {
+  padding: 12px 16px;
+  border-radius: 999px;
+  background-color: var(--paper);
+}
+
+.surface-action.ui-active {
+  background-color: var(--neutral-ambient);
+}
+
+.surface-action-text {
+  color: var(--content);
+  font-size: 14px;
+}
+
+.surface-card {
+  border-radius: 24px;
+}
+
+.surface-layout {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+}
+
+.surface-scroll {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.surface-row {
+  padding: 20px 24px;
+  border-top: 1px solid var(--rule);
+  gap: 8px;
+}
+
+.surface-row-title {
+  color: var(--content);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.surface-row-copy {
+  color: var(--content-muted);
+  font-size: 15px;
+  line-height: 24px;
+}

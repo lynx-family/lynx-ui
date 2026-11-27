@@ -19,13 +19,14 @@ const VALID_TRANSITIONS: Record<PresenceState, PresenceState[]> = {
 export interface SheetPresenceCallbacks {
   onEntered?: () => void
   onDismiss?: () => void
-  onUnmount?: () => void
-  onBeforeDismiss?: () => void
+  onUnmount?: (closedEpoch?: number) => void
+  onBeforeDismiss?: (leavingEpoch?: number) => void
 }
 
 export function useSheetPresence(
   callbacks: SheetPresenceCallbacks,
   externalRef?: MainThreadRef<PresenceState>,
+  openEpochMTRef?: MainThreadRef<number>,
 ) {
   const internalRef = useMainThreadRef<PresenceState>(
     PresenceState.Left,
@@ -63,7 +64,7 @@ export function useSheetPresence(
         break
       case PresenceState.Leaving:
         if (onBeforeDismiss) {
-          runOnBackground(onBeforeDismiss)()
+          runOnBackground(onBeforeDismiss)(openEpochMTRef?.current)
         }
         break
       case PresenceState.Left:
@@ -71,7 +72,7 @@ export function useSheetPresence(
           runOnBackground(onDismiss)()
         }
         if (onUnmount) {
-          runOnBackground(onUnmount)()
+          runOnBackground(onUnmount)(openEpochMTRef?.current)
         }
         break
       default:

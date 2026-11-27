@@ -9,15 +9,16 @@ import { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 
 import { useSheetPresence } from './useSheetPresence'
-import type { SheetTransition } from '../types'
+import type { SheetRootProps, SheetTransition } from '../types'
 
 export interface SheetControllerOptions {
   onEntered?: () => void
   onDismiss?: () => void
-  onUnmount?: () => void
-  onBeforeDismiss?: () => void
+  onUnmount?: (closedEpoch?: number) => void
+  onBeforeDismiss?: (leavingEpoch?: number) => void
   onResurrected?: () => void
   presenceStateMTRef?: MainThreadRef<PresenceState>
+  openEpochMTRef?: MainThreadRef<number>
 }
 
 export interface SheetControllerAnimationDeps {
@@ -31,6 +32,9 @@ export interface SheetControllerAnimationDeps {
   getTargetForSnap: (index: number) => number
   getResolvedSnapPointValues: () => number[]
   onSnapChangeMT: (index: number, value: number) => void
+  onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
+  onOpeningMT?: () => void
+  onClosedBeforeEntryMT?: () => void
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
   initialSnap: number
@@ -52,6 +56,7 @@ export function useSheetController(
     onBeforeDismiss,
     onResurrected,
     presenceStateMTRef: presenceStateMTRefProp,
+    openEpochMTRef,
   } = options
 
   const {
@@ -61,6 +66,9 @@ export function useSheetController(
     getTargetForSnap,
     getResolvedSnapPointValues,
     onSnapChangeMT,
+    onSnapStartMT,
+    onOpeningMT,
+    onClosedBeforeEntryMT,
     enterAnimation,
     exitAnimation,
     initialSnap,
@@ -80,6 +88,7 @@ export function useSheetController(
       onBeforeDismiss,
     },
     presenceStateMTRefProp,
+    openEpochMTRef,
   )
 
   // Pending snap index and options (for 'fit' snap points that resolve after layout)
@@ -87,9 +96,21 @@ export function useSheetController(
     {
       index: number
       isEntry: boolean
+      animate?: boolean
       animationConfig?: SheetTransition
     } | null
   >(null)
+
+  function beginOpeningMT() {
+    'main thread'
+    if (
+      presenceStateMTRef.current === PresenceState.Left
+      || presenceStateMTRef.current === PresenceState.Leaving
+    ) {
+      onOpeningMT?.()
+    }
+    enter()
+  }
 
   /**
    * Complete a snap transition - handle state changes after animation
@@ -118,6 +139,12 @@ export function useSheetController(
     },
   ) {
     'main thread'
+    const wasClosingOrClosed = presenceStateMTRef.current === PresenceState.Left
+      || presenceStateMTRef.current === PresenceState.Leaving
+    if (wasClosingOrClosed) {
+      onOpeningMT?.()
+      enter()
+    }
     const target = getTargetForSnap(index)
     const values = getResolvedSnapPointValues()
 
@@ -126,21 +153,26 @@ export function useSheetController(
     if (target === -1) {
       pendingSnapMTRef.current = {
         index,
-        isEntry: opts?.isEntry ?? false,
+        isEntry: opts?.isEntry === true
+          || (wasClosingOrClosed && index === initialSnap),
+        animate: opts?.animate,
         animationConfig: opts?.animationConfig,
       }
       return
-    }
-
-    // If called when Left, transition to Entering first
-    if (presenceStateMTRef.current === PresenceState.Left) {
-      enter()
     }
 
     stopAnimationMT()
     const defaultConfig = opts?.isEntry ? enterAnimation : undefined
 
     const clampedIndex = Math.max(0, Math.min(index, values.length - 1))
+    // A new snap can interrupt the opening animation before presence reaches
+    // Entered, and an imperative snap from closed to a non-initial snap index
+    // must notify onSnapStartMT so surface transitions run immediately.
+    const isInitialEntry = opts?.isEntry === true
+      || (wasClosingOrClosed && clampedIndex === initialSnap)
+    if (!isInitialEntry && onSnapStartMT) {
+      onSnapStartMT(clampedIndex, values[clampedIndex], opts?.animate !== false)
+    }
 
     if (opts?.animate === false) {
       yRef.current.jump(target)
@@ -165,15 +197,21 @@ export function useSheetController(
     animationConfig?: SheetTransition
   }) {
     'main thread'
-    // Guard: skip if already showing or shown
-    if (
-      presenceStateMTRef.current === PresenceState.Entering
-      || presenceStateMTRef.current === PresenceState.Entered
-    ) {
+    if (presenceStateMTRef.current === PresenceState.Entered) {
+      return
+    }
+    if (presenceStateMTRef.current === PresenceState.Entering) {
+      if (opts?.animate === false || opts?.animationConfig !== undefined) {
+        snapToMT(initialSnap, {
+          animate: opts.animate,
+          animationConfig: opts.animationConfig,
+          isEntry: true,
+        })
+      }
       return
     }
 
-    enter()
+    beginOpeningMT()
     snapToMT(initialSnap, {
       animate: opts?.animate,
       animationConfig: opts?.animationConfig,
@@ -189,14 +227,20 @@ export function useSheetController(
     animationConfig?: SheetTransition
   }) {
     'main thread'
-    // Guard: skip if already closing or closed
-    if (
-      presenceStateMTRef.current === PresenceState.Leaving
-      || presenceStateMTRef.current === PresenceState.Left
-    ) {
+    // Guard: skip if already closing
+    if (presenceStateMTRef.current === PresenceState.Leaving) {
+      return
+    }
+    if (presenceStateMTRef.current === PresenceState.Left) {
+      pendingSnapMTRef.current = null
+      onClosedBeforeEntryMT?.()
+      if (onUnmount) {
+        runOnBackground(onUnmount)(openEpochMTRef?.current)
+      }
       return
     }
 
+    pendingSnapMTRef.current = null
     stopAnimationMT()
     leave()
     const target = 0
@@ -250,6 +294,7 @@ export function useSheetController(
     pendingSnapMTRef.current = null
     snapToMT(pending.index, {
       isEntry: pending.isEntry,
+      animate: pending.animate,
       animationConfig: pending.animationConfig,
     })
   }
@@ -284,6 +329,7 @@ export function useSheetController(
    */
   function onDragEndCloseMT(opts?: { animationConfig?: SheetTransition }) {
     'main thread'
+    pendingSnapMTRef.current = null
     // Transition to close if not already
     if (
       presenceStateMTRef.current !== PresenceState.Leaving

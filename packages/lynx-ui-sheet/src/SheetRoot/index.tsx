@@ -3,11 +3,12 @@
 // LICENSE file in the root directory of this source tree.
 import {
   forwardRef,
+  runOnMainThread,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMainThreadRef,
   useMemo,
+  useReducer,
   useRef,
   useState,
 } from '@lynx-js/react'
@@ -35,6 +36,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       snapPoints,
       initialSnap,
       onSnapChange: onSnapChangeProp,
+      'main-thread:onSnapStart': onSnapStartMT,
       side = 'bottom',
       enableRTL = false,
       screenHeight,
@@ -58,28 +60,56 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       defaultShow,
     )
     const actualShow = isControlled ? show : uncontrolledShow
+    const openEpochMTRef = useMainThreadRef<number>(actualShow ? 1 : 0)
 
-    const [mounted, setMounted] = useState<boolean>(
-      actualShow ? true : false,
-    )
+    function syncOpenEpochMT(epoch: number) {
+      'main thread'
+      openEpochMTRef.current = epoch
+    }
 
-    // Wake up the component if show becomes true
-    useEffect(() => {
-      if (actualShow && !mounted) {
-        setMounted(true)
-      }
-    }, [actualShow, mounted])
-
+    const [, forceRender] = useReducer((count: number) => count + 1, 0)
     // Store registered methods from SheetContent
     const sheetMethodsRef = useRef<SheetMethods | null>(null)
     const pendingActionsRef = useRef<Array<() => void>>([])
+    const openEpochRef = useRef<number>(actualShow ? 1 : 0)
+    const prevActualShowRef = useRef<boolean>(Boolean(actualShow))
+    const latestUncontrolledShowRef = useRef<boolean>(defaultShow)
+    latestUncontrolledShowRef.current = uncontrolledShow
+    const pendingEmittedShowRef = useRef<boolean | null>(null)
+    const pendingEmissionIdRef = useRef<number>(0)
+    const latchedMountedRef = useRef<boolean>(Boolean(actualShow))
+    if (actualShow && !prevActualShowRef.current) {
+      const nextEpoch = ++openEpochRef.current
+      latchedMountedRef.current = true
+      const isLepus = typeof __LEPUS__ !== 'undefined' && __LEPUS__
+      if (!isLepus) {
+        runOnMainThread(syncOpenEpochMT)(nextEpoch)
+      }
+    }
+    prevActualShowRef.current = Boolean(actualShow)
+    // Mount SheetView synchronously on the rising edge when `show` becomes true
+    // without scheduling a follow-up `setMounted(true)` render; only `onUnmount`
+    // (or imperative open from unmounted) triggers `forceRender()`.
+    const effectiveMounted = latchedMountedRef.current
 
     const handleShowChange = useMemoizedFn((newShow: boolean) => {
-      if (newShow === actualShow) return
-      onShowChange?.(newShow)
+      const committedShow = isControlled
+        ? show
+        : latestUncontrolledShowRef.current
+      const effectiveShow = pendingEmittedShowRef.current ?? committedShow
+      if (newShow === effectiveShow) return
+      const emissionId = ++pendingEmissionIdRef.current
+      pendingEmittedShowRef.current = newShow
+      void Promise.resolve().then(() => {
+        if (pendingEmissionIdRef.current === emissionId) {
+          pendingEmittedShowRef.current = null
+        }
+      })
       if (!isControlled) {
+        latestUncontrolledShowRef.current = newShow
         setUncontrolledShow(newShow)
       }
+      onShowChange?.(newShow)
     })
 
     const registerMethods = useCallback((methods: SheetMethods | null) => {
@@ -95,48 +125,74 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
     // Imperative handle methods
     useImperativeHandle(ref, () => {
       const queueAction = (action: () => void) => {
-        if (mounted && sheetMethodsRef.current) {
+        if (effectiveMounted && sheetMethodsRef.current) {
           action()
         } else {
-          if (!mounted) setMounted(true)
+          const wasMounted = latchedMountedRef.current
+          latchedMountedRef.current = true
+          if (!wasMounted) forceRender()
           pendingActionsRef.current.push(action)
         }
       }
 
+      const beginImperativeOpen = (action: () => void) => {
+        const nextEpoch = ++openEpochRef.current
+        const wasMounted = latchedMountedRef.current
+        latchedMountedRef.current = true
+        if (!wasMounted) forceRender()
+        runOnMainThread(syncOpenEpochMT)(nextEpoch)
+        handleShowChange(true)
+        queueAction(action)
+      }
+
       return {
         snapTo: (index, opts) => {
-          handleShowChange(true)
-          queueAction(() => sheetMethodsRef.current?.snapTo(index, opts))
+          beginImperativeOpen(() =>
+            sheetMethodsRef.current?.snapTo(index, opts)
+          )
         },
         expand: (opts) => {
-          handleShowChange(true)
-          queueAction(() => sheetMethodsRef.current?.expand(opts))
+          beginImperativeOpen(() => sheetMethodsRef.current?.expand(opts))
         },
         collapse: (opts) => {
-          handleShowChange(true)
-          queueAction(() => sheetMethodsRef.current?.collapse(opts))
+          beginImperativeOpen(() => sheetMethodsRef.current?.collapse(opts))
         },
         close: (opts) => {
           handleShowChange(false)
-          if (mounted || actualShow) {
+          if (effectiveMounted || latchedMountedRef.current || actualShow) {
             queueAction(() => sheetMethodsRef.current?.close(opts))
           }
         },
         open: (opts) => {
-          handleShowChange(true)
-          queueAction(() => sheetMethodsRef.current?.show?.(opts))
+          beginImperativeOpen(() => sheetMethodsRef.current?.show?.(opts))
         },
       }
-    }, [handleShowChange, mounted])
+    }, [handleShowChange, effectiveMounted, actualShow])
+
+    const autoOpen = actualShow && pendingActionsRef.current.length === 0
+
+    const isCurrentOpenEpoch = useCallback(
+      (epoch?: number) => epoch === undefined || epoch === openEpochRef.current,
+      [],
+    )
 
     const contextValue = useMemo(() => ({
       show: actualShow,
+      autoOpen,
       forceMount,
       setUncontrolledShow,
       groupState: PresenceState.Entered, // Obsolete, keeping for type/compat if needed or remove
-      mounted,
-      onUnmount: () => {
-        setMounted(false)
+      mounted: effectiveMounted,
+      isCurrentOpenEpoch,
+      onUnmount: (closedEpoch?: number) => {
+        if (!isCurrentOpenEpoch(closedEpoch)) {
+          return
+        }
+        if (!latchedMountedRef.current) {
+          return
+        }
+        latchedMountedRef.current = false
+        forceRender()
       },
       onOpen,
       onClose,
@@ -147,6 +203,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       snapPoints,
       initialSnap,
       onSnapChange: onSnapChangeProp,
+      onSnapStartMT,
       side,
       enableRTL,
       resolvedSide,
@@ -159,12 +216,15 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       handleOnly,
       enableDragToClose,
       presenceStateMTRef,
+      openEpochMTRef,
       claimedGestureAngles,
     }), [
       actualShow,
+      autoOpen,
       forceMount,
       setUncontrolledShow,
-      mounted,
+      effectiveMounted,
+      isCurrentOpenEpoch,
       onOpen,
       onClose,
       handleShowChange,
@@ -173,6 +233,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       snapPoints,
       initialSnap,
       onSnapChangeProp,
+      onSnapStartMT,
       side,
       enableRTL,
       resolvedSide,
@@ -184,6 +245,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       handleOnly,
       enableDragToClose,
       presenceStateMTRef,
+      openEpochMTRef,
       claimedGestureAngles,
     ])
 
