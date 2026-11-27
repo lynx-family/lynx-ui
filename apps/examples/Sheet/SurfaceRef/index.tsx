@@ -20,6 +20,7 @@ import {
   SheetView,
   screenHeight,
   screenWidth,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 import {
@@ -27,57 +28,79 @@ import {
   useMotionValueRef,
   useMotionValueRefEvent,
 } from '@lynx-js/motion/mini'
-import type { MainThread } from '@lynx-js/types'
 
 import { TriggerButton } from '../shared/index.js'
 import './index.css'
 
+const FLOATING_FRAME = {
+  insets: { left: 24, right: 24 },
+  maxWidth: 664,
+}
+
 function App() {
   const sheet = useRef<SheetRootRef>(null)
-  const surface = useMainThreadRef<MainThread.Element | null>(null)
+  const surface = useSheetSurface({ frame: FLOATING_FRAME })
+  const surfaceController = surface.controllerRef
   const [viewport, setViewport] = useState({
     width: screenWidth,
     height: screenHeight,
   })
-  const floatingWidth = Math.min(Math.max(0, viewport.width - 48), 664)
-  const fullscreenWidth = viewport.width
   const fullscreenHeight = viewport.height
-  const width = useMotionValueRef(floatingWidth)
-  const target = useMainThreadRef({ width: floatingWidth, animated: false })
+  const progress = useMotionValueRef(0)
+  const target = useMainThreadRef({ value: 0, animated: false })
 
-  useMotionValueRefEvent(width, 'change', value => {
+  useMotionValueRefEvent(progress, 'change', value => {
     'main thread'
-    surface.current?.setStyleProperties({ width: `${value}px` })
+    const surface = surfaceController.current
+    if (!surface) return
+    const { width: viewportWidth } = surface.getViewportSize()
+    const startWidth = Math.min(Math.max(0, viewportWidth - 48), 664)
+    const amount = Math.max(0, Math.min(1, value))
+    surface.setFrame({
+      width: startWidth + (viewportWidth - startWidth) * amount,
+    })
   })
 
   function resetWidth() {
     'main thread'
-    target.current = { width: floatingWidth, animated: false }
-    width.current.jump(floatingWidth)
+    target.current = { value: 0, animated: false }
+    progress.current.jump(0)
+    surfaceController.current?.setFrame(FLOATING_FRAME)
+  }
+
+  function onDragStart() {
+    'main thread'
+    progress.current.stop()
   }
 
   function onSnapStart(_index: number, size: number, animated: boolean) {
     'main thread'
-    const next = size >= fullscreenHeight ? fullscreenWidth : floatingWidth
+    const next = size >= fullscreenHeight ? 1 : 0
     const previous = target.current
-    if (previous.width === next && previous.animated === animated) return
-    target.current = { width: next, animated }
-    width.current.stop()
+    if (
+      previous.value === next
+      && previous.animated === animated
+      && (progress.current.isAnimating() || progress.current.get() === next)
+    ) {
+      return
+    }
+    target.current = { value: next, animated }
+    progress.current.stop()
     if (animated) {
-      animate(width.current, next, {
+      animate(progress.current, next, {
         type: 'spring',
         stiffness: 260,
         damping: 28,
       })
     } else {
-      width.current.jump(next)
+      progress.current.jump(next)
     }
   }
 
   useEffect(() => () => {
     runOnMainThread(() => {
       'main thread'
-      width.current?.stop()
+      progress.current?.stop()
     })()
   }, [])
 
@@ -100,16 +123,17 @@ function App() {
       <SheetRoot
         ref={sheet}
         snapPoints={['45%', '100%']}
+        screenWidth={viewport.width}
         screenHeight={fullscreenHeight}
+        main-thread:onDragStart={onDragStart}
         main-thread:onSnapStart={onSnapStart}
       >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            main-thread:surfaceRef={surface}
+            surface={surface}
             className='sheet-content'
             innerClassName='surface-layout'
-            style={{ alignSelf: 'center', width: `${floatingWidth}px` }}
           >
             <SheetHandle className='sheet-handle' />
             <view className='surface-body'>

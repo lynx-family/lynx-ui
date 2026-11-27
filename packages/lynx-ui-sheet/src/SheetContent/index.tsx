@@ -44,6 +44,7 @@ export function SheetContent(props: SheetContentProps) {
     getResolvedSnapPointValues: snap.getResolvedSnapPointValues,
     claimedGestureAngles,
     onDragStartMT: snap.onDragStartMT,
+    onDragRebaseMT: snap.onDragRebaseMT,
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
   })
@@ -53,11 +54,17 @@ export function SheetContent(props: SheetContentProps) {
       {...props}
       dragHandlers={dragHandlers}
       resolvedSide={context.resolvedSide}
+      enableRTL={context.enableRTL}
       handleOnly={context.handleOnly}
       snapPoints={snapPoints}
       maxSnapSize={snap.maxSnapSize}
+      fitMaxSize={snap.fitMaxSize}
+      screenWidth={snap.screenWidth}
+      screenHeight={snap.screenHeight}
       positioner={positioner}
       footerContext={snap.footerContext}
+      bodyContext={snap.bodyContext}
+      measureSurfaceMT={snap.measureSurfaceMT}
       setClipMTRef={snap.setClipMTRef}
       setSurfaceMTRef={snap.setSurfaceMTRef}
       setViewportMTRef={snap.setViewportMTRef}

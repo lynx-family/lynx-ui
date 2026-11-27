@@ -88,6 +88,42 @@ describe('Sheet snap start notification', () => {
     expect(onSnapStartMT).toHaveBeenCalledTimes(2)
   })
 
+  it('waits for fit measurement and preserves the immediate option', () => {
+    const { controller, animateToMT, getTargetForSnap, onSnapStartMT } = setup()
+    controller.showMT()
+    animateToMT.mock.calls[0][1]()
+    getTargetForSnap.mockReturnValueOnce(-1)
+    controller.snapToMT(1, { animate: false })
+    expect(onSnapStartMT).not.toHaveBeenCalled()
+    controller.resolvePendingSnapMT()
+    expect(onSnapStartMT.mock.calls).toEqual([[1, 900, false]])
+  })
+
+  it('clears a pending fit snap on closeMT and onDragEndCloseMT even without retargetAnimationMT', () => {
+    const { controller, animateToMT, getTargetForSnap, onSnapStartMT } = setup()
+    controller.showMT()
+    animateToMT.mock.calls[0][1]()
+
+    getTargetForSnap.mockReturnValueOnce(-1)
+    controller.snapToMT(1)
+    controller.closeMT({ animate: false })
+    animateToMT.mockClear()
+    onSnapStartMT.mockClear()
+    controller.resolvePendingSnapMT()
+    expect(animateToMT).not.toHaveBeenCalled()
+    expect(onSnapStartMT).not.toHaveBeenCalled()
+
+    controller.showMT({ animate: false })
+    getTargetForSnap.mockReturnValueOnce(-1)
+    controller.snapToMT(1)
+    controller.onDragEndCloseMT()
+    animateToMT.mockClear()
+    onSnapStartMT.mockClear()
+    controller.resolvePendingSnapMT()
+    expect(animateToMT).not.toHaveBeenCalled()
+    expect(onSnapStartMT).not.toHaveBeenCalled()
+  })
+
   it('allows showMT({ animate: false }) to override an in-flight Entering animation immediately', () => {
     const { controller, position, onEntered } = setup()
     controller.showMT()
@@ -104,16 +140,5 @@ describe('Sheet snap start notification', () => {
     expect(onSnapStartMT.mock.calls).toEqual([[1, 900, true]])
     animateToMT.mock.calls[0][1]()
     expect(onEntered).toHaveBeenCalledTimes(1)
-  })
-
-  it('waits for fit measurement and preserves the immediate option', () => {
-    const { controller, animateToMT, getTargetForSnap, onSnapStartMT } = setup()
-    controller.showMT()
-    animateToMT.mock.calls[0][1]()
-    getTargetForSnap.mockReturnValueOnce(-1)
-    controller.snapToMT(1, { animate: false })
-    expect(onSnapStartMT).not.toHaveBeenCalled()
-    controller.resolvePendingSnapMT()
-    expect(onSnapStartMT.mock.calls).toEqual([[1, 900, false]])
   })
 })

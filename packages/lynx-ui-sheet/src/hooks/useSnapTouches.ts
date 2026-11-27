@@ -14,11 +14,14 @@ import {
   getMainAxisTouchCoordinate,
   getNextMainAxisOffset,
   resolveSheetSide,
-  rubberEffect,
 } from '../utils'
+import { createSheetDragState, moveSheetDrag } from './sheetDrag'
+import type { SheetDragState } from './sheetDrag'
 import { useDrag } from './useDrag'
 import type { SnappingOptions } from './useSnap'
 import type { SheetSide } from '../types'
+
+export { getRubberBandConfig } from './sheetDrag'
 
 export interface SnapTouchOptions {
   side?: SheetSide
@@ -42,6 +45,7 @@ export interface SnapTouchOptions {
   getResolvedSnapPointValues: () => number[]
   // Controller handlers
   onDragStartMT: () => void
+  onDragRebaseMT?: () => void
   onDragEndSnapMT: (
     index: number,
     opts?: { animationConfig?: SnappingOptions['animationConfig'] },
@@ -68,13 +72,14 @@ export function useSnapTouches({
   claimedGestureAngles,
   // Controller handlers
   onDragStartMT,
+  onDragRebaseMT,
   onDragEndSnapMT,
   onDragEndCloseMT,
 }: SnapTouchOptions) {
   const resolvedSide = resolveSheetSide(side, enableRTL)
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
-  const startTouchMainAxisRef = useMainThreadRef<number>(0)
-  const startOffsetRef = useMainThreadRef<number>(0)
+  const lastTouchMainAxisRef = useMainThreadRef<number>(0)
+  const dragStateMTRef = useMainThreadRef<SheetDragState | null>(null)
   const isDraggingMTRef = useMainThreadRef<boolean>(false)
 
   function handleTouchStartMT(e: MainThread.TouchEvent) {
@@ -85,11 +90,11 @@ export function useSnapTouches({
 
     // Only record start position - don't stop animation or change state yet
     // Wait for handleFirstMoveMT to confirm this is a sheet drag
-    startTouchMainAxisRef.current = getMainAxisTouchCoordinate(
+    dragStateMTRef.current = null
+    lastTouchMainAxisRef.current = getMainAxisTouchCoordinate(
       resolvedSide,
       e.detail,
     )
-    startOffsetRef.current = yRef.current.get()
   }
 
   function handleFirstMoveMT() {
@@ -102,6 +107,13 @@ export function useSnapTouches({
 
     // Delegate to controller - handles resurrection and stopping animations
     onDragStartMT()
+    dragStateMTRef.current = createSheetDragState(
+      yRef.current.get(),
+      offsets,
+      effectiveRubberBand,
+      viewportSize,
+      enableDragToClose,
+    )
   }
 
   function handleTouchMoveMT(e: MainThread.TouchEvent) {
@@ -109,39 +121,34 @@ export function useSnapTouches({
     if (dragDisabled) return
     const offsets = getResolvedSnapOffsets()
     if (offsets.length === 0) return
-    const delta = getMainAxisTouchCoordinate(resolvedSide, e.detail)
-      - startTouchMainAxisRef.current
-    let next = getNextMainAxisOffset(
+    const coordinate = getMainAxisTouchCoordinate(resolvedSide, e.detail)
+    const delta = getNextMainAxisOffset(
       resolvedSide,
-      startOffsetRef.current,
-      delta,
+      0,
+      coordinate - lastTouchMainAxisRef.current,
     )
-
-    const validOffsets = offsets.filter(o => o !== -1)
-    const min = validOffsets.length > 0 ? Math.min(...validOffsets) : 0
-    // Use the actual max snap point, not clamped to sheet height yet
-    const maxSnap = validOffsets.length > 0 ? Math.max(...validOffsets) : 0
-    const max = clamp(maxSnap, Math.max(sheetSizeMTRef.current, maxSnap))
-
-    // Use max snap offset (not DOM height) for rubber band calculation
-    const { enabled, coeff, max: rubberMax } = getRubberBandConfig(
-      effectiveRubberBand,
-      viewportSize,
-      max,
-    )
-
-    if (next > max) {
-      next = enabled
-        ? max + rubberEffect(next - max, rubberMax, coeff)
-        : max
+    lastTouchMainAxisRef.current = coordinate
+    let current = yRef.current.get()
+    let state = dragStateMTRef.current
+    // An imperative snap can replace the position while a finger is still down.
+    if (current !== state?.position) {
+      if (state) {
+        if (onDragRebaseMT) onDragRebaseMT()
+        else onDragStartMT()
+        current = yRef.current.get()
+      }
+      state = createSheetDragState(
+        current,
+        offsets,
+        effectiveRubberBand,
+        viewportSize,
+        enableDragToClose,
+      )
     }
-    if (next < min && !enableDragToClose) {
-      next = enabled
-        ? min + rubberEffect(next - min, rubberMax, coeff)
-        : min
-    }
-
-    yRef.current.set(next)
+    if (!state) return
+    const next = moveSheetDrag(state, delta)
+    dragStateMTRef.current = next
+    if (delta !== 0) yRef.current.set(next.position)
   }
 
   function handleTouchEndMT() {
@@ -149,6 +156,7 @@ export function useSnapTouches({
     // Only process if we started a real vertical drag
     if (!isDraggingMTRef.current) return
     isDraggingMTRef.current = false
+    dragStateMTRef.current = null
 
     if (dragDisabled) return
     const offsets = getResolvedSnapOffsets()
@@ -228,34 +236,4 @@ export function useSnapTouches({
     handleTouchMoveMT: handleTouchMoveW,
     handleTouchEndMT: handleTouchEndW,
   }
-}
-
-export function getRubberBandConfig(
-  rubberBand: SnapTouchOptions['rubberBand'],
-  viewportSize: number,
-  sheetSize: number,
-) {
-  'main thread'
-  const enabled = rubberBand !== false
-  if (!enabled) {
-    return { enabled, coeff: 0, max: 0 }
-  }
-
-  const coeff = typeof rubberBand === 'number'
-    ? rubberBand
-    : (typeof rubberBand === 'object' ? (rubberBand.coeff ?? 0.5) : 0.5)
-
-  const defaultMax = Math.max(
-    0,
-    Math.min(
-      80,
-      viewportSize - sheetSize,
-    ),
-  )
-
-  const max = typeof rubberBand === 'object'
-    ? (rubberBand.max ?? defaultMax)
-    : defaultMax
-
-  return { enabled, coeff, max }
 }

@@ -7,12 +7,14 @@ import { root, useRef, useState } from '@lynx-js/react'
 import {
   Button,
   SheetBackdrop,
+  SheetBody,
   SheetContent,
   SheetHandle,
   SheetNestedScrollContent,
   SheetPositioner,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef, SheetSide } from '@lynx-js/lynx-ui'
 
@@ -30,6 +32,7 @@ function App() {
   const snapValue = (side === 'top' || side === 'bottom' ? height : width)
     * (snapIndex === 0 ? 0.5 : 0.85)
   const sides: SheetSide[] = ['bottom', 'top', 'left', 'right', 'start', 'end']
+  const surface = useSheetSurface({ frame: { insets: { bottom: 8 } } })
 
   return (
     <view className='demo-container lunaris-dark'>
@@ -100,35 +103,44 @@ function App() {
               ? (
                 <SheetNestedScrollContent
                   className='surface'
-                  panelLayout={{ bottomGap: 8 }}
+                  surface={surface}
+                  innerStyle={{ display: 'flex', flexDirection: 'column' }}
                 >
                   {({ scrollGesture }) => (
-                    <scroll-view
-                      className='scroll'
-                      scroll-orientation={side === 'top' || side === 'bottom'
-                        ? 'vertical'
-                        : 'horizontal'}
-                      main-thread:gesture={scrollGesture}
-                      bounces={false}
-                    >
-                      {Array.from(
-                        { length: 16 },
-                        (_, index) => (
-                          <view className='row' key={index}>
-                            <text className='row-label'>
-                              {`Item ${index + 1}`}
-                            </text>
-                          </view>
-                        ),
-                      )}
-                    </scroll-view>
+                    <>
+                      <SheetHandle className='handle' />
+                      <SheetBody
+                        viewportInsets={{ top: 64, left: 32, right: 32 }}
+                      >
+                        <scroll-view
+                          className='scroll'
+                          scroll-orientation={side === 'top'
+                              || side === 'bottom'
+                            ? 'vertical'
+                            : 'horizontal'}
+                          main-thread:gesture={scrollGesture}
+                          bounces={true}
+                        >
+                          {Array.from(
+                            { length: 16 },
+                            (_, index) => (
+                              <view className='row' key={index}>
+                                <text className='row-label'>
+                                  {`Item ${index + 1}`}
+                                </text>
+                              </view>
+                            ),
+                          )}
+                        </scroll-view>
+                      </SheetBody>
+                    </>
                   )}
                 </SheetNestedScrollContent>
               )
               : (
                 <SheetContent
                   className='surface'
-                  panelLayout={{ bottomGap: 8 }}
+                  surface={surface}
                 >
                   <SheetHandle className='handle' />
                   <view className='panel'>

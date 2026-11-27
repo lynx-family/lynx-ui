@@ -11,25 +11,38 @@ import type {
 } from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
-import type { MainThread, ViewProps } from '@lynx-js/types'
+import type { ViewProps } from '@lynx-js/types'
 
 export type SheetSide = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'
 
 /**
- * Optional local viewport inside SheetView. Wrap the backdrop and content together.
- * Width and height come from the host pane in logical pixels and are available
- * before opening. Sheet does not wait for an asynchronous layout query.
+ * Optional local viewport inside SheetView. Wrap the backdrop and content
+ * together for a localized backdrop, or place SheetBackdrop as a sibling inside
+ * SheetView for a full-screen backdrop with a constrained sheet viewport (such as
+ * asymmetric safe areas).
+ * Width and height can be supplied synchronously in logical pixels or omitted to
+ * auto-measure the positioner's own bounds on layout. Numeric or `'px'` edge
+ * offsets (`left`/`top`/`right`/`bottom`) in `style` are also subtracted from
+ * fallback viewport bounds before the first layout measurement completes.
  * CSS places the viewport; its origin does not enter snap or drag calculations.
  * Updating dimensions preserves the selected snap and active gestures.
- * @zh SheetView 内可选的局部视口，同时包裹背景遮罩和内容。宽高由宿主区域以逻辑像素提供，
- * 在打开前即可用于计算，无需等待异步布局查询。CSS 控制位置，原点不参与吸附或拖拽计算。
- * 更新宽高会保留吸附索引和正在进行的手势。
+ * @zh SheetView 内可选的局部视口。可同时包裹背景遮罩与内容实现局部遮罩，
+ * 也可与 SheetBackdrop 在 SheetView 内并列放置，保留全屏遮罩并将面板视口约束在安全区域内。
+ * 宽高可以逻辑像素同步传入，也可省略以在布局时自动测量定位容器尺寸。`style` 中传入的数值或
+ * `'px'` 边距（`left`/`top`/`right`/`bottom`）会在首次布局测量完成前预先从回退视口尺寸中扣除。
+ * CSS 控制位置，原点不参与吸附或拖拽计算。更新宽高会保留吸附索引和正在进行的手势。
  */
 export interface SheetPositionerProps extends ComponentBasicProps {
-  /** Local viewport width in positive logical pixels. Overrides screenWidth. @zh 局部视口宽度，正逻辑像素，优先于 screenWidth。 */
-  width: number
-  /** Local viewport height in positive logical pixels. Overrides screenHeight. @zh 局部视口高度，正逻辑像素，优先于 screenHeight。 */
-  height: number
+  /** Local viewport width in positive logical pixels. Overrides screenWidth; auto-measured when omitted. @zh 局部视口宽度，正逻辑像素，优先于 screenWidth；省略时自动测量。 */
+  width?: number
+  /** Local viewport height in positive logical pixels. Overrides screenHeight; auto-measured when omitted. @zh 局部视口高度，正逻辑像素，优先于 screenHeight；省略时自动测量。 */
+  height?: number
+  /**
+   * Called whenever resolved local viewport dimensions become available or change.
+   * Fires for both explicit `width`/`height` props and auto-measured bounds.
+   * @zh 当局部视口尺寸首次可用或发生变化时触发，同时覆盖显式传入宽高和自动测量场景。
+   */
+  onSizeChange?: (size: SheetViewportSize) => void
   children?: ReactNode
   /**
    * Native properties for the positioner view. Dimensions, clipping, className,
@@ -121,34 +134,224 @@ export interface SheetTransitionTween {
 export type SheetTransition = SheetTransitionSpring | SheetTransitionTween
 
 /**
+ * Viewport edge safe-area insets for `SheetBody`, supporting physical edges
+ * (`top`, `right`, `bottom`, `left`) and logical horizontal edges (`start`, `end`)
+ * resolved against `enableRTL`.
+ * @zh `SheetBody` 的视口安全区边距，支持物理四边（`top`、`right`、`bottom`、`left`）以及跟随 `enableRTL` 解析的逻辑水平边（`start`、`end`）。
+ */
+export interface SheetViewportInsets {
+  top?: number
+  right?: number
+  bottom?: number
+  left?: number
+  start?: number
+  end?: number
+}
+
+/**
+ * Panel width, maximum width, or fit bound inside the local viewport, expressed
+ * in logical pixels, a `'px'` string, or a percentage string of the local viewport.
+ * @docTypeFallback number | `${number}%` | `${number}px`
+ * @zh 局部视口内的面板宽度、最大宽度或 fit 尺寸约束，支持逻辑像素数值、`'px'` 字符串或相对局部视口尺寸的百分比字符串。
+ */
+export type SheetSurfaceSize = number | `${number}%` | `${number}px`
+
+/**
+ * Horizontal alignment of the sheet surface within the available corridor left
+ * by `insets`. `'start'` and `'end'` respect `enableRTL`. Defaults to `'center'`.
+ * @zh 面板在 `insets` 预留可用空间内的水平对齐方式；`'start'` 与 `'end'` 会跟随 `enableRTL`，默认为 `'center'`。
+ */
+export type SheetSurfaceAlign = 'start' | 'center' | 'end'
+
+/**
+ * Surface frame constraint box inside the local viewport.
+ * `insets` define minimum edge margins, `width`/`maxWidth` are clamped to the
+ * available horizontal corridor (`screenWidth - left - right`), and `align`
+ * distributes remaining horizontal slack. When passed to `setFrame`, omitted or
+ * `undefined` fields reset to their defaults.
+ * @zh 局部视口内的面板约束框。`insets` 定义最小边距，`width`/`maxWidth` 会被钳制在可用水平宽度
+ * （`screenWidth - left - right`）内，`align` 决定剩余水平空间的分配。调用 `setFrame` 时为全量替换，省略或 `undefined` 的字段恢复默认值。
+ */
+export interface SheetSurfaceFrame {
+  insets?: {
+    right?: number
+    bottom?: number
+    left?: number
+  }
+  width?: SheetSurfaceSize
+  maxWidth?: SheetSurfaceSize
+  align?: SheetSurfaceAlign
+}
+
+/**
+ * Current local viewport dimensions (from `SheetPositioner` when mounted, or
+ * fallback `screenWidth`/`screenHeight`) in logical pixels.
+ * @zh 当前局部视口尺寸（挂载了 `SheetPositioner` 时为其尺寸，否则为 `screenWidth`/`screenHeight`），单位为逻辑像素。
+ */
+export interface SheetViewportSize {
+  width: number
+  height: number
+}
+
+/**
+ * Presence lifecycle states emitted on the main thread while opening or closing the Sheet.
+ * @zh Sheet 打开或关闭过程中在主线程派发的生命周期状态。
+ */
+export type SheetPresenceState = 'entering' | 'entered' | 'exiting' | 'exited'
+
+/**
+ * Main-axis bounds for a bounded `'fit'` snap point inside `snapPoints`,
+ * applied to the total `'fit'` panel size (including bottom safe-area reserve
+ * and `SheetFooter` height). Values accept logical pixels, `'px'` strings, or
+ * local-viewport percentages.
+ * @zh 有界 `'fit'` 吸附点的主轴尺寸上下限（作用于包含底部安全区预留与 `SheetFooter` 的整体面板高度/宽度），支持逻辑像素数值、`'px'` 字符串或基于局部视口主轴尺寸的百分比字符串。
+ */
+export interface SheetFitBounds {
+  /**
+   * Minimum total panel size along the main axis in logical pixels, `'px'` string, or viewport percentage.
+   * @zh 主轴方向的整体面板最小尺寸，支持逻辑像素数值、`'px'` 字符串或局部视口百分比字符串。
+   */
+  min?: SheetSurfaceSize
+  /**
+   * Maximum total panel size along the main axis in logical pixels, `'px'` string, or viewport percentage.
+   * @zh 主轴方向的整体面板最大尺寸，支持逻辑像素数值、`'px'` 字符串或局部视口百分比字符串。
+   */
+  max?: SheetSurfaceSize
+}
+
+/**
+ * Bounded `'fit'` snap point entry for `snapPoints`. Passing `{ fit: {} }` is
+ * equivalent to `'fit'`.
+ * @zh `snapPoints` 中带上下限约束的 `'fit'` 吸附点配置；传入 `{ fit: {} }` 等同于 `'fit'`。
+ */
+export interface SheetFitSnapPoint {
+  /**
+   * Minimum and maximum bounds for this `'fit'` snap point.
+   * @zh 该 `'fit'` 吸附点的最小/最大尺寸约束。
+   */
+  fit: SheetFitBounds
+}
+
+/**
+ * A snap point entry accepted by `SheetRoot.snapPoints`.
+ * Accepts logical pixel numbers, `'%'` / `'px'` strings, `'fit'`, or `{ fit: { min?, max? } }`.
+ * @docTypeFallback number | 'fit' | `${number}%` | `${number}px` | (string & {}) | SheetFitSnapPoint
+ * @zh `SheetRoot.snapPoints` 支持的吸附点项：像素数值、百分比/`px` 字符串、`'fit'` 或 `{ fit: { min?, max? } }`。
+ */
+export type SheetSnapPoint =
+  | number
+  | 'fit'
+  | `${number}%`
+  | `${number}px`
+  | (string & {})
+  | SheetFitSnapPoint
+
+/**
+ * Exposed corner radii in logical pixels for a Sheet surface.
+ * Pass a single number to apply the same radius to all four corners, or an
+ * object to specify corners individually. Omitted (`undefined` or `null`)
+ * corners restore CSS / `style` corner radii (clipped bottom corners default to square).
+ * @zh Sheet 表面的可见圆角半径（逻辑像素）。传入单个数字会同时设置四角；传入对象可按角设置，省略（`undefined` 或 `null`）的角恢复 CSS / `style` 圆角（被裁剪的底角默认为直角）。
+ */
+export type SheetCornerRadius =
+  | number
+  | {
+    topLeft?: number | null
+    topRight?: number | null
+    bottomRight?: number | null
+    bottomLeft?: number | null
+  }
+
+/**
+ * Main-thread controller for updating the Sheet surface's constraint frame and corner shape.
+ * Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on the main thread.
+ * @zh 用于在主线程更新 Sheet 表面约束框与圆角形态的控制器，原子化同步表面边界、裁剪与 SheetBody 安全区避让。
+ */
+export interface SheetSurfaceController {
+  /**
+   * Replace the panel surface constraint frame inside the local viewport in logical pixels.
+   * Any omitted or `undefined` field resets to its default (0 insets, full available width,
+   * no max-width cap, `'center'` alignment). Pass `{ animating: true }` on intermediate animation
+   * frames to defer committing viewport layout bounds until the final update (when `animating`
+   * is omitted or `false`).
+   * @zh 全量替换局部视口内的面板约束框（逻辑像素）。省略或为 `undefined` 的字段将恢复默认值
+   * （零边距、占满可用宽度、无最大宽度限制、居中对齐）。动画中间帧可传入 `{ animating: true }`，
+   * 将视口布局边界推迟到最终更新（省略或传 `false`）时统一提交。
+   */
+  setFrame: (
+    frame: SheetSurfaceFrame,
+    options?: { animating?: boolean },
+  ) => void
+  /**
+   * Replace exposed corner radii in logical pixels. Passing a number sets all four corners;
+   * passing an object sets the specified corners and restores CSS / `style` radii on any
+   * omitted (`undefined` or `null`) corner. Passing `undefined` restores CSS / `style` radii
+   * on all four corners.
+   * @zh 全量替换可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象会设置指定的角并将省略（`undefined` 或 `null`）的角恢复为 CSS / `style` 圆角；传入 `undefined` 将恢复四角的 CSS / `style` 圆角。
+   */
+  setCornerRadius: (radius: SheetCornerRadius | undefined) => void
+  /**
+   * Read the current local viewport dimensions (`{ width, height }`) on the main thread.
+   * @zh 在主线程读取当前局部视口尺寸（`{ width, height }`）。
+   */
+  getViewportSize: () => SheetViewportSize
+}
+
+/**
+ * Options passed to `useSheetSurface` to configure base surface geometry and corner radii.
+ * @zh 传给 `useSheetSurface` 的基础面板约束框与圆角配置。
+ */
+export interface SheetSurfaceOptions {
+  /**
+   * Base panel constraint frame inside the local viewport (for example,
+   * `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`).
+   * Seeded on Frame 0, reset on each open, and updated reactively whenever its
+   * resolved values change while open. Imperative `controllerRef.current?.setFrame(...)`
+   * calls override it on the main thread until the next open or base value change.
+   * @zh 局部视口内的基础面板约束框（例如 `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`）。在首帧渲染、每次打开以及基础配置值变化时应用；主线程 `controllerRef.current?.setFrame(...)` 可实时覆盖，直至下次打开或基础配置变更。
+   */
+  frame?: SheetSurfaceFrame
+  /**
+   * Base exposed corner radii in logical pixels.
+   * Seeded on Frame 0, reset on each open, and updated reactively whenever its
+   * resolved values change while open. Imperative `controllerRef.current?.setCornerRadius(...)`
+   * calls override it on the main thread until the next open or base value change.
+   * @zh 面板可见圆角的基础半径（逻辑像素）。在首帧渲染、每次打开以及基础配置值变化时应用；主线程 `controllerRef.current?.setCornerRadius(...)` 可实时覆盖，直至下次打开或基础配置变更。
+   */
+  cornerRadius?: SheetCornerRadius
+}
+
+/**
+ * Opt-in surface handle returned by `useSheetSurface` and passed to `SheetContent`
+ * or `SheetNestedScrollContent` via `surface`.
+ * @zh `useSheetSurface` 返回的可选表面句柄，通过 `surface` 属性传给 `SheetContent` 或 `SheetNestedScrollContent`。
+ */
+export interface SheetSurfaceHandle {
+  /**
+   * Main-thread ref receiving the `SheetSurfaceController` while mounted.
+   * Drive per-frame animations on the main thread via `setFrame`, `setCornerRadius`,
+   * and `getViewportSize`.
+   * @zh 挂载期间接收 `SheetSurfaceController` 的主线程引用，可在主线程通过 `setFrame`、`setCornerRadius` 和 `getViewportSize` 逐帧驱动动画。
+   */
+  controllerRef: MainThreadRef<SheetSurfaceController | null>
+}
+
+/**
  * The main content of the Sheet.
  * @zh Sheet 的主要内容。
  */
 export interface SheetContentProps extends ComponentBasicProps {
   /**
-   * A main-thread ref to the painted view styled by `className` and `style`.
-   * Its value is set while the view is mounted and cleared on unmount.
-   * Use it to animate appearance, such as width on a bottom sheet. Give each
-   * animated property one owner: avoid updating it through React styles or a
-   * CSS transition while writing it imperatively.
-   * Sheet owns movement, coverage height, inset positioning, and clipping.
-   * For horizontal drawers, Sheet writes the movement transform on this view.
+   * Optional surface handle created by `useSheetSurface({ frame, cornerRadius })`
+   * for floating constraints, dynamic corner radii, and main-thread
+   * `SheetSurfaceController` updates. Omit `surface` for a standard attached panel
+   * with zero surface-frame bundle overhead.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 背景面板的主线程引用，与 className 和 style 作用在同一个节点。
-   * 可用于动态设置外观，例如底部 Sheet 的宽度。Sheet 管理位移、覆盖高度、外部间距和裁剪。
+   * @zh 由 `useSheetSurface({ frame, cornerRadius })` 创建的可选表面句柄，用于悬浮边距约束、动态圆角及主线程 `SheetSurfaceController` 控制。省略时使用默认贴边面板并完全按需裁剪相关包体积。
    */
-  'main-thread:surfaceRef'?: MainThreadRef<MainThread.Element | null>
-  /**
-   * Opt into a bounded bottom panel. Omit this to retain the default
-   * extended surface. The gap is external and excluded from snap sizes.
-   * Updating it follows the snap animation without replacing the content.
-   */
-  panelLayout?: {
-    /** Space below the panel in local logical pixels. Defaults to zero. */
-    bottomGap?: number
-  }
+  surface?: SheetSurfaceHandle
   /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。
@@ -195,6 +398,17 @@ export interface SheetContentProps extends ComponentBasicProps {
    * @Harmony
    */
   innerStyle?: ComponentBasicProps['style']
+  /**
+   * Native view properties for the outer painted surface. Sheet owns its ref,
+   * layout measurement, gesture handlers, class name, and style; use `className`
+   * and `style` for styling.
+   * @zh 外层表面面板的原生 view 属性。Sheet 管理引用、布局测量、手势、类名和样式；
+   * 请使用 `className` 和 `style` 设置样式。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  surfaceViewProps?: ViewProps
   /**
    * Native view properties for the inner panel. Sheet owns its ref, layout
    * measurement, gesture handlers, class name, and style; use `innerClassName`
@@ -280,6 +494,37 @@ export interface SheetNestedScrollContentProps
 }
 
 /**
+ * A body region that stays inside the local Sheet viewport safe-area boundaries
+ * as the panel moves, while keeping a constant view hierarchy so children never remount.
+ * @zh 在面板移动过程中保持在局部视口安全区边界内的内容区域，并保持固定节点层级以避免子组件重挂载。
+ */
+export interface SheetBodyProps extends ComponentBasicProps {
+  /**
+   * Body content.
+   * @zh 主体内容。
+   */
+  children?: ReactNode
+  /**
+   * Minimum distance from each supplied edge of the local viewport in logical pixels
+   * (`top`, `right`, `bottom`, `left`, plus logical `start`/`end` resolved with `enableRTL`).
+   * Place `SheetBody` inside `SheetContent` or `SheetNestedScrollContent` alongside any
+   * `SheetHandle` that should continue moving with the panel. Multiple `SheetBody` regions
+   * can be mounted independently. Clamping uses hardware `overflow: hidden` + `transform`
+   * with zero layout writes during steady drags across all four sides (including `'fit'`).
+   * @zh 距离局部视口各边的最小安全边距（逻辑像素，支持 `top`、`right`、`bottom`、`left` 及跟随 `enableRTL` 的 `start`、`end`）。可将 `SheetBody` 与跟随面板移动的 `SheetHandle` 并列放入 `SheetContent` 或 `SheetNestedScrollContent`，支持挂载多个独立的 `SheetBody`。拖拽期间通过 `overflow: hidden` 与 `transform` 裁剪，零布局重排。
+   */
+  viewportInsets?: SheetViewportInsets
+  /**
+   * Native view properties applied to the inner content node alongside `className` and `style`.
+   * @zh 作用于内层内容容器（与 `className` 和 `style` 同一节点）的原生 view 属性。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  bodyViewProps?: ViewProps
+}
+
+/**
  * The root component of the Sheet, containing all of its child components.
  * @zh Sheet 的根组件，包含其所有子组件。
  */
@@ -306,22 +551,28 @@ export interface SheetRootProps extends ComponentBasicProps {
    */
   enableRTL?: boolean
   /**
-   * The snap points of the Sheet. Can be pixel numbers, percentages, or 'fit'.
+   * The snap points of the Sheet. Can be pixel numbers, percentages, `'fit'`,
+   * or a bounded fit entry `{ fit: { min?, max? } }`.
    * - Numbers are treated as pixel values
    * - Percentages (e.g., '50%') are relative to screen height for `top` / `bottom`,
    *   and relative to screen width for `left` / `right` / `start` / `end`
-   * - 'fit' dynamically resolves to the measured content height for `top` / `bottom`,
+   * - `'fit'` dynamically resolves to the measured content height for `top` / `bottom`,
    *   and the measured content width for `left` / `right` / `start` / `end`
+   * - `{ fit: { min?, max? } }` resolves `'fit'` with main-axis bounds on the total
+   *   panel size (including bottom safe-area reserve and `SheetFooter` height)
+   * - Bottom `'fit'` is capped at the local viewport height above the bottom gap.
+   *   Use scrollable content when the content exceeds that space.
    * @defaultValue ['fit']
    * The index order follows the order of this array.
    * @example snapPoints={['fit', '80%']} // First snap fits content, second is 80% of screen
-   * @zh Sheet 的吸附点。可以是像素数值、百分比或 'fit'。
+   * @zh Sheet 的吸附点。可以是像素数值、百分比、`'fit'` 或 `{ fit: { min?, max? } }`。
    * - 数字被视为像素值
    * - 百分比（例如 '50%'）在 `top` / `bottom` 模式下相对于屏幕高度，在 `left` / `right` / `start` / `end` 模式下相对于屏幕宽度
-   * - 'fit' 在 `top` / `bottom` 模式下动态解析为测量的内容高度，在 `left` / `right` / `start` / `end` 模式下动态解析为测量的内容宽度
+   * - `'fit'` 在 `top` / `bottom` 模式下动态解析为测量的内容高度，在 `left` / `right` / `start` / `end` 模式下动态解析为测量的内容宽度
+   * - `{ fit: { min?, max? } }` 为 `'fit'` 指定包含安全区预留与 `SheetFooter` 的整体面板主轴上下限
    * 索引顺序与该数组顺序一致。
    */
-  snapPoints?: Array<number | string>
+  snapPoints?: SheetSnapPoint[]
   /**
    * The initial snap point index.
    * @zh 初始吸附点索引。
@@ -353,6 +604,30 @@ export interface SheetRootProps extends ComponentBasicProps {
     animated: boolean,
   ) => void
   /**
+   * Called on the main thread when the user begins dragging the Sheet,
+   * including interrupting an active snap or close animation.
+   * Use this to freeze or cancel coordinated consumer animations in place.
+   * Use the `main thread` directive in the callback.
+   * @zh 当用户开始拖拽 Sheet（包括打断正在进行的吸附或关闭动画）时在主线程触发，可用于原地冻结或取消协同动画。
+   */
+  'main-thread:onDragStart'?: () => void
+  /**
+   * Called on the main thread whenever the Sheet's main-axis position (visible
+   * size in logical pixels) changes during drags or animations.
+   * Use the `main thread` directive in the callback.
+   * @zh Sheet 主轴位置（逻辑像素可见尺寸）在拖拽或动画过程中变化时在主线程触发。
+   */
+  'main-thread:onPositionChange'?: (position: number) => void
+  /**
+   * Called on the main thread when the Sheet transitions between presence states
+   * (`'entering'`, `'entered'`, `'exiting'`, `'exited'`), including drag resurrection
+   * from `'exiting'` to `'entering'` (emitted before `main-thread:onDragStart`).
+   * Use the `main thread` directive in the callback.
+   * @zh Sheet 在主线程切换生命周期状态（`'entering'`、`'entered'`、`'exiting'`、`'exited'`）时触发，
+   * 包含从 `'exiting'` 拖拽恢复至 `'entering'`（在 `main-thread:onDragStart` 之前触发）。请在回调中使用 `main thread` 指令。
+   */
+  'main-thread:onPresenceChange'?: (state: SheetPresenceState) => void
+  /**
    * The height of the Sheet container (screen height).
    * Used in vertical sheet mode (`top` / `bottom`) for percentage snap points
    * and dismissal calculations.
@@ -376,12 +651,19 @@ export interface SheetRootProps extends ComponentBasicProps {
    * If false, disables rubber band effect.
    * If number, enables rubber band effect with the specified coefficient.
    * If object, allows specifying coefficient and max distance.
+   * Sheet-owned over-drag follows total finger displacement and holds until
+   * touch-up or cancellation. Its resistance geometry is sampled when the
+   * Sheet acquires the drag. Nested content uses its own native bounce settings
+   * after handoff at the maximum snap; this option does not enable content bounce.
    * @zh 橡皮筋效果配置。
    * 默认情况下，垂直 Sheet（`top` / `bottom`）启用橡皮筋效果，水平抽屉（`left` / `right` / `start` / `end`）禁用。
    * 如果为 true，启用默认橡皮筋效果（系数 0.5）。
    * 如果为 false，禁用橡皮筋效果。
    * 如果为数字，启用指定系数的橡皮筋效果。
    * 如果为对象，允许指定系数和最大距离。
+   * Sheet 的越界阻尼跟随手指累计位移，在抬手或取消前保持拖拽位置。
+   * 阻尼几何参数在 Sheet 接管拖拽时采样。嵌套内容在最大吸附点交接后
+   * 使用自身的原生回弹配置；此选项不会启用内容回弹。
    */
   rubberBand?: boolean | number | { coeff?: number, max?: number }
   /**

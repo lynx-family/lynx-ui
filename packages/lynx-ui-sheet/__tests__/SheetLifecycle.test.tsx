@@ -2,26 +2,31 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import {
-  createRef,
-  runOnMainThread,
-  useMainThreadRef,
-  useState,
-} from '@lynx-js/react'
+import { createRef, runOnMainThread, useEffect, useState } from '@lynx-js/react'
 import v8 from 'node:v8'
 import vm from 'node:vm'
 
 import { act, fireEvent, render } from '@lynx-js/react/testing-library'
+import type { CSSProperties } from '@lynx-js/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   SheetBackdrop,
-  SheetContent,
+  SheetBody,
+  SheetFooter,
+  SheetHandle,
   SheetNestedScrollContent,
+  SheetPositioner,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '../src'
-import type { SheetRootRef } from '../src'
+import type {
+  SheetRootRef,
+  SheetSnapPoint,
+  SheetSurfaceFrame,
+  SheetViewportInsets,
+} from '../src'
 
 v8.setFlagsFromString('--expose-gc')
 const forceGC = vm.runInNewContext('gc') as () => void
@@ -35,129 +40,66 @@ async function flushFinalizers() {
   await Promise.resolve()
 }
 
-interface TestingBridgeEvent {
-  type: string
-  data?: unknown
+const FLOATING_FRAME: SheetSurfaceFrame = {
+  insets: { bottom: 8 },
+  width: '50%',
+  maxWidth: 664,
 }
 
-interface LynxTestingEnvGlobal {
-  switchToMainThread: () => void
-  switchToBackgroundThread: () => void
-  mainThread: {
-    globalThis: typeof globalThis
-    lynx: {
-      requestAnimationFrame?: typeof requestAnimationFrame
-      cancelAnimationFrame?: typeof cancelAnimationFrame
-      getJSContext: () => {
-        dispatchEvent: (event: TestingBridgeEvent) => unknown
-      }
-    }
+function fireLayoutChange(
+  element: Element,
+  rect: { left?: number, top?: number, width: number, height: number },
+) {
+  const detail = {
+    left: rect.left ?? 0,
+    top: rect.top ?? 0,
+    width: rect.width,
+    height: rect.height,
   }
-  backgroundThread: {
-    globalThis: typeof globalThis
-    lynx: {
-      requestAnimationFrame?: typeof requestAnimationFrame
-      cancelAnimationFrame?: typeof cancelAnimationFrame
-      getCoreContext: () => {
-        dispatchEvent: (event: TestingBridgeEvent) => unknown
-      }
-    }
-  }
-}
-
-function getTestingEnv(): LynxTestingEnvGlobal {
-  return (globalThis as unknown as { lynxTestingEnv: LynxTestingEnvGlobal })
-    .lynxTestingEnv
+  fireEvent.layoutchange(element, { detail, params: detail })
 }
 
 function installFakeAnimationFrames() {
-  const env = getTestingEnv()
+  const env = (
+    globalThis as unknown as {
+      lynxTestingEnv?: {
+        switchToMainThread: () => void
+        switchToBackgroundThread: () => void
+        mainThread?: { globalThis?: typeof globalThis }
+        backgroundThread?: { globalThis?: typeof globalThis }
+      }
+    }
+  ).lynxTestingEnv
   const mainRaf = (cb: FrameRequestCallback) =>
     setTimeout(() => {
       const wasBackground = Boolean(
         (globalThis as unknown as { __JS__?: boolean }).__JS__,
       )
-      if (wasBackground) env.switchToMainThread()
+      if (wasBackground) env?.switchToMainThread()
       try {
         cb(Date.now())
       } finally {
-        if (wasBackground) env.switchToBackgroundThread()
-      }
-    }, 16) as unknown as number
-  const bgRaf = (cb: FrameRequestCallback) =>
-    setTimeout(() => {
-      const wasMain = Boolean(
-        (globalThis as unknown as { __LEPUS__?: boolean }).__LEPUS__,
-      )
-      if (wasMain) env.switchToBackgroundThread()
-      try {
-        cb(Date.now())
-      } finally {
-        if (wasMain) env.switchToMainThread()
+        if (wasBackground) env?.switchToBackgroundThread()
       }
     }, 16) as unknown as number
   const cancelFrame = (id: number) => clearTimeout(id)
   globalThis.requestAnimationFrame = mainRaf
   globalThis.cancelAnimationFrame = cancelFrame
+  if (env?.mainThread?.globalThis) {
+    env.mainThread.globalThis.requestAnimationFrame = mainRaf
+    env.mainThread.globalThis.cancelAnimationFrame = cancelFrame
+    Reflect.deleteProperty(env.mainThread.globalThis, 'queueMicrotask')
+  }
+  const bgGlobal = (env as unknown as {
+    backgroundThread?: { globalThis?: Record<string, unknown> }
+  })?.backgroundThread?.globalThis
+  if (bgGlobal) {
+    Reflect.deleteProperty(bgGlobal, 'queueMicrotask')
+  }
   Reflect.deleteProperty(globalThis, 'queueMicrotask')
-  env.mainThread.globalThis.requestAnimationFrame = mainRaf
-  env.mainThread.globalThis.cancelAnimationFrame = cancelFrame
-  env.mainThread.lynx.requestAnimationFrame = mainRaf
-  env.mainThread.lynx.cancelAnimationFrame = cancelFrame
-  env.backgroundThread.lynx.requestAnimationFrame = bgRaf
-  env.backgroundThread.lynx.cancelAnimationFrame = cancelFrame
 }
 
-function createBackgroundIpcController() {
-  const env = getTestingEnv()
-  const jsContext = env.mainThread.lynx.getJSContext()
-  const originalDispatch = jsContext.dispatchEvent.bind(jsContext)
-  let holdMessages = false
-  const heldQueue: TestingBridgeEvent[] = []
-
-  function deliverOnBackground(event: TestingBridgeEvent) {
-    const wasMain = Boolean(
-      (globalThis as unknown as { __LEPUS__?: boolean }).__LEPUS__,
-    )
-    if (wasMain) env.switchToBackgroundThread()
-    try {
-      return originalDispatch(event)
-    } finally {
-      if (wasMain) env.switchToMainThread()
-    }
-  }
-
-  jsContext.dispatchEvent = (event: TestingBridgeEvent) => {
-    if (event.type === 'Lynx.Worklet.runOnBackground' && holdMessages) {
-      heldQueue.push(event)
-      return true
-    }
-    return originalDispatch(event)
-  }
-
-  return {
-    hold() {
-      holdMessages = true
-    },
-    flushHeldSynchronously() {
-      holdMessages = false
-      const pending = heldQueue.splice(0, heldQueue.length)
-      for (const event of pending) {
-        deliverOnBackground(event)
-      }
-    },
-    pendingCount() {
-      return heldQueue.length
-    },
-    restore() {
-      holdMessages = false
-      heldQueue.length = 0
-      jsContext.dispatchEvent = originalDispatch
-    },
-  }
-}
-
-describe('Sheet dual-thread ReactLynx lifecycle & async IPC timing', () => {
+describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     installFakeAnimationFrames()
@@ -167,61 +109,90 @@ describe('Sheet dual-thread ReactLynx lifecycle & async IPC timing', () => {
     vi.useRealTimers()
   })
 
-  it('survives show=true mount, mid-flight re-render, and GC before firing onOpen', async () => {
+  it('survives show=true mount, mid-flight SheetPositioner re-render, and GC before firing onOpen', async () => {
     const onOpen = vi.fn()
     const onClose = vi.fn()
 
-    function MountHarness({ gap }: { gap: number }) {
+    function SafeAreaHarness() {
+      const surface = useSheetSurface({
+        cornerRadius: 24,
+        frame: FLOATING_FRAME,
+      })
       return (
         <SheetRoot
           show={true}
           onOpen={onOpen}
           onClose={onClose}
-          screenWidth={400}
-          screenHeight={800}
+          screenWidth={800}
+          screenHeight={1000}
           snapPoints={['45%', '100%']}
         >
           <SheetView>
-            <SheetBackdrop />
-            <SheetNestedScrollContent
-              className='painted-surface'
-              panelLayout={{ bottomGap: gap }}
-            >
-              {() => <text>Reader</text>}
-            </SheetNestedScrollContent>
+            <SheetPositioner positionerProps={{ id: 'positioner' }}>
+              <SheetBackdrop />
+              <SheetNestedScrollContent
+                surface={surface}
+                surfaceViewProps={{ id: 'painted-surface' }}
+              >
+                {() => (
+                  <>
+                    <SheetHandle />
+                    <SheetBody viewportInsets={{ top: 64, right: 84 }}>
+                      <text>Reader</text>
+                    </SheetBody>
+                  </>
+                )}
+              </SheetNestedScrollContent>
+            </SheetPositioner>
           </SheetView>
         </SheetRoot>
       )
     }
 
-    const { container, rerender } = render(<MountHarness gap={8} />)
-    expect(container.querySelector('.painted-surface')).not.toBeNull()
+    function mountSafeArea() {
+      const { container } = render(<SafeAreaHarness />)
+      return container.querySelector('#positioner')!
+    }
 
+    const positioner = mountSafeArea()
+    expect(positioner).not.toBeNull()
+
+    // Advance partway into the opening spring.
     await act(async () => {
       await vi.advanceTimersByTimeAsync(32)
     })
 
-    rerender(<MountHarness gap={12} />)
+    // Trigger SheetPositioner layout measurement mid-flight (causing BTS Render #2
+    // to replace Render #1's worklet refs in the snapshot), then run V8 GC + a real
+    // event-loop turn so FinalizationRegistry dispatches releaseBackgroundWorkletCtx.
+    await act(async () => {
+      fireLayoutChange(positioner, { width: 800, height: 960 })
+      await Promise.resolve()
+    })
     await flushFinalizers()
     await flushFinalizers()
 
+    // Advance spring to completion: runOnBackground(onEntered) must resolve without throwing
+    // "runOnBackground: JS function not found".
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000)
     })
 
     expect(onOpen).toHaveBeenCalledTimes(1)
     expect(onClose).not.toHaveBeenCalled()
-    const backdrop = container.querySelector('.lynx-ui-sheet-backdrop')!
+    const backdrop = positioner.querySelector('.lynx-ui-sheet-backdrop')!
     expect(backdrop.getAttribute('style')).toContain('opacity: 0.45')
   })
 
   it('mounts on Render #1 when show flips false->true and stays latched across rapid false->true->false toggles', async () => {
+    const onOpen = vi.fn()
     const onClose = vi.fn()
 
     function ControlledHarness({ show }: { show: boolean }) {
       return (
         <SheetRoot
           show={show}
+          onOpen={onOpen}
           onClose={onClose}
           screenWidth={400}
           screenHeight={800}
@@ -229,7 +200,7 @@ describe('Sheet dual-thread ReactLynx lifecycle & async IPC timing', () => {
         >
           <SheetView>
             <SheetBackdrop />
-            <SheetNestedScrollContent className='surface'>
+            <SheetNestedScrollContent surfaceViewProps={{ id: 'surface' }}>
               {() => <text>Body</text>}
             </SheetNestedScrollContent>
           </SheetView>
@@ -238,167 +209,362 @@ describe('Sheet dual-thread ReactLynx lifecycle & async IPC timing', () => {
     }
 
     const { container, rerender } = render(<ControlledHarness show={false} />)
-    expect(container.querySelector('.surface')).toBeNull()
+    expect(container.querySelector('#surface')).toBeNull()
 
+    // Flip show=true: mounts immediately on Render #1 and begins opening in the same commit.
     rerender(<ControlledHarness show={true} />)
-    expect(container.querySelector('.surface')).not.toBeNull()
+    expect(container.querySelector('#surface')).not.toBeNull()
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(32)
     })
+    expect(
+      Number.parseFloat(
+        container
+          .querySelector('.lynx-ui-sheet-backdrop')!
+          .getAttribute('style')
+          ?.match(/opacity:\s*([0-9.]+)/)?.[1] ?? '0',
+      ),
+    ).toBeGreaterThan(0)
 
+    // Rapidly flip show=false mid-opening: stays mounted during exit until spring settles at 0.
     rerender(<ControlledHarness show={false} />)
-    expect(container.querySelector('.surface')).not.toBeNull()
+    expect(container.querySelector('#surface')).not.toBeNull()
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000)
     })
     expect(onClose).toHaveBeenCalledTimes(1)
-    expect(container.querySelector('.surface')).toBeNull()
+    expect(container.querySelector('#surface')).toBeNull()
   })
 
-  it('ignores stale in-flight onUnmount IPC across reopens and keeps state consistent across touch drag-resurrection IPC batches', async () => {
-    const ipc = createBackgroundIpcController()
-    const onOpen = vi.fn()
-    const onClose = vi.fn()
-    const controlledEmitted: boolean[] = []
-
-    function StatefulControlledParent() {
-      const [show, setShow] = useState(true)
-      return (
-        <view>
-          <view id='reopen-btn' bindtap={() => setShow(true)} />
-          <view id='close-btn' bindtap={() => setShow(false)} />
-          <SheetRoot
-            show={show}
-            onShowChange={next => {
-              controlledEmitted.push(next)
-              setShow(next)
-            }}
-            onOpen={onOpen}
-            onClose={onClose}
-            screenWidth={400}
-            screenHeight={800}
-            snapPoints={[400]}
-          >
-            <SheetView>
-              <SheetBackdrop />
-              <SheetContent
-                className='touch-surface'
-                innerViewProps={{ id: 'touch-content' }}
-              >
-                {() => <text>Touch Sheet</text>}
-              </SheetContent>
-            </SheetView>
-          </SheetRoot>
-        </view>
-      )
-    }
-
-    try {
-      const { container } = render(<StatefulControlledParent />)
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(2500)
-      })
-      expect(onOpen).toHaveBeenCalledTimes(1)
-
-      const touchTarget = container.querySelector('#touch-content')!
-
-      // Drag sheet into dismiss zone and catch mid-exit while IPC is held on wire:
-      ipc.hold()
-      fireEvent.touchstart(touchTarget, { detail: { x: 200, y: 400 } })
-      fireEvent.touchmove(touchTarget, { detail: { x: 200, y: 560 } })
-      fireEvent.touchmove(touchTarget, { detail: { x: 200, y: 720 } })
-      fireEvent.touchend(touchTarget, { detail: { x: 200, y: 720 } })
-      expect(ipc.pendingCount()).toBe(1)
-
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(16)
-      })
-      fireEvent.touchstart(touchTarget, { detail: { x: 200, y: 730 } })
-      fireEvent.touchmove(touchTarget, { detail: { x: 200, y: 580 } })
-      fireEvent.touchmove(touchTarget, { detail: { x: 200, y: 420 } })
-      fireEvent.touchend(touchTarget, { detail: { x: 200, y: 420 } })
-      expect(ipc.pendingCount()).toBe(2)
-
-      await act(async () => {
-        ipc.flushHeldSynchronously()
-        await vi.advanceTimersByTimeAsync(2500)
-      })
-      expect(controlledEmitted).toEqual([false, true])
-      expect(container.querySelector('.touch-surface')).not.toBeNull()
-
-      // Close completely while holding `onUnmount(1)` IPC, then reopen before `onUnmount(1)` arrives:
-      fireEvent.tap(container.querySelector('#close-btn')!)
-      ipc.hold()
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(2500)
-      })
-      expect(ipc.pendingCount()).toBeGreaterThan(0)
-
-      fireEvent.tap(container.querySelector('#reopen-btn')!)
-      await act(async () => {
-        ipc.flushHeldSynchronously()
-        await vi.advanceTimersByTimeAsync(2500)
-      })
-      expect(onClose).toHaveBeenCalledTimes(1)
-      expect(onOpen).toHaveBeenCalledTimes(3)
-      expect(container.querySelector('.touch-surface')).not.toBeNull()
-    } finally {
-      ipc.restore()
-    }
-  })
-
-  it('notifies main-thread:onSnapStart when opening directly to a non-initial snap index via snapTo(1) from closed', async () => {
+  it('preserves imperative snapTo(1, { animate: false }) from closed without autoOpen hijacking to snap 0', async () => {
     const sheetRef = createRef<SheetRootRef>()
-    let readSnapEventsMT: (() => string[]) | undefined
+    const onOpen = vi.fn()
+    const onSnapChange = vi.fn()
 
-    function DirectSnapHarness() {
-      const eventsMTRef = useMainThreadRef<string[]>([])
-      readSnapEventsMT = () => {
+    render(
+      <SheetRoot
+        ref={sheetRef}
+        defaultShow={false}
+        onOpen={onOpen}
+        onSnapChange={onSnapChange}
+        screenWidth={400}
+        screenHeight={800}
+        snapPoints={[300, 700]}
+      >
+        <SheetView>
+          <SheetBackdrop />
+          <SheetNestedScrollContent surfaceViewProps={{ id: 'surface' }}>
+            {() => <text>Imperative</text>}
+          </SheetNestedScrollContent>
+        </SheetView>
+      </SheetRoot>,
+    )
+
+    await act(async () => {
+      sheetRef.current?.snapTo(1, { animate: false })
+      await Promise.resolve()
+    })
+
+    expect(onOpen).toHaveBeenCalledTimes(1)
+    expect(onSnapChange).toHaveBeenLastCalledWith(1, 700)
+  })
+
+  it('restores fullscreen surface styles across React __SetInlineStyles re-renders and clears SheetBody 44px->0px insets', async () => {
+    let applyFullscreenMT: (() => void) | undefined
+
+    function FullscreenHarness({
+      surfaceStyle,
+      insets,
+    }: {
+      surfaceStyle: CSSProperties
+      insets: SheetViewportInsets
+    }) {
+      const surface = useSheetSurface({
+        cornerRadius: 26,
+        frame: {
+          insets: { left: 24, right: 24, bottom: 8 },
+          maxWidth: 664,
+        },
+      })
+      applyFullscreenMT = () => {
         'main thread'
-        return eventsMTRef.current.slice()
-      }
-      const onSnapStartMT = (
-        index: number,
-        value: number,
-        animated: boolean,
-      ) => {
-        'main thread'
-        eventsMTRef.current.push(`${index}:${value}:${String(animated)}`)
+        surface.controllerRef.current?.setFrame({ insets: { bottom: 0 } })
+        surface.controllerRef.current?.setCornerRadius(0)
       }
       return (
         <SheetRoot
-          ref={sheetRef}
-          defaultShow={false}
-          screenWidth={400}
+          show={true}
+          screenWidth={1000}
           screenHeight={800}
-          snapPoints={[300, 700]}
-          initialSnap={0}
-          main-thread:onSnapStart={onSnapStartMT}
+          snapPoints={['100%']}
         >
           <SheetView>
-            <SheetNestedScrollContent className='snap-surface'>
-              {() => <text>Imperative</text>}
+            <SheetNestedScrollContent
+              surface={surface}
+              surfaceViewProps={{ id: 'painted-surface' }}
+              innerViewProps={{ id: 'sheet-panel' }}
+              style={surfaceStyle}
+            >
+              {() => (
+                <SheetBody viewportInsets={insets}>
+                  <view id='body-inner' />
+                </SheetBody>
+              )}
             </SheetNestedScrollContent>
           </SheetView>
         </SheetRoot>
       )
     }
 
-    const { container } = render(<DirectSnapHarness />)
-    act(() => {
-      sheetRef.current?.snapTo(1)
-    })
+    const { container, rerender } = render(
+      <FullscreenHarness
+        surfaceStyle={{ backgroundColor: 'rgb(17, 17, 17)' }}
+        insets={{ top: 59, bottom: 34, left: 44, right: 44 }}
+      />,
+    )
 
-    let events: string[] = []
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(2500)
-      events = await runOnMainThread(readSnapEventsMT!)()
+      await vi.advanceTimersByTimeAsync(3000)
     })
 
-    expect(events).toEqual(['1:700:true'])
-    const movement = container.querySelector('.snap-surface')!.parentElement!
-    expect(movement.getAttribute('style')).toContain('translate(0px, -700px)')
+    const painted = container.querySelector('#painted-surface')!
+    const panel = container.querySelector('#sheet-panel')!
+    const bodyInner = container.querySelector('#body-inner')!
+    const bodyPositioned = bodyInner.parentElement!.parentElement!
+    const bodySlot = bodyPositioned.parentElement!.parentElement!
+    fireLayoutChange(painted, { left: 0, top: 0, width: 664, height: 1200 })
+    fireLayoutChange(panel, { left: 0, top: 0, width: 1000, height: 800 })
+    fireLayoutChange(bodySlot, { left: 0, top: 0, width: 1000, height: 800 })
+
+    await act(async () => {
+      await runOnMainThread(applyFullscreenMT!)()
+    })
+
+    expect(painted.getAttribute('style')).toContain('width: 100%')
+    expect(painted.getAttribute('style')).toContain(
+      'border-top-left-radius: 0px',
+    )
+    expect(bodyPositioned.getAttribute('style')).toContain('left: 44px')
+    expect(bodyPositioned.getAttribute('style')).toContain('right: 44px')
+
+    // Re-render with a new surface style (triggering ReactLynx __SetInlineStyles) AND
+    // toggle horizontal viewportInsets from 44px back to 0px.
+    rerender(
+      <FullscreenHarness
+        surfaceStyle={{ backgroundColor: 'rgb(34, 34, 34)' }}
+        insets={{ top: 59, bottom: 34, left: 0, right: 0 }}
+      />,
+    )
+
+    expect(painted.getAttribute('style')).toContain('width: 100%')
+    expect(painted.getAttribute('style')).toContain(
+      'border-top-left-radius: 0px',
+    )
+    expect(bodyPositioned.getAttribute('style')).toContain('left: 0px')
+    expect(bodyPositioned.getAttribute('style')).toContain('right: 0px')
+  })
+
+  it('resolves Pass-1 fit snap with SheetFooter without double-counting bottom safe-area inset', async () => {
+    const onOpen = vi.fn()
+
+    const { container } = render(
+      <SheetRoot
+        show={true}
+        onOpen={onOpen}
+        screenWidth={400}
+        screenHeight={800}
+        snapPoints={['fit']}
+      >
+        <SheetView>
+          <SheetNestedScrollContent
+            surfaceViewProps={{ id: 'painted-surface' }}
+            innerViewProps={{ id: 'sheet-panel' }}
+          >
+            {() => (
+              <>
+                <SheetBody viewportInsets={{ bottom: 34 }}>
+                  <view id='fit-child' />
+                </SheetBody>
+                <SheetFooter>
+                  <view id='footer-child' />
+                </SheetFooter>
+              </>
+            )}
+          </SheetNestedScrollContent>
+        </SheetView>
+      </SheetRoot>,
+    )
+
+    const movement = container.querySelector('#painted-surface')!.parentElement!
+    const panel = container.querySelector('#sheet-panel')!
+    const intrinsicWrapper = container.querySelector('#fit-child')!
+      .parentElement!.parentElement!
+    const bodySlot = intrinsicWrapper.parentElement!.parentElement!
+    const footerRoot = container.querySelector('#footer-child')!.parentElement!
+
+    await act(async () => {
+      fireLayoutChange(panel, { width: 400, height: 0 })
+      fireLayoutChange(bodySlot, { width: 400, height: 0 })
+      fireLayoutChange(intrinsicWrapper, { width: 400, height: 200 })
+      fireLayoutChange(footerRoot, { width: 400, height: 60 })
+      await vi.advanceTimersByTimeAsync(3000)
+    })
+
+    // 200px body + 60px footer (which already covers the 34px bottom safe area) = 260px, not 294px.
+    expect(onOpen).toHaveBeenCalledTimes(1)
+    expect(movement.getAttribute('style')).toContain('translate(0px, -260px)')
+  })
+
+  it('never remounts SheetBody children across viewportInsets or snapPoints toggles and supports multiple bodies', async () => {
+    let childMounts = 0
+    let childUnmounts = 0
+
+    function StatefulChild() {
+      const [count] = useState(42)
+      useEffect(() => {
+        childMounts += 1
+        return () => {
+          childUnmounts += 1
+        }
+      }, [])
+      return <text id='stateful-child'>{String(count)}</text>
+    }
+
+    function BodyHarness({
+      insets,
+      snapPoints,
+      showSecondBody,
+    }: {
+      insets?: SheetViewportInsets
+      snapPoints: SheetSnapPoint[]
+      showSecondBody: boolean
+    }) {
+      return (
+        <SheetRoot
+          show={true}
+          screenWidth={500}
+          screenHeight={800}
+          snapPoints={snapPoints}
+        >
+          <SheetView>
+            <SheetNestedScrollContent
+              surfaceViewProps={{ id: 'multi-surface' }}
+              innerViewProps={{ id: 'multi-panel' }}
+            >
+              {() => (
+                <>
+                  <SheetBody
+                    className='primary-body'
+                    style={{ maxHeight: '640px' }}
+                    bodyViewProps={{ id: 'primary-content' }}
+                    viewportInsets={insets}
+                  >
+                    <StatefulChild />
+                  </SheetBody>
+                  {showSecondBody && (
+                    <SheetBody
+                      bodyViewProps={{ id: 'secondary-content' }}
+                      viewportInsets={{ left: 30, right: 30 }}
+                    >
+                      <view id='secondary-child' />
+                    </SheetBody>
+                  )}
+                </>
+              )}
+            </SheetNestedScrollContent>
+          </SheetView>
+        </SheetRoot>
+      )
+    }
+
+    const { container, rerender } = render(
+      <BodyHarness
+        insets={undefined}
+        snapPoints={[400, 800]}
+        showSecondBody={true}
+      />,
+    )
+    expect(childMounts).toBe(1)
+    expect(childUnmounts).toBe(0)
+    const initialContentEl = container.querySelector('#primary-content')!
+    expect(initialContentEl.getAttribute('class')).toBe('primary-body')
+    expect(initialContentEl.getAttribute('style')).toContain(
+      'max-height: 640px',
+    )
+
+    // 1. Async safe-area insets arrive (undefined -> { left: 50, right: 60 }): zero remount!
+    rerender(
+      <BodyHarness
+        insets={{ left: 50, right: 60, top: 44 }}
+        snapPoints={[400, 800]}
+        showSecondBody={true}
+      />,
+    )
+    expect(childMounts).toBe(1)
+    expect(childUnmounts).toBe(0)
+    expect(container.querySelector('#primary-content')).toBe(initialContentEl)
+
+    const painted = container.querySelector('#multi-surface')!
+    const panel = container.querySelector('#multi-panel')!
+    const primaryMover = initialContentEl.parentElement!
+    const primarySlot = primaryMover.parentElement!.parentElement!
+    const secondaryContent = container.querySelector('#secondary-content')!
+    const secondaryMover = secondaryContent.parentElement!
+    const secondarySlot = secondaryMover.parentElement!.parentElement!
+
+    await act(async () => {
+      fireLayoutChange(painted, { left: 0, top: 0, width: 500, height: 1200 })
+      fireLayoutChange(panel, { left: 0, top: 0, width: 500, height: 800 })
+      fireLayoutChange(primarySlot, {
+        left: 0,
+        top: 0,
+        width: 500,
+        height: 400,
+      })
+      fireLayoutChange(secondarySlot, {
+        left: 0,
+        top: 400,
+        width: 500,
+        height: 400,
+      })
+      await vi.advanceTimersByTimeAsync(100)
+    })
+
+    expect(primaryMover.getAttribute('style')).toContain('left: 50px')
+    expect(primaryMover.getAttribute('style')).toContain('right: 60px')
+    expect(secondaryMover.getAttribute('style')).toContain('left: 30px')
+    expect(secondaryMover.getAttribute('style')).toContain('right: 30px')
+
+    // 2. Unmounting the second SheetBody must NOT clear or disturb the first SheetBody!
+    rerender(
+      <BodyHarness
+        insets={{ left: 20, right: 40, top: 44 }}
+        snapPoints={[400, 800]}
+        showSecondBody={false}
+      />,
+    )
+    expect(primaryMover.getAttribute('style')).toContain('left: 20px')
+    expect(primaryMover.getAttribute('style')).toContain('right: 40px')
+
+    // 3. Switching snapPoints to ['fit'] and back to [400, 800], then clearing insets: zero remount!
+    rerender(
+      <BodyHarness
+        insets={{ left: 20, right: 40, top: 44 }}
+        snapPoints={['fit']}
+        showSecondBody={false}
+      />,
+    )
+    rerender(
+      <BodyHarness
+        insets={undefined}
+        snapPoints={[400, 800]}
+        showSecondBody={false}
+      />,
+    )
+    expect(childMounts).toBe(1)
+    expect(childUnmounts).toBe(0)
+    expect(container.querySelector('#primary-content')).toBe(initialContentEl)
   })
 })

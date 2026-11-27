@@ -7,11 +7,12 @@ import { root, useRef, useState } from '@lynx-js/react'
 import {
   Button,
   SheetBackdrop,
+  SheetBody,
   SheetContent,
   SheetHandle,
   SheetRoot,
   SheetView,
-  screenWidth,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
@@ -21,33 +22,39 @@ import './index.css'
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
   const [details, setDetails] = useState(false)
-  const width = Math.min(screenWidth - 32, 480)
+  const surface = useSheetSurface({
+    cornerRadius: 24,
+    frame: {
+      insets: { left: 16, right: 16, bottom: 8 },
+      maxWidth: 480,
+    },
+  })
   return (
     <view className='demo-container surface-stage lunaris-dark'>
       <view className='surface-launcher'>
         <text className='surface-title'>Just enough room</text>
         <text className='surface-copy'>
-          A floating panel that fits its content, with an 8px gap outside it.
+          A floating panel that fits its text inside a simulated right safe
+          area.
         </text>
         <TriggerButton
           text='Review delivery'
           onClick={() => sheetRef.current?.open()}
         />
       </view>
-      <SheetRoot ref={sheetRef} snapPoints={['fit']}>
+      <SheetRoot defaultShow ref={sheetRef} snapPoints={['fit', '100%']}>
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            panelLayout={{ bottomGap: 8 }}
-            className='sheet-content surface-card'
+            surface={surface}
+            className='sheet-content'
             innerClassName='surface-layout'
-            style={{
-              width: `${width}px`,
-              left: `${(screenWidth - width) / 2}px`,
-            }}
           >
             <SheetHandle className='sheet-handle' />
-            <view className='surface-body'>
+            <SheetBody
+              className='surface-body'
+              viewportInsets={{ top: 64, right: 72 }}
+            >
               <text className='surface-title'>Delivery tomorrow</text>
               <text className='surface-copy'>
                 Your order will arrive between 9am and 6pm.
@@ -59,6 +66,18 @@ function App() {
                 </text>
               )}
               <view className='surface-controls'>
+                <Button
+                  className='surface-action'
+                  onClick={() => sheetRef.current?.expand()}
+                >
+                  <text className='surface-action-text'>Expand</text>
+                </Button>
+                <Button
+                  className='surface-action'
+                  onClick={() => sheetRef.current?.collapse()}
+                >
+                  <text className='surface-action-text'>Fit</text>
+                </Button>
                 <Button
                   className='surface-action'
                   onClick={() => setDetails(value => !value)}
@@ -74,7 +93,7 @@ function App() {
                   <text className='surface-action-text'>Done</text>
                 </Button>
               </view>
-            </view>
+            </SheetBody>
           </SheetContent>
         </SheetView>
       </SheetRoot>

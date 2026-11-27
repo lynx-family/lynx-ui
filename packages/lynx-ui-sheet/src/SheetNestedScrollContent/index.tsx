@@ -31,7 +31,11 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
   const activeScrollMTRef = useMainThreadRef<ActiveSheetScrollGesture | null>(
     null,
   )
-  const { gesture: sheetGesture, finishTouchMT } = useSheetPanGesture({
+  const {
+    gesture: sheetGesture,
+    finishTouchMT,
+    sheetDraggingMTRef,
+  } = useSheetPanGesture({
     side: context.side,
     enableRTL: context.enableRTL,
     dragDisabled: context.dragDisabled,
@@ -48,6 +52,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     onGestureStartMT: snap.interruptAnimationMT,
     onGestureEndMT: snap.resumeAnimationMT,
     onDragStartMT: snap.onDragStartMT,
+    onDragRebaseMT: snap.onDragRebaseMT,
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
     onReleaseAtMaxMT: snap.releaseAtMaxSnapMT,
@@ -60,6 +65,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     activeScrollMTRef,
     resolvedSide: context.resolvedSide,
     position: snap.yRef,
+    sheetDraggingMTRef,
     getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
     onScrollEndMT: cancelled => {
       'main thread'
@@ -85,11 +91,17 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         dragHandlers={{ gesture: dragEnabled ? sheetGesture : undefined }}
         sheetGesture={dragEnabled ? sheetGesture : undefined}
         resolvedSide={context.resolvedSide}
+        enableRTL={context.enableRTL}
         handleOnly={context.handleOnly}
         snapPoints={snapPoints}
         maxSnapSize={snap.maxSnapSize}
+        fitMaxSize={snap.fitMaxSize}
+        screenWidth={snap.screenWidth}
+        screenHeight={snap.screenHeight}
         positioner={positioner}
         footerContext={snap.footerContext}
+        bodyContext={snap.bodyContext}
+        measureSurfaceMT={snap.measureSurfaceMT}
         setClipMTRef={snap.setClipMTRef}
         setSurfaceMTRef={snap.setSurfaceMTRef}
         setViewportMTRef={snap.setViewportMTRef}

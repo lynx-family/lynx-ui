@@ -58,10 +58,6 @@
   font-size: 14px;
 }
 
-.surface-card {
-  border-radius: 24px;
-}
-
 .surface-layout {
   display: flex;
   flex-direction: column;

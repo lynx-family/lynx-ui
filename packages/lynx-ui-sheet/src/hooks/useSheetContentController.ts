@@ -7,7 +7,11 @@ import { useEffect, useRef } from '@lynx-js/react'
 import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
 
 import { useSheetContext, useSheetPositionerContext } from '../context'
-import type { SheetContentProps, SheetTransition } from '../types'
+import type {
+  SheetContentProps,
+  SheetSnapPoint,
+  SheetTransition,
+} from '../types'
 import { getDefaultRubberBand } from '../utils'
 import { useSnap } from './useSnap'
 
@@ -24,19 +28,22 @@ function toSnappingOptions(opts?: {
   }
 }
 
-const DEFAULT_SNAP_POINTS: Array<number | string> = ['fit']
+const DEFAULT_SNAP_POINTS: SheetSnapPoint[] = ['fit']
 const DEFAULT_TRANSITION: SheetTransition = {
   type: 'spring',
   stiffness: 200,
   damping: 60,
 }
 
-export function useSheetContentController(props: SheetContentProps) {
+export function useSheetContentController(
+  props: SheetContentProps,
+) {
   const {
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
-    panelLayout,
+    surface,
+    style,
   } = props
   const context = useSheetContext()
   const positioner = useSheetPositionerContext()
@@ -53,6 +60,9 @@ export function useSheetContentController(props: SheetContentProps) {
     screenWidth,
     onSnapChange,
     onSnapStartMT,
+    onDragStartMT,
+    onPositionChangeMT,
+    onPresenceChangeMT,
     onShowChange,
     presenceStateMTRef,
     openEpochMTRef,
@@ -85,7 +95,8 @@ export function useSheetContentController(props: SheetContentProps) {
     snapPoints,
     initialSnap,
     initialOpen,
-    panelLayout,
+    surface,
+    surfaceStyle: style,
     snapAnimation,
     side,
     enableRTL,
@@ -94,6 +105,9 @@ export function useSheetContentController(props: SheetContentProps) {
     positioner,
     onSnapChange,
     onSnapStartMT,
+    onDragStartMT,
+    onPositionChangeMT,
+    onPresenceChangeMT,
     onDismiss: handleDismissed,
     onBeforeDismiss: handleBeforeDismiss,
     onEntered: handleEntered,

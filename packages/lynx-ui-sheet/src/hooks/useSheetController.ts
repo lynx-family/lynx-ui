@@ -17,6 +17,7 @@ export interface SheetControllerOptions {
   onUnmount?: (closedEpoch?: number) => void
   onBeforeDismiss?: (leavingEpoch?: number) => void
   onResurrected?: () => void
+  onPresenceChangeMT?: SheetRootProps['main-thread:onPresenceChange']
   presenceStateMTRef?: MainThreadRef<PresenceState>
   openEpochMTRef?: MainThreadRef<number>
 }
@@ -33,8 +34,12 @@ export interface SheetControllerAnimationDeps {
   getResolvedSnapPointValues: () => number[]
   onSnapChangeMT: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
-  onOpeningMT?: () => void
+  onDragStartNotifyMT?: SheetRootProps['main-thread:onDragStart']
+  onOpeningMT?: (entryTargetSize?: number) => void
+  onEntryTargetMT?: (entryTargetSize: number) => void
+  onDraggingMT?: () => void
   onClosedBeforeEntryMT?: () => void
+  onSettledMT?: () => void
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
   initialSnap: number
@@ -56,6 +61,7 @@ export function useSheetController(
     onUnmount,
     onBeforeDismiss,
     onResurrected,
+    onPresenceChangeMT,
     presenceStateMTRef: presenceStateMTRefProp,
     openEpochMTRef,
   } = options
@@ -68,8 +74,12 @@ export function useSheetController(
     getResolvedSnapPointValues,
     onSnapChangeMT,
     onSnapStartMT,
+    onDragStartNotifyMT,
     onOpeningMT,
+    onEntryTargetMT,
+    onDraggingMT,
     onClosedBeforeEntryMT,
+    onSettledMT,
     enterAnimation,
     exitAnimation,
     initialSnap,
@@ -88,6 +98,7 @@ export function useSheetController(
       onDismiss,
       onUnmount,
       onBeforeDismiss,
+      onPresenceChangeMT,
     },
     presenceStateMTRefProp,
     openEpochMTRef,
@@ -98,19 +109,20 @@ export function useSheetController(
     {
       index: number
       isEntry: boolean
+      fromClosed?: boolean
       animate?: boolean
       animationConfig?: SheetTransition
     } | null
   >(null)
   const activeSnapMTRef = useMainThreadRef<number | null>(null)
 
-  function beginOpeningMT() {
+  function beginOpeningMT(entryTargetSize?: number) {
     'main thread'
     if (
       presenceStateMTRef.current === PresenceState.Left
       || presenceStateMTRef.current === PresenceState.Leaving
     ) {
-      onOpeningMT?.()
+      onOpeningMT?.(entryTargetSize)
     }
     enter()
   }
@@ -123,9 +135,11 @@ export function useSheetController(
     if (presenceStateMTRef.current === PresenceState.Entering) {
       onSnapChangeMT(index, value)
       entered()
+      onSettledMT?.()
     } else if (presenceStateMTRef.current === PresenceState.Entered) {
       // Already entered, just update snap index
       onSnapChangeMT(index, value)
+      onSettledMT?.()
     }
     // If Leaving/Left, close animation took over - do nothing
   }
@@ -139,17 +153,19 @@ export function useSheetController(
       animate?: boolean
       animationConfig?: SheetTransition
       isEntry?: boolean
+      fromClosed?: boolean
     },
   ) {
     'main thread'
     const wasClosingOrClosed = presenceStateMTRef.current === PresenceState.Left
       || presenceStateMTRef.current === PresenceState.Leaving
-    if (wasClosingOrClosed) {
-      onOpeningMT?.()
-      enter()
-    }
+    const fromClosed = opts?.fromClosed === true || wasClosingOrClosed
     const target = getTargetForSnap(index)
     const values = getResolvedSnapPointValues()
+    if (wasClosingOrClosed) {
+      onOpeningMT?.(target >= 0 ? target : undefined)
+      enter()
+    }
 
     // If target is -1, snap point not yet resolved (e.g., 'fit')
     // Queue for later when layout completes
@@ -157,11 +173,16 @@ export function useSheetController(
       pendingSnapMTRef.current = {
         index,
         isEntry: opts?.isEntry === true
-          || (wasClosingOrClosed && index === initialSnap),
+          || (fromClosed && index === initialSnap),
+        fromClosed,
         animate: opts?.animate,
         animationConfig: opts?.animationConfig,
       }
       return
+    }
+
+    if (fromClosed && !wasClosingOrClosed) {
+      onEntryTargetMT?.(target)
     }
 
     stopAnimationMT()
@@ -172,10 +193,17 @@ export function useSheetController(
     // Entered, and an imperative snap from closed to a non-initial snap index
     // must notify onSnapStartMT so surface transitions run immediately.
     const isInitialEntry = opts?.isEntry === true
-      || (wasClosingOrClosed && clampedIndex === initialSnap)
+      || (fromClosed && clampedIndex === initialSnap)
     activeSnapMTRef.current = clampedIndex
-    if (!isInitialEntry && onSnapStartMT) {
-      onSnapStartMT(clampedIndex, values[clampedIndex], opts?.animate !== false)
+    if (!fromClosed && !isInitialEntry) {
+      onDraggingMT?.()
+    }
+    if (!isInitialEntry) {
+      onSnapStartMT?.(
+        clampedIndex,
+        values[clampedIndex],
+        opts?.animate !== false,
+      )
     }
 
     if (opts?.animate === false) {
@@ -215,11 +243,13 @@ export function useSheetController(
       return
     }
 
-    beginOpeningMT()
+    const initialTarget = getTargetForSnap(initialSnap)
+    beginOpeningMT(initialTarget >= 0 ? initialTarget : undefined)
     snapToMT(initialSnap, {
       animate: opts?.animate,
       animationConfig: opts?.animationConfig,
       isEntry: true,
+      fromClosed: true,
     })
   }
 
@@ -246,7 +276,7 @@ export function useSheetController(
     }
 
     activeSnapMTRef.current = null
-    if (retargetAnimationMT) pendingSnapMTRef.current = null
+    pendingSnapMTRef.current = null
     stopAnimationMT()
     leave()
     const target = 0
@@ -300,24 +330,34 @@ export function useSheetController(
     pendingSnapMTRef.current = null
     snapToMT(pending.index, {
       isEntry: pending.isEntry,
+      fromClosed: pending.fromClosed,
       animate: pending.animate,
       animationConfig: pending.animationConfig,
     })
   }
 
   /**
-   * Called by gesture handler when user starts a vertical drag
+   * Stop running animations or resurrect a closing sheet during an active drag
+   * rebase without re-emitting the public `onDragStart` callback.
    */
-  function onDragStartMT() {
+  function onDragRebaseMT() {
     'main thread'
     activeSnapMTRef.current = null
-    // If currently closing, resurrect
     if (presenceStateMTRef.current === PresenceState.Leaving) {
       resurrectMT()
     } else {
-      // Just stop any running animation
       stopAnimationMT()
     }
+    onDraggingMT?.()
+  }
+
+  /**
+   * Called by gesture handler when user starts a sheet drag
+   */
+  function onDragStartMT() {
+    'main thread'
+    onDragRebaseMT()
+    onDragStartNotifyMT?.()
   }
 
   /**
@@ -337,7 +377,7 @@ export function useSheetController(
   function onDragEndCloseMT(opts?: { animationConfig?: SheetTransition }) {
     'main thread'
     activeSnapMTRef.current = null
-    if (retargetAnimationMT) pendingSnapMTRef.current = null
+    pendingSnapMTRef.current = null
     // Transition to close if not already
     if (
       presenceStateMTRef.current !== PresenceState.Leaving
@@ -394,6 +434,7 @@ export function useSheetController(
     snapToMT,
     // Gesture handlers
     onDragStartMT,
+    onDragRebaseMT,
     onDragEndSnapMT,
     onDragEndCloseMT,
     resurrectMT,

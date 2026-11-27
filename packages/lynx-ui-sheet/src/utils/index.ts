@@ -2,21 +2,38 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
+import type { MainThread } from '@lynx-js/types'
 
 export {
   getDefaultClaimedGestureAngles,
   getDefaultRubberBand,
+  getDefaultScreenSize,
+  getFitSnapBounds,
   getMainAxisLayoutSize,
   getMainAxisSize,
   getMaxSnapSize,
   getMainAxisTouchCoordinate,
   getNextMainAxisOffset,
   getSheetTransform,
+  isFitSnapPoint,
   isHorizontalSide,
+  resolveFitBoundSize,
   resolveSheetSide,
   toPxJS,
 } from './direction'
 export type { SheetResolvedSide } from './direction'
+
+/**
+ * Apply inline style properties on a main-thread element, allowing `null` to
+ * clear an inline style property so CSS stylesheet cascade applies again.
+ */
+export function setElementStylesMT(
+  element: MainThread.Element,
+  styles: Record<string, string | null>,
+) {
+  'main thread'
+  element.setStyleProperties(styles as Record<string, string>)
+}
 
 export function rubberEffect(
   original: number,
