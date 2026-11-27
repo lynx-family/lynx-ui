@@ -53,16 +53,25 @@ export function SheetContent(props: SheetContentProps) {
       {...props}
       dragHandlers={dragHandlers}
       resolvedSide={context.resolvedSide}
+      enableRTL={context.enableRTL}
       handleOnly={context.handleOnly}
       snapPoints={snapPoints}
       maxSnapSize={snap.maxSnapSize}
+      fitMaxSize={snap.fitMaxSize}
+      screenWidth={snap.screenWidth}
+      screenHeight={snap.screenHeight}
       positioner={positioner}
       footerContext={snap.footerContext}
+      bodyContext={snap.bodyContext}
+      measureSurfaceMT={snap.measureSurfaceMT}
       setClipMTRef={snap.setClipMTRef}
       setSurfaceMTRef={snap.setSurfaceMTRef}
       setViewportMTRef={snap.setViewportMTRef}
       setSheetMTRef={snap.setSheetMTRef}
       setContentMTRef={snap.setContentMTRef}
+      setFrameMT={snap.setFrameMT}
+      setCornerRadiusMT={snap.setCornerRadiusMT}
+      getViewportSizeMT={snap.getViewportSizeMT}
       handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
     />
   )

@@ -4,7 +4,7 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import type { CSSProperties, ViewProps } from '@lynx-js/types'
+import type { CSSProperties, OverlayProps, ViewProps } from '@lynx-js/types'
 
 export interface OverlayViewRef {
   getRect: (handleLayoutUpdate: (e: unknown) => void) => void
@@ -65,8 +65,16 @@ export interface OverlayViewProps {
    * @Android
    * @iOS
    * @Harmony
+   * @docTypeFallback OverlayProps | ViewProps
    */
-  overlayViewProps?: OverlayViewProps | ViewProps
+  overlayViewProps?:
+    | (OverlayProps & {
+      'ios-follow-mode-edge'?: boolean
+      'events-pass-through'?: boolean
+      'cut-out-mode'?: boolean
+      'event-through'?: boolean
+    })
+    | ViewProps
   /**
    * Display debug logs. Open it when you find a bug.
    * @zh 显示调试日志。发现 bug 时开启。

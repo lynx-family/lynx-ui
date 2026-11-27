@@ -8,6 +8,7 @@ import type { SheetViewProps } from '../types'
 
 export const SheetView = (props: SheetViewProps) => {
   const {
+    id,
     container,
     children,
     className,
@@ -24,6 +25,7 @@ export const SheetView = (props: SheetViewProps) => {
 
   return (
     <OverlayView
+      id={id}
       container={container}
       className={className}
       style={{

@@ -37,6 +37,9 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       initialSnap,
       onSnapChange: onSnapChangeProp,
       'main-thread:onSnapStart': onSnapStartMT,
+      'main-thread:onDragStart': onDragStartMT,
+      'main-thread:onPositionChange': onPositionChangeMT,
+      'main-thread:onPresenceChange': onPresenceChangeMT,
       side = 'bottom',
       enableRTL = false,
       screenHeight,
@@ -70,6 +73,9 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
     const [, forceRender] = useReducer((count: number) => count + 1, 0)
     // Store registered methods from SheetContent
     const sheetMethodsRef = useRef<SheetMethods | null>(null)
+    const positionerSizeCacheRef = useRef<
+      { hostKey: string, width: number, height: number } | null
+    >(null)
     const pendingActionsRef = useRef<Array<() => void>>([])
     const openEpochRef = useRef<number>(actualShow ? 1 : 0)
     const prevActualShowRef = useRef<boolean>(Boolean(actualShow))
@@ -204,6 +210,9 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       initialSnap,
       onSnapChange: onSnapChangeProp,
       onSnapStartMT,
+      onDragStartMT,
+      onPositionChangeMT,
+      onPresenceChangeMT,
       side,
       enableRTL,
       resolvedSide,
@@ -218,6 +227,7 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       presenceStateMTRef,
       openEpochMTRef,
       claimedGestureAngles,
+      positionerSizeCacheRef,
     }), [
       actualShow,
       autoOpen,
@@ -234,6 +244,9 @@ export const SheetRoot = forwardRef<SheetRootRef, SheetRootProps>(
       initialSnap,
       onSnapChangeProp,
       onSnapStartMT,
+      onDragStartMT,
+      onPositionChangeMT,
+      onPresenceChangeMT,
       side,
       enableRTL,
       resolvedSide,

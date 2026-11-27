@@ -7,11 +7,13 @@ import { describe, expect, it } from 'vitest'
 import {
   getDefaultClaimedGestureAngles,
   getDefaultRubberBand,
+  getFitSnapBounds,
   getMainAxisLayoutSize,
   getMainAxisSize,
   getMaxSnapSize,
   getNextMainAxisOffset,
   getSheetTransform,
+  isFitSnapPoint,
   resolveSheetSide,
   toPxJS,
 } from './direction'
@@ -34,6 +36,22 @@ describe('sheet side utils', () => {
 
   it('resolves percent snap points against width for drawers', () => {
     expect(toPxJS('75%', 360)).toBe(270)
+  })
+
+  it('identifies bounded and unbounded fit snap points', () => {
+    expect(isFitSnapPoint('fit')).toBe(true)
+    expect(isFitSnapPoint(' fit ')).toBe(true)
+    expect(isFitSnapPoint({ fit: { min: 166, max: '73%' } })).toBe(true)
+    expect(isFitSnapPoint({ fit: {} })).toBe(true)
+    expect(isFitSnapPoint('50%')).toBe(false)
+    expect(isFitSnapPoint(320)).toBe(false)
+
+    expect(getFitSnapBounds('fit')).toBeUndefined()
+    expect(getFitSnapBounds({ fit: { min: 166, max: '73%' } })).toEqual({
+      min: 166,
+      max: '73%',
+    })
+    expect(toPxJS({ fit: { min: 166, max: '73%' } }, 800)).toBe(-1)
   })
 
   it('reads the correct viewport basis for each resolved side', () => {

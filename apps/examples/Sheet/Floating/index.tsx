@@ -2,7 +2,13 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { root, useRef, useState } from '@lynx-js/react'
+import {
+  root,
+  runOnMainThread,
+  useMainThreadRef,
+  useRef,
+  useState,
+} from '@lynx-js/react'
 
 import {
   Button,
@@ -11,9 +17,8 @@ import {
   SheetNestedScrollContent,
   SheetRoot,
   SheetView,
-  screenWidth,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef } from '@lynx-js/lynx-ui'
+import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
@@ -21,9 +26,27 @@ import './index.css'
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
+  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
+    null,
+  )
   const [bounded, setBounded] = useState(true)
   const [bottomGap, setBottomGap] = useState(8)
-  const width = Math.min(screenWidth - 32, 664)
+  const openingCornerRadius = bounded ? 24 : { topLeft: 24, topRight: 24 }
+  const openingFrame = {
+    insets: { left: 16, right: 16, bottom: bounded ? bottomGap : 0 },
+    maxWidth: 664,
+  }
+
+  function applySurface(nextBounded: boolean, nextGap: number) {
+    'main thread'
+    surfaceControllerRef.current?.setFrame({
+      insets: { left: 16, right: 16, bottom: nextBounded ? nextGap : 0 },
+      maxWidth: 664,
+    })
+    surfaceControllerRef.current?.setCornerRadius(
+      nextBounded ? 24 : { topLeft: 24, topRight: 24 },
+    )
+  }
 
   return (
     <view className='demo-container surface-stage lunaris-dark'>
@@ -42,13 +65,11 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            panelLayout={bounded ? { bottomGap } : undefined}
-            className='sheet-content surface-card'
+            main-thread:surfaceControllerRef={surfaceControllerRef}
+            initialCornerRadius={openingCornerRadius}
+            initialFrame={openingFrame}
+            className='sheet-content'
             innerClassName='surface-layout'
-            style={{
-              width: `${width}px`,
-              left: `${(screenWidth - width) / 2}px`,
-            }}
           >
             {({ scrollGesture }) => (
               <>
@@ -60,7 +81,11 @@ function App() {
                   <view className='surface-controls'>
                     <Button
                       className='surface-action'
-                      onClick={() => setBounded(value => !value)}
+                      onClick={() => {
+                        const nextBounded = !bounded
+                        setBounded(nextBounded)
+                        runOnMainThread(applySurface)(nextBounded, bottomGap)
+                      }}
                     >
                       <text className='surface-action-text'>
                         Switch coverage
@@ -68,7 +93,11 @@ function App() {
                     </Button>
                     <Button
                       className='surface-action'
-                      onClick={() => setBottomGap(value => value === 0 ? 8 : 0)}
+                      onClick={() => {
+                        const nextGap = bottomGap === 0 ? 8 : 0
+                        setBottomGap(nextGap)
+                        runOnMainThread(applySurface)(bounded, nextGap)
+                      }}
                     >
                       <text className='surface-action-text'>
                         {`Bottom gap: ${bottomGap}px`}

@@ -17,6 +17,7 @@ export interface SheetControllerOptions {
   onUnmount?: (closedEpoch?: number) => void
   onBeforeDismiss?: (leavingEpoch?: number) => void
   onResurrected?: () => void
+  onPresenceChangeMT?: SheetRootProps['main-thread:onPresenceChange']
   presenceStateMTRef?: MainThreadRef<PresenceState>
   openEpochMTRef?: MainThreadRef<number>
 }
@@ -33,8 +34,10 @@ export interface SheetControllerAnimationDeps {
   getResolvedSnapPointValues: () => number[]
   onSnapChangeMT: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
+  onDragStartNotifyMT?: SheetRootProps['main-thread:onDragStart']
   onOpeningMT?: () => void
   onClosedBeforeEntryMT?: () => void
+  onSettledMT?: () => void
   enterAnimation: SheetTransition
   exitAnimation: SheetTransition
   initialSnap: number
@@ -56,6 +59,7 @@ export function useSheetController(
     onUnmount,
     onBeforeDismiss,
     onResurrected,
+    onPresenceChangeMT,
     presenceStateMTRef: presenceStateMTRefProp,
     openEpochMTRef,
   } = options
@@ -68,8 +72,10 @@ export function useSheetController(
     getResolvedSnapPointValues,
     onSnapChangeMT,
     onSnapStartMT,
+    onDragStartNotifyMT,
     onOpeningMT,
     onClosedBeforeEntryMT,
+    onSettledMT,
     enterAnimation,
     exitAnimation,
     initialSnap,
@@ -88,6 +94,7 @@ export function useSheetController(
       onDismiss,
       onUnmount,
       onBeforeDismiss,
+      onPresenceChangeMT,
     },
     presenceStateMTRefProp,
     openEpochMTRef,
@@ -123,9 +130,11 @@ export function useSheetController(
     if (presenceStateMTRef.current === PresenceState.Entering) {
       onSnapChangeMT(index, value)
       entered()
+      onSettledMT?.()
     } else if (presenceStateMTRef.current === PresenceState.Entered) {
       // Already entered, just update snap index
       onSnapChangeMT(index, value)
+      onSettledMT?.()
     }
     // If Leaving/Left, close animation took over - do nothing
   }
@@ -246,7 +255,7 @@ export function useSheetController(
     }
 
     activeSnapMTRef.current = null
-    if (retargetAnimationMT) pendingSnapMTRef.current = null
+    pendingSnapMTRef.current = null
     stopAnimationMT()
     leave()
     const target = 0
@@ -318,6 +327,7 @@ export function useSheetController(
       // Just stop any running animation
       stopAnimationMT()
     }
+    onDragStartNotifyMT?.()
   }
 
   /**
@@ -337,7 +347,7 @@ export function useSheetController(
   function onDragEndCloseMT(opts?: { animationConfig?: SheetTransition }) {
     'main thread'
     activeSnapMTRef.current = null
-    if (retargetAnimationMT) pendingSnapMTRef.current = null
+    pendingSnapMTRef.current = null
     // Transition to close if not already
     if (
       presenceStateMTRef.current !== PresenceState.Leaving

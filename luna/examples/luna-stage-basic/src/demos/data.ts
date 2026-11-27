@@ -77,6 +77,7 @@ const demosByPackage = {
     'SheetControlled',
     'SheetDirectional',
     'SheetImperative',
+    'SheetSafeArea',
   ],
   slider: [
     'SliderBasic',

@@ -6,6 +6,7 @@ import {
   root,
   runOnBackground,
   runOnMainThread,
+  useEffect,
   useMainThreadRef,
   useRef,
   useState,
@@ -19,26 +20,36 @@ import {
   SheetRoot,
   SheetView,
   screenHeight,
-  screenWidth,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef } from '@lynx-js/lynx-ui'
-import clsx from 'clsx'
+import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
 import './index.css'
 
+const FLOATING_FRAME = {
+  insets: { left: 24, right: 24, bottom: 8 },
+  maxWidth: 664,
+}
+
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
+  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
+    null,
+  )
   const [panel, setPanel] = useState({ fullscreen: false, animated: false })
   const panelTarget = useMainThreadRef({ fullscreen: false, animated: false })
-  const [viewport, setViewport] = useState({
-    width: screenWidth,
-    height: screenHeight,
-  })
-  const fullscreenHeight = viewport.height
-  const floatingWidth = Math.min(viewport.width - 48, 664)
-  const width = panel.fullscreen ? viewport.width : floatingWidth
+  const [fullscreenHeight, setFullscreenHeight] = useState(screenHeight)
+
+  function applyPanelSurface(fullscreen: boolean) {
+    'main thread'
+    surfaceControllerRef.current?.setFrame(
+      fullscreen
+        ? { insets: { bottom: 0 } }
+        : FLOATING_FRAME,
+    )
+    surfaceControllerRef.current?.setCornerRadius(fullscreen ? 0 : 24)
+  }
 
   function updatePanel(fullscreen: boolean, animated: boolean) {
     setPanel({ fullscreen, animated })
@@ -47,6 +58,7 @@ function App() {
   function resetPanelTarget() {
     'main thread'
     panelTarget.current = { fullscreen: false, animated: false }
+    applyPanelSurface(false)
   }
 
   function onSnapStart(_index: number, value: number, animated: boolean) {
@@ -61,11 +73,16 @@ function App() {
     runOnBackground(updatePanel)(fullscreen, animated)
   }
 
+  useEffect(() => {
+    runOnMainThread(applyPanelSurface)(panel.fullscreen)
+  }, [panel])
+
   return (
     <view
       className='demo-container surface-stage lunaris-dark'
-      bindlayoutchange={event =>
-        setViewport({ width: event.detail.width, height: event.detail.height })}
+      bindlayoutchange={event => {
+        if (event.detail.height > 0) setFullscreenHeight(event.detail.height)
+      }}
     >
       <view className='surface-launcher'>
         <text className='surface-title'>Room to read</text>
@@ -90,15 +107,12 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            panelLayout={{ bottomGap: panel.fullscreen ? 0 : 8 }}
-            className={clsx(
-              'sheet-content',
-              !panel.fullscreen && 'surface-card',
-            )}
+            main-thread:surfaceControllerRef={surfaceControllerRef}
+            initialCornerRadius={24}
+            initialFrame={FLOATING_FRAME}
+            className='sheet-content'
             innerClassName='surface-layout'
             style={{
-              width: `${width}px`,
-              left: `${(viewport.width - width) / 2}px`,
               // This CSS transition has its own clock; it does not follow the snap spring.
               transition: panel.animated
                 ? 'width 280ms ease-out, left 280ms ease-out'

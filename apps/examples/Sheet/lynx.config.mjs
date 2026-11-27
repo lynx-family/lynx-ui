@@ -22,6 +22,7 @@ const defaultConfig = exampleConfig(
     SheetGestureFixedFooter: './GestureFixedFooter/index.tsx',
     SheetGestureComposite: './GestureComposite/index.tsx',
     SheetPositioner: './Positioner/index.tsx',
+    SheetSafeArea: './SafeArea/index.tsx',
     // For Internal Tests
     // Uncomment entries below when running internal tests for Sheet.
     /*     SheetControlledOpen: './ControlledOpen/index.tsx',
