@@ -76,6 +76,8 @@ export const apiReferenceConfig: Readonly<
       'SheetSurfaceFrame',
       'SheetSurfaceSize',
       'SheetSurfaceAlign',
+      'SheetSurfaceOptions',
+      'SheetSurfaceHandle',
       'SheetViewportInsets',
       'SheetCornerRadius',
       'SheetViewportSize',

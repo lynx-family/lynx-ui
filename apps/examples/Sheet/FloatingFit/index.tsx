@@ -12,6 +12,7 @@ import {
   SheetHandle,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
@@ -21,6 +22,13 @@ import './index.css'
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
   const [details, setDetails] = useState(false)
+  const surface = useSheetSurface({
+    cornerRadius: 24,
+    frame: {
+      insets: { left: 16, right: 16, bottom: 8 },
+      maxWidth: 480,
+    },
+  })
   return (
     <view className='demo-container surface-stage lunaris-dark'>
       <view className='surface-launcher'>
@@ -38,11 +46,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            initialCornerRadius={24}
-            initialFrame={{
-              insets: { left: 16, right: 16, bottom: 8 },
-              maxWidth: 480,
-            }}
+            surface={surface}
             className='sheet-content'
             innerClassName='surface-layout'
           >

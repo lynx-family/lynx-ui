@@ -9,7 +9,14 @@ import type { MainThread } from '@lynx-js/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { SheetPositionerDimensions } from '../context'
-import type { SheetSide, SheetSnapPoint } from '../types'
+import type {
+  SheetCornerRadius,
+  SheetSide,
+  SheetSnapPoint,
+  SheetSurfaceFrame,
+} from '../types'
+import { useSheetBodyInsets } from './useSheetBodyInsets'
+import { useSheetSurface } from './useSheetSurface'
 import { useSnap } from './useSnap'
 import { resolveSurfaceHorizontalFrame } from '../utils/surfaceFrame'
 
@@ -28,6 +35,7 @@ function persistentRef<T>(current: T) {
 }
 
 vi.mock('@lynx-js/react', () => ({
+  createContext: () => ({ Provider: 'context-provider' }),
   useMainThreadRef: <T>(current: T) => persistentRef(current),
   useRef: <T>(current: T) => persistentRef(current),
   useMemo: <T>(fn: () => T) => fn(),
@@ -74,8 +82,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   side: SheetSide = 'bottom',
   snapPoints: SheetSnapPoint[] = ['50%', '85%'],
-  initialFrame?: Parameters<typeof useSnap>[0]['initialFrame'],
-  initialCornerRadius?: Parameters<typeof useSnap>[0]['initialCornerRadius'],
+  initialFrame?: SheetSurfaceFrame,
+  initialCornerRadius?: SheetCornerRadius,
 ) {
   const presence = { current: PresenceState.Left }
   const entered = vi.fn()
@@ -103,10 +111,14 @@ function setup(
     hooks.subscriptionCursor = 0
     hooks.effects = []
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+    const surfaceHandle = useSheetSurface({
+      frame: openingFrame,
+      cornerRadius: initialCornerRadius,
+    })
+    // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const snap = useSnap({
       snapPoints: nextSnapPoints,
-      initialFrame: openingFrame,
-      initialCornerRadius,
+      surface: surfaceHandle,
       side,
       enableRTL: true,
       screenHeight: nextScreenHeight,
@@ -116,6 +128,18 @@ function setup(
       onEntered: entered,
       onSnapStartMT: snapStarted,
       onSnapChange: changed,
+    })
+    // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+    const bodyInsets = useSheetBodyInsets({
+      resolvedSide: snap.bodyContext.resolvedSide,
+      enableRTL: snap.bodyContext.enableRTL,
+      screenWidth: snap.bodyContext.viewportWidth,
+      screenHeight: snap.bodyContext.viewportHeight,
+      maxSnapSize: snap.bodyContext.maxSnapSize,
+      hasFitSnapPoint: snap.bodyContext.hasFitSnapPoint,
+      fitMinSize: snap.bodyContext.fitMinSize,
+      fitMaxSize: snap.bodyContext.fitMaxSize,
+      hubMTRef: snap.bodyContext.hubMTRef,
     })
     snap.setSheetMTRef({
       setStyleProperties: () => undefined,
@@ -130,7 +154,19 @@ function setup(
     if (effects) {
       for (const effect of hooks.effects) effect()
     }
-    return snap
+    return {
+      ...snap,
+      setFrameMT: (
+        f: SheetSurfaceFrame,
+        opts?: { animating?: boolean },
+      ) => surfaceHandle.controllerRef.current?.setFrame(f, opts),
+      setCornerRadiusMT: (r: SheetCornerRadius | undefined) =>
+        surfaceHandle.controllerRef.current?.setCornerRadius(r),
+      bodyContext: {
+        ...snap.bodyContext,
+        ...bodyInsets,
+      },
+    }
   }
   return {
     render,
@@ -173,13 +209,17 @@ describe('Sheet local viewport calculations and resizing', () => {
     snap.setFrameMT({ insets: { left: 0, right: 0 } })
     snap.setCornerRadiusMT(0)
 
-    const rerendered = render(viewport, true, {
-      insets: { left: 40, right: 40 },
+    const sameBase = render(viewport, true, {
+      insets: { left: 30, right: 30 },
     })
     expect(surfaceStyle.width).toBe('400px')
     expect(surfaceStyle['border-top-left-radius']).toBe('0px')
+    const rerendered = render(viewport, true, {
+      insets: { left: 40, right: 40 },
+    })
     rerendered.closeMT({ animate: false })
     rerendered.showMT({ animate: false })
+    expect(sameBase).toBeDefined()
     expect(surfaceStyle.width).toBe('320px')
     expect(surfaceStyle['border-top-left-radius']).toBe('24px')
   })

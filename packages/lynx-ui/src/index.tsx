@@ -326,6 +326,7 @@ export {
   SheetPositioner,
   useSnap,
   useSheetScrollGesture,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui-sheet'
 export type {
   SheetBackdropProps,
@@ -346,6 +347,8 @@ export type {
   SheetSurfaceAlign,
   SheetSurfaceController,
   SheetSurfaceFrame,
+  SheetSurfaceHandle,
+  SheetSurfaceOptions,
   SheetSurfaceSize,
   SheetViewProps,
   SheetViewportInsets,

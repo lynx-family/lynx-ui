@@ -22,12 +22,9 @@ import {
   SheetPositioner,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '../src'
-import type {
-  SheetPresenceState,
-  SheetRootRef,
-  SheetSurfaceController,
-} from '../src'
+import type { SheetPresenceState, SheetRootRef } from '../src'
 
 interface TestingBridgeEvent {
   type: string
@@ -621,11 +618,8 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
     let readEventsMT: (() => string[]) | undefined
 
     function FullscreenFromClosedHarness() {
-      const surfaceControllerRef = useMainThreadRef<
-        SheetSurfaceController | null
-      >(
-        null,
-      )
+      const surface = useSheetSurface({ cornerRadius: 24 })
+      const surfaceControllerRef = surface.controllerRef
       const eventsMTRef = useMainThreadRef<string[]>([])
       readEventsMT = () => {
         'main thread'
@@ -660,9 +654,8 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
         >
           <SheetView>
             <SheetNestedScrollContent
-              main-thread:surfaceControllerRef={surfaceControllerRef}
+              surface={surface}
               surfaceViewProps={{ id: 'fs-surface' }}
-              initialCornerRadius={24}
             >
               {() => <text>Direct Fullscreen</text>}
             </SheetNestedScrollContent>
@@ -706,6 +699,10 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
       screenWidth: number
       screenHeight: number
     }) {
+      const surface = useSheetSurface({
+        cornerRadius: 24,
+        frame: { insets: { bottom: 8 } },
+      })
       return (
         <SheetRoot
           show={true}
@@ -719,10 +716,9 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
             <SheetPositioner positionerProps={{ id: 'pos' }}>
               <SheetBackdrop />
               <SheetNestedScrollContent
+                surface={surface}
                 surfaceViewProps={{ id: 'ov-surface' }}
                 innerViewProps={{ id: 'ov-panel' }}
-                initialCornerRadius={24}
-                initialFrame={{ insets: { bottom: 8 } }}
               >
                 {() => (
                   <>
@@ -753,7 +749,6 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
     const intrinsicWrapper = container.querySelector('#ov-fit-child')!
       .parentElement!.parentElement!
     const bodySlot = intrinsicWrapper.parentElement!.parentElement!
-      .parentElement!
     const footerRoot = container.querySelector('#ov-footer-child')!
       .parentElement!
 
@@ -839,6 +834,14 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
     try {
       function SafeAreaOpenHarness() {
         const [show, setShow] = useState(false)
+        const surface = useSheetSurface({
+          cornerRadius: 24,
+          frame: {
+            insets: { bottom: 8 },
+            width: '50%',
+            maxWidth: 664,
+          },
+        })
         return (
           <view>
             <view id='open-reader-btn' bindtap={() => setShow(true)} />
@@ -853,13 +856,8 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
                     style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
                   />
                   <SheetNestedScrollContent
+                    surface={surface}
                     surfaceViewProps={{ id: 'safe-area-painted' }}
-                    initialCornerRadius={24}
-                    initialFrame={{
-                      insets: { bottom: 8 },
-                      width: '50%',
-                      maxWidth: 664,
-                    }}
                   >
                     {({ scrollGesture }) => {
                       bodyRenderCount += 1

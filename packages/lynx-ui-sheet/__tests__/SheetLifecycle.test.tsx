@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { createRef, runOnMainThread, useMainThreadRef } from '@lynx-js/react'
+import { createRef, runOnMainThread, useEffect, useState } from '@lynx-js/react'
 import v8 from 'node:v8'
 import vm from 'node:vm'
 
@@ -19,10 +19,11 @@ import {
   SheetPositioner,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '../src'
 import type {
   SheetRootRef,
-  SheetSurfaceController,
+  SheetSnapPoint,
   SheetSurfaceFrame,
   SheetViewportInsets,
 } from '../src'
@@ -113,11 +114,10 @@ describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
     const onClose = vi.fn()
 
     function SafeAreaHarness() {
-      const surfaceControllerRef = useMainThreadRef<
-        SheetSurfaceController | null
-      >(
-        null,
-      )
+      const surface = useSheetSurface({
+        cornerRadius: 24,
+        frame: FLOATING_FRAME,
+      })
       return (
         <SheetRoot
           show={true}
@@ -131,10 +131,8 @@ describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
             <SheetPositioner positionerProps={{ id: 'positioner' }}>
               <SheetBackdrop />
               <SheetNestedScrollContent
-                main-thread:surfaceControllerRef={surfaceControllerRef}
+                surface={surface}
                 surfaceViewProps={{ id: 'painted-surface' }}
-                initialCornerRadius={24}
-                initialFrame={FLOATING_FRAME}
               >
                 {() => (
                   <>
@@ -283,15 +281,17 @@ describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
       surfaceStyle: CSSProperties
       insets: SheetViewportInsets
     }) {
-      const surfaceControllerRef = useMainThreadRef<
-        SheetSurfaceController | null
-      >(
-        null,
-      )
+      const surface = useSheetSurface({
+        cornerRadius: 26,
+        frame: {
+          insets: { left: 24, right: 24, bottom: 8 },
+          maxWidth: 664,
+        },
+      })
       applyFullscreenMT = () => {
         'main thread'
-        surfaceControllerRef.current?.setFrame({ insets: { bottom: 0 } })
-        surfaceControllerRef.current?.setCornerRadius(0)
+        surface.controllerRef.current?.setFrame({ insets: { bottom: 0 } })
+        surface.controllerRef.current?.setCornerRadius(0)
       }
       return (
         <SheetRoot
@@ -302,15 +302,10 @@ describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
         >
           <SheetView>
             <SheetNestedScrollContent
-              main-thread:surfaceControllerRef={surfaceControllerRef}
+              surface={surface}
               surfaceViewProps={{ id: 'painted-surface' }}
               innerViewProps={{ id: 'sheet-panel' }}
               style={surfaceStyle}
-              initialCornerRadius={26}
-              initialFrame={{
-                insets: { left: 24, right: 24, bottom: 8 },
-                maxWidth: 664,
-              }}
             >
               {() => (
                 <SheetBody viewportInsets={insets}>
@@ -407,7 +402,6 @@ describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
     const intrinsicWrapper = container.querySelector('#fit-child')!
       .parentElement!.parentElement!
     const bodySlot = intrinsicWrapper.parentElement!.parentElement!
-      .parentElement!
     const footerRoot = container.querySelector('#footer-child')!.parentElement!
 
     await act(async () => {
@@ -421,5 +415,156 @@ describe('Sheet dual-thread ReactLynx lifecycle integration', () => {
     // 200px body + 60px footer (which already covers the 34px bottom safe area) = 260px, not 294px.
     expect(onOpen).toHaveBeenCalledTimes(1)
     expect(movement.getAttribute('style')).toContain('translate(0px, -260px)')
+  })
+
+  it('never remounts SheetBody children across viewportInsets or snapPoints toggles and supports multiple bodies', async () => {
+    let childMounts = 0
+    let childUnmounts = 0
+
+    function StatefulChild() {
+      const [count] = useState(42)
+      useEffect(() => {
+        childMounts += 1
+        return () => {
+          childUnmounts += 1
+        }
+      }, [])
+      return <text id='stateful-child'>{String(count)}</text>
+    }
+
+    function BodyHarness({
+      insets,
+      snapPoints,
+      showSecondBody,
+    }: {
+      insets?: SheetViewportInsets
+      snapPoints: SheetSnapPoint[]
+      showSecondBody: boolean
+    }) {
+      return (
+        <SheetRoot
+          show={true}
+          screenWidth={500}
+          screenHeight={800}
+          snapPoints={snapPoints}
+        >
+          <SheetView>
+            <SheetNestedScrollContent
+              surfaceViewProps={{ id: 'multi-surface' }}
+              innerViewProps={{ id: 'multi-panel' }}
+            >
+              {() => (
+                <>
+                  <SheetBody
+                    className='primary-body'
+                    style={{ maxHeight: '640px' }}
+                    bodyViewProps={{ id: 'primary-content' }}
+                    viewportInsets={insets}
+                  >
+                    <StatefulChild />
+                  </SheetBody>
+                  {showSecondBody && (
+                    <SheetBody
+                      bodyViewProps={{ id: 'secondary-content' }}
+                      viewportInsets={{ left: 30, right: 30 }}
+                    >
+                      <view id='secondary-child' />
+                    </SheetBody>
+                  )}
+                </>
+              )}
+            </SheetNestedScrollContent>
+          </SheetView>
+        </SheetRoot>
+      )
+    }
+
+    const { container, rerender } = render(
+      <BodyHarness
+        insets={undefined}
+        snapPoints={[400, 800]}
+        showSecondBody={true}
+      />,
+    )
+    expect(childMounts).toBe(1)
+    expect(childUnmounts).toBe(0)
+    const initialContentEl = container.querySelector('#primary-content')!
+    expect(initialContentEl.getAttribute('class')).toBe('primary-body')
+    expect(initialContentEl.getAttribute('style')).toContain(
+      'max-height: 640px',
+    )
+
+    // 1. Async safe-area insets arrive (undefined -> { left: 50, right: 60 }): zero remount!
+    rerender(
+      <BodyHarness
+        insets={{ left: 50, right: 60, top: 44 }}
+        snapPoints={[400, 800]}
+        showSecondBody={true}
+      />,
+    )
+    expect(childMounts).toBe(1)
+    expect(childUnmounts).toBe(0)
+    expect(container.querySelector('#primary-content')).toBe(initialContentEl)
+
+    const painted = container.querySelector('#multi-surface')!
+    const panel = container.querySelector('#multi-panel')!
+    const primaryMover = initialContentEl.parentElement!
+    const primarySlot = primaryMover.parentElement!.parentElement!
+    const secondaryContent = container.querySelector('#secondary-content')!
+    const secondaryMover = secondaryContent.parentElement!
+    const secondarySlot = secondaryMover.parentElement!.parentElement!
+
+    await act(async () => {
+      fireLayoutChange(painted, { left: 0, top: 0, width: 500, height: 1200 })
+      fireLayoutChange(panel, { left: 0, top: 0, width: 500, height: 800 })
+      fireLayoutChange(primarySlot, {
+        left: 0,
+        top: 0,
+        width: 500,
+        height: 400,
+      })
+      fireLayoutChange(secondarySlot, {
+        left: 0,
+        top: 400,
+        width: 500,
+        height: 400,
+      })
+      await vi.advanceTimersByTimeAsync(100)
+    })
+
+    expect(primaryMover.getAttribute('style')).toContain('left: 50px')
+    expect(primaryMover.getAttribute('style')).toContain('right: 60px')
+    expect(secondaryMover.getAttribute('style')).toContain('left: 30px')
+    expect(secondaryMover.getAttribute('style')).toContain('right: 30px')
+
+    // 2. Unmounting the second SheetBody must NOT clear or disturb the first SheetBody!
+    rerender(
+      <BodyHarness
+        insets={{ left: 20, right: 40, top: 44 }}
+        snapPoints={[400, 800]}
+        showSecondBody={false}
+      />,
+    )
+    expect(primaryMover.getAttribute('style')).toContain('left: 20px')
+    expect(primaryMover.getAttribute('style')).toContain('right: 40px')
+
+    // 3. Switching snapPoints to ['fit'] and back to [400, 800], then clearing insets: zero remount!
+    rerender(
+      <BodyHarness
+        insets={{ left: 20, right: 40, top: 44 }}
+        snapPoints={['fit']}
+        showSecondBody={false}
+      />,
+    )
+    rerender(
+      <BodyHarness
+        insets={undefined}
+        snapPoints={[400, 800]}
+        showSecondBody={false}
+      />,
+    )
+    expect(childMounts).toBe(1)
+    expect(childUnmounts).toBe(0)
+    expect(container.querySelector('#primary-content')).toBe(initialContentEl)
   })
 })

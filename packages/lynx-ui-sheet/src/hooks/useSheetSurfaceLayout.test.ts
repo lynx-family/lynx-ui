@@ -8,9 +8,18 @@ import type * as MotionMini from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { SheetCornerRadius, SheetSurfaceFrame } from '../types'
-import { normalizeInset, useSheetSurfaceLayout } from './useSheetSurfaceLayout'
-import { resolveSurfaceHorizontalFrame } from '../utils/surfaceFrame'
+import type {
+  SheetCornerRadius,
+  SheetSurfaceFrame,
+  SheetViewportSize,
+} from '../types'
+import { useSheetBodyInsets } from './useSheetBodyInsets'
+import { useSheetSurface } from './useSheetSurface'
+import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
+import {
+  normalizeInset,
+  resolveSurfaceHorizontalFrame,
+} from '../utils/surfaceFrame'
 
 const hooks = vi.hoisted(() => ({
   slots: [] as unknown[],
@@ -21,6 +30,7 @@ const hooks = vi.hoisted(() => ({
 }))
 
 vi.mock('@lynx-js/react', () => ({
+  createContext: () => ({ Provider: 'context-provider' }),
   useMainThreadRef: <T>(current: T) => {
     const index = hooks.cursor++
     hooks.slots[index] ??= { current }
@@ -31,6 +41,7 @@ vi.mock('@lynx-js/react', () => ({
     hooks.slots[index] ??= { current }
     return hooks.slots[index]
   },
+  useMemo: <T>(fn: () => T) => fn(),
   useEffect: (effect: () => unknown) => hooks.effects.push(effect),
   runOnMainThread: <T>(fn: T) => fn,
 }))
@@ -155,16 +166,20 @@ function setup(
     hooks.cursor = 0
     hooks.subscriptionCursor = 0
     hooks.effects = []
+    const activeFrame = controlled?.frame ?? nextFrame
+    const activeRadius = controlled?.cornerRadius ?? cornerRadius
+    // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+    const surfaceHandle = useSheetSurface({
+      frame: activeFrame,
+      cornerRadius: activeRadius,
+    })
     // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
     const layout = useSheetSurfaceLayout({
       position,
       presence,
       resolvedSide,
       enableRTL,
-      frame: controlled?.frame,
-      cornerRadius: controlled?.cornerRadius,
-      initialCornerRadius: cornerRadius,
-      initialFrame: nextFrame,
+      surface: surfaceHandle,
       surfaceStyle: baseStyle,
       screenHeight,
       screenWidth,
@@ -178,11 +193,38 @@ function setup(
       initialSize: () => 400,
       initialSnap: 0,
     })
+    // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+    const bodyInsets = useSheetBodyInsets({
+      resolvedSide: layout.bodyContext.resolvedSide,
+      enableRTL: layout.bodyContext.enableRTL,
+      screenWidth: layout.bodyContext.viewportWidth,
+      screenHeight: layout.bodyContext.viewportHeight,
+      maxSnapSize: layout.bodyContext.maxSnapSize,
+      hasFitSnapPoint: layout.bodyContext.hasFitSnapPoint,
+      fitMinSize: layout.bodyContext.fitMinSize,
+      fitMaxSize: layout.bodyContext.fitMaxSize,
+      hubMTRef: layout.bodyContext.hubMTRef,
+    })
     layout.setClipMTRef(clip)
     layout.setSurfaceMTRef(surface)
     layout.setViewportMTRef(viewport)
     for (const effect of hooks.effects) effect()
-    return layout
+    return {
+      ...layout,
+      setFrameMT: (
+        f: SheetSurfaceFrame,
+        opts?: { animating?: boolean },
+      ) => surfaceHandle.controllerRef.current?.setFrame(f, opts),
+      setCornerRadiusMT: (r: SheetCornerRadius | undefined) =>
+        surfaceHandle.controllerRef.current?.setCornerRadius(r),
+      getViewportSizeMT: (): SheetViewportSize =>
+        surfaceHandle.controllerRef.current?.getViewportSize()
+          ?? layout.getViewportSizeMT(),
+      bodyContext: {
+        ...layout.bodyContext,
+        ...bodyInsets,
+      },
+    }
   }
   const layout = render()
   return {
@@ -301,7 +343,7 @@ describe('Sheet surface geometry', () => {
     },
   )
 
-  it('merges partial corner updates and restores CSS on explicit null or undefined', () => {
+  it('replaces corner updates so omitted or null corners restore CSS', () => {
     const { render, surfaceStyle } = setup()
     const baseStyle = { borderTopLeftRadius: '12rpx' }
     const { setCornerRadiusMT } = render(
@@ -316,15 +358,16 @@ describe('Sheet surface geometry', () => {
     })
     expect(surfaceStyle).not.toHaveProperty('border-top-right-radius')
 
-    // Partial update preserves existing topLeft / bottomRight while updating bottomLeft.
-    setCornerRadiusMT({ bottomLeft: 18 })
+    // Replace semantics: omitted topLeft restores baseStyle while specified bottom corners update.
+    setCornerRadiusMT({ bottomRight: 12, bottomLeft: 18 })
     expect(surfaceStyle).toMatchObject({
-      'border-top-left-radius': '20px',
+      'border-top-left-radius': '12rpx',
       'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 18px)',
     })
 
-    // Explicit null restores topLeft to baseStyle while keeping bottomRight/bottomLeft intact.
-    setCornerRadiusMT({ topLeft: null })
+    // Explicit null also restores topLeft to baseStyle.
+    setCornerRadiusMT({ topLeft: 20, bottomRight: 12, bottomLeft: 18 })
+    setCornerRadiusMT({ topLeft: null, bottomRight: 12, bottomLeft: 18 })
     expect(surfaceStyle).toMatchObject({
       'border-top-left-radius': '12rpx',
       'clip-path': 'inset(0px 0px 1100px 0px round 0px 0px 12px 18px)',
@@ -335,12 +378,12 @@ describe('Sheet surface geometry', () => {
     expect(surfaceStyle['clip-path']).toBe('none')
   })
 
-  it('clears a corner explicitly set to null without inline CSS so class styles can apply', () => {
+  it('clears a corner explicitly set to null or omitted without inline CSS so class styles can apply', () => {
     const { setCornerRadiusMT, surfaceStyle } = setup()
     setCornerRadiusMT({ topLeft: 20, topRight: 18 })
     expect(surfaceStyle['border-top-left-radius']).toBe('20px')
 
-    setCornerRadiusMT({ topLeft: null })
+    setCornerRadiusMT({ topLeft: null, topRight: 18 })
     expect(surfaceStyle['border-top-left-radius']).toBeNull()
     expect(surfaceStyle['border-top-right-radius']).toBe('18px')
   })
@@ -1381,9 +1424,14 @@ describe('Sheet surface geometry', () => {
     expect(surfaceStyle['border-bottom-left-radius']).toBeUndefined()
     expect(surfaceStyle['border-bottom-right-radius']).toBeUndefined()
 
-    // Updating only top corners updates border-top-*-radius without re-writing clip-path.
+    // Replacing corners with only topLeft/topRight clears bottom radii to square ('clip-path: none') and updates top radii.
     surfaceSpy.mockClear()
-    setCornerRadiusMT({ topLeft: 12, topRight: 12 })
+    setCornerRadiusMT({
+      topLeft: 12,
+      topRight: 12,
+      bottomLeft: 24,
+      bottomRight: 24,
+    })
     expect(surfaceSpy).toHaveBeenCalledTimes(1)
     expect(surfaceSpy).toHaveBeenCalledWith({
       'border-top-left-radius': '12px',

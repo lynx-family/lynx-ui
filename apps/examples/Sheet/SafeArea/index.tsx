@@ -20,11 +20,11 @@ import {
   SheetPositioner,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
 import type {
   SheetPresenceState,
   SheetRootRef,
-  SheetSurfaceController,
   SheetSurfaceFrame,
 } from '@lynx-js/lynx-ui'
 import {
@@ -46,9 +46,8 @@ const FLOATING_FRAME: SheetSurfaceFrame = {
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
-    null,
-  )
+  const surface = useSheetSurface({ frame: FLOATING_FRAME, cornerRadius: 24 })
+  const surfaceControllerRef = surface.controllerRef
   const [show, setShow] = useState(true)
   const progress = useMotionValueRef(0)
   const fullscreenTarget = useMainThreadRef(false)
@@ -164,11 +163,9 @@ function App() {
           <SheetPositioner>
             <SheetBackdrop className='sheet-backdrop' />
             <SheetNestedScrollContent
-              main-thread:surfaceControllerRef={surfaceControllerRef}
+              surface={surface}
               className='sheet-surface'
               innerClassName='sheet-layout'
-              initialCornerRadius={24}
-              initialFrame={FLOATING_FRAME}
             >
               {({ scrollGesture }) => (
                 <>

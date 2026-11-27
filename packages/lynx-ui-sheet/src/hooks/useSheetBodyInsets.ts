@@ -2,13 +2,19 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { useMainThreadRef } from '@lynx-js/react'
+import {
+  runOnMainThread,
+  useEffect,
+  useMainThreadRef,
+  useRef,
+} from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
 import type { MainThread } from '@lynx-js/types'
 
-import type { SheetLayoutRect } from '../context'
+import type { SheetLayoutRect, SheetSurfaceBodyHubMT } from '../context'
 import type { SheetViewportInsets } from '../types'
+import { setElementStylesMT } from '../utils'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetBodyInsetsOptions {
@@ -20,10 +26,18 @@ export interface SheetBodyInsetsOptions {
   hasFitSnapPoint: boolean
   fitMinSize?: number
   fitMaxSize?: number
-  getBottomInsetMT: () => number
-  getSurfaceHorizontalOverrideMT: () => { left: number, width: number } | null
-  footerHeightMTRef?: MainThreadRef<number>
-  onFitBodyLayoutMT?: (height: number) => void
+  hubMTRef?: MainThreadRef<SheetSurfaceBodyHubMT> | null
+}
+
+function hasAnyFiniteInset(insets: SheetViewportInsets | undefined) {
+  'main thread'
+  if (!insets) return false
+  return Number.isFinite(insets.top)
+    || Number.isFinite(insets.right)
+    || Number.isFinite(insets.bottom)
+    || Number.isFinite(insets.left)
+    || Number.isFinite(insets.start)
+    || Number.isFinite(insets.end)
 }
 
 function viewportOverlap(
@@ -77,9 +91,12 @@ function resolveBodyLayout(
 }
 
 /**
- * Keep SheetBody inside viewport safe-area boundaries across all 4 sides using
- * transform + clip (zero layout writes during steady drags) and synchronous
- * cross-axis clamping when panel horizontal insets change.
+ * Keep a `SheetBody` instance inside viewport safe-area boundaries across all
+ * 4 sides using hardware `overflow: hidden` + `transform` (zero layout writes
+ * during steady drags) and synchronous cross-axis clamping when panel
+ * horizontal insets change. Subscribes per-instance to `SheetSurfaceBodyHubMT`
+ * so multiple `SheetBody` regions work independently and the entire engine is
+ * tree-shaken when `SheetBody` is unused.
  */
 export function useSheetBodyInsets({
   resolvedSide,
@@ -90,19 +107,13 @@ export function useSheetBodyInsets({
   hasFitSnapPoint,
   fitMinSize,
   fitMaxSize,
-  getBottomInsetMT,
-  getSurfaceHorizontalOverrideMT,
-  footerHeightMTRef,
-  onFitBodyLayoutMT,
+  hubMTRef,
 }: SheetBodyInsetsOptions) {
   const isBottom = resolvedSide === 'bottom'
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const intrinsic = hasFitSnapPoint
   const fitSlotMaxSize = maxSnapSize === 0 ? fitMaxSize : undefined
-  const surfaceOriginMTRef = useMainThreadRef({ left: 0, top: 0 })
-  const bodyRangeMTRef = useMainThreadRef<
-    { start: number, size: number } | null
-  >(null)
+  const subscriberIdMTRef = useMainThreadRef(0)
   const reportFitBodyMTRef = useMainThreadRef<
     ((allowStableParent?: boolean) => void) | null
   >(null)
@@ -116,7 +127,6 @@ export function useSheetBodyInsets({
     intrinsicWrapper: MainThread.Element | null
     insets: SheetViewportInsets | undefined
     outer: SheetLayoutRect
-    parent: Partial<SheetLayoutRect>
     horizontalPadding: number
     outerPendingParentSync: boolean
     appliedHorizontal: string
@@ -146,10 +156,8 @@ export function useSheetBodyInsets({
     intrinsicWrapper: null,
     insets: undefined,
     outer: { left: 0, top: 0, width: -1, height: -1 },
-    parent: {},
     horizontalPadding: 0,
     outerPendingParentSync: false,
-    // Seeded to match SheetBody JSX defaults (left: 0, right: 0 / top: 0, bottom: 0).
     appliedHorizontal: '0/0',
     appliedVertical: '0/0',
     appliedIntrinsicBounds: '/',
@@ -172,6 +180,8 @@ export function useSheetBodyInsets({
   function reportFitBodyLayoutMT(allowStableParent = false) {
     'main thread'
     reportFitBodyMTRef.current = reportFitBodyLayoutMT
+    const hub = hubMTRef?.current
+    if (!hub) return
     const body = bodyMTRef.current
     const {
       slot,
@@ -179,18 +189,21 @@ export function useSheetBodyInsets({
       expectedCross,
       fitCrossSize,
       reservedSize,
-      parent,
     } = body
+    const parent = hub.parentRect
     const outerMain = horizontal ? outer.width : outer.height
     const parentMain = horizontal ? parent.width : parent.height
     if (
-      !slot || !body.element || outer.width < 0 || outer.height < 0
+      !slot || !body.element || !hasAnyFiniteInset(body.insets)
+      || outer.width < 0 || outer.height < 0
       || fitCrossSize < 0
       || parentMain === undefined
       || Math.abs(expectedCross - fitCrossSize) > 1
       || Math.abs(outerMain - reservedSize) > 1
       || body.reportedMain === parentMain
-    ) return
+    ) {
+      return
+    }
     if (
       !allowStableParent && parentMain === body.parentSizeBeforeReservation
     ) {
@@ -205,7 +218,7 @@ export function useSheetBodyInsets({
       return
     }
     body.reportedMain = parentMain
-    onFitBodyLayoutMT?.(parentMain)
+    hub.onFitBodyLayout?.(parentMain)
   }
 
   function applyIntrinsicFitMT(params: {
@@ -220,6 +233,7 @@ export function useSheetBodyInsets({
     footer: number
   }) {
     'main thread'
+    const hub = hubMTRef?.current
     const body = bodyMTRef.current
     const natural = body.natural
     const {
@@ -247,7 +261,9 @@ export function useSheetBodyInsets({
       !body.slot || !measuredAtCross
       || (body.fitCrossSize >= 0 && !compactCross
         && body.fitViewportCross === viewportCross)
-    ) return
+    ) {
+      return
+    }
 
     if (!compactCross) {
       body.fitCrossSize = body.expectedCross
@@ -285,12 +301,13 @@ export function useSheetBodyInsets({
     const contentMin = fitMinSize === undefined
       ? undefined
       : Math.max(0, Math.min(effectiveMaxSpan, fitMinSize) - overhead)
-    const wrapper = body.intrinsicWrapper
+    const wrapper = body.intrinsicWrapper ?? body.element
     const boundsKey = `${contentMin ?? ''}/${contentMax ?? ''}`
     if (wrapper && boundsKey !== body.appliedIntrinsicBounds) {
       body.appliedIntrinsicBounds = boundsKey
-      wrapper.setStyleProperties(
-        (horizontal
+      setElementStylesMT(
+        wrapper,
+        horizontal
           ? {
             minWidth: contentMin === undefined ? null : `${contentMin}px`,
             maxWidth: contentMax === undefined ? null : `${contentMax}px`,
@@ -298,7 +315,7 @@ export function useSheetBodyInsets({
           : {
             minHeight: contentMin === undefined ? null : `${contentMin}px`,
             maxHeight: contentMax === undefined ? null : `${contentMax}px`,
-          }) as Record<string, string>,
+          },
       )
     }
     const clampedNatural = Math.max(
@@ -316,9 +333,6 @@ export function useSheetBodyInsets({
           : { height: `${reservedSize}px` },
       )
     }
-    // On initial fit open (or when footer / bounds update reservedSize before
-    // Pass #2 updates outerMain), report the resolved total size immediately
-    // instead of blocking until Pass #2 + requestAnimationFrame.
     const unmeasuredSlot = Math.abs(outerMain - reservedSize) > 1
     if (
       (body.reportedMain < 0 || (reservedChanged && unmeasuredSlot))
@@ -328,44 +342,51 @@ export function useSheetBodyInsets({
         + body.parentEndOffset
       if (body.reportedMain !== predictedParentMain) {
         body.reportedMain = predictedParentMain
-        onFitBodyLayoutMT?.(predictedParentMain)
+        hub?.onFitBodyLayout?.(predictedParentMain)
       }
     }
   }
 
-  function applyBodyLayoutMT(nextRange?: { start: number, size: number }) {
+  function applyBodyLayoutMT() {
     'main thread'
-    const range = nextRange ?? bodyRangeMTRef.current
+    const hub = hubMTRef?.current
+    if (!hub) return
     const body = bodyMTRef.current
-    const { element, outer, insets, parent } = body
-    if ((!range && !intrinsic) || !element || outer.width < 0 || !insets) return
-    const surface = surfaceOriginMTRef.current
+    const { element, outer, insets } = body
+    if (
+      (!hub.hasRange && !intrinsic)
+      || !element
+      || outer.width < 0
+      || !insets
+      || !hasAnyFiniteInset(insets)
+    ) {
+      return
+    }
+    const parent = hub.parentRect
     if (!parent.width || parent.height === undefined) return
 
-    // When panel horizontal bounds are driven synchronously on MT, use the
-    // upcoming left/width immediately so SheetBody clamps in the same layout pass.
-    const horizontalOverride = horizontal
-      ? null
-      : getSurfaceHorizontalOverrideMT()
+    const horizontalOverride = horizontal ? null : hub.horizontalOverride
     if (horizontalOverride) {
       body.pendingSurfaceWidth = -1
     }
     const effectiveSurfaceLeft = horizontalOverride
       ? horizontalOverride.left
-      : surface.left
+      : hub.surfaceLeft
     const effectiveOuterWidth = horizontalOverride
       ? Math.max(0, horizontalOverride.width - body.horizontalPadding)
       : (!horizontal && body.pendingSurfaceWidth >= 0
         ? Math.max(0, body.pendingSurfaceWidth - body.horizontalPadding)
         : outer.width)
 
-    const start = range?.start ?? 0
-    const size = range?.size ?? (horizontal ? outer.width : outer.height)
+    const start = hub.hasRange ? hub.rangeStart : 0
+    const size = hub.hasRange
+      ? hub.rangeSize
+      : (horizontal ? outer.width : outer.height)
     const left = horizontal
       ? start + outer.left - (parent.left ?? 0)
       : effectiveSurfaceLeft + outer.left - (parent.left ?? 0)
     const top = horizontal
-      ? surface.top + outer.top - (parent.top ?? 0)
+      ? hub.surfaceTop + outer.top - (parent.top ?? 0)
       : start + outer.top - (parent.top ?? 0)
     const width = horizontal
       ? Math.max(0, size - parent.width + outer.width)
@@ -391,9 +412,9 @@ export function useSheetBodyInsets({
       body.appliedHorizontal = horizontalKey
 
       const footer = isBottom && intrinsic
-        ? Math.max(0, footerHeightMTRef?.current ?? 0)
+        ? Math.max(0, hub.footerHeightMTRef?.current ?? 0)
         : 0
-      const edgeInset = isBottom ? getBottomInsetMT() : 0
+      const edgeInset = isBottom ? hub.settledBottom : 0
       const availableSpan = Math.max(0, screenHeight - edgeInset)
 
       const parentStartOffset = Math.max(0, outer.top - (parent.top ?? 0))
@@ -569,31 +590,14 @@ export function useSheetBodyInsets({
     if (intrinsic) reportFitBodyLayoutMT()
   }
 
-  function updateBodyRangeMT(start: number, size: number) {
-    'main thread'
-    if (hasFitSnapPoint && !intrinsic) return
-    const range = { start, size }
-    bodyRangeMTRef.current = range
-    applyBodyLayoutMT(range)
-  }
-
-  function measureSurfaceMT(event: MainThread.LayoutChangeEvent) {
-    'main thread'
-    const { left, top } = event.detail ?? event.params
-    const previous = surfaceOriginMTRef.current
-    if (previous.left === left && previous.top === top) return
-    surfaceOriginMTRef.current = { left, top }
-    applyBodyLayoutMT()
-  }
-
   function syncHorizontalPaddingMT(fromOuter: boolean) {
     'main thread'
+    const hub = hubMTRef?.current
+    if (!hub) return
     const body = bodyMTRef.current
-    const parentWidth = body.parent.width
+    const parentWidth = hub.parentRect.width
     const outerWidth = body.outer.width
-    const horizontalOverride = horizontal
-      ? null
-      : getSurfaceHorizontalOverrideMT()
+    const horizontalOverride = horizontal ? null : hub.horizontalOverride
     const expectedParentWidth = horizontalOverride
       ? horizontalOverride.width
       : (body.pendingSurfaceWidth >= 0 ? body.pendingSurfaceWidth : undefined)
@@ -629,26 +633,112 @@ export function useSheetBodyInsets({
     }
   }
 
-  function measureBodyParentMT(rect?: Partial<SheetLayoutRect>) {
+  function handleParentLayoutMT() {
     'main thread'
-    if (!rect) return
-    const parent = bodyMTRef.current.parent
-    const nextLeft = rect.left ?? parent.left
-    const nextTop = rect.top ?? parent.top
-    const nextWidth = rect.width ?? parent.width
-    const nextHeight = rect.height ?? parent.height
-    if (
-      parent.left === nextLeft
-      && parent.top === nextTop
-      && parent.width === nextWidth
-      && parent.height === nextHeight
-    ) return
-    parent.left = nextLeft
-    parent.top = nextTop
-    parent.width = nextWidth
-    parent.height = nextHeight
     syncHorizontalPaddingMT(false)
     applyBodyLayoutMT()
+  }
+
+  function syncSurfaceOriginLeftMT(
+    _left: number,
+    pendingSurfaceWidth?: number,
+  ) {
+    'main thread'
+    bodyMTRef.current.pendingSurfaceWidth = pendingSurfaceWidth ?? -1
+  }
+
+  function hasFitBodyMT() {
+    'main thread'
+    return intrinsic
+      && hasAnyFiniteInset(bodyMTRef.current.insets)
+      && bodyMTRef.current.slot !== null
+  }
+
+  function ensureSubscribedMT() {
+    'main thread'
+    const hub = hubMTRef?.current
+    if (!hub) return
+    if (subscriberIdMTRef.current === 0) {
+      subscriberIdMTRef.current = ++hub.nextId
+    }
+    const id = subscriberIdMTRef.current
+    const entry = {
+      id,
+      onUpdate: applyBodyLayoutMT,
+      onSurfaceOriginLeft: syncSurfaceOriginLeftMT,
+      onParentLayout: handleParentLayoutMT,
+      isFitBody: hasFitBodyMT,
+    }
+    const existingIndex = hub.subscribers.findIndex(sub => sub.id === id)
+    if (existingIndex === -1) {
+      hub.subscribers.push(entry)
+      if (!hub.hasRange) {
+        hub.requestSurfaceUpdate?.()
+      }
+    } else {
+      hub.subscribers[existingIndex] = entry
+    }
+  }
+
+  function maybeUnsubscribeMT() {
+    'main thread'
+    const body = bodyMTRef.current
+    if (body.element !== null || body.slot !== null || body.clip !== null) {
+      return
+    }
+    const hub = hubMTRef?.current
+    const id = subscriberIdMTRef.current
+    if (!hub || id === 0) return
+    const index = hub.subscribers.findIndex(sub => sub.id === id)
+    if (index !== -1) {
+      hub.subscribers.splice(index, 1)
+    }
+  }
+
+  function clearDisabledOverridesMT() {
+    'main thread'
+    const body = bodyMTRef.current
+    if (body.element) {
+      if (body.appliedHorizontal !== '0/0') {
+        body.appliedHorizontal = '0/0'
+        setElementStylesMT(body.element, { left: null, right: null })
+      }
+      if (body.appliedVertical !== '0/0') {
+        body.appliedVertical = '0/0'
+        setElementStylesMT(body.element, { top: null, bottom: null })
+      }
+      if (body.translatedMain !== null) {
+        body.translatedMain = null
+        setElementStylesMT(body.element, { transform: null })
+      }
+    }
+    const wrapper = body.intrinsicWrapper ?? body.element
+    if (wrapper && body.appliedIntrinsicBounds !== '/') {
+      body.appliedIntrinsicBounds = '/'
+      setElementStylesMT(
+        wrapper,
+        horizontal
+          ? { minWidth: null, maxWidth: null }
+          : { minHeight: null, maxHeight: null },
+      )
+    }
+    if (body.clip && (body.clipSize !== null || body.clipOffset !== null)) {
+      body.clipSize = null
+      body.clipOffset = null
+      setElementStylesMT(
+        body.clip,
+        horizontal
+          ? { width: null, transform: null }
+          : { height: null, transform: null },
+      )
+    }
+    if (body.slot && body.reservedSize > 0) {
+      body.reservedSize = 0
+      setElementStylesMT(
+        body.slot,
+        horizontal ? { width: null } : { height: null },
+      )
+    }
   }
 
   function measureBodyMT(
@@ -662,7 +752,9 @@ export function useSheetBodyInsets({
       && outer.top === top
       && outer.width === width
       && outer.height === height
-    ) return
+    ) {
+      return
+    }
     outer.left = left
     outer.top = top
     outer.width = width
@@ -685,8 +777,10 @@ export function useSheetBodyInsets({
     const body = bodyMTRef.current
     if (!element) {
       body.element = null
+      maybeUnsubscribeMT()
       return
     }
+    ensureSubscribedMT()
     const rawNode = (element as unknown as { element?: unknown }).element
     const isNewNode = rawNode === undefined
       ? body.element === null
@@ -695,27 +789,34 @@ export function useSheetBodyInsets({
       && bodyStyleKey !== undefined
       && body.elementStyleKey !== undefined
       && bodyStyleKey !== body.elementStyleKey
-    const sameWidthInsets = body.insets?.left === insets?.left
-      && body.insets?.right === insets?.right
-      && body.insets?.start === insets?.start
-      && body.insets?.end === insets?.end
+    const active = hasAnyFiniteInset(insets)
+    const normalizedInsets = active ? insets : undefined
+    const sameWidthInsets = body.insets?.left === normalizedInsets?.left
+      && body.insets?.right === normalizedInsets?.right
+      && body.insets?.start === normalizedInsets?.start
+      && body.insets?.end === normalizedInsets?.end
     if (
       !isNewNode
       && !styleResetByReact
       && body.element === element
       && sameWidthInsets
-      && body.insets?.top === insets?.top
-      && body.insets?.bottom === insets?.bottom
-    ) return
+      && body.insets?.top === normalizedInsets?.top
+      && body.insets?.bottom === normalizedInsets?.bottom
+      && Boolean(body.insets) === Boolean(normalizedInsets)
+    ) {
+      return
+    }
     if (isNewNode) {
       body.elementNodeKey = rawNode ?? element
       body.reportedMain = -1
       body.appliedHorizontal = '0/0'
       body.appliedVertical = '0/0'
+      body.appliedIntrinsicBounds = '/'
       body.translatedMain = null
     } else if (styleResetByReact) {
       body.appliedHorizontal = '0/0'
       body.appliedVertical = '0/0'
+      body.appliedIntrinsicBounds = '/'
       body.translatedMain = null
     }
     if (bodyStyleKey !== undefined) {
@@ -723,28 +824,34 @@ export function useSheetBodyInsets({
     }
     if (!sameWidthInsets) body.fitCrossSize = -1
     body.element = element
-    body.insets = insets
+    body.insets = normalizedInsets
+    if (!normalizedInsets) {
+      clearDisabledOverridesMT()
+      return
+    }
     applyBodyLayoutMT()
   }
 
-  function setBodySlotMTRef(
-    element: MainThread.Element | null,
-    onAttach?: () => void,
-  ) {
+  function setBodySlotMTRef(element: MainThread.Element | null) {
     'main thread'
     const body = bodyMTRef.current
     if (body.slot === element) return
     body.slot = element
-    if (element) {
-      if (body.reservedSize > 0) {
-        element.setStyleProperties(
-          horizontal
-            ? { width: `${body.reservedSize}px` }
-            : { height: `${body.reservedSize}px` },
-        )
-      }
-      onAttach?.()
+    if (!element) {
+      maybeUnsubscribeMT()
+      return
     }
+    ensureSubscribedMT()
+    if (
+      intrinsic && hasAnyFiniteInset(body.insets) && body.reservedSize > 0
+    ) {
+      element.setStyleProperties(
+        horizontal
+          ? { width: `${body.reservedSize}px` }
+          : { height: `${body.reservedSize}px` },
+      )
+    }
+    hubMTRef?.current?.requestSurfaceUpdate?.()
   }
 
   function setBodyIntrinsicMTRef(element: MainThread.Element | null) {
@@ -764,7 +871,11 @@ export function useSheetBodyInsets({
     'main thread'
     const body = bodyMTRef.current
     body.clip = element
-    if (!element) return
+    if (!element) {
+      maybeUnsubscribeMT()
+      return
+    }
+    ensureSubscribedMT()
     const nodeKey = getNativeNodeKeyMT(element)
     const isNewNode = nodeKey !== body.clipNodeKey
     const styleResetByReact = !isNewNode
@@ -790,25 +901,32 @@ export function useSheetBodyInsets({
     applyBodyLayoutMT()
   }
 
-  function hasFitBodyMT() {
-    'main thread'
-    return intrinsic && bodyMTRef.current.slot !== null
-  }
+  const hostSyncKey = `${resolvedSide}|${
+    String(enableRTL)
+  }|${screenWidth}|${screenHeight}|${maxSnapSize}|${String(hasFitSnapPoint)}|${
+    fitMinSize ?? ''
+  }|${fitMaxSize ?? ''}`
+  const lastHostSyncKeyRef = useRef(hostSyncKey)
 
-  function syncSurfaceOriginLeftMT(
-    left: number,
-    pendingSurfaceWidth?: number,
-  ) {
-    'main thread'
-    surfaceOriginMTRef.current = { left, top: surfaceOriginMTRef.current.top }
-    bodyMTRef.current.pendingSurfaceWidth = pendingSurfaceWidth ?? -1
-  }
+  useEffect(() => {
+    if (lastHostSyncKeyRef.current === hostSyncKey) return
+    lastHostSyncKeyRef.current = hostSyncKey
+    if (!hubMTRef) return
+    runOnMainThread(() => {
+      'main thread'
+      const body = bodyMTRef.current
+      if (!intrinsic && body.reservedSize > 0) {
+        body.reservedSize = 0
+      }
+      if (body.element || body.slot || body.clip) {
+        ensureSubscribedMT()
+        applyBodyLayoutMT()
+      }
+    })()
+  }, [hostSyncKey, hubMTRef, intrinsic])
 
   return {
     applyBodyLayoutMT,
-    updateBodyRangeMT,
-    measureSurfaceMT,
-    measureBodyParentMT,
     measureBodyMT,
     setBodyMTRef,
     setBodySlotMTRef,
@@ -817,7 +935,5 @@ export function useSheetBodyInsets({
     measureIntrinsicBodyMT,
     hasFitBodyMT,
     syncSurfaceOriginLeftMT,
-    intrinsic,
-    enabled: true,
   }
 }

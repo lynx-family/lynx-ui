@@ -59,6 +59,7 @@ interface UseSheetPanGestureOptions {
   onGestureStartMT?: () => void
   onGestureEndMT?: () => void
   onDragStartMT: () => void
+  onDragRebaseMT?: () => void
   onDragEndSnapMT: (
     index: number,
     opts?: { animationConfig?: SnappingOptions['animationConfig'] },
@@ -115,6 +116,7 @@ export function useSheetPanGesture({
   onGestureStartMT,
   onGestureEndMT,
   onDragStartMT,
+  onDragRebaseMT,
   onDragEndSnapMT,
   onDragEndCloseMT,
   onReleaseAtMaxMT,
@@ -124,6 +126,7 @@ export function useSheetPanGesture({
   const effectiveRubberBand = rubberBand ?? getDefaultRubberBand(resolvedSide)
   const lastCoordinateMTRef = useMainThreadRef(0)
   const draggingMTRef = useMainThreadRef(false)
+  const notifiedDragStartMTRef = useMainThreadRef(false)
   const dragStateMTRef = useMainThreadRef<SheetDragState | null>(null)
   const handedOffAtMaxMTRef = useMainThreadRef(false)
   const interactionStartedMTRef = useMainThreadRef(false)
@@ -134,6 +137,7 @@ export function useSheetPanGesture({
     'main thread'
     const started = interactionStartedMTRef.current
     interactionStartedMTRef.current = false
+    notifiedDragStartMTRef.current = false
     // Recognizer completion is not physical release. Native touch-up can call
     // this too, after a related recognizer has failed or handed off the drag.
     if (started && !activeScrollMTRef.current) onGestureEndMT?.()
@@ -211,6 +215,7 @@ export function useSheetPanGesture({
         event.params,
       )
       draggingMTRef.current = false
+      notifiedDragStartMTRef.current = false
       dragStateMTRef.current = null
       handedOffAtMaxMTRef.current = false
       interactionStartedMTRef.current = false
@@ -300,7 +305,14 @@ export function useSheetPanGesture({
       if (!draggingMTRef.current) {
         draggingMTRef.current = true
         handedOffAtMaxMTRef.current = false
-        onDragStartMT()
+        if (!notifiedDragStartMTRef.current) {
+          notifiedDragStartMTRef.current = true
+          onDragStartMT()
+        } else if (onDragRebaseMT) {
+          onDragRebaseMT()
+        } else {
+          onDragStartMT()
+        }
       }
       let dragPosition = yRef.current.get()
       let state = dragStateMTRef.current
@@ -308,7 +320,8 @@ export function useSheetPanGesture({
       // or native-owned displacement back into the next raw Sheet movement.
       if (dragPosition !== state?.position) {
         if (state) {
-          onDragStartMT()
+          if (onDragRebaseMT) onDragRebaseMT()
+          else onDragStartMT()
           dragPosition = yRef.current.get()
         }
         state = createSheetDragState(

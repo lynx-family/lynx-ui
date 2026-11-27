@@ -20,8 +20,9 @@ import {
   SheetRoot,
   SheetView,
   screenHeight,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
+import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
@@ -34,9 +35,8 @@ const FLOATING_FRAME = {
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
-    null,
-  )
+  const surface = useSheetSurface({ frame: FLOATING_FRAME, cornerRadius: 24 })
+  const surfaceControllerRef = surface.controllerRef
   const [panel, setPanel] = useState({ fullscreen: false, animated: false })
   const panelTarget = useMainThreadRef({ fullscreen: false, animated: false })
   const [fullscreenHeight, setFullscreenHeight] = useState(screenHeight)
@@ -107,9 +107,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            main-thread:surfaceControllerRef={surfaceControllerRef}
-            initialCornerRadius={24}
-            initialFrame={FLOATING_FRAME}
+            surface={surface}
             className='sheet-content'
             innerClassName='surface-layout'
             style={{

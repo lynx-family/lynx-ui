@@ -52,6 +52,7 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
     onGestureStartMT: snap.interruptAnimationMT,
     onGestureEndMT: snap.resumeAnimationMT,
     onDragStartMT: snap.onDragStartMT,
+    onDragRebaseMT: snap.onDragRebaseMT,
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
     onReleaseAtMaxMT: snap.releaseAtMaxSnapMT,
@@ -106,9 +107,6 @@ export function SheetNestedScrollContent(props: SheetNestedScrollContentProps) {
         setViewportMTRef={snap.setViewportMTRef}
         setSheetMTRef={snap.setSheetMTRef}
         setContentMTRef={snap.setContentMTRef}
-        setFrameMT={snap.setFrameMT}
-        setCornerRadiusMT={snap.setCornerRadiusMT}
-        getViewportSizeMT={snap.getViewportSizeMT}
         handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
       >
         {resolvedChildren}

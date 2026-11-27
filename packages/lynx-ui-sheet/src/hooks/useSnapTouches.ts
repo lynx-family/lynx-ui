@@ -45,6 +45,7 @@ export interface SnapTouchOptions {
   getResolvedSnapPointValues: () => number[]
   // Controller handlers
   onDragStartMT: () => void
+  onDragRebaseMT?: () => void
   onDragEndSnapMT: (
     index: number,
     opts?: { animationConfig?: SnappingOptions['animationConfig'] },
@@ -71,6 +72,7 @@ export function useSnapTouches({
   claimedGestureAngles,
   // Controller handlers
   onDragStartMT,
+  onDragRebaseMT,
   onDragEndSnapMT,
   onDragEndCloseMT,
 }: SnapTouchOptions) {
@@ -131,7 +133,8 @@ export function useSnapTouches({
     // An imperative snap can replace the position while a finger is still down.
     if (current !== state?.position) {
       if (state) {
-        onDragStartMT()
+        if (onDragRebaseMT) onDragRebaseMT()
+        else onDragStartMT()
         current = yRef.current.get()
       }
       state = createSheetDragState(

@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { runOnMainThread, useEffect, useRef } from '@lynx-js/react'
+import { useRef } from '@lynx-js/react'
 
 import type { GestureKind } from '@lynx-js/gesture-runtime'
 import type { MainThread } from '@lynx-js/types'
@@ -11,27 +11,17 @@ import {
   SheetBodyContext,
   SheetDragContext,
   SheetFooterContext,
+  getInternalSheetSurface,
 } from '../context'
 import type {
   SheetBodyContextValue,
   SheetDragContextValue,
   SheetFooterContextValue,
   SheetPositionerDimensions,
+  SheetSurfaceRenderSeed,
 } from '../context'
-import { normalizeCornerRadii } from '../hooks/useSheetCornerStyle'
-import type { CornerRadii } from '../hooks/useSheetCornerStyle'
-import type {
-  SheetContentProps,
-  SheetCornerRadius,
-  SheetSnapPoint,
-  SheetSurfaceFrame,
-  SheetViewportSize,
-} from '../types'
+import type { SheetContentProps, SheetSnapPoint } from '../types'
 import { isFitSnapPoint } from '../utils/direction'
-import {
-  normalizeInset,
-  resolveSurfaceHorizontalFrame,
-} from '../utils/surfaceFrame'
 
 export interface SheetSurfaceProps extends SheetContentProps {
   dragHandlers: SheetDragContextValue['dragHandlers']
@@ -56,12 +46,6 @@ export interface SheetSurfaceProps extends SheetContentProps {
   setViewportMTRef: (element: MainThread.Element) => void
   setSheetMTRef: (element: MainThread.Element | null) => void
   setContentMTRef: (element: MainThread.Element) => void
-  setFrameMT: (
-    frame: SheetSurfaceFrame,
-    options?: { animating?: boolean },
-  ) => void
-  setCornerRadiusMT: (radius: SheetCornerRadius | undefined) => void
-  getViewportSizeMT: () => SheetViewportSize
   handleSheetLayoutChangeMT: (event: {
     detail?: { height?: number, width?: number }
     params?: { height?: number, width?: number }
@@ -95,14 +79,10 @@ export function SheetSurface(props: SheetSurfaceProps) {
     innerStyle,
     surfaceViewProps,
     innerViewProps,
-    'main-thread:surfaceControllerRef': surfaceControllerRef,
+    surface,
     snapAnimation: _snapAnimation,
     enterAnimation: _enterAnimation,
     exitAnimation: _exitAnimation,
-    frame,
-    cornerRadius,
-    initialFrame,
-    initialCornerRadius,
     dragHandlers,
     sheetGesture,
     resolvedSide,
@@ -122,13 +102,11 @@ export function SheetSurface(props: SheetSurfaceProps) {
     setViewportMTRef,
     setSheetMTRef,
     setContentMTRef,
-    setFrameMT,
-    setCornerRadiusMT,
-    getViewportSizeMT,
     handleSheetLayoutChangeMT,
   } = props
   const isHorizontal = resolvedSide === 'left' || resolvedSide === 'right'
   const isTop = resolvedSide === 'top'
+  const isBottom = resolvedSide === 'bottom'
   const hasFitSnapPoint = snapPoints.some(point => isFitSnapPoint(point))
   const dragOnContent = isHorizontal && !handleOnly
   const dragOnSurface = !isHorizontal && !handleOnly
@@ -136,41 +114,21 @@ export function SheetSurface(props: SheetSurfaceProps) {
     dragHandlers: sheetGesture && !handleOnly ? {} : dragHandlers,
   }
 
-  const mountHorizontalFrame = useRef<
-    { left: number, width: number } | null | undefined
-  >(undefined)
-  if (mountHorizontalFrame.current === undefined) {
-    mountHorizontalFrame.current = isHorizontal
-      ? null
-      : resolveSurfaceHorizontalFrame(
-        frame ?? initialFrame,
-        screenWidth,
-        enableRTL,
-      )
-  }
-  const mountCornerRadii = useRef<CornerRadii | undefined>(undefined)
-  mountCornerRadii.current ??= normalizeCornerRadii(
-    cornerRadius ?? initialCornerRadius,
+  const internalSurface = getInternalSheetSurface(surface)
+  const mountSeedRef = useRef<SheetSurfaceRenderSeed | null | undefined>(
+    undefined,
   )
-  const [initTL, initTR, initBR, initBL] = mountCornerRadii.current
-  const isBottom = resolvedSide === 'bottom'
-  const initialCornerStyle = {
-    ...(initTL === null ? {} : { borderTopLeftRadius: `${initTL}px` }),
-    ...(initTR === null ? {} : { borderTopRightRadius: `${initTR}px` }),
-    ...(!isBottom && initBR !== null
-      ? { borderBottomRightRadius: `${initBR}px` }
-      : {}),
-    ...(!isBottom && initBL !== null
-      ? { borderBottomLeftRadius: `${initBL}px` }
-      : {}),
+  if (mountSeedRef.current === undefined) {
+    mountSeedRef.current = internalSurface
+      ? internalSurface.resolveRenderSeed(resolvedSide, screenWidth, enableRTL)
+      : null
   }
-  const initialLeft = mountHorizontalFrame.current?.left
-  const initialWidth = mountHorizontalFrame.current?.width
-  const initialBottomInset = isBottom
-    ? normalizeInset((frame ?? initialFrame)?.insets?.bottom)
-    : 0
-  const initialViewportHeight = isBottom
-      && screenHeight !== undefined
+  const seed = mountSeedRef.current
+  const initialCornerStyle = seed?.cornerStyle
+  const initialLeft = seed?.horizontalBounds?.left
+  const initialWidth = seed?.horizontalBounds?.width
+  const initialBottomInset = isBottom ? (seed?.bottomInset ?? 0) : 0
+  const initialViewportHeight = isBottom && screenHeight !== undefined
     ? Math.min(maxSnapSize, Math.max(0, screenHeight - initialBottomInset))
     : maxSnapSize
 
@@ -211,50 +169,11 @@ export function SheetSurface(props: SheetSurfaceProps) {
     overflow: 'hidden' as const,
     pointerEvents: 'auto' as const,
   }
-  const paintedStyleKey = serializeStyleKey(
-    isHorizontal ? horizontalPaintedStyle : verticalPaintedStyle,
-  )
-
-  const controllerDepsRef = useRef({
-    surfaceControllerRef,
-    setFrameMT,
-    setCornerRadiusMT,
-    getViewportSizeMT,
-  })
-
-  function setHorizontalPaintedRefMT(element: MainThread.Element | null) {
-    'main thread'
-    if (surfaceControllerRef) {
-      surfaceControllerRef.current = element
-        ? {
-          setFrame: setFrameMT,
-          setCornerRadius: setCornerRadiusMT,
-          getViewportSize: getViewportSizeMT,
-        }
-        : null
-    }
-    setSheetMTRef(element)
-  }
-
-  function setVerticalPaintedWithControllerRefMT(
-    element: MainThread.Element | null,
-  ) {
-    'main thread'
-    if (surfaceControllerRef) {
-      surfaceControllerRef.current = element
-        ? {
-          setFrame: setFrameMT,
-          setCornerRadius: setCornerRadiusMT,
-          getViewportSize: getViewportSizeMT,
-        }
-        : null
-    }
-    if (element) {
-      setSurfaceMTRef(element, paintedStyleKey)
-    } else {
-      setSurfaceMTRef(null)
-    }
-  }
+  const paintedStyleKey = internalSurface
+    ? serializeStyleKey(
+      isHorizontal ? horizontalPaintedStyle : verticalPaintedStyle,
+    )
+    : undefined
 
   function setVerticalPaintedRefMT(element: MainThread.Element | null) {
     'main thread'
@@ -264,35 +183,6 @@ export function SheetSurface(props: SheetSurfaceProps) {
       setSurfaceMTRef(null)
     }
   }
-
-  useEffect(() => {
-    const prev = controllerDepsRef.current
-    if (
-      prev.surfaceControllerRef === surfaceControllerRef
-      && prev.setFrameMT === setFrameMT
-      && prev.setCornerRadiusMT === setCornerRadiusMT
-      && prev.getViewportSizeMT === getViewportSizeMT
-    ) {
-      return
-    }
-    controllerDepsRef.current = {
-      surfaceControllerRef,
-      setFrameMT,
-      setCornerRadiusMT,
-      getViewportSizeMT,
-    }
-    if (!surfaceControllerRef) return
-    runOnMainThread(() => {
-      'main thread'
-      if (surfaceControllerRef.current) {
-        surfaceControllerRef.current = {
-          setFrame: setFrameMT,
-          setCornerRadius: setCornerRadiusMT,
-          getViewportSize: getViewportSizeMT,
-        }
-      }
-    })()
-  }, [surfaceControllerRef, setFrameMT, setCornerRadiusMT, getViewportSizeMT])
 
   const content = (
     <view
@@ -353,9 +243,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
         {...surfaceViewProps}
         className={className}
         style={horizontalPaintedStyle}
-        main-thread:ref={surfaceControllerRef
-          ? setHorizontalPaintedRefMT
-          : setSheetMTRef}
+        main-thread:ref={setSheetMTRef}
         event-through={true}
         main-thread:bindlayoutchange={measureSurfaceMT}
       >
@@ -375,7 +263,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
         overflow: 'hidden',
         pointerEvents: 'none',
       }}
-      main-thread:ref={setClipMTRef}
+      main-thread:ref={internalSurface ? setClipMTRef : undefined}
       implicit-animation='false'
       event-through={true}
     >
@@ -406,9 +294,7 @@ export function SheetSurface(props: SheetSurfaceProps) {
           {...surfaceViewProps}
           className={className}
           style={verticalPaintedStyle}
-          main-thread:ref={surfaceControllerRef
-            ? setVerticalPaintedWithControllerRefMT
-            : setVerticalPaintedRefMT}
+          main-thread:ref={setVerticalPaintedRefMT}
           main-thread:bindlayoutchange={measureSurfaceMT}
           enable-new-animator={true}
           event-through={false}

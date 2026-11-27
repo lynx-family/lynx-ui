@@ -42,10 +42,7 @@ export function useSheetContentController(
     snapAnimation = DEFAULT_TRANSITION,
     enterAnimation,
     exitAnimation,
-    frame,
-    cornerRadius,
-    initialCornerRadius,
-    initialFrame,
+    surface,
     style,
   } = props
   const context = useSheetContext()
@@ -98,10 +95,7 @@ export function useSheetContentController(
     snapPoints,
     initialSnap,
     initialOpen,
-    frame,
-    cornerRadius,
-    initialCornerRadius,
-    initialFrame,
+    surface,
     surfaceStyle: style,
     snapAnimation,
     side,

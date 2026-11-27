@@ -20,8 +20,9 @@ import {
   SheetView,
   screenHeight,
   screenWidth,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
+import type { SheetRootRef } from '@lynx-js/lynx-ui'
 import {
   animate,
   useMotionValueRef,
@@ -38,9 +39,8 @@ const FLOATING_FRAME = {
 
 function App() {
   const sheet = useRef<SheetRootRef>(null)
-  const surfaceController = useMainThreadRef<SheetSurfaceController | null>(
-    null,
-  )
+  const surface = useSheetSurface({ frame: FLOATING_FRAME })
+  const surfaceController = surface.controllerRef
   const [viewport, setViewport] = useState({
     width: screenWidth,
     height: screenHeight,
@@ -125,8 +125,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetContent
-            main-thread:surfaceControllerRef={surfaceController}
-            initialFrame={FLOATING_FRAME}
+            surface={surface}
             className='sheet-content'
             innerClassName='surface-layout'
           >

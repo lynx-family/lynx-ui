@@ -44,6 +44,7 @@ export function SheetContent(props: SheetContentProps) {
     getResolvedSnapPointValues: snap.getResolvedSnapPointValues,
     claimedGestureAngles,
     onDragStartMT: snap.onDragStartMT,
+    onDragRebaseMT: snap.onDragRebaseMT,
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
   })
@@ -69,9 +70,6 @@ export function SheetContent(props: SheetContentProps) {
       setViewportMTRef={snap.setViewportMTRef}
       setSheetMTRef={snap.setSheetMTRef}
       setContentMTRef={snap.setContentMTRef}
-      setFrameMT={snap.setFrameMT}
-      setCornerRadiusMT={snap.setCornerRadiusMT}
-      getViewportSizeMT={snap.getViewportSizeMT}
       handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
     />
   )

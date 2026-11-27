@@ -8,10 +8,16 @@ import type * as MotionMini from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { SheetSnapPoint } from '../types'
+import type {
+  SheetCornerRadius,
+  SheetSnapPoint,
+  SheetSurfaceFrame,
+} from '../types'
+import { useSheetSurface } from './useSheetSurface'
 import { useSnap } from './useSnap'
 
 vi.mock('@lynx-js/react', () => ({
+  createContext: () => ({ Provider: 'context-provider' }),
   useMainThreadRef: <T>(current: T) => ({ current }),
   useRef: <T>(current: T) => ({ current }),
   useEffect: vi.fn(),
@@ -50,8 +56,8 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
 function setup(
   snapPoints: SheetSnapPoint[] = ['fit'],
   onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
-  initialFrame?: Parameters<typeof useSnap>[0]['initialFrame'],
-  initialCornerRadius?: Parameters<typeof useSnap>[0]['initialCornerRadius'],
+  initialFrame?: SheetSurfaceFrame,
+  initialCornerRadius?: SheetCornerRadius,
   callbacks?: {
     onDragStartMT?: () => void
     onPositionChangeMT?: (position: number) => void
@@ -62,10 +68,18 @@ function setup(
   const entered = vi.fn()
   const onSnapChange = vi.fn()
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+  const surfaceHandle = useSheetSurface({
+    frame: initialFrame,
+    cornerRadius: initialCornerRadius,
+  })
+  const surface =
+    initialFrame !== undefined || initialCornerRadius !== undefined
+      ? surfaceHandle
+      : undefined
+  // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
-    initialFrame,
-    initialCornerRadius,
+    surface,
     screenHeight: 800,
     screenWidth: 400,
     presenceStateMTRef: state,
@@ -81,6 +95,11 @@ function setup(
     setStyleProperties: styles,
   } as unknown as MainThread.Element
   snap.setSheetMTRef(
+    {
+      setStyleProperties: () => undefined,
+    } as unknown as MainThread.Element,
+  )
+  snap.setSurfaceMTRef(
     {
       setStyleProperties: () => undefined,
     } as unknown as MainThread.Element,

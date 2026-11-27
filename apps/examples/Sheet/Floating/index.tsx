@@ -2,13 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import {
-  root,
-  runOnMainThread,
-  useMainThreadRef,
-  useRef,
-  useState,
-} from '@lynx-js/react'
+import { root, runOnMainThread, useRef, useState } from '@lynx-js/react'
 
 import {
   Button,
@@ -17,8 +11,9 @@ import {
   SheetNestedScrollContent,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
-import type { SheetRootRef, SheetSurfaceController } from '@lynx-js/lynx-ui'
+import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
 import { TriggerButton } from '../shared/index.js'
 import { SurfaceRows } from '../shared/SurfaceRows.js'
@@ -26,9 +21,6 @@ import './index.css'
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
-  const surfaceControllerRef = useMainThreadRef<SheetSurfaceController | null>(
-    null,
-  )
   const [bounded, setBounded] = useState(true)
   const [bottomGap, setBottomGap] = useState(8)
   const openingCornerRadius = bounded ? 24 : { topLeft: 24, topRight: 24 }
@@ -36,6 +28,11 @@ function App() {
     insets: { left: 16, right: 16, bottom: bounded ? bottomGap : 0 },
     maxWidth: 664,
   }
+  const surface = useSheetSurface({
+    frame: openingFrame,
+    cornerRadius: openingCornerRadius,
+  })
+  const surfaceControllerRef = surface.controllerRef
 
   function applySurface(nextBounded: boolean, nextGap: number) {
     'main thread'
@@ -65,9 +62,7 @@ function App() {
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetNestedScrollContent
-            main-thread:surfaceControllerRef={surfaceControllerRef}
-            initialCornerRadius={openingCornerRadius}
-            initialFrame={openingFrame}
+            surface={surface}
             className='sheet-content'
             innerClassName='surface-layout'
           >

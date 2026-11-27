@@ -315,18 +315,25 @@ export function useSheetController(
   }
 
   /**
-   * Called by gesture handler when user starts a vertical drag
+   * Stop running animations or resurrect a closing sheet during an active drag
+   * rebase without re-emitting the public `onDragStart` callback.
    */
-  function onDragStartMT() {
+  function onDragRebaseMT() {
     'main thread'
     activeSnapMTRef.current = null
-    // If currently closing, resurrect
     if (presenceStateMTRef.current === PresenceState.Leaving) {
       resurrectMT()
     } else {
-      // Just stop any running animation
       stopAnimationMT()
     }
+  }
+
+  /**
+   * Called by gesture handler when user starts a sheet drag
+   */
+  function onDragStartMT() {
+    'main thread'
+    onDragRebaseMT()
     onDragStartNotifyMT?.()
   }
 
@@ -404,6 +411,7 @@ export function useSheetController(
     snapToMT,
     // Gesture handlers
     onDragStartMT,
+    onDragRebaseMT,
     onDragEndSnapMT,
     onDragEndCloseMT,
     resurrectMT,

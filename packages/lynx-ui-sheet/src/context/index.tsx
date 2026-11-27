@@ -11,12 +11,15 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
+import type { InlineCornerStyles } from '../hooks/useSheetCornerStyle'
 import type {
-  SheetBodyProps,
+  SheetContentProps,
   SheetRootProps,
   SheetSide,
   SheetSnapPoint,
+  SheetSurfaceHandle,
   SheetTransition,
+  SheetViewportSize,
 } from '../types'
 import type { SheetResolvedSide } from '../utils'
 
@@ -103,29 +106,139 @@ export interface SheetLayoutRect {
   height: number
 }
 
+export interface SheetSurfaceBodySubscriberMT {
+  id: number
+  onUpdate: () => void
+  onSurfaceOriginLeft: (left: number, pendingWidth?: number) => void
+  onParentLayout: () => void
+  isFitBody: () => boolean
+}
+
+export interface SheetSurfaceBodyHubMT {
+  nextId: number
+  subscribers: SheetSurfaceBodySubscriberMT[]
+  hasRange: boolean
+  rangeStart: number
+  rangeSize: number
+  surfaceLeft: number
+  surfaceTop: number
+  horizontalOverride: { left: number, width: number } | null
+  parentRect: Partial<SheetLayoutRect>
+  settledBottom: number
+  footerHeightMTRef?: MainThreadRef<number>
+  onFitBodyLayout?: (height: number) => void
+  requestSurfaceUpdate?: () => void
+}
+
 export interface SheetBodyContextValue {
-  enabled: boolean
-  intrinsic?: boolean
-  resolvedSide?: SheetResolvedSide
-  enableRTL?: boolean
-  viewportWidth?: number
-  viewportHeight?: number
-  maxSnapSize?: number
-  initialBottomInset?: number
-  setBodyClipMTRef: (
+  resolvedSide: SheetResolvedSide
+  enableRTL: boolean
+  viewportWidth: number
+  viewportHeight: number
+  maxSnapSize: number
+  hasFitSnapPoint: boolean
+  fitMinSize?: number
+  fitMaxSize?: number
+  initialBottomInset: number
+  hubMTRef: MainThreadRef<SheetSurfaceBodyHubMT>
+}
+
+export interface InternalSheetSurfaceAppliedStyles {
+  clipTransform: string
+  surfaceHeight: string
+  surfaceWidth: string
+  surfaceTransform: string
+  surfaceMask: string
+  translation: string
+  viewportHeight: string
+}
+
+export interface InternalSheetSurfaceStyleConfig {
+  inlineCorners: InlineCornerStyles
+  inlineCornerKey: string
+  baseWidth: string
+  baseTransform: string | null
+  baseLeftPx: number
+}
+
+export interface InternalSheetSurfaceSeededSnapshot {
+  width: string
+  transform: string
+  radii: [number | null, number | null, number | null, number | null]
+}
+
+export interface InternalSheetSurfaceHostMT {
+  resolvedSide: SheetResolvedSide
+  enableRTL: boolean
+  hasFitSnapPoint: boolean
+  maxSnapSize: number
+  initialSnap: number
+  initialSize: (index: number) => number
+  position: MainThreadRef<MotionValue<number>>
+  presence: MainThreadRef<PresenceState>
+  sheetSizeMTRef: MainThreadRef<number>
+  viewportSizeMTRef: MainThreadRef<SheetViewportSize>
+  surfaceMTRef: MainThreadRef<MainThread.Element | null>
+  movingSurfaceMTRef?: MainThreadRef<MainThread.Element | null>
+  clipMTRef: MainThreadRef<MainThread.Element | null>
+  viewportMTRef: MainThreadRef<MainThread.Element | null>
+  appliedStylesMTRef: MainThreadRef<InternalSheetSurfaceAppliedStyles>
+  footerHeightMTRef?: MainThreadRef<number>
+  updateFooterPositionMT?: (visibleHeight: number) => void
+  bodyHubMTRef: MainThreadRef<SheetSurfaceBodyHubMT>
+  styleConfig?: InternalSheetSurfaceStyleConfig
+  seededSurface?: InternalSheetSurfaceSeededSnapshot
+  notifyBodyRangeMT: (start: number, size: number) => void
+  hasFitBodyMT: () => boolean
+  requestUpdateSurface: () => void
+}
+
+export interface InternalSheetSurfacePluginMT {
+  onSurfaceAttach: (
     element: MainThread.Element | null,
-    seededClipSize?: number | null,
-    clipStyleKey?: string,
+    isNewNode: boolean,
+    isFirstAttach: boolean,
+    styleResetByReact: boolean,
   ) => void
-  setBodySlotMTRef?: (element: MainThread.Element | null) => void
-  setBodyIntrinsicMTRef?: (element: MainThread.Element | null) => void
-  measureIntrinsicBodyMT?: (rect: Partial<SheetLayoutRect>) => void
-  setBodyMTRef: (
-    element: MainThread.Element | null,
-    insets: SheetBodyProps['viewportInsets'],
-    bodyStyleKey?: string,
-  ) => void
-  measureBodyMT: (rect: Partial<SheetLayoutRect>) => void
+  onClipAttach: (isNewNode: boolean) => void
+  onViewportAttach: () => void
+  onHostPropsSync: () => void
+  onOpen: () => void
+  onSettle: () => boolean
+  updateVerticalSurface: (value: number, paintHeight: number) => void
+}
+
+export interface SheetSurfaceRenderSeed {
+  horizontalBounds: { left: number, width: number } | null
+  bottomInset: number
+  cornerStyle: Record<string, string>
+  seededSurface: InternalSheetSurfaceSeededSnapshot
+}
+
+export interface InternalSheetSurfaceHandle extends SheetSurfaceHandle {
+  _internal: {
+    pluginMTRef: MainThreadRef<InternalSheetSurfacePluginMT | null>
+    getBaseBottomInset: () => number
+    resolveHostConfig: (surfaceStyle?: SheetContentProps['style']) => {
+      styleConfig: InternalSheetSurfaceStyleConfig
+      styleSyncKey: string
+    }
+    resolveRenderSeed: (
+      resolvedSide: SheetResolvedSide,
+      screenWidth: number,
+      enableRTL: boolean,
+    ) => SheetSurfaceRenderSeed
+    attachHostMT: (
+      hostMTRef: MainThreadRef<InternalSheetSurfaceHostMT | null>,
+      element: MainThread.Element | null,
+    ) => void
+  }
+}
+
+export function getInternalSheetSurface(
+  surface: SheetSurfaceHandle | undefined,
+): InternalSheetSurfaceHandle['_internal'] | undefined {
+  return (surface as InternalSheetSurfaceHandle | undefined)?._internal
 }
 
 export const SheetBodyContext = createContext<SheetBodyContextValue | null>(

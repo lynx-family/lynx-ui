@@ -2073,76 +2073,6 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
-    "name": "cornerRadius",
-    "type": "SheetCornerRadius",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Controlled corner radii in logical pixels for the sheet's exposed corners.\nApplied on mount, on each open, and reactively whenever its resolved values change\nwhile open (takes precedence over "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": "). Use "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": "\nwith "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " instead when driving per-frame animations."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "受控的面板可见圆角半径（逻辑像素）。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": "）。如需在主线程逐帧驱动动画，请改用 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": " 配合 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": "。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
     "name": "enterAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -2177,216 +2107,6 @@ The main content of the Sheet.
       {
         "kind": "text",
         "text": "Sheet 退出动画配置。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "frame",
-    "type": "SheetSurfaceFrame",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Controlled panel surface constraint frame inside the local viewport. Applied on\nmount, on each open, and reactively whenever its resolved values change while open\n(takes precedence over "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": "). Use "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " with\n"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " instead when driving per-frame animations."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "受控的局部视口面板约束框。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": "）。如需在主线程逐帧驱动动画，请改用 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " 配合 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": "。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "initialCornerRadius",
-    "type": "SheetCornerRadius",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opening corner radii in logical pixels for the sheet's exposed corners. A\nnumber applies to every exposed corner; supply an object for asymmetric\ncorners. Applied on mount and on each open, including with "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": ";\nupdates while open take effect on the next open. Drive live changes while\nopen through "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": ". Zero explicitly makes a\ncorner square, and omitted corners fall back to CSS (or square on clipped\nbottom corners)."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "打开时的面板可见圆角初始半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。在挂载和每次打开时应用（包括 "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": "），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " 驱动。传 0 显式设为直角，省略的角沿用 CSS（被裁剪的底角默认为直角）。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "initialFrame",
-    "type": "SheetSurfaceFrame",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opening panel surface constraint frame inside the local viewport (for\nexample, "
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { bottom: 8 } }`"
-      },
-      {
-        "kind": "text",
-        "text": " for a floating card gap, or\n"
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
-      },
-      {
-        "kind": "text",
-        "text": " for a\ncentered floating card).\nApplied on mount and on each open, including with "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": "; updates while\nopen take effect on the next open. Drive live changes while open through\n"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": "."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "打开时的面板在局部视口内的初始约束框（例如 "
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { bottom: 8 } }`"
-      },
-      {
-        "kind": "text",
-        "text": " 或 "
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
-      },
-      {
-        "kind": "text",
-        "text": "）。在挂载和每次打开时应用（包括 "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": "），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " 驱动。"
       }
     ],
     "defaultValue": "",
@@ -2543,108 +2263,6 @@ The main content of the Sheet.
     "docTypeFallback": null
   },
   {
-    "name": "main-thread:surfaceControllerRef",
-    "type": "MainThreadRef<SheetSurfaceController | null>",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " and "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": " for the opening appearance,\nand drive live updates while open through this controller on the main thread\n(for example in "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onSnapStart`"
-      },
-      {
-        "kind": "text",
-        "text": ", "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onDragStart`"
-      },
-      {
-        "kind": "text",
-        "text": ", or\n"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onPositionChange`"
-      },
-      {
-        "kind": "text",
-        "text": ")."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "挂载期间接收 SheetSurfaceController 的主线程引用。使用 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " 和 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": " 设置打开时的初始外观，打开期间的实时变更请在主线程通过该控制器驱动（例如在 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onSnapStart`"
-      },
-      {
-        "kind": "text",
-        "text": "、"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onDragStart`"
-      },
-      {
-        "kind": "text",
-        "text": " 或 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onPositionChange`"
-      },
-      {
-        "kind": "text",
-        "text": " 中）。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
     "name": "snapAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -2679,6 +2297,68 @@ The main content of the Sheet.
       {
         "kind": "text",
         "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "surface",
+    "type": "SheetSurfaceHandle",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Optional surface handle created by "
+      },
+      {
+        "kind": "code",
+        "text": "`useSheetSurface({ frame, cornerRadius })`"
+      },
+      {
+        "kind": "text",
+        "text": "\nfor floating constraints, dynamic corner radii, and main-thread\n"
+      },
+      {
+        "kind": "code",
+        "text": "`SheetSurfaceController`"
+      },
+      {
+        "kind": "text",
+        "text": " updates. Omit "
+      },
+      {
+        "kind": "code",
+        "text": "`surface`"
+      },
+      {
+        "kind": "text",
+        "text": " for a standard attached panel\nwith zero surface-frame bundle overhead."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "由 "
+      },
+      {
+        "kind": "code",
+        "text": "`useSheetSurface({ frame, cornerRadius })`"
+      },
+      {
+        "kind": "text",
+        "text": " 创建的可选表面句柄，用于悬浮边距约束、动态圆角及主线程 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetSurfaceController`"
+      },
+      {
+        "kind": "text",
+        "text": " 控制。省略时使用默认贴边面板并完全按需裁剪相关包体积。"
       }
     ],
     "defaultValue": "",
@@ -2746,14 +2426,79 @@ The main content of the Sheet.
 
 ### SheetBody {#api-sheet-body}
 
-A body region that can stay inside the local Sheet viewport as the panel moves.
+A body region that stays inside the local Sheet viewport safe-area boundaries
+as the panel moves, while keeping a constant view hierarchy so children never remount.
 
 <UIApiTable source={[
   {
+    "name": "bodyViewProps",
+    "type": "ViewProps",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native view properties applied to the inner content node alongside "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " and "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "作用于内层内容容器（与 "
+      },
+      {
+        "kind": "code",
+        "text": "`className`"
+      },
+      {
+        "kind": "text",
+        "text": " 和 "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " 同一节点）的原生 view 属性。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
     "name": "children",
     "type": "ReactNode",
-    "summary": [],
-    "summary_zh": [],
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Body content."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "主体内容。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -2811,26 +2556,247 @@ A body region that can stay inside the local Sheet viewport as the panel moves.
     "summary": [
       {
         "kind": "text",
-        "text": "Minimum distance from each supplied physical edge of the local viewport,\nin logical pixels. Place the body in the Sheet flex content layout, alongside\nany handle that should travel with the panel. Supply at most one body per\nSheetContent or SheetNestedScrollContent. Bottom sheets with a "
+        "text": "Minimum distance from each supplied edge of the local viewport in logical pixels\n("
       },
       {
         "kind": "code",
-        "text": "`fit`"
+        "text": "`top`"
       },
       {
         "kind": "text",
-        "text": " snap\nmeasure the body at its available width. Bottom sheets keep the body's\nlayout stable during a drag and clip to the visible area. Use intrinsically\nsized body content for "
+        "text": ", "
       },
       {
         "kind": "code",
-        "text": "`fit`"
+        "text": "`right`"
       },
       {
         "kind": "text",
-        "text": ". Other sheet sides support viewport insets\nwith explicit snaps."
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`bottom`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`left`"
+      },
+      {
+        "kind": "text",
+        "text": ", plus logical "
+      },
+      {
+        "kind": "code",
+        "text": "`start`"
+      },
+      {
+        "kind": "text",
+        "text": "/"
+      },
+      {
+        "kind": "code",
+        "text": "`end`"
+      },
+      {
+        "kind": "text",
+        "text": " resolved with "
+      },
+      {
+        "kind": "code",
+        "text": "`enableRTL`"
+      },
+      {
+        "kind": "text",
+        "text": ").\nPlace "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetBody`"
+      },
+      {
+        "kind": "text",
+        "text": " inside "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetContent`"
+      },
+      {
+        "kind": "text",
+        "text": " or "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetNestedScrollContent`"
+      },
+      {
+        "kind": "text",
+        "text": " alongside any\n"
+      },
+      {
+        "kind": "code",
+        "text": "`SheetHandle`"
+      },
+      {
+        "kind": "text",
+        "text": " that should continue moving with the panel. Multiple "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetBody`"
+      },
+      {
+        "kind": "text",
+        "text": " regions\ncan be mounted independently. Clamping uses hardware "
+      },
+      {
+        "kind": "code",
+        "text": "`overflow: hidden`"
+      },
+      {
+        "kind": "text",
+        "text": " + "
+      },
+      {
+        "kind": "code",
+        "text": "`transform`"
+      },
+      {
+        "kind": "text",
+        "text": "\nwith zero layout writes during steady drags across all four sides (including "
+      },
+      {
+        "kind": "code",
+        "text": "`'fit'`"
+      },
+      {
+        "kind": "text",
+        "text": ")."
       }
     ],
-    "summary_zh": [],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "距离局部视口各边的最小安全边距（逻辑像素，支持 "
+      },
+      {
+        "kind": "code",
+        "text": "`top`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`right`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`bottom`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`left`"
+      },
+      {
+        "kind": "text",
+        "text": " 及跟随 "
+      },
+      {
+        "kind": "code",
+        "text": "`enableRTL`"
+      },
+      {
+        "kind": "text",
+        "text": " 的 "
+      },
+      {
+        "kind": "code",
+        "text": "`start`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`end`"
+      },
+      {
+        "kind": "text",
+        "text": "）。可将 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetBody`"
+      },
+      {
+        "kind": "text",
+        "text": " 与跟随面板移动的 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetHandle`"
+      },
+      {
+        "kind": "text",
+        "text": " 并列放入 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetContent`"
+      },
+      {
+        "kind": "text",
+        "text": " 或 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetNestedScrollContent`"
+      },
+      {
+        "kind": "text",
+        "text": "，支持挂载多个独立的 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetBody`"
+      },
+      {
+        "kind": "text",
+        "text": "。拖拽期间通过 "
+      },
+      {
+        "kind": "code",
+        "text": "`overflow: hidden`"
+      },
+      {
+        "kind": "text",
+        "text": " 与 "
+      },
+      {
+        "kind": "code",
+        "text": "`transform`"
+      },
+      {
+        "kind": "text",
+        "text": " 裁剪，零布局重排。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -2887,76 +2853,6 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "docTypeFallback": null
   },
   {
-    "name": "cornerRadius",
-    "type": "SheetCornerRadius",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Controlled corner radii in logical pixels for the sheet's exposed corners.\nApplied on mount, on each open, and reactively whenever its resolved values change\nwhile open (takes precedence over "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": "). Use "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": "\nwith "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " instead when driving per-frame animations."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "受控的面板可见圆角半径（逻辑像素）。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": "）。如需在主线程逐帧驱动动画，请改用 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": " 配合 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": "。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
     "name": "enterAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -3001,76 +2897,6 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "docTypeFallback": null
   },
   {
-    "name": "frame",
-    "type": "SheetSurfaceFrame",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Controlled panel surface constraint frame inside the local viewport. Applied on\nmount, on each open, and reactively whenever its resolved values change while open\n(takes precedence over "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": "). Use "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " with\n"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " instead when driving per-frame animations."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "受控的局部视口面板约束框。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": "）。如需在主线程逐帧驱动动画，请改用 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " 配合 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": "。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
     "name": "gestureConfig",
     "type": "SheetGestureConfig",
     "summary": [
@@ -3097,146 +2923,6 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       }
     ],
     "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "initialCornerRadius",
-    "type": "SheetCornerRadius",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opening corner radii in logical pixels for the sheet's exposed corners. A\nnumber applies to every exposed corner; supply an object for asymmetric\ncorners. Applied on mount and on each open, including with "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": ";\nupdates while open take effect on the next open. Drive live changes while\nopen through "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": ". Zero explicitly makes a\ncorner square, and omitted corners fall back to CSS (or square on clipped\nbottom corners)."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "打开时的面板可见圆角初始半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。在挂载和每次打开时应用（包括 "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": "），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " 驱动。传 0 显式设为直角，省略的角沿用 CSS（被裁剪的底角默认为直角）。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
-  },
-  {
-    "name": "initialFrame",
-    "type": "SheetSurfaceFrame",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Opening panel surface constraint frame inside the local viewport (for\nexample, "
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { bottom: 8 } }`"
-      },
-      {
-        "kind": "text",
-        "text": " for a floating card gap, or\n"
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
-      },
-      {
-        "kind": "text",
-        "text": " for a\ncentered floating card).\nApplied on mount and on each open, including with "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": "; updates while\nopen take effect on the next open. Drive live changes while open through\n"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": "."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "打开时的面板在局部视口内的初始约束框（例如 "
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { bottom: 8 } }`"
-      },
-      {
-        "kind": "text",
-        "text": " 或 "
-      },
-      {
-        "kind": "code",
-        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
-      },
-      {
-        "kind": "text",
-        "text": "）。在挂载和每次打开时应用（包括 "
-      },
-      {
-        "kind": "code",
-        "text": "`forceMount`"
-      },
-      {
-        "kind": "text",
-        "text": "），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:surfaceControllerRef`"
-      },
-      {
-        "kind": "text",
-        "text": " 驱动。"
-      }
-    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -3391,108 +3077,6 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
     "docTypeFallback": null
   },
   {
-    "name": "main-thread:surfaceControllerRef",
-    "type": "MainThreadRef<SheetSurfaceController | null>",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "A main-thread ref receiving the SheetSurfaceController while mounted.\nUse "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " and "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": " for the opening appearance,\nand drive live updates while open through this controller on the main thread\n(for example in "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onSnapStart`"
-      },
-      {
-        "kind": "text",
-        "text": ", "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onDragStart`"
-      },
-      {
-        "kind": "text",
-        "text": ", or\n"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onPositionChange`"
-      },
-      {
-        "kind": "text",
-        "text": ")."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "挂载期间接收 SheetSurfaceController 的主线程引用。使用 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialFrame`"
-      },
-      {
-        "kind": "text",
-        "text": " 和 "
-      },
-      {
-        "kind": "code",
-        "text": "`initialCornerRadius`"
-      },
-      {
-        "kind": "text",
-        "text": " 设置打开时的初始外观，打开期间的实时变更请在主线程通过该控制器驱动（例如在 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onSnapStart`"
-      },
-      {
-        "kind": "text",
-        "text": "、"
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onDragStart`"
-      },
-      {
-        "kind": "text",
-        "text": " 或 "
-      },
-      {
-        "kind": "code",
-        "text": "`main-thread:onPositionChange`"
-      },
-      {
-        "kind": "text",
-        "text": " 中）。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
     "name": "snapAnimation",
     "type": "SheetTransition",
     "summary": [
@@ -3527,6 +3111,68 @@ Requires enableNewGesture: true and LynxSDK 3.2 or newer.
       {
         "kind": "text",
         "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "surface",
+    "type": "SheetSurfaceHandle",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Optional surface handle created by "
+      },
+      {
+        "kind": "code",
+        "text": "`useSheetSurface({ frame, cornerRadius })`"
+      },
+      {
+        "kind": "text",
+        "text": "\nfor floating constraints, dynamic corner radii, and main-thread\n"
+      },
+      {
+        "kind": "code",
+        "text": "`SheetSurfaceController`"
+      },
+      {
+        "kind": "text",
+        "text": " updates. Omit "
+      },
+      {
+        "kind": "code",
+        "text": "`surface`"
+      },
+      {
+        "kind": "text",
+        "text": " for a standard attached panel\nwith zero surface-frame bundle overhead."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "由 "
+      },
+      {
+        "kind": "code",
+        "text": "`useSheetSurface({ frame, cornerRadius })`"
+      },
+      {
+        "kind": "text",
+        "text": " 创建的可选表面句柄，用于悬浮边距约束、动态圆角及主线程 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetSurfaceController`"
+      },
+      {
+        "kind": "text",
+        "text": " 控制。省略时使用默认贴边面板并完全按需裁剪相关包体积。"
       }
     ],
     "defaultValue": "",
@@ -4497,6 +4143,199 @@ distributes remaining horizontal slack. When passed to `setFrame`, omitted or
   }
 ]}/>
 
+### SheetSurfaceOptions {#api-supporting-types-sheet-surface-options}
+
+Options passed to `useSheetSurface` to configure base surface geometry and corner radii.
+
+<UIApiTable source={[
+  {
+    "name": "cornerRadius",
+    "type": "SheetCornerRadius",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Base exposed corner radii in logical pixels.\nSeeded on Frame 0, reset on each open, and updated reactively whenever its\nresolved values change while open. Imperative "
+      },
+      {
+        "kind": "code",
+        "text": "`controllerRef.current?.setCornerRadius(...)`"
+      },
+      {
+        "kind": "text",
+        "text": "\ncalls override it on the main thread until the next open or base value change."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "面板可见圆角的基础半径（逻辑像素）。在首帧渲染、每次打开以及基础配置值变化时应用；主线程 "
+      },
+      {
+        "kind": "code",
+        "text": "`controllerRef.current?.setCornerRadius(...)`"
+      },
+      {
+        "kind": "text",
+        "text": " 可实时覆盖，直至下次打开或基础配置变更。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "frame",
+    "type": "SheetSurfaceFrame",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Base panel constraint frame inside the local viewport (for example,\n"
+      },
+      {
+        "kind": "code",
+        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
+      },
+      {
+        "kind": "text",
+        "text": ").\nSeeded on Frame 0, reset on each open, and updated reactively whenever its\nresolved values change while open. Imperative "
+      },
+      {
+        "kind": "code",
+        "text": "`controllerRef.current?.setFrame(...)`"
+      },
+      {
+        "kind": "text",
+        "text": "\ncalls override it on the main thread until the next open or base value change."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "局部视口内的基础面板约束框（例如 "
+      },
+      {
+        "kind": "code",
+        "text": "`{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`"
+      },
+      {
+        "kind": "text",
+        "text": "）。在首帧渲染、每次打开以及基础配置值变化时应用；主线程 "
+      },
+      {
+        "kind": "code",
+        "text": "`controllerRef.current?.setFrame(...)`"
+      },
+      {
+        "kind": "text",
+        "text": " 可实时覆盖，直至下次打开或基础配置变更。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+### SheetSurfaceHandle {#api-supporting-types-sheet-surface-handle}
+
+Opt-in surface handle returned by `useSheetSurface` and passed to `SheetContent`
+or `SheetNestedScrollContent` via `surface`.
+
+<UIApiTable source={[
+  {
+    "name": "controllerRef",
+    "type": "MainThreadRef<SheetSurfaceController | null>",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread ref receiving the "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetSurfaceController`"
+      },
+      {
+        "kind": "text",
+        "text": " while mounted.\nDrive per-frame animations on the main thread via "
+      },
+      {
+        "kind": "code",
+        "text": "`setFrame`"
+      },
+      {
+        "kind": "text",
+        "text": ", "
+      },
+      {
+        "kind": "code",
+        "text": "`setCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": ",\nand "
+      },
+      {
+        "kind": "code",
+        "text": "`getViewportSize`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "挂载期间接收 "
+      },
+      {
+        "kind": "code",
+        "text": "`SheetSurfaceController`"
+      },
+      {
+        "kind": "text",
+        "text": " 的主线程引用，可在主线程通过 "
+      },
+      {
+        "kind": "code",
+        "text": "`setFrame`"
+      },
+      {
+        "kind": "text",
+        "text": "、"
+      },
+      {
+        "kind": "code",
+        "text": "`setCornerRadius`"
+      },
+      {
+        "kind": "text",
+        "text": " 和 "
+      },
+      {
+        "kind": "code",
+        "text": "`getViewportSize`"
+      },
+      {
+        "kind": "text",
+        "text": " 逐帧驱动动画。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
 ### SheetViewportInsets {#api-supporting-types-sheet-viewport-insets}
 
 Viewport edge safe-area insets for `SheetBody`, supporting physical edges
@@ -4584,8 +4423,66 @@ resolved against `enableRTL`.
   {
     "name": "SheetCornerRadius",
     "type": "number | {bottomLeft?: number | null, bottomRight?: number | null, topLeft?: number | null, topRight?: number | null}",
-    "summary": [],
-    "summary_zh": [],
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Exposed corner radii in logical pixels for a Sheet surface.\nPass a single number to apply the same radius to all four corners, or an\nobject to specify corners individually. Omitted ("
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": " or "
+      },
+      {
+        "kind": "code",
+        "text": "`null`"
+      },
+      {
+        "kind": "text",
+        "text": ")\ncorners restore CSS / "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " corner radii (clipped bottom corners default to square)."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "Sheet 表面的可见圆角半径（逻辑像素）。传入单个数字会同时设置四角；传入对象可按角设置，省略（"
+      },
+      {
+        "kind": "code",
+        "text": "`undefined`"
+      },
+      {
+        "kind": "text",
+        "text": " 或 "
+      },
+      {
+        "kind": "code",
+        "text": "`null`"
+      },
+      {
+        "kind": "text",
+        "text": "）的角恢复 CSS / "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " 圆角（被裁剪的底角默认为直角）。"
+      }
+    ],
     "defaultValue": "",
     "isOption": true,
     "isSupportIOS": false,
@@ -4677,7 +4574,15 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
     "summary": [
       {
         "kind": "text",
-        "text": "Update exposed corner radii in logical pixels. Passing a number sets all four corners;\npassing an object merges only the specified corners while keeping omitted ("
+        "text": "Replace exposed corner radii in logical pixels. Passing a number sets all four corners;\npassing an object sets the specified corners and restores CSS / "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " radii on any\nomitted ("
       },
       {
         "kind": "code",
@@ -4685,7 +4590,7 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": ")\ncorners intact (pass "
+        "text": " or "
       },
       {
         "kind": "code",
@@ -4693,7 +4598,7 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": " for an individual corner to restore its CSS radius). Passing\n"
+        "text": ") corner. Passing "
       },
       {
         "kind": "code",
@@ -4701,13 +4606,21 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": " restores CSS corners on all four corners."
+        "text": " restores CSS / "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " radii\non all four corners."
       }
     ],
     "summary_zh": [
       {
         "kind": "text",
-        "text": "更新可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象仅合并指定的角并保留省略（"
+        "text": "全量替换可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象会设置指定的角并将省略（"
       },
       {
         "kind": "code",
@@ -4715,7 +4628,7 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": "）的角（对单个角传 "
+        "text": " 或 "
       },
       {
         "kind": "code",
@@ -4723,7 +4636,15 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": " 可恢复其 CSS 圆角）；传入 "
+        "text": "）的角恢复为 CSS / "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " 圆角；传入 "
       },
       {
         "kind": "code",
@@ -4731,7 +4652,15 @@ Drives surface bounds, clipping, and SheetBody safe-area clamping atomically on 
       },
       {
         "kind": "text",
-        "text": " 将恢复四角的 CSS 圆角。"
+        "text": " 将恢复四角的 CSS / "
+      },
+      {
+        "kind": "code",
+        "text": "`style`"
+      },
+      {
+        "kind": "text",
+        "text": " 圆角。"
       }
     ],
     "defaultValue": "",

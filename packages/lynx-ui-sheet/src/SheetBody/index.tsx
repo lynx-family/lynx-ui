@@ -13,46 +13,67 @@ import {
 import type { MainThread } from '@lynx-js/types'
 
 import { SheetBodyContext } from '../context'
+import { useSheetBodyInsets } from '../hooks/useSheetBodyInsets'
 import type { SheetBodyProps } from '../types'
 
-/** Lay out the body in the portion of the panel inside the supplied edges. */
+/**
+ * Keep body content inside local Sheet viewport safe-area boundaries while
+ * preserving a constant view hierarchy so children never remount when insets
+ * or snap configurations change.
+ */
 export function SheetBody(
-  { children, className, style, viewportInsets }: SheetBodyProps,
+  { children, className, style, viewportInsets, bodyViewProps }: SheetBodyProps,
 ) {
   const context = useContext(SheetBodyContext)
   const elementMTRef = useMainThreadRef<MainThread.Element | null>(null)
-  const setBodyMTRef = context?.setBodyMTRef
-  const setBodyClipMTRef = context?.setBodyClipMTRef
-  const setBodySlotMTRef = context?.setBodySlotMTRef
-  const setBodyIntrinsicMTRef = context?.setBodyIntrinsicMTRef
-  const measureBodyMT = context?.measureBodyMT
-  const measureIntrinsicBodyMT = context?.measureIntrinsicBodyMT
-  const resolvedSide = context?.resolvedSide
+  const resolvedSide = context?.resolvedSide ?? 'bottom'
   const enableRTL = context?.enableRTL ?? false
-  const viewportWidth = context?.viewportWidth
-  const viewportHeight = context?.viewportHeight
-  const maxSnapSize = context?.maxSnapSize
+  const viewportWidth = context?.viewportWidth ?? 0
+  const viewportHeight = context?.viewportHeight ?? 0
+  const maxSnapSize = context?.maxSnapSize ?? 0
+  const hasFitSnapPoint = context?.hasFitSnapPoint ?? false
   const initialBottomInset = context?.initialBottomInset ?? 0
   const horizontal = resolvedSide === 'left' || resolvedSide === 'right'
+
+  const {
+    measureBodyMT,
+    measureIntrinsicBodyMT,
+    setBodyMTRef,
+    setBodySlotMTRef,
+    setBodyClipMTRef,
+  } = useSheetBodyInsets({
+    resolvedSide,
+    enableRTL,
+    screenWidth: viewportWidth,
+    screenHeight: viewportHeight,
+    maxSnapSize,
+    hasFitSnapPoint,
+    fitMinSize: context?.fitMinSize,
+    fitMaxSize: context?.fitMaxSize,
+    hubMTRef: context?.hubMTRef,
+  })
+
   const top = viewportInsets?.top
   const right = viewportInsets?.right
   const bottom = viewportInsets?.bottom
   const left = viewportInsets?.left
   const start = viewportInsets?.start
   const end = viewportInsets?.end
-  const enabled = Boolean(
-    context?.enabled && (Number.isFinite(top) || Number.isFinite(right)
-      || Number.isFinite(bottom) || Number.isFinite(left)
-      || Number.isFinite(start) || Number.isFinite(end)),
-  )
-  const intrinsic = enabled && context?.intrinsic === true
+  const hasActiveInsets = Number.isFinite(top)
+    || Number.isFinite(right)
+    || Number.isFinite(bottom)
+    || Number.isFinite(left)
+    || Number.isFinite(start)
+    || Number.isFinite(end)
+  const enabled = Boolean(context && hasActiveInsets)
+  const intrinsic = enabled && hasFitSnapPoint
 
   const mountSeededClipSize = useRef<number | null | undefined>(undefined)
   if (mountSeededClipSize.current === undefined) {
     if (!enabled || intrinsic || !maxSnapSize || maxSnapSize <= 0) {
       mountSeededClipSize.current = null
     } else if (horizontal) {
-      if (viewportWidth && viewportWidth > 0) {
+      if (viewportWidth > 0) {
         const rawLeft = left ?? (enableRTL ? end : start) ?? 0
         const rawRight = right ?? (enableRTL ? start : end) ?? 0
         const clampedLeft = Number.isFinite(rawLeft) ? Math.max(0, rawLeft) : 0
@@ -80,7 +101,7 @@ export function SheetBody(
       } else {
         mountSeededClipSize.current = null
       }
-    } else if (viewportHeight && viewportHeight > 0) {
+    } else if (viewportHeight > 0) {
       const clampedTop = top !== undefined && Number.isFinite(top)
         ? Math.max(0, top)
         : 0
@@ -111,7 +132,9 @@ export function SheetBody(
       mountSeededClipSize.current = null
     }
   }
-  const seededClipSize = mountSeededClipSize.current
+  const seededClipSize = enabled && !intrinsic
+    ? mountSeededClipSize.current
+    : null
   let clipMainDimension: string
   if (intrinsic) {
     if (horizontal) {
@@ -122,14 +145,16 @@ export function SheetBody(
   } else {
     clipMainDimension = seededClipSize === null ? '100%' : `${seededClipSize}px`
   }
-  const clipStyleKey = `${String(horizontal)}|${clipMainDimension}`
-  const bodyStyleKey = `${String(enabled)}|${String(intrinsic)}|${
+  const clipStyleKey = `${String(enabled)}|${String(intrinsic)}|${
+    String(horizontal)
+  }|${clipMainDimension}`
+  const bodyStyleKey = `${String(enabled)}|${String(hasFitSnapPoint)}|${
     String(horizontal)
   }`
 
   function setBodyClipElementMT(element: MainThread.Element | null) {
     'main thread'
-    setBodyClipMTRef?.(
+    setBodyClipMTRef(
       element,
       intrinsic ? null : seededClipSize,
       element ? clipStyleKey : undefined,
@@ -139,9 +164,9 @@ export function SheetBody(
   function setBodyElementMT(element: MainThread.Element | null) {
     'main thread'
     elementMTRef.current = element
-    setBodyMTRef?.(
+    setBodyMTRef(
       element,
-      { top, right, bottom, left, start, end },
+      enabled ? { top, right, bottom, left, start, end } : undefined,
       element ? bodyStyleKey : undefined,
     )
   }
@@ -149,13 +174,13 @@ export function SheetBody(
   function onLayoutMT(event: MainThread.LayoutChangeEvent) {
     'main thread'
     const rect = event.detail ?? event.params
-    if (rect?.width >= 0 && rect.height >= 0) measureBodyMT?.(rect)
+    if (rect?.width >= 0 && rect.height >= 0) measureBodyMT(rect)
   }
 
   function onIntrinsicLayoutMT(event: MainThread.LayoutChangeEvent) {
     'main thread'
     const rect = event.detail ?? event.params
-    if (rect?.width >= 0 && rect.height >= 0) measureIntrinsicBodyMT?.(rect)
+    if (rect?.width >= 0 && rect.height >= 0) measureIntrinsicBodyMT(rect)
   }
 
   const insetsSyncKey = `${String(enabled)}|${top ?? ''}|${right ?? ''}|${
@@ -168,22 +193,20 @@ export function SheetBody(
       return
     }
     lastInsetsSyncKeyRef.current = insetsSyncKey
-    if (!enabled || !setBodyMTRef) return
+    if (!context) return
     runOnMainThread(() => {
       'main thread'
       if (elementMTRef.current) {
-        setBodyMTRef(elementMTRef.current, {
-          top,
-          right,
-          bottom,
-          left,
-          start,
-          end,
-        })
+        setBodyMTRef(
+          elementMTRef.current,
+          enabled ? { top, right, bottom, left, start, end } : undefined,
+        )
       }
     })()
   }, [
+    context,
     enabled,
+    insetsSyncKey,
     setBodyMTRef,
     top,
     right,
@@ -194,154 +217,165 @@ export function SheetBody(
     elementMTRef,
   ])
 
-  const intrinsicBodyStyle = horizontal
-    ? {
-      pointerEvents: 'auto' as const,
-      position: 'absolute' as const,
+  const flexDirection = horizontal
+    ? ('row' as const)
+    : ('column' as const)
+  const crossFill = horizontal ? { height: '100%' } : { width: '100%' }
+
+  let slotStyle: SheetBodyProps['style']
+  if (!context) {
+    slotStyle = undefined
+  } else if (intrinsic) {
+    slotStyle = horizontal
+      ? { position: 'relative', width: 0, height: '100%', flexShrink: 0 }
+      : { position: 'relative', height: 0, flexShrink: 0 }
+  } else if (hasFitSnapPoint) {
+    slotStyle = {
+      position: 'relative',
+      display: 'flex',
+      flexDirection,
+      ...crossFill,
+      flexShrink: 0,
+    }
+  } else {
+    slotStyle = {
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      flexGrow: 1,
+      flexShrink: 1,
+      minWidth: 0,
+      minHeight: 0,
+    }
+  }
+
+  let clipStyle: SheetBodyProps['style']
+  if (!context) {
+    clipStyle = undefined
+  } else if (enabled) {
+    clipStyle = horizontal
+      ? {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        width: clipMainDimension,
+        overflow: 'hidden',
+        pointerEvents: 'none',
+      }
+      : {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: clipMainDimension,
+        overflow: 'hidden',
+        pointerEvents: 'none',
+      }
+  } else if (hasFitSnapPoint) {
+    clipStyle = {
+      display: 'flex',
+      flexDirection,
+      ...crossFill,
+      flexShrink: 0,
+    }
+  } else {
+    clipStyle = {
+      position: 'absolute',
       top: 0,
+      right: 0,
       bottom: 0,
       left: 0,
+      pointerEvents: 'none',
     }
-    : {
-      pointerEvents: 'auto' as const,
-      position: 'absolute' as const,
-      top: 0,
-      left: 0,
-      right: 0,
-    }
+  }
 
-  const body = (
-    <view
-      className={enabled ? undefined : className}
-      style={enabled
-        ? (intrinsic
-          ? intrinsicBodyStyle
-          : {
-            pointerEvents: 'auto',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          })
-        : style}
-      main-thread:ref={enabled ? setBodyElementMT : undefined}
-      implicit-animation={enabled ? 'false' : undefined}
-      event-through={false}
-    >
-      {intrinsic
-        ? (
-          <view
-            style={horizontal
-              ? {
-                display: 'flex',
-                flexDirection: 'row',
-                height: '100%',
-                flexShrink: 0,
-              }
-              : {
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                flexShrink: 0,
-              }}
-            main-thread:ref={setBodyIntrinsicMTRef}
-            implicit-animation='false'
-            main-thread:bindlayoutchange={onIntrinsicLayoutMT}
-          >
-            <view
-              className={className}
-              style={{
-                ...(horizontal
-                  ? { flexGrow: 1, flexShrink: 1, minWidth: 0, height: '100%' }
-                  : {
-                    flexGrow: 1,
-                    flexShrink: 1,
-                    minHeight: 0,
-                    width: '100%',
-                  }),
-                ...style,
-              }}
-            >
-              {children}
-            </view>
-          </view>
-        )
-        : (enabled
-          ? (
-            <view
-              className={className}
-              style={{
-                ...style,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              }}
-            >
-              {children}
-            </view>
-          )
-          : children)}
-    </view>
-  )
+  let moverStyle: SheetBodyProps['style']
+  if (!context) {
+    moverStyle = undefined
+  } else if (intrinsic) {
+    moverStyle = horizontal
+      ? {
+        pointerEvents: 'auto',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        flexShrink: 0,
+      }
+      : {
+        pointerEvents: 'auto',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+      }
+  } else if (hasFitSnapPoint) {
+    moverStyle = {
+      pointerEvents: 'auto',
+      display: 'flex',
+      flexDirection,
+      ...crossFill,
+      flexShrink: 0,
+    }
+  } else {
+    moverStyle = {
+      pointerEvents: 'auto',
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      display: 'flex',
+      flexDirection,
+    }
+  }
 
   return (
     <view
-      style={intrinsic
-        ? (horizontal
-          ? { position: 'relative', width: 0, height: '100%', flexShrink: 0 }
-          : { position: 'relative', height: 0, flexShrink: 0 })
-        : (enabled
-          ? {
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            flexGrow: 1,
-            flexShrink: 1,
-            minWidth: 0,
-            minHeight: 0,
-          }
-          : undefined)}
-      main-thread:ref={intrinsic ? setBodySlotMTRef : undefined}
-      implicit-animation={intrinsic ? 'false' : undefined}
-      main-thread:bindlayoutchange={enabled ? onLayoutMT : undefined}
+      style={slotStyle}
+      main-thread:ref={context ? setBodySlotMTRef : undefined}
+      implicit-animation='false'
+      main-thread:bindlayoutchange={context ? onLayoutMT : undefined}
       event-through={false}
     >
-      {enabled
-        ? (
+      <view
+        style={clipStyle}
+        main-thread:ref={context ? setBodyClipElementMT : undefined}
+        flatten={false}
+        implicit-animation='false'
+        event-through={true}
+      >
+        <view
+          style={moverStyle}
+          main-thread:ref={context ? setBodyElementMT : undefined}
+          implicit-animation='false'
+          main-thread:bindlayoutchange={context && hasFitSnapPoint
+            ? onIntrinsicLayoutMT
+            : undefined}
+          event-through={false}
+        >
           <view
-            style={horizontal
-              ? {
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                // The intrinsic slot starts at zero width during first-screen layout.
-                width: clipMainDimension,
-                overflow: 'hidden',
-                pointerEvents: 'none',
-              }
-              : {
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                // The intrinsic slot starts at zero during first-screen layout.
-                height: clipMainDimension,
-                overflow: 'hidden',
-                pointerEvents: 'none',
-              }}
-            main-thread:ref={setBodyClipElementMT}
-            flatten={false}
-            implicit-animation='false'
-            event-through={true}
+            {...bodyViewProps}
+            className={className}
+            style={{
+              ...(context
+                ? (horizontal
+                  ? { flexGrow: 1, flexShrink: 1, minWidth: 0, height: '100%' }
+                  : { flexGrow: 1, flexShrink: 1, minHeight: 0, width: '100%' })
+                : {}),
+              ...style,
+            }}
           >
-            {body}
+            {children}
           </view>
-        )
-        : body}
+        </view>
+      </view>
     </view>
   )
 }

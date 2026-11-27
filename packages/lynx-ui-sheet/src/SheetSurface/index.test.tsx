@@ -4,7 +4,15 @@
 
 import { describe, expect, it, vi } from 'vitest'
 
-import type { SheetSurfaceController } from '../types'
+import { getInternalSheetSurface } from '../context'
+import type * as SheetContextModule from '../context'
+import type { SheetSurfaceBodyHubMT } from '../context'
+import { useSheetSurface } from '../hooks/useSheetSurface'
+import type {
+  SheetCornerRadius,
+  SheetSurfaceFrame,
+  SheetSurfaceHandle,
+} from '../types'
 
 import { SheetSurface } from './index'
 import type { SheetSurfaceProps } from './index'
@@ -15,7 +23,14 @@ const refs = vi.hoisted(() => ({
 }))
 
 vi.mock('@lynx-js/react', () => ({
+  createContext: () => ({ Provider: 'context-provider' }),
   useEffect: vi.fn(),
+  useMemo: <T,>(fn: () => T) => fn(),
+  useMainThreadRef: <T,>(initialValue: T) => {
+    const index = refs.cursor++
+    refs.slots[index] ??= { current: initialValue }
+    return refs.slots[index] as { current: T }
+  },
   useRef: <T,>(initialValue: T) => {
     const index = refs.cursor++
     refs.slots[index] ??= { current: initialValue }
@@ -24,11 +39,21 @@ vi.mock('@lynx-js/react', () => ({
   runOnMainThread: <T,>(fn: T) => fn,
 }))
 
-vi.mock('../context', () => ({
-  SheetDragContext: { Provider: 'drag-provider' },
-  SheetFooterContext: { Provider: 'footer-provider' },
-  SheetBodyContext: { Provider: 'body-provider' },
+vi.mock('@lynx-js/lynx-ui-common', () => ({
+  noop: () => undefined,
+  useMemoizedFn: <T,>(fn: T) => fn,
+  useStrictContext: () => [{}],
 }))
+
+vi.mock('../context', async importOriginal => {
+  const actual = await importOriginal<typeof SheetContextModule>()
+  return {
+    ...actual,
+    SheetDragContext: { Provider: 'drag-provider' },
+    SheetFooterContext: { Provider: 'footer-provider' },
+    SheetBodyContext: { Provider: 'body-provider' },
+  }
+})
 
 vi.stubGlobal('React', {
   createElement: (
@@ -50,19 +75,55 @@ interface ViewProps {
   style: Record<string, unknown>
   'main-thread:gesture'?: unknown
   'main-thread:bindtouchstart'?: unknown
-  'main-thread:ref': (element: unknown) => void
+  'main-thread:ref'?: (element: unknown) => void
 }
 
-function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
+function renderSurface(
+  overrides: Partial<SheetSurfaceProps> & {
+    frame?: SheetSurfaceFrame
+    cornerRadius?: SheetCornerRadius
+  } = {},
+) {
   refs.slots = []
   refs.cursor = 0
   const measure = vi.fn()
   const gesture = {} as NonNullable<SheetSurfaceProps['sheetGesture']>
-  const setFrameMT = vi.fn()
-  const setCornerRadiusMT = vi.fn()
-  const getViewportSizeMT = vi.fn(() => ({ width: 1000, height: 800 }))
-  const buildTree = (nextOverrides: Partial<SheetSurfaceProps> = {}) => {
+  const hubMTRef = {
+    current: {
+      nextId: 0,
+      subscribers: [],
+      hasRange: false,
+      rangeStart: 0,
+      rangeSize: 0,
+      surfaceLeft: 0,
+      surfaceTop: 0,
+      horizontalOverride: null,
+      parentRect: {},
+      settledBottom: 0,
+    } as SheetSurfaceBodyHubMT,
+  }
+  const buildTree = (
+    nextOverrides: Partial<SheetSurfaceProps> & {
+      frame?: SheetSurfaceFrame
+      cornerRadius?: SheetCornerRadius
+    } = {},
+  ) => {
     refs.cursor = 0
+    const merged = { ...overrides, ...nextOverrides }
+    const {
+      frame,
+      cornerRadius,
+      surface: explicitSurface,
+      ...restOverrides
+    } = merged
+    let surfaceHandle: SheetSurfaceHandle | undefined = explicitSurface
+    if (
+      surfaceHandle === undefined
+      && (frame !== undefined || cornerRadius !== undefined)
+    ) {
+      // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for unit tests.
+      surfaceHandle = useSheetSurface({ frame, cornerRadius })
+    }
     const surface = SheetSurface({
       resolvedSide: 'bottom',
       enableRTL: false,
@@ -77,10 +138,14 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
         updateFooterHeightMT: vi.fn(),
       },
       bodyContext: {
-        enabled: true,
-        setBodyClipMTRef: vi.fn(),
-        setBodyMTRef: vi.fn(),
-        measureBodyMT: vi.fn(),
+        resolvedSide: 'bottom',
+        enableRTL: false,
+        viewportWidth: 1000,
+        viewportHeight: 800,
+        maxSnapSize: 800,
+        hasFitSnapPoint: false,
+        initialBottomInset: 0,
+        hubMTRef,
       },
       setSheetMTRef: vi.fn(),
       measureSurfaceMT: vi.fn(),
@@ -88,12 +153,9 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       setSurfaceMTRef: vi.fn(),
       setViewportMTRef: vi.fn(),
       setContentMTRef: measure,
-      setFrameMT,
-      setCornerRadiusMT,
-      getViewportSizeMT,
       handleSheetLayoutChangeMT: vi.fn(),
-      ...overrides,
-      ...nextOverrides,
+      surface: surfaceHandle,
+      ...restOverrides,
     }) as unknown as { props: ViewProps }
     const movement = surface.props.children as { props: ViewProps }
     const painted = movement.props.children as { props: ViewProps }
@@ -107,9 +169,7 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
       panel,
       measure,
       gesture,
-      setFrameMT,
-      setCornerRadiusMT,
-      getViewportSizeMT,
+      surfaceHandle,
     }
   }
   return {
@@ -119,61 +179,46 @@ function renderSurface(overrides: Partial<SheetSurfaceProps> = {}) {
 }
 
 describe('Sheet surface composition', () => {
-  it('exposes the stateless SheetSurfaceController on mount and clears it on detach', () => {
-    const surfaceControllerRef = {
-      current: null as SheetSurfaceController | null,
-    }
-    let controllerAtSurfaceAttach: SheetSurfaceController | null = null
-    const setSurfaceMTRef = vi.fn(() => {
-      controllerAtSurfaceAttach = surfaceControllerRef.current
+  it('omits clip ref when surface handle is absent and binds painted ref when surface is provided', () => {
+    const attached = renderSurface()
+    expect(attached.surface.props['main-thread:ref']).toBeUndefined()
+
+    refs.slots = []
+    refs.cursor = 0
+    // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for unit tests.
+    const handle = useSheetSurface({
+      frame: { insets: { bottom: 8 } },
+      cornerRadius: 24,
     })
-    const setSheetMTRef = vi.fn()
-    const {
-      painted,
-      movement,
-      setFrameMT,
-      setCornerRadiusMT,
-      getViewportSizeMT,
-    } = renderSurface(
-      {
-        'main-thread:surfaceControllerRef': surfaceControllerRef,
-        setSurfaceMTRef,
-        setSheetMTRef,
-      },
-    )
-    const movementElement = { setStyleProperties: vi.fn() }
+    const setClipMTRef = vi.fn()
+    const setSurfaceMTRef = vi.fn((el: unknown) => {
+      getInternalSheetSurface(handle)?.attachHostMT(
+        { current: null },
+        el as never,
+      )
+    })
+    const floating = renderSurface({
+      surface: handle,
+      setClipMTRef,
+      setSurfaceMTRef,
+    })
+    expect(floating.surface.props['main-thread:ref']).toBe(setClipMTRef)
+    expect(floating.painted.props).not.toHaveProperty('surface')
+
     const element = { setStyleProperties: vi.fn() }
-
-    movement.props['main-thread:ref'](movementElement)
-    painted.props['main-thread:ref'](element)
-    expect(setSheetMTRef).toHaveBeenCalledWith(movementElement)
+    floating.painted.props['main-thread:ref']?.(element)
     expect(setSurfaceMTRef).toHaveBeenCalledWith(element, expect.any(String))
-    expect(controllerAtSurfaceAttach).not.toBeNull()
-    expect(surfaceControllerRef.current).not.toBeNull()
-    surfaceControllerRef.current?.setFrame({
-      insets: { bottom: 0, left: 0, right: 0 },
-    })
-    surfaceControllerRef.current?.setCornerRadius(0)
-    expect(setFrameMT).toHaveBeenCalledWith({
-      insets: { bottom: 0, left: 0, right: 0 },
-    })
-    expect(setCornerRadiusMT).toHaveBeenCalledWith(0)
-    expect(surfaceControllerRef.current?.getViewportSize()).toEqual({
-      width: 1000,
-      height: 800,
-    })
-    expect(getViewportSizeMT).toHaveBeenCalledTimes(1)
-    expect(painted.props).not.toHaveProperty('main-thread:surfaceControllerRef')
+    expect(handle.controllerRef.current).not.toBeNull()
 
-    painted.props['main-thread:ref'](null)
+    floating.painted.props['main-thread:ref']?.(null)
     expect(setSurfaceMTRef).toHaveBeenLastCalledWith(null)
-    expect(surfaceControllerRef.current).toBeNull()
+    expect(handle.controllerRef.current).toBeNull()
   })
 
   it('keeps the Sheet measurement ref on the inner panel', () => {
     const { panel, measure } = renderSurface()
     const element = { setStyleProperties: vi.fn() }
-    panel.props['main-thread:ref'](element)
+    panel.props['main-thread:ref']?.(element)
     expect(measure).toHaveBeenCalledWith(element)
   })
 
@@ -254,15 +299,15 @@ describe('Sheet surface composition', () => {
     )
   })
 
-  it('computes initial horizontal surface bounds from initialFrame without leaking to native props', () => {
+  it('computes initial horizontal surface bounds from useSheetSurface without leaking props', () => {
     const child = { type: 'scroll-view' }
     const attached = renderSurface({ children: child })
     const floating = renderSurface({
-      initialFrame: { insets: { left: 88, right: 88, bottom: 8 } },
+      frame: { insets: { left: 88, right: 88, bottom: 8 } },
       screenWidth: 840,
       children: child,
     })
-    expect(floating.painted.props).not.toHaveProperty('initialFrame')
+    expect(floating.painted.props).not.toHaveProperty('surface')
     expect(floating.painted.props.style.transform).toBe('translateX(88px)')
     expect(floating.painted.props.style.left).toBeUndefined()
     expect(floating.painted.props.style.width).toBe('664px')
@@ -272,7 +317,7 @@ describe('Sheet surface composition', () => {
     expect(floating.viewport.props.style.height).toBe('800px')
 
     const maxCard = renderSurface({
-      initialFrame: {
+      frame: {
         insets: { left: 16, right: 16, bottom: 8 },
         maxWidth: 664,
       },
@@ -283,7 +328,7 @@ describe('Sheet surface composition', () => {
     expect(maxCard.painted.props.style.width).toBe('664px')
 
     const percentCard = renderSurface({
-      initialFrame: { width: '80%' },
+      frame: { width: '80%' },
       screenWidth: 500,
       children: child,
     })
@@ -291,7 +336,7 @@ describe('Sheet surface composition', () => {
     expect(percentCard.painted.props.style.width).toBe('400px')
 
     const rtlAligned = renderSurface({
-      initialFrame: {
+      frame: {
         insets: { left: 20, right: 40 },
         width: 500,
         align: 'start',
@@ -304,45 +349,39 @@ describe('Sheet surface composition', () => {
     expect(rtlAligned.painted.props.style.width).toBe('500px')
   })
 
-  it('seeds Frame-0 horizontal bounds with surfaceControllerRef and freezes JSX styles across rerenders', () => {
-    const surfaceControllerRef = {
-      current: null as SheetSurfaceController | null,
-    }
+  it('seeds Frame-0 horizontal bounds and freezes JSX styles across rerenders', () => {
     const mounted = renderSurface({
-      'main-thread:surfaceControllerRef': surfaceControllerRef,
-      initialFrame: { insets: { left: 60, right: 80, bottom: 8 } },
+      frame: { insets: { left: 60, right: 80, bottom: 8 } },
       screenWidth: 1000,
     })
     expect(mounted.painted.props.style.transform).toBe('translateX(60px)')
     expect(mounted.painted.props.style.width).toBe('860px')
 
     const updated = mounted.rerender({
-      initialFrame: { insets: { left: 10, right: 10, bottom: 0 } },
+      frame: { insets: { left: 10, right: 10, bottom: 0 } },
       screenWidth: 1000,
     })
     expect(updated.painted.props.style.transform).toBe('translateX(60px)')
     expect(updated.painted.props.style.width).toBe('860px')
   })
 
-  it('keeps initialCornerRadius out of the native view props and seeds Frame-0 JSX radii', () => {
-    const { painted, panel } = renderSurface({ initialCornerRadius: 24 })
-    expect(painted.props).not.toHaveProperty('initialCornerRadius')
-    expect(panel.props).not.toHaveProperty('initialCornerRadius')
+  it('seeds Frame-0 JSX corner radii without leaking surface props', () => {
+    const { painted, panel } = renderSurface({ cornerRadius: 24 })
+    expect(painted.props).not.toHaveProperty('surface')
+    expect(panel.props).not.toHaveProperty('surface')
     expect(painted.props.style.borderTopLeftRadius).toBe('24px')
     expect(painted.props.style.borderTopRightRadius).toBe('24px')
     expect(painted.props.style.borderBottomLeftRadius).toBeUndefined()
     expect(painted.props.style.borderBottomRightRadius).toBeUndefined()
   })
 
-  it('seeds Frame-0 horizontal bounds from controlled frame without leaking frame or cornerRadius to native props', () => {
+  it('seeds Frame-0 horizontal bounds with positioner pre-measure width', () => {
     const mounted = renderSurface({
       frame: { insets: { left: 16, right: 16, bottom: 8 }, maxWidth: '664px' },
       cornerRadius: 24,
       positioner: { insetX: 60, insetY: 0 },
       screenWidth: 840,
     })
-    expect(mounted.painted.props).not.toHaveProperty('frame')
-    expect(mounted.painted.props).not.toHaveProperty('cornerRadius')
     expect(mounted.painted.props.style.transform).toBe('translateX(88px)')
     expect(mounted.painted.props.style.width).toBe('664px')
     expect(mounted.painted.props.style.height).toBe('150vh')

@@ -14,6 +14,7 @@ import {
   SheetPositioner,
   SheetRoot,
   SheetView,
+  useSheetSurface,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef, SheetSide } from '@lynx-js/lynx-ui'
 
@@ -31,6 +32,7 @@ function App() {
   const snapValue = (side === 'top' || side === 'bottom' ? height : width)
     * (snapIndex === 0 ? 0.5 : 0.85)
   const sides: SheetSide[] = ['bottom', 'top', 'left', 'right', 'start', 'end']
+  const surface = useSheetSurface({ frame: { insets: { bottom: 8 } } })
 
   return (
     <view className='demo-container lunaris-dark'>
@@ -101,7 +103,7 @@ function App() {
               ? (
                 <SheetNestedScrollContent
                   className='surface'
-                  initialFrame={{ insets: { bottom: 8 } }}
+                  surface={surface}
                   innerStyle={{ display: 'flex', flexDirection: 'column' }}
                 >
                   {({ scrollGesture }) => (
@@ -138,7 +140,7 @@ function App() {
               : (
                 <SheetContent
                   className='surface'
-                  initialFrame={{ insets: { bottom: 8 } }}
+                  surface={surface}
                 >
                   <SheetHandle className='handle' />
                   <view className='panel'>

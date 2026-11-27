@@ -5,6 +5,7 @@
 import type { MainThread } from '@lynx-js/types'
 
 import type { SheetContentProps, SheetCornerRadius } from '../types'
+import { setElementStylesMT } from '../utils'
 
 export type CornerRadii = [
   topLeft: number | null,
@@ -60,33 +61,6 @@ export function normalizeCornerRadiiMT(
     normalizeCornerRadiusMT(corners?.topRight ?? scalar),
     normalizeCornerRadiusMT(corners?.bottomRight ?? scalar),
     normalizeCornerRadiusMT(corners?.bottomLeft ?? scalar),
-  ]
-}
-
-/** Merge a partial object update onto the current corner radii, preserving omitted corners. */
-export function mergeCornerRadiiMT(
-  current: CornerRadii,
-  cornerRadius: SheetCornerRadius | undefined,
-): CornerRadii {
-  'main thread'
-  if (cornerRadius === undefined) return [null, null, null, null]
-  if (typeof cornerRadius === 'number') {
-    const value = normalizeCornerRadiusMT(cornerRadius)
-    return [value, value, value, value]
-  }
-  return [
-    cornerRadius.topLeft === undefined
-      ? current[0]
-      : normalizeCornerRadiusMT(cornerRadius.topLeft),
-    cornerRadius.topRight === undefined
-      ? current[1]
-      : normalizeCornerRadiusMT(cornerRadius.topRight),
-    cornerRadius.bottomRight === undefined
-      ? current[2]
-      : normalizeCornerRadiusMT(cornerRadius.bottomRight),
-    cornerRadius.bottomLeft === undefined
-      ? current[3]
-      : normalizeCornerRadiusMT(cornerRadius.bottomLeft),
   ]
 }
 
@@ -162,9 +136,7 @@ export function applySurfaceCornersMT(
     }
   }
   if (Object.keys(styles).length > 0) {
-    // The runtime accepts null to remove an inline value and restore the
-    // stylesheet cascade. The public worklet declaration only lists strings.
-    surface.setStyleProperties(styles as Record<string, string>)
+    setElementStylesMT(surface, styles)
   }
   return radii
 }

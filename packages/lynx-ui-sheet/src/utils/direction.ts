@@ -8,6 +8,7 @@ import type {
   SheetFitSnapPoint,
   SheetSide,
   SheetSnapPoint,
+  SheetSurfaceSize,
 } from '../types'
 
 export type SheetResolvedSide = 'top' | 'bottom' | 'left' | 'right'
@@ -32,6 +33,31 @@ export function getFitSnapBounds(
 ): SheetFitBounds | undefined {
   if (!isFitSnapPoint(value) || typeof value === 'string') return undefined
   return value.fit
+}
+
+export function resolveFitBoundSize(
+  size: SheetSurfaceSize | undefined,
+  basis: number,
+): number | undefined {
+  if (typeof size === 'number') {
+    return Number.isFinite(size) ? Math.max(0, size) : undefined
+  }
+  if (typeof size === 'string') {
+    const trimmed = size.trim()
+    if (trimmed.endsWith('%') && trimmed.length > 1) {
+      const num = Number(trimmed.slice(0, -1).trim())
+      return Number.isFinite(num) && trimmed.slice(0, -1).trim() !== ''
+        ? (Math.max(0, num) / 100) * Math.max(0, basis)
+        : undefined
+    }
+    if (trimmed.endsWith('px') && trimmed.length > 2) {
+      const num = Number(trimmed.slice(0, -2).trim())
+      return Number.isFinite(num) && trimmed.slice(0, -2).trim() !== ''
+        ? Math.max(0, num)
+        : undefined
+    }
+  }
+  return undefined
 }
 
 export function toPxJS(value: SheetSnapPoint, viewportSize: number): number {

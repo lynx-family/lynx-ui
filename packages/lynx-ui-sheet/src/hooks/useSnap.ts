@@ -17,17 +17,17 @@ import { createMotionValue, useMotionValueRef } from '@lynx-js/motion/mini'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
+import { getInternalSheetSurface } from '../context'
 import type { SheetLayoutRect, SheetPositionerDimensions } from '../context'
 import { useSheetAnimation } from './useSheetAnimation'
 import { useSheetController } from './useSheetController'
-import { normalizeInset, useSheetSurfaceLayout } from './useSheetSurfaceLayout'
+import { useSheetSurfaceLayout } from './useSheetSurfaceLayout'
 import type {
   SheetContentProps,
-  SheetCornerRadius,
   SheetRootProps,
   SheetSide,
   SheetSnapPoint,
-  SheetSurfaceFrame,
+  SheetSurfaceHandle,
   SheetTransition,
 } from '../types'
 import {
@@ -41,10 +41,10 @@ import {
   getMaxSnapSize,
   getSheetTransform,
   isHorizontalSide,
+  resolveFitBoundSize,
   resolveSheetSide,
   toPxJS,
 } from '../utils'
-import { resolveSurfaceSize } from '../utils/surfaceFrame'
 
 export interface SnappingOptions {
   animate?: boolean
@@ -56,10 +56,7 @@ export interface SnapOptions {
   snapPoints: SheetSnapPoint[]
   initialSnap?: number
   initialOpen?: boolean
-  frame?: SheetSurfaceFrame
-  cornerRadius?: SheetCornerRadius
-  initialCornerRadius?: SheetCornerRadius
-  initialFrame?: SheetSurfaceFrame
+  surface?: SheetSurfaceHandle
   surfaceStyle?: SheetContentProps['style']
   snapAnimation?: SheetTransition
   side?: SheetSide
@@ -89,10 +86,7 @@ export function useSnap({
   snapPoints = [],
   initialSnap = 0,
   initialOpen = false,
-  frame,
-  cornerRadius,
-  initialCornerRadius,
-  initialFrame,
+  surface,
   surfaceStyle,
   snapAnimation = { type: 'spring', stiffness: 200, damping: 60 },
   side = 'bottom',
@@ -162,7 +156,7 @@ export function useSnap({
     ?? Math.max(0, fallbackScreenHeight - (positioner?.insetY ?? 0))
   const screenWidth = positioner?.width
     ?? Math.max(0, fallbackScreenWidth - (positioner?.insetX ?? 0))
-  const propBottom = normalizeInset((frame ?? initialFrame)?.insets?.bottom)
+  const propBottom = getInternalSheetSurface(surface)?.getBaseBottomInset() ?? 0
   const openingBottomMTRef = useMainThreadRef(propBottom)
   const viewportSize = getMainAxisSize(resolvedSide, {
     screenHeight,
@@ -175,10 +169,10 @@ export function useSnap({
       const value = toPxJS(point, viewportSize)
       const bounds = getFitSnapBounds(point)
       const min = value === -1
-        ? resolveSurfaceSize(bounds?.min, viewportSize) ?? -1
+        ? resolveFitBoundSize(bounds?.min, viewportSize) ?? -1
         : -1
       const max = value === -1
-        ? resolveSurfaceSize(bounds?.max, viewportSize) ?? -1
+        ? resolveFitBoundSize(bounds?.max, viewportSize) ?? -1
         : -1
       return `${value}:${min}:${max}`
     })
@@ -419,6 +413,7 @@ export function useSnap({
     closeMT,
     snapToMT,
     onDragStartMT,
+    onDragRebaseMT,
     onDragEndSnapMT,
     onDragEndCloseMT,
     resolvePendingSnapMT,
@@ -547,10 +542,7 @@ export function useSnap({
     presence: presenceStateMTRef,
     resolvedSide,
     enableRTL,
-    frame,
-    cornerRadius,
-    initialCornerRadius,
-    initialFrame,
+    surface,
     surfaceStyle,
     screenHeight,
     screenWidth,
@@ -824,6 +816,7 @@ export function useSnap({
     // Controller exports for gesture handling
     presenceStateMTRef,
     onDragStartMT,
+    onDragRebaseMT,
     onDragEndSnapMT,
     onDragEndCloseMT,
     releaseAtMaxSnapMT,

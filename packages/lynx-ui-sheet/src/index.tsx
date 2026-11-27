@@ -12,6 +12,7 @@ export { SheetFooter } from './SheetFooter'
 export { SheetView } from './SheetView'
 export { SheetPositioner } from './SheetPositioner'
 export { useSheetScrollGesture, useSnap } from './hooks'
+export { useSheetSurface } from './hooks/useSheetSurface'
 
 export type {
   SheetBackdropProps,
@@ -31,6 +32,8 @@ export type {
   SheetSurfaceAlign,
   SheetSurfaceController,
   SheetSurfaceFrame,
+  SheetSurfaceHandle,
+  SheetSurfaceOptions,
   SheetSurfaceSize,
   SheetViewProps,
   SheetViewportInsets,

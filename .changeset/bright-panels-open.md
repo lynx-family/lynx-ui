@@ -1,7 +1,10 @@
 ---
 "@lynx-js/lynx-ui-sheet": minor
-"@lynx-js/lynx-ui-overlay": patch
 "@lynx-example/lynx-ui-sheet": patch
 ---
 
-Replace surface insets API with constraint-box `initialFrame` / `setFrame` (`insets`, `width`, `maxWidth`, `align`) and `getViewportSize()`, allow sibling `SheetBackdrop` + `SheetPositioner` (`pointerEvents: 'none'` on positioner, `onSizeChange`), support `{ fit: { min?, max? } }` snap points and horizontal `'fit'` drawers in `SheetBody`, expose `main-thread:onPresenceChange`, auto-settle `{ animating: true }` frame updates, default painted surface `implicit-animation` to `'false'`, and complete `overlayViewProps` typing in `lynx-ui-overlay`.
+Add opt-in `useSheetSurface({ frame, cornerRadius })` and `SheetSurfaceHandle` (`surface` prop on `SheetContent` / `SheetNestedScrollContent`) for floating constraint frames (`insets`, `width`, `maxWidth`, `align`), exposed corner radii with unified replace semantics, and synchronous main-thread `SheetSurfaceController` updates (`setFrame`, `setCornerRadius`, `getViewportSize`) with zero bundle cost when unused.
+
+Add self-contained `SheetBody` with four-sided hardware-clipped `viewportInsets` (including RTL `start`/`end`), `bodyViewProps`, multi-body subscription, and a constant view hierarchy that never remounts children across inset or snap changes.
+
+Support `{ fit: { min?, max? } }` snap points, auto-measured `SheetPositioner` bounds with `onSizeChange` and sibling `SheetBackdrop`, finger-anchored rubber-band state (`sheetDrag`) with nested-scroll `atEnd` tracking, and main-thread `onDragStart` (once per gesture), `onPositionChange`, and `onPresenceChange` callbacks.

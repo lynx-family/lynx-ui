@@ -246,6 +246,13 @@ export type SheetSnapPoint =
   | (string & {})
   | SheetFitSnapPoint
 
+/**
+ * Exposed corner radii in logical pixels for a Sheet surface.
+ * Pass a single number to apply the same radius to all four corners, or an
+ * object to specify corners individually. Omitted (`undefined` or `null`)
+ * corners restore CSS / `style` corner radii (clipped bottom corners default to square).
+ * @zh Sheet 表面的可见圆角半径（逻辑像素）。传入单个数字会同时设置四角；传入对象可按角设置，省略（`undefined` 或 `null`）的角恢复 CSS / `style` 圆角（被裁剪的底角默认为直角）。
+ */
 export type SheetCornerRadius =
   | number
   | {
@@ -276,11 +283,11 @@ export interface SheetSurfaceController {
     options?: { animating?: boolean },
   ) => void
   /**
-   * Update exposed corner radii in logical pixels. Passing a number sets all four corners;
-   * passing an object merges only the specified corners while keeping omitted (`undefined`)
-   * corners intact (pass `null` for an individual corner to restore its CSS radius). Passing
-   * `undefined` restores CSS corners on all four corners.
-   * @zh 更新可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象仅合并指定的角并保留省略（`undefined`）的角（对单个角传 `null` 可恢复其 CSS 圆角）；传入 `undefined` 将恢复四角的 CSS 圆角。
+   * Replace exposed corner radii in logical pixels. Passing a number sets all four corners;
+   * passing an object sets the specified corners and restores CSS / `style` radii on any
+   * omitted (`undefined` or `null`) corner. Passing `undefined` restores CSS / `style` radii
+   * on all four corners.
+   * @zh 全量替换可见圆角半径（逻辑像素）。传入数字会设置四个角；传入对象会设置指定的角并将省略（`undefined` 或 `null`）的角恢复为 CSS / `style` 圆角；传入 `undefined` 将恢复四角的 CSS / `style` 圆角。
    */
   setCornerRadius: (radius: SheetCornerRadius | undefined) => void
   /**
@@ -291,62 +298,60 @@ export interface SheetSurfaceController {
 }
 
 /**
+ * Options passed to `useSheetSurface` to configure base surface geometry and corner radii.
+ * @zh 传给 `useSheetSurface` 的基础面板约束框与圆角配置。
+ */
+export interface SheetSurfaceOptions {
+  /**
+   * Base panel constraint frame inside the local viewport (for example,
+   * `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`).
+   * Seeded on Frame 0, reset on each open, and updated reactively whenever its
+   * resolved values change while open. Imperative `controllerRef.current?.setFrame(...)`
+   * calls override it on the main thread until the next open or base value change.
+   * @zh 局部视口内的基础面板约束框（例如 `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`）。在首帧渲染、每次打开以及基础配置值变化时应用；主线程 `controllerRef.current?.setFrame(...)` 可实时覆盖，直至下次打开或基础配置变更。
+   */
+  frame?: SheetSurfaceFrame
+  /**
+   * Base exposed corner radii in logical pixels.
+   * Seeded on Frame 0, reset on each open, and updated reactively whenever its
+   * resolved values change while open. Imperative `controllerRef.current?.setCornerRadius(...)`
+   * calls override it on the main thread until the next open or base value change.
+   * @zh 面板可见圆角的基础半径（逻辑像素）。在首帧渲染、每次打开以及基础配置值变化时应用；主线程 `controllerRef.current?.setCornerRadius(...)` 可实时覆盖，直至下次打开或基础配置变更。
+   */
+  cornerRadius?: SheetCornerRadius
+}
+
+/**
+ * Opt-in surface handle returned by `useSheetSurface` and passed to `SheetContent`
+ * or `SheetNestedScrollContent` via `surface`.
+ * @zh `useSheetSurface` 返回的可选表面句柄，通过 `surface` 属性传给 `SheetContent` 或 `SheetNestedScrollContent`。
+ */
+export interface SheetSurfaceHandle {
+  /**
+   * Main-thread ref receiving the `SheetSurfaceController` while mounted.
+   * Drive per-frame animations on the main thread via `setFrame`, `setCornerRadius`,
+   * and `getViewportSize`.
+   * @zh 挂载期间接收 `SheetSurfaceController` 的主线程引用，可在主线程通过 `setFrame`、`setCornerRadius` 和 `getViewportSize` 逐帧驱动动画。
+   */
+  controllerRef: MainThreadRef<SheetSurfaceController | null>
+}
+
+/**
  * The main content of the Sheet.
  * @zh Sheet 的主要内容。
  */
 export interface SheetContentProps extends ComponentBasicProps {
   /**
-   * A main-thread ref receiving the SheetSurfaceController while mounted.
-   * Use `initialFrame` and `initialCornerRadius` for the opening appearance,
-   * and drive live updates while open through this controller on the main thread
-   * (for example in `main-thread:onSnapStart`, `main-thread:onDragStart`, or
-   * `main-thread:onPositionChange`).
+   * Optional surface handle created by `useSheetSurface({ frame, cornerRadius })`
+   * for floating constraints, dynamic corner radii, and main-thread
+   * `SheetSurfaceController` updates. Omit `surface` for a standard attached panel
+   * with zero surface-frame bundle overhead.
    * @Android
    * @iOS
    * @Harmony
-   * @zh 挂载期间接收 SheetSurfaceController 的主线程引用。使用 `initialFrame` 和 `initialCornerRadius` 设置打开时的初始外观，打开期间的实时变更请在主线程通过该控制器驱动（例如在 `main-thread:onSnapStart`、`main-thread:onDragStart` 或 `main-thread:onPositionChange` 中）。
+   * @zh 由 `useSheetSurface({ frame, cornerRadius })` 创建的可选表面句柄，用于悬浮边距约束、动态圆角及主线程 `SheetSurfaceController` 控制。省略时使用默认贴边面板并完全按需裁剪相关包体积。
    */
-  'main-thread:surfaceControllerRef'?: MainThreadRef<
-    SheetSurfaceController | null
-  >
-  /**
-   * Controlled panel surface constraint frame inside the local viewport. Applied on
-   * mount, on each open, and reactively whenever its resolved values change while open
-   * (takes precedence over `initialFrame`). Use `initialFrame` with
-   * `main-thread:surfaceControllerRef` instead when driving per-frame animations.
-   * @zh 受控的局部视口面板约束框。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 `initialFrame`）。如需在主线程逐帧驱动动画，请改用 `initialFrame` 配合 `main-thread:surfaceControllerRef`。
-   */
-  frame?: SheetSurfaceFrame
-  /**
-   * Controlled corner radii in logical pixels for the sheet's exposed corners.
-   * Applied on mount, on each open, and reactively whenever its resolved values change
-   * while open (takes precedence over `initialCornerRadius`). Use `initialCornerRadius`
-   * with `main-thread:surfaceControllerRef` instead when driving per-frame animations.
-   * @zh 受控的面板可见圆角半径（逻辑像素）。会在挂载、每次打开以及打开期间属性变化时响应更新（优先级高于 `initialCornerRadius`）。如需在主线程逐帧驱动动画，请改用 `initialCornerRadius` 配合 `main-thread:surfaceControllerRef`。
-   */
-  cornerRadius?: SheetCornerRadius
-  /**
-   * Opening panel surface constraint frame inside the local viewport (for
-   * example, `{ insets: { bottom: 8 } }` for a floating card gap, or
-   * `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }` for a
-   * centered floating card).
-   * Applied on mount and on each open, including with `forceMount`; updates while
-   * open take effect on the next open. Drive live changes while open through
-   * `main-thread:surfaceControllerRef`.
-   * @zh 打开时的面板在局部视口内的初始约束框（例如 `{ insets: { bottom: 8 } }` 或 `{ insets: { left: 16, right: 16, bottom: 8 }, maxWidth: 664 }`）。在挂载和每次打开时应用（包括 `forceMount`），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 `main-thread:surfaceControllerRef` 驱动。
-   */
-  initialFrame?: SheetSurfaceFrame
-  /**
-   * Opening corner radii in logical pixels for the sheet's exposed corners. A
-   * number applies to every exposed corner; supply an object for asymmetric
-   * corners. Applied on mount and on each open, including with `forceMount`;
-   * updates while open take effect on the next open. Drive live changes while
-   * open through `main-thread:surfaceControllerRef`. Zero explicitly makes a
-   * corner square, and omitted corners fall back to CSS (or square on clipped
-   * bottom corners).
-   * @zh 打开时的面板可见圆角初始半径（逻辑像素）。传数字作用于四角，传对象按角分别设置。在挂载和每次打开时应用（包括 `forceMount`），打开期间的变更将在下次打开时生效；打开期间的实时变化请通过 `main-thread:surfaceControllerRef` 驱动。传 0 显式设为直角，省略的角沿用 CSS（被裁剪的底角默认为直角）。
-   */
-  initialCornerRadius?: SheetCornerRadius
+  surface?: SheetSurfaceHandle
   /**
    * The transition configuration for the Sheet snap animation.
    * @zh Sheet 动画的过渡配置。
@@ -488,20 +493,35 @@ export interface SheetNestedScrollContentProps
   gestureRelations?: SheetGestureRelations
 }
 
-/** A body region that can stay inside the local Sheet viewport as the panel moves. */
+/**
+ * A body region that stays inside the local Sheet viewport safe-area boundaries
+ * as the panel moves, while keeping a constant view hierarchy so children never remount.
+ * @zh 在面板移动过程中保持在局部视口安全区边界内的内容区域，并保持固定节点层级以避免子组件重挂载。
+ */
 export interface SheetBodyProps extends ComponentBasicProps {
+  /**
+   * Body content.
+   * @zh 主体内容。
+   */
   children?: ReactNode
   /**
-   * Minimum distance from each supplied physical edge of the local viewport,
-   * in logical pixels. Place the body in the Sheet flex content layout, alongside
-   * any handle that should travel with the panel. Supply at most one body per
-   * SheetContent or SheetNestedScrollContent. Bottom sheets with a `fit` snap
-   * measure the body at its available width. Bottom sheets keep the body's
-   * layout stable during a drag and clip to the visible area. Use intrinsically
-   * sized body content for `fit`. Other sheet sides support viewport insets
-   * with explicit snaps.
+   * Minimum distance from each supplied edge of the local viewport in logical pixels
+   * (`top`, `right`, `bottom`, `left`, plus logical `start`/`end` resolved with `enableRTL`).
+   * Place `SheetBody` inside `SheetContent` or `SheetNestedScrollContent` alongside any
+   * `SheetHandle` that should continue moving with the panel. Multiple `SheetBody` regions
+   * can be mounted independently. Clamping uses hardware `overflow: hidden` + `transform`
+   * with zero layout writes during steady drags across all four sides (including `'fit'`).
+   * @zh 距离局部视口各边的最小安全边距（逻辑像素，支持 `top`、`right`、`bottom`、`left` 及跟随 `enableRTL` 的 `start`、`end`）。可将 `SheetBody` 与跟随面板移动的 `SheetHandle` 并列放入 `SheetContent` 或 `SheetNestedScrollContent`，支持挂载多个独立的 `SheetBody`。拖拽期间通过 `overflow: hidden` 与 `transform` 裁剪，零布局重排。
    */
   viewportInsets?: SheetViewportInsets
+  /**
+   * Native view properties applied to the inner content node alongside `className` and `style`.
+   * @zh 作用于内层内容容器（与 `className` 和 `style` 同一节点）的原生 view 属性。
+   * @Android
+   * @iOS
+   * @Harmony
+   */
+  bodyViewProps?: ViewProps
 }
 
 /**

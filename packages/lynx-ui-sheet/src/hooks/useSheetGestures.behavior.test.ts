@@ -1110,4 +1110,40 @@ describe('Sheet pan resistance directions', () => {
       expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
     },
   )
+
+  it('fires onDragStartMT once per physical gesture across rebases and same-touch scroll handoff reversals', () => {
+    const onDragRebaseMT = vi.fn()
+    const scrollState = {
+      manager: makeManager(),
+      consuming: false,
+      atStart: true,
+      atEnd: false,
+    }
+    const { gesture, motion, options } = makePan([450, 900], {
+      activeScrollMTRef: { current: scrollState },
+      onDragRebaseMT,
+    })
+    const manager = makeManager()
+    motion.set(890)
+    gesture.callbacks.begin(event(500), manager)
+    // 1. Expand Sheet to max (900): fires onDragStartMT once.
+    gesture.callbacks.update(event(490), manager)
+    expect(motion.get()).toBe(900)
+    expect(options.onDragStartMT).toHaveBeenCalledTimes(1)
+    // 2. Further upward movement hands off to scroll content.
+    gesture.callbacks.update(event(470), manager)
+    expect(scrollState.consuming).toBe(true)
+    // 3. Reverse downward while content is still atStart: Sheet re-acquires drag without duplicate onDragStartMT.
+    gesture.callbacks.update(event(510), manager)
+    expect(motion.get()).toBe(860)
+    expect(options.onDragStartMT).toHaveBeenCalledTimes(1)
+    expect(onDragRebaseMT).toHaveBeenCalledTimes(1)
+    // 4. External rebase mid-drag also uses onDragRebaseMT rather than firing onDragStartMT again.
+    motion.set(700)
+    gesture.callbacks.update(event(520), manager)
+    expect(motion.get()).toBe(690)
+    expect(options.onDragStartMT).toHaveBeenCalledTimes(1)
+    expect(onDragRebaseMT).toHaveBeenCalledTimes(2)
+    gesture.callbacks.up(event(520), manager)
+  })
 })

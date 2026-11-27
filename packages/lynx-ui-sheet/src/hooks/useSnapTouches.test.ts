@@ -143,6 +143,7 @@ function rawDrag(initial = 900, overrides: Partial<SnapTouchOptions> = {}) {
     getResolvedSnapOffsets: () => [450, 900],
     getResolvedSnapPointValues: () => [450, 900],
     onDragStartMT: vi.fn(),
+    onDragRebaseMT: vi.fn(),
     onDragEndSnapMT: vi.fn(),
     onDragEndCloseMT: vi.fn(),
     ...overrides,
@@ -192,7 +193,7 @@ describe('raw-touch Sheet resistance', () => {
     expect(getPosition()).toBeLessThan(910)
   })
 
-  it('rebases after an imperative position change during the touch', () => {
+  it('rebases after an imperative position change during the touch without re-firing onDragStartMT', () => {
     const { handlers, getPosition, setPosition, options } = rawDrag(800)
     handlers.handleTouchStartMT(touchAt(500))
     handlers.handleTouchMoveMT(touchAt(480))
@@ -200,7 +201,8 @@ describe('raw-touch Sheet resistance', () => {
     setPosition(600)
     handlers.handleTouchMoveMT(touchAt(470))
     expect(getPosition()).toBe(610)
-    expect(options.onDragStartMT).toHaveBeenCalledTimes(2)
+    expect(options.onDragStartMT).toHaveBeenCalledTimes(1)
+    expect(options.onDragRebaseMT).toHaveBeenCalledTimes(1)
   })
 
   it.each(

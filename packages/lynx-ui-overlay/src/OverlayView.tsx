@@ -23,6 +23,7 @@ export const OverlayView = (props: OverlayViewProps) => {
     overlayViewProps,
   } = props
   const containerRef = useRef<NodesRef>(null)
+  // @ts-expect-error 'event-through' only works on overlay
   const { 'event-through': eventThrough = true, ...restOverlayProps } =
     overlayViewProps ?? {}
   const [overlayViewId, _] = useState<string>(
