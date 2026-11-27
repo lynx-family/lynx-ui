@@ -136,7 +136,12 @@ export function useSnap({
   const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const footerOffsetMTRef = useMainThreadRef<number | null>(null)
   const surfaceLifecycleMTRef = useMainThreadRef<
-    { open: () => void, drag: () => void, settle: () => void } | null
+    {
+      open: (entryTargetSize?: number) => void
+      setEntryTarget: (entryTargetSize: number) => void
+      drag: () => void
+      settle: () => void
+    } | null
   >(null)
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const fitMeasuredMTRef = useMainThreadRef(false)
@@ -438,10 +443,11 @@ export function useSnap({
       onSnapChangeMT,
       onSnapStartMT,
       onDragStartNotifyMT,
-      onOpeningMT: () => {
+      onOpeningMT: (entryTargetSize?: number) => {
         'main thread'
         closedBeforeOpenMTRef.current = false
         openingBottomMTRef.current = propBottom
+        let resolvedEntryTarget = entryTargetSize
         if (hasFitSnapPoint && fitMeasuredMTRef.current) {
           const { maxFit, nextValues, nextOffsets } = resolveFitOffsetsMT(
             bodySizeMTRef.current,
@@ -450,8 +456,16 @@ export function useSnap({
           sheetSizeMTRef.current = maxFit
           resolvedSnapPointMTRef.current = nextValues
           resolvedSnapOffsetsMTRef.current = nextOffsets
+          if (resolvedEntryTarget === undefined) {
+            const initTarget = getTargetForSnap(initialSnap)
+            if (initTarget >= 0) resolvedEntryTarget = initTarget
+          }
         }
-        surfaceLifecycleMTRef.current?.open()
+        surfaceLifecycleMTRef.current?.open(resolvedEntryTarget)
+      },
+      onEntryTargetMT: (entryTargetSize: number) => {
+        'main thread'
+        surfaceLifecycleMTRef.current?.setEntryTarget(entryTargetSize)
       },
       onDraggingMT: () => {
         'main thread'

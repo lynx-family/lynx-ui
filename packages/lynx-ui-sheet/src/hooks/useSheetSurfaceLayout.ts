@@ -54,7 +54,12 @@ interface SheetSurfaceLayoutOptions {
   initialSize: (index: number) => number
   initialSnap: number
   surfaceLifecycleMTRef?: MainThreadRef<
-    { open: () => void, drag: () => void, settle: () => void } | null
+    {
+      open: (entryTargetSize?: number) => void
+      setEntryTarget: (entryTargetSize: number) => void
+      drag: () => void
+      settle: () => void
+    } | null
   >
   onSurfaceReadyMT?: () => void
   onMotionValueChangeMT?: (value: number) => void
@@ -346,12 +351,18 @@ export function useSheetSurfaceLayout({
     }
   }
 
-  function openSurfaceMT() {
+  function openSurfaceMT(entryTargetSize?: number) {
     'main thread'
     const ops = surfaceOpsMTRef.current
     ops?.bindPosition(true)
-    pluginMTRef?.current?.onOpen()
+    pluginMTRef?.current?.onOpen(entryTargetSize)
     ops?.updateSurface()
+  }
+
+  function setEntryTargetSurfaceMT(entryTargetSize: number) {
+    'main thread'
+    pluginMTRef?.current?.onEntryTarget(entryTargetSize)
+    surfaceOpsMTRef.current?.updateSurface()
   }
 
   function dragSurfaceMT() {
@@ -365,6 +376,7 @@ export function useSheetSurfaceLayout({
     if (surfaceLifecycleMTRef) {
       surfaceLifecycleMTRef.current = {
         open: openSurfaceMT,
+        setEntryTarget: setEntryTargetSurfaceMT,
         drag: dragSurfaceMT,
         settle: settleSurfaceMT,
       }

@@ -915,8 +915,20 @@ export function useSheetBodyInsets({
     runOnMainThread(() => {
       'main thread'
       const body = bodyMTRef.current
-      if (!intrinsic && body.reservedSize > 0) {
-        body.reservedSize = 0
+      if (!intrinsic) {
+        if (body.reservedSize > 0) {
+          body.reservedSize = 0
+        }
+        const wrapper = body.intrinsicWrapper ?? body.element
+        if (wrapper && body.appliedIntrinsicBounds !== '/') {
+          body.appliedIntrinsicBounds = '/'
+          setElementStylesMT(
+            wrapper,
+            horizontal
+              ? { minWidth: null, maxWidth: null }
+              : { minHeight: null, maxHeight: null },
+          )
+        }
       }
       if (body.element || body.slot || body.clip) {
         ensureSubscribedMT()

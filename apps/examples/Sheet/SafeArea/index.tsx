@@ -51,6 +51,8 @@ function App() {
   const [show, setShow] = useState(true)
   const progress = useMotionValueRef(0)
   const fullscreenTarget = useMainThreadRef(false)
+  const presenceState = useMainThreadRef<SheetPresenceState>('entered')
+  const resurrectCandidate = useMainThreadRef(false)
 
   function applyAppearance(value: number, animating = false) {
     'main thread'
@@ -84,22 +86,43 @@ function App() {
 
   function onPresenceChange(state: SheetPresenceState) {
     'main thread'
+    const previous = presenceState.current
+    presenceState.current = state
     if (state === 'entering') {
+      progress.current.stop()
+      if (previous === 'exiting') {
+        resurrectCandidate.current = true
+        requestAnimationFrame(() => {
+          'main thread'
+          if (!resurrectCandidate.current) return
+          resurrectCandidate.current = false
+          fullscreenTarget.current = false
+          progress.current.jump(0)
+          applyAppearance(0)
+        })
+        return
+      }
+      resurrectCandidate.current = false
       fullscreenTarget.current = false
-      progress.current.stop()
       progress.current.jump(0)
-    } else if (state === 'exiting') {
-      progress.current.stop()
+      applyAppearance(0)
+    } else {
+      resurrectCandidate.current = false
+      if (state === 'exiting') {
+        progress.current.stop()
+      }
     }
   }
 
   function onDragStart() {
     'main thread'
+    resurrectCandidate.current = false
     progress.current.stop()
   }
 
   function onSnapStart(_index: number, value: number, animated: boolean) {
     'main thread'
+    resurrectCandidate.current = false
     const fullscreenHeight =
       surfaceControllerRef.current?.getViewportSize().height ?? 0
     const nextFullscreen = fullscreenHeight > 0 && value >= fullscreenHeight

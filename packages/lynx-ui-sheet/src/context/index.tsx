@@ -203,7 +203,8 @@ export interface InternalSheetSurfacePluginMT {
   onClipAttach: (isNewNode: boolean) => void
   onViewportAttach: () => void
   onHostPropsSync: () => void
-  onOpen: () => void
+  onOpen: (entryTargetSize?: number) => void
+  onEntryTarget: (entryTargetSize: number) => void
   onDrag: () => void
   onSettle: () => boolean
   updateVerticalSurface: (value: number, paintHeight: number) => void

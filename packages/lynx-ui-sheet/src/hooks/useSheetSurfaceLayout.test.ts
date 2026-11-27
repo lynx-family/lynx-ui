@@ -1600,4 +1600,140 @@ describe('Sheet surface geometry', () => {
       'inset(0px 0px 1260px 0px round 0px 0px 24px 24px)',
     )
   })
+
+  it('slides an intact expanded card when opening directly to a non-initial snap and cleans up fit bounds when switching away from fit', () => {
+    const {
+      position,
+      presence,
+      surfaceStyle,
+      surfaceSpy,
+      openSurfaceMT,
+    } = setup(
+      { insets: { bottom: 12 }, width: '50%' },
+      false,
+      'bottom',
+      800,
+      false,
+      24,
+    )
+    presence.current = PresenceState.Left
+    openSurfaceMT(800)
+    presence.current = PresenceState.Entering
+    position.current.set(100)
+    // Entry floor uses the 800px non-initial target (1500 - 800 = 700px clippedBottom), not 400px or 100px.
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 700px 0px round 0px 0px 24px 24px)',
+    )
+    surfaceSpy.mockClear()
+    for (const sample of [250, 500, 800]) {
+      position.current.set(sample)
+    }
+    const clipPathWrites = surfaceSpy.mock.calls.filter(
+      ([patch]) => 'clip-path' in patch,
+    )
+    expect(clipPathWrites).toHaveLength(0)
+
+    // Verify dynamic fit -> fixed snap switch clears minHeight/maxHeight on SheetBody wrapper,
+    // and multiple SheetBody subscribers clean up hub.subscribers on unmount.
+    hooks.slots = []
+    hooks.subscriptions = []
+    let fitMode = true
+    const wrapperStyle: Record<string, string | null> = {}
+    const slotEl = {
+      setStyleProperties: vi.fn(),
+    } as unknown as MainThread.Element
+    const clipEl = {
+      setStyleProperties: vi.fn(),
+    } as unknown as MainThread.Element
+    const bodyEl = {
+      setStyleProperties: (s: object) => Object.assign(wrapperStyle, s),
+    } as unknown as MainThread.Element
+    const secondBodyEl = {
+      setStyleProperties: vi.fn(),
+    } as unknown as MainThread.Element
+    const pos = { current: createMotionValue(400) }
+    const pres = { current: PresenceState.Entered }
+    const sizeRef = { current: 800 }
+
+    function renderDynamic() {
+      hooks.cursor = 0
+      hooks.subscriptionCursor = 0
+      hooks.effects = []
+      // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+      const layout = useSheetSurfaceLayout({
+        position: pos,
+        presence: pres,
+        resolvedSide: 'bottom',
+        enableRTL: false,
+        screenHeight: 1000,
+        screenWidth: 1000,
+        allowOverDrag: false,
+        sheetSizeMTRef: sizeRef,
+        maxSnapSize: fitMode ? 0 : 800,
+        hasFitSnapPoint: fitMode,
+        fitMinSize: fitMode ? 200 : undefined,
+        fitMaxSize: fitMode ? 500 : undefined,
+        initialSize: () => 400,
+        initialSnap: 0,
+      })
+      // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+      const firstBody = useSheetBodyInsets({
+        resolvedSide: 'bottom',
+        enableRTL: false,
+        screenWidth: 1000,
+        screenHeight: 1000,
+        maxSnapSize: fitMode ? 0 : 800,
+        hasFitSnapPoint: fitMode,
+        fitMinSize: fitMode ? 200 : undefined,
+        fitMaxSize: fitMode ? 500 : undefined,
+        hubMTRef: layout.bodyContext.hubMTRef,
+      })
+      // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
+      const secondBody = useSheetBodyInsets({
+        resolvedSide: 'bottom',
+        enableRTL: false,
+        screenWidth: 1000,
+        screenHeight: 1000,
+        maxSnapSize: fitMode ? 0 : 800,
+        hasFitSnapPoint: fitMode,
+        hubMTRef: layout.bodyContext.hubMTRef,
+      })
+      for (const effect of hooks.effects) effect()
+      return { layout, firstBody, secondBody }
+    }
+
+    const firstPass = renderDynamic()
+    firstPass.firstBody.setBodySlotMTRef(slotEl)
+    firstPass.firstBody.setBodyClipMTRef(clipEl)
+    firstPass.firstBody.setBodyMTRef(bodyEl, { bottom: 34 })
+    firstPass.secondBody.setBodyMTRef(secondBodyEl, { top: 40 })
+    expect(firstPass.layout.bodyHubMTRef.current.subscribers).toHaveLength(2)
+    firstPass.layout.measureBodyParentMT({
+      left: 0,
+      top: 0,
+      width: 1000,
+      height: 0,
+    })
+    firstPass.firstBody.measureBodyMT({
+      left: 0,
+      top: 0,
+      width: 1000,
+      height: 0,
+    })
+    firstPass.firstBody.measureIntrinsicBodyMT({ width: 1000, height: 120 })
+    expect(wrapperStyle.minHeight).toBe('166px')
+    expect(wrapperStyle.maxHeight).toBe('466px')
+
+    fitMode = false
+    const secondPass = renderDynamic()
+    expect(wrapperStyle.minHeight).toBeNull()
+    expect(wrapperStyle.maxHeight).toBeNull()
+
+    // Unmounting both SheetBody instances removes all subscribers cleanly.
+    secondPass.firstBody.setBodySlotMTRef(null)
+    secondPass.firstBody.setBodyClipMTRef(null)
+    secondPass.firstBody.setBodyMTRef(null, undefined)
+    secondPass.secondBody.setBodyMTRef(null, undefined)
+    expect(secondPass.layout.bodyHubMTRef.current.subscribers).toHaveLength(0)
+  })
 })

@@ -974,9 +974,199 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
       expect(insetMatchDown).not.toBeNull()
       // Visible height must shrink below 45% (383.4px) so bottom stays anchored at 8px above screen bottom.
       expect(Number(insetMatchDown![1])).toBeGreaterThan(895)
+      touchRender.unmount()
+      vi.clearAllTimers()
     } finally {
-      env.backgroundThread.globalThis.SystemInfo = savedBgSystemInfo
-      env.mainThread.globalThis.SystemInfo = savedMainSystemInfo
+      if (savedBgSystemInfo === undefined) {
+        Reflect.deleteProperty(env.backgroundThread.globalThis, 'SystemInfo')
+      } else {
+        env.backgroundThread.globalThis.SystemInfo = savedBgSystemInfo
+      }
+      if (savedMainSystemInfo === undefined) {
+        Reflect.deleteProperty(env.mainThread.globalThis, 'SystemInfo')
+      } else {
+        env.mainThread.globalThis.SystemInfo = savedMainSystemInfo
+      }
     }
+  })
+
+  it('survives mid-entry drag to fullscreen, mid-exit resurrection without width snap, and direct expand() from closed', async () => {
+    const sheetRef = createRef<SheetRootRef>()
+    let readLogMT: (() => string[]) | undefined
+
+    function StressHarness() {
+      const [show, setShow] = useState(true)
+      const surface = useSheetSurface({
+        cornerRadius: 24,
+        frame: { insets: { bottom: 8 }, width: '50%' },
+      })
+      const surfaceControllerRef = surface.controllerRef
+      const logMTRef = useMainThreadRef<string[]>([])
+      const fullscreenMTRef = useMainThreadRef(false)
+      const presenceMTRef = useMainThreadRef<SheetPresenceState>('entered')
+      const resurrectCandidateMTRef = useMainThreadRef(false)
+
+      readLogMT = () => {
+        'main thread'
+        return logMTRef.current.slice()
+      }
+
+      function applyAppearanceMT(fullscreen: boolean) {
+        'main thread'
+        surfaceControllerRef.current?.setFrame(
+          fullscreen
+            ? { insets: { bottom: 0 } }
+            : { insets: { bottom: 8 }, width: '50%' },
+        )
+        surfaceControllerRef.current?.setCornerRadius(fullscreen ? 0 : 24)
+      }
+
+      function onPresenceChangeMT(state: SheetPresenceState) {
+        'main thread'
+        const prev = presenceMTRef.current
+        presenceMTRef.current = state
+        logMTRef.current.push(`presence:${state}`)
+        if (state === 'entering') {
+          if (prev === 'exiting') {
+            resurrectCandidateMTRef.current = true
+            requestAnimationFrame(() => {
+              'main thread'
+              if (!resurrectCandidateMTRef.current) return
+              resurrectCandidateMTRef.current = false
+              fullscreenMTRef.current = false
+              applyAppearanceMT(false)
+            })
+            return
+          }
+          resurrectCandidateMTRef.current = false
+          fullscreenMTRef.current = false
+          applyAppearanceMT(false)
+        } else {
+          resurrectCandidateMTRef.current = false
+        }
+      }
+
+      function onDragStartMT() {
+        'main thread'
+        resurrectCandidateMTRef.current = false
+        logMTRef.current.push('dragStart')
+      }
+
+      function onSnapStartMT(index: number, value: number) {
+        'main thread'
+        resurrectCandidateMTRef.current = false
+        const fullscreen = value >= 800
+        fullscreenMTRef.current = fullscreen
+        logMTRef.current.push(`snapStart:${index}:${value}`)
+        applyAppearanceMT(fullscreen)
+      }
+
+      return (
+        <SheetRoot
+          ref={sheetRef}
+          show={show}
+          onShowChange={setShow}
+          screenWidth={400}
+          screenHeight={800}
+          snapPoints={[360, 800]}
+          main-thread:onPresenceChange={onPresenceChangeMT}
+          main-thread:onDragStart={onDragStartMT}
+          main-thread:onSnapStart={onSnapStartMT}
+        >
+          <SheetView>
+            <SheetPositioner width={400} height={800}>
+              <SheetBackdrop />
+              <SheetContent
+                surface={surface}
+                surfaceViewProps={{ id: 'stress-painted' }}
+                enterAnimation={{ type: 'tween', duration: 600 }}
+                exitAnimation={{ type: 'tween', duration: 600 }}
+                snapAnimation={{ type: 'tween', duration: 300 }}
+              >
+                <SheetBody viewportInsets={{ top: 48, right: 60 }}>
+                  <text>Header body</text>
+                </SheetBody>
+                <SheetBody viewportInsets={{ bottom: 24, left: 20 }}>
+                  <text>Content body</text>
+                </SheetBody>
+              </SheetContent>
+            </SheetPositioner>
+          </SheetView>
+        </SheetRoot>
+      )
+    }
+
+    const { container } = render(<StressHarness />)
+    await act(async () => {
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(200)
+    })
+
+    const painted = container.querySelector('#stress-painted')!
+    // 1. Mid-entry drag UP to 800px fullscreen across 16ms frames: single dragStart, snaps to fullscreen (width 100%, radius 0).
+    fireEvent.touchstart(painted, { detail: { x: 200, y: 700 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(16)
+    })
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 680 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(16)
+    })
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 120 } })
+    fireEvent.touchend(painted, { detail: { x: 200, y: 120 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500)
+    })
+    expect(painted.getAttribute('style')).toContain('width: 100%')
+    expect(painted.getAttribute('style')).toContain(
+      'border-top-left-radius: 0px',
+    )
+
+    // 2. Drag down from fullscreen into dismiss zone (< 360 - 120 = 240px) and release -> Leaving!
+    fireEvent.touchstart(painted, { detail: { x: 200, y: 100 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(16)
+    })
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 120 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(16)
+    })
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 740 } })
+    fireEvent.touchend(painted, { detail: { x: 200, y: 740 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(32)
+    })
+
+    // 3. Catch mid-exit (resurrectMT: Leaving -> Entering): must NOT snap fullscreen width back to 50% on touch-down!
+    fireEvent.touchstart(painted, { detail: { x: 200, y: 650 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(16)
+    })
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 620 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(16)
+    })
+    expect(painted.getAttribute('style')).toContain('width: 100%')
+
+    // Release gently near 360px (with settle pause so fling velocity decays): onSnapStart(0) transitions back to 50% width (200px) & 24px corners!
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 470 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(80)
+    })
+    fireEvent.touchmove(painted, { detail: { x: 200, y: 469 } })
+    fireEvent.touchend(painted, { detail: { x: 200, y: 469 } })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500)
+    })
+    expect(painted.getAttribute('style')).toContain('width: 200px')
+    expect(painted.getAttribute('style')).toContain(
+      'border-top-left-radius: 24px',
+    )
+
+    const log = await runOnMainThread(readLogMT!)()
+    // Exactly 3 distinct drag gestures -> exactly 3 dragStart callbacks!
+    expect(log.filter(item => item === 'dragStart')).toHaveLength(3)
+    expect(log).toContain('snapStart:1:800')
+    expect(log).toContain('snapStart:0:360')
   })
 })

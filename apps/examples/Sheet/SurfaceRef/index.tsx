@@ -77,7 +77,13 @@ function App() {
     'main thread'
     const next = size >= fullscreenHeight ? 1 : 0
     const previous = target.current
-    if (previous.value === next && previous.animated === animated) return
+    if (
+      previous.value === next
+      && previous.animated === animated
+      && (progress.current.isAnimating() || progress.current.get() === next)
+    ) {
+      return
+    }
     target.current = { value: next, animated }
     progress.current.stop()
     if (animated) {

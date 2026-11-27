@@ -35,7 +35,8 @@ export interface SheetControllerAnimationDeps {
   onSnapChangeMT: (index: number, value: number) => void
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDragStartNotifyMT?: SheetRootProps['main-thread:onDragStart']
-  onOpeningMT?: () => void
+  onOpeningMT?: (entryTargetSize?: number) => void
+  onEntryTargetMT?: (entryTargetSize: number) => void
   onDraggingMT?: () => void
   onClosedBeforeEntryMT?: () => void
   onSettledMT?: () => void
@@ -75,6 +76,7 @@ export function useSheetController(
     onSnapStartMT,
     onDragStartNotifyMT,
     onOpeningMT,
+    onEntryTargetMT,
     onDraggingMT,
     onClosedBeforeEntryMT,
     onSettledMT,
@@ -107,19 +109,20 @@ export function useSheetController(
     {
       index: number
       isEntry: boolean
+      fromClosed?: boolean
       animate?: boolean
       animationConfig?: SheetTransition
     } | null
   >(null)
   const activeSnapMTRef = useMainThreadRef<number | null>(null)
 
-  function beginOpeningMT() {
+  function beginOpeningMT(entryTargetSize?: number) {
     'main thread'
     if (
       presenceStateMTRef.current === PresenceState.Left
       || presenceStateMTRef.current === PresenceState.Leaving
     ) {
-      onOpeningMT?.()
+      onOpeningMT?.(entryTargetSize)
     }
     enter()
   }
@@ -150,17 +153,19 @@ export function useSheetController(
       animate?: boolean
       animationConfig?: SheetTransition
       isEntry?: boolean
+      fromClosed?: boolean
     },
   ) {
     'main thread'
     const wasClosingOrClosed = presenceStateMTRef.current === PresenceState.Left
       || presenceStateMTRef.current === PresenceState.Leaving
-    if (wasClosingOrClosed) {
-      onOpeningMT?.()
-      enter()
-    }
+    const fromClosed = opts?.fromClosed === true || wasClosingOrClosed
     const target = getTargetForSnap(index)
     const values = getResolvedSnapPointValues()
+    if (wasClosingOrClosed) {
+      onOpeningMT?.(target >= 0 ? target : undefined)
+      enter()
+    }
 
     // If target is -1, snap point not yet resolved (e.g., 'fit')
     // Queue for later when layout completes
@@ -168,11 +173,16 @@ export function useSheetController(
       pendingSnapMTRef.current = {
         index,
         isEntry: opts?.isEntry === true
-          || (wasClosingOrClosed && index === initialSnap),
+          || (fromClosed && index === initialSnap),
+        fromClosed,
         animate: opts?.animate,
         animationConfig: opts?.animationConfig,
       }
       return
+    }
+
+    if (fromClosed && !wasClosingOrClosed) {
+      onEntryTargetMT?.(target)
     }
 
     stopAnimationMT()
@@ -183,10 +193,12 @@ export function useSheetController(
     // Entered, and an imperative snap from closed to a non-initial snap index
     // must notify onSnapStartMT so surface transitions run immediately.
     const isInitialEntry = opts?.isEntry === true
-      || (wasClosingOrClosed && clampedIndex === initialSnap)
+      || (fromClosed && clampedIndex === initialSnap)
     activeSnapMTRef.current = clampedIndex
-    if (!isInitialEntry) {
+    if (!fromClosed && !isInitialEntry) {
       onDraggingMT?.()
+    }
+    if (!isInitialEntry) {
       onSnapStartMT?.(
         clampedIndex,
         values[clampedIndex],
@@ -231,11 +243,13 @@ export function useSheetController(
       return
     }
 
-    beginOpeningMT()
+    const initialTarget = getTargetForSnap(initialSnap)
+    beginOpeningMT(initialTarget >= 0 ? initialTarget : undefined)
     snapToMT(initialSnap, {
       animate: opts?.animate,
       animationConfig: opts?.animationConfig,
       isEntry: true,
+      fromClosed: true,
     })
   }
 
@@ -316,6 +330,7 @@ export function useSheetController(
     pendingSnapMTRef.current = null
     snapToMT(pending.index, {
       isEntry: pending.isEntry,
+      fromClosed: pending.fromClosed,
       animate: pending.animate,
       animationConfig: pending.animationConfig,
     })

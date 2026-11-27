@@ -169,6 +169,7 @@ export function useSheetSurface(
     hasFrameOverride: false,
     hasRadiusOverride: false,
     entrySliding: true,
+    entryTargetSize: null as number | null,
     lastPresence: null as PresenceState | null,
     settledBottom: propBottom,
     bottomUpdatePending: false,
@@ -290,6 +291,7 @@ export function useSheetSurface(
     const host = hostRefMTRef.current?.current
     const geo = geometryMTRef.current
     geo.entrySliding = false
+    geo.entryTargetSize = null
     if (
       host?.resolvedSide !== 'bottom'
       || geo.bottomUpdatePending
@@ -441,14 +443,22 @@ export function useSheetSurface(
     const geo = geometryMTRef.current
     const state = host.presence.current
     if (state !== geo.lastPresence) {
-      geo.entrySliding = state === PresenceState.Entering
+      if (state === PresenceState.Entering) {
+        geo.entrySliding = true
+      } else if (
+        geo.lastPresence !== PresenceState.Entering
+        || state === PresenceState.Entered
+      ) {
+        geo.entrySliding = false
+      }
       geo.lastPresence = state
     }
     const entering = geo.entrySliding && state === PresenceState.Entering
     const leaving = state === PresenceState.Leaving
       || state === PresenceState.Left
+    const entryFloor = geo.entryTargetSize ?? host.initialSize(host.initialSnap)
     const height = entering
-      ? Math.max(value, host.initialSize(host.initialSnap), 0)
+      ? Math.max(value, entryFloor, 0)
       : (leaving ? Math.max(panelHeightMTRef.current, value) : value)
     panelHeightMTRef.current = height
 
@@ -657,7 +667,7 @@ export function useSheetSurface(
     internalOpsMTRef.current?.updateCorners(inlineChanged)
   }
 
-  function onOpenMT() {
+  function onOpenMT(entryTargetSize?: number) {
     'main thread'
     const host = getHostMT()
     const base = baseGeometryMTRef.current
@@ -667,6 +677,9 @@ export function useSheetSurface(
     geo.hasFrameOverride = false
     geo.hasRadiusOverride = false
     geo.entrySliding = true
+    geo.entryTargetSize = entryTargetSize !== undefined && entryTargetSize >= 0
+      ? entryTargetSize
+      : null
     geo.lastPresence = PresenceState.Entering
     geo.right = base.right
     geo.bottom = base.bottom
@@ -691,11 +704,17 @@ export function useSheetSurface(
     internalOpsMTRef.current?.updateCorners()
   }
 
+  function onEntryTargetMT(entryTargetSize: number) {
+    'main thread'
+    geometryMTRef.current.entryTargetSize = entryTargetSize
+  }
+
   function onDragMT() {
     'main thread'
     const host = getHostMT()
     const geo = geometryMTRef.current
     geo.entrySliding = false
+    geo.entryTargetSize = null
     geo.lastPresence = host?.presence.current ?? null
     if (host?.resolvedSide === 'bottom' && !geo.bottomUpdatePending) {
       geo.settledBottom = geo.bottom
@@ -725,6 +744,7 @@ export function useSheetSurface(
       onViewportAttach: onViewportAttachMT,
       onHostPropsSync: onHostPropsSyncMT,
       onOpen: onOpenMT,
+      onEntryTarget: onEntryTargetMT,
       onDrag: onDragMT,
       onSettle: settleSurfaceMT,
       updateVerticalSurface: updateVerticalSurfaceMT,
