@@ -927,6 +927,53 @@ describe('Sheet real-device async IPC & multi-frame layout timing', () => {
         await vi.advanceTimersByTimeAsync(1500)
       })
       expect(container.querySelector('#safe-area-painted')).toBeNull()
+
+      // 5. Reopen a rounded floating sheet and immediately drag UP & DOWN at t=400ms
+      // (while the 1500ms entry spring is still in PresenceState.Entering): panel bottom
+      // must stay locked at 852 - 8 = 844px instead of moving with the drag!
+      function TouchSafeAreaHarness() {
+        const surface = useSheetSurface({
+          cornerRadius: 24,
+          frame: { insets: { bottom: 8 }, width: '50%' },
+        })
+        return (
+          <SheetRoot defaultShow={true} snapPoints={['45%', '100%']}>
+            <SheetView>
+              <SheetContent
+                surface={surface}
+                surfaceViewProps={{ id: 'touch-floating-painted' }}
+              >
+                {() => <text>Reader</text>}
+              </SheetContent>
+            </SheetView>
+          </SheetRoot>
+        )
+      }
+      const touchRender = render(<TouchSafeAreaHarness />)
+      await act(async () => {
+        await Promise.resolve()
+        await vi.advanceTimersByTimeAsync(400)
+      })
+      const reopenedPainted = touchRender.container.querySelector(
+        '#touch-floating-painted',
+      )!
+      fireEvent.touchstart(reopenedPainted, { detail: { x: 196, y: 500 } })
+      fireEvent.touchmove(reopenedPainted, { detail: { x: 196, y: 480 } })
+      fireEvent.touchmove(reopenedPainted, { detail: { x: 196, y: 200 } })
+      const maskAfterDragUp = reopenedPainted.getAttribute('style') ?? ''
+      const insetMatchUp = /inset\(0px 0px ([\d.]+)px 0px/.exec(maskAfterDragUp)
+      expect(insetMatchUp).not.toBeNull()
+      // Visible height must grow well beyond 45% (383.4px), so clippedBottom < 1278 - 600 = 678px.
+      expect(Number(insetMatchUp![1])).toBeLessThan(678)
+
+      fireEvent.touchmove(reopenedPainted, { detail: { x: 196, y: 650 } })
+      const maskAfterDragDown = reopenedPainted.getAttribute('style') ?? ''
+      const insetMatchDown = /inset\(0px 0px ([\d.]+)px 0px/.exec(
+        maskAfterDragDown,
+      )
+      expect(insetMatchDown).not.toBeNull()
+      // Visible height must shrink below 45% (383.4px) so bottom stays anchored at 8px above screen bottom.
+      expect(Number(insetMatchDown![1])).toBeGreaterThan(895)
     } finally {
       env.backgroundThread.globalThis.SystemInfo = savedBgSystemInfo
       env.mainThread.globalThis.SystemInfo = savedMainSystemInfo

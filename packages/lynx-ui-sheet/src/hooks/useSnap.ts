@@ -136,7 +136,7 @@ export function useSnap({
   const footerMTRef = useMainThreadRef<MainThread.Element | null>(null)
   const footerOffsetMTRef = useMainThreadRef<number | null>(null)
   const surfaceLifecycleMTRef = useMainThreadRef<
-    { open: () => void, settle: () => void } | null
+    { open: () => void, drag: () => void, settle: () => void } | null
   >(null)
   const fitSizeMTRef = useMainThreadRef<number>(0)
   const fitMeasuredMTRef = useMainThreadRef(false)
@@ -452,6 +452,10 @@ export function useSnap({
           resolvedSnapOffsetsMTRef.current = nextOffsets
         }
         surfaceLifecycleMTRef.current?.open()
+      },
+      onDraggingMT: () => {
+        'main thread'
+        surfaceLifecycleMTRef.current?.drag()
       },
       onClosedBeforeEntryMT: () => {
         'main thread'

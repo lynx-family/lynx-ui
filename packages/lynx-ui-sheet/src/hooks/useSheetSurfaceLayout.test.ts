@@ -1547,8 +1547,15 @@ describe('Sheet surface geometry', () => {
     expect(bodyStyle.right).toBe('0px')
   })
 
-  it('keeps rounded-bottom clip-path constant across spring overshoot during entering', () => {
-    const { position, presence, surfaceStyle, surfaceSpy } = setup(
+  it('keeps rounded-bottom clip-path constant while rising to initialSnap and keeps bottom anchored on overshoot or drag', () => {
+    const {
+      position,
+      presence,
+      surfaceStyle,
+      movingStyle,
+      surfaceSpy,
+      dragSurfaceMT,
+    } = setup(
       { insets: { bottom: 8 }, width: '50%' },
       false,
       'bottom',
@@ -1561,8 +1568,9 @@ describe('Sheet surface geometry', () => {
     const initialMask = surfaceStyle['clip-path']
     expect(initialMask).toContain('round 0px 0px 24px 24px')
 
+    // Zero clip-path writes across the entire 0 -> 400 entry travel.
     surfaceSpy.mockClear()
-    for (const sample of [260, 400, 408, 412, 405, 400]) {
+    for (const sample of [200, 280, 360, 400]) {
       position.current.set(sample)
     }
     const clipPathWrites = surfaceSpy.mock.calls.filter(
@@ -1570,5 +1578,26 @@ describe('Sheet surface geometry', () => {
     )
     expect(clipPathWrites).toHaveLength(0)
     expect(surfaceStyle['clip-path']).toBe(initialMask)
+
+    // Overshoot past initialSnap (412 > 400) keeps panel bottom anchored at 1000 - 8 = 992px.
+    position.current.set(412)
+    expect(movingStyle.transform).toBe('translate(0px, -412px)')
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 1088px 0px round 0px 0px 24px 24px)',
+    )
+
+    // Dragging while presence is still Entering (both up to 620 and down to 240)
+    // ends the entry slide and keeps the panel bottom locked at 992px (bottom: 8px).
+    dragSurfaceMT()
+    position.current.set(620)
+    expect(movingStyle.transform).toBe('translate(0px, -620px)')
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 880px 0px round 0px 0px 24px 24px)',
+    )
+    position.current.set(240)
+    expect(movingStyle.transform).toBe('translate(0px, -240px)')
+    expect(surfaceStyle['clip-path']).toBe(
+      'inset(0px 0px 1260px 0px round 0px 0px 24px 24px)',
+    )
   })
 })

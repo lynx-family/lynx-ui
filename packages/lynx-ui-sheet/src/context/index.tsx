@@ -204,6 +204,7 @@ export interface InternalSheetSurfacePluginMT {
   onViewportAttach: () => void
   onHostPropsSync: () => void
   onOpen: () => void
+  onDrag: () => void
   onSettle: () => boolean
   updateVerticalSurface: (value: number, paintHeight: number) => void
 }

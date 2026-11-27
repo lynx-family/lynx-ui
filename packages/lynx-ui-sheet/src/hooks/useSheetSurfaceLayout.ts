@@ -54,7 +54,7 @@ interface SheetSurfaceLayoutOptions {
   initialSize: (index: number) => number
   initialSnap: number
   surfaceLifecycleMTRef?: MainThreadRef<
-    { open: () => void, settle: () => void } | null
+    { open: () => void, drag: () => void, settle: () => void } | null
   >
   onSurfaceReadyMT?: () => void
   onMotionValueChangeMT?: (value: number) => void
@@ -354,11 +354,18 @@ export function useSheetSurfaceLayout({
     ops?.updateSurface()
   }
 
+  function dragSurfaceMT() {
+    'main thread'
+    pluginMTRef?.current?.onDrag()
+    surfaceOpsMTRef.current?.updateSurface()
+  }
+
   function registerSurfaceLifecycleMT() {
     'main thread'
     if (surfaceLifecycleMTRef) {
       surfaceLifecycleMTRef.current = {
         open: openSurfaceMT,
+        drag: dragSurfaceMT,
         settle: settleSurfaceMT,
       }
     }
@@ -612,6 +619,7 @@ export function useSheetSurfaceLayout({
     isSurfaceReadyMT,
     settleSurfaceMT,
     openSurfaceMT,
+    dragSurfaceMT,
     getViewportSizeMT,
     measureBodyParentMT,
     measureSurfaceMT,

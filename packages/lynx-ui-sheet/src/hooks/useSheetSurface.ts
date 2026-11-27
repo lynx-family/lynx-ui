@@ -168,6 +168,8 @@ export function useSheetSurface(
     radii: propRadii,
     hasFrameOverride: false,
     hasRadiusOverride: false,
+    entrySliding: true,
+    lastPresence: null as PresenceState | null,
     settledBottom: propBottom,
     bottomUpdatePending: false,
     animatingToken: 0,
@@ -286,13 +288,14 @@ export function useSheetSurface(
   function settleSurfaceMT() {
     'main thread'
     const host = hostRefMTRef.current?.current
+    const geo = geometryMTRef.current
+    geo.entrySliding = false
     if (
       host?.resolvedSide !== 'bottom'
-      || geometryMTRef.current.bottomUpdatePending
+      || geo.bottomUpdatePending
     ) {
       return false
     }
-    const geo = geometryMTRef.current
     const nextSettled = host.presence.current === PresenceState.Entered
       ? geo.bottom
       : 0
@@ -437,15 +440,15 @@ export function useSheetSurface(
     const screenHeight = host.viewportSizeMTRef.current.height
     const geo = geometryMTRef.current
     const state = host.presence.current
-    const entering = state === PresenceState.Entering
+    if (state !== geo.lastPresence) {
+      geo.entrySliding = state === PresenceState.Entering
+      geo.lastPresence = state
+    }
+    const entering = geo.entrySliding && state === PresenceState.Entering
     const leaving = state === PresenceState.Leaving
       || state === PresenceState.Left
-    const hasRoundedBottom = isBottom
-      && ((geo.radii[2] ?? 0) > 0 || (geo.radii[3] ?? 0) > 0)
     const height = entering
-      ? (hasRoundedBottom
-        ? Math.max(host.initialSize(host.initialSnap), 0)
-        : Math.max(value, host.initialSize(host.initialSnap), 0))
+      ? Math.max(value, host.initialSize(host.initialSnap), 0)
       : (leaving ? Math.max(panelHeightMTRef.current, value) : value)
     panelHeightMTRef.current = height
 
@@ -663,6 +666,8 @@ export function useSheetSurface(
     const geo = geometryMTRef.current
     geo.hasFrameOverride = false
     geo.hasRadiusOverride = false
+    geo.entrySliding = true
+    geo.lastPresence = PresenceState.Entering
     geo.right = base.right
     geo.bottom = base.bottom
     geo.left = base.left
@@ -684,6 +689,18 @@ export function useSheetSurface(
     }
     internalOpsMTRef.current?.applyHorizontal()
     internalOpsMTRef.current?.updateCorners()
+  }
+
+  function onDragMT() {
+    'main thread'
+    const host = getHostMT()
+    const geo = geometryMTRef.current
+    geo.entrySliding = false
+    geo.lastPresence = host?.presence.current ?? null
+    if (host?.resolvedSide === 'bottom' && !geo.bottomUpdatePending) {
+      geo.settledBottom = geo.bottom
+      host.bodyHubMTRef.current.settledBottom = geo.bottom
+    }
   }
 
   function attachHostMT(
@@ -708,6 +725,7 @@ export function useSheetSurface(
       onViewportAttach: onViewportAttachMT,
       onHostPropsSync: onHostPropsSyncMT,
       onOpen: onOpenMT,
+      onDrag: onDragMT,
       onSettle: settleSurfaceMT,
       updateVerticalSurface: updateVerticalSurfaceMT,
     }

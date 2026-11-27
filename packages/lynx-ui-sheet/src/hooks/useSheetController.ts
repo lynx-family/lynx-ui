@@ -36,6 +36,7 @@ export interface SheetControllerAnimationDeps {
   onSnapStartMT?: SheetRootProps['main-thread:onSnapStart']
   onDragStartNotifyMT?: SheetRootProps['main-thread:onDragStart']
   onOpeningMT?: () => void
+  onDraggingMT?: () => void
   onClosedBeforeEntryMT?: () => void
   onSettledMT?: () => void
   enterAnimation: SheetTransition
@@ -74,6 +75,7 @@ export function useSheetController(
     onSnapStartMT,
     onDragStartNotifyMT,
     onOpeningMT,
+    onDraggingMT,
     onClosedBeforeEntryMT,
     onSettledMT,
     enterAnimation,
@@ -183,8 +185,13 @@ export function useSheetController(
     const isInitialEntry = opts?.isEntry === true
       || (wasClosingOrClosed && clampedIndex === initialSnap)
     activeSnapMTRef.current = clampedIndex
-    if (!isInitialEntry && onSnapStartMT) {
-      onSnapStartMT(clampedIndex, values[clampedIndex], opts?.animate !== false)
+    if (!isInitialEntry) {
+      onDraggingMT?.()
+      onSnapStartMT?.(
+        clampedIndex,
+        values[clampedIndex],
+        opts?.animate !== false,
+      )
     }
 
     if (opts?.animate === false) {
@@ -326,6 +333,7 @@ export function useSheetController(
     } else {
       stopAnimationMT()
     }
+    onDraggingMT?.()
   }
 
   /**
