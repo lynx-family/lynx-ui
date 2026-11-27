@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { getArrowDimensions, resolveArrowSize } from '../src/arrowGeometry'
 import { arrow } from '../src/floating/arrow'
@@ -13,8 +13,6 @@ import type {
   Platform,
 } from '../src/floating/floatingTypes'
 import { offset } from '../src/floating/offset'
-
-vi.mock('@lynx-js/lynx-ui-common', () => ({ log: vi.fn() }))
 
 const placements: Placement[] = [
   'top',

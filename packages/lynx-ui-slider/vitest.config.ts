@@ -2,16 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { defineConfig } from 'vitest/config'
+import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-const config = defineConfig({
-  esbuild: {
-    jsx: 'automatic',
-    jsxImportSource: '@lynx-js/react',
-  },
-  test: {
-    name: 'lynx-ui-slider',
-  },
+export default vitestBaseConfig({
+  root: import.meta.dirname,
+  name: 'lynx-ui-slider',
 })
-
-export default config

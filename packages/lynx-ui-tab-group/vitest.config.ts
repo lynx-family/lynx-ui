@@ -2,11 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { defineConfig } from 'vitest/config'
+import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-export default defineConfig({
-  test: {
-    include: ['src/**/*.test.ts'],
-    name: 'lynx-ui-tab-group',
-  },
+export default vitestBaseConfig({
+  root: import.meta.dirname,
+  name: 'lynx-ui-tab-group',
 })

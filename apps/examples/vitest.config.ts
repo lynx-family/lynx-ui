@@ -2,14 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { defineConfig, mergeConfig } from 'vitest/config'
 import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-/**
- * Vitest Config Entry
- */
-export default defineConfig(
-  mergeConfig(vitestBaseConfig, {
-    test: {},
-  }),
-)
+export default vitestBaseConfig({
+  root: import.meta.dirname,
+  name: 'examples',
+  include: ['**/*.test.{ts,tsx}'],
+})

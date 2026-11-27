@@ -2,67 +2,88 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-// cspell:ignore catchmousedown catchmousemove catchmouseup jsxs unstub
+// cspell:ignore catchmousedown catchmousemove catchmouseup
 
-import { getRectByRef } from '@lynx-js/lynx-ui-common'
-import type { NodesRef } from '@lynx-js/types'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, render } from '@lynx-js/react/testing-library'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { SliderContextValue } from '../context'
+import { SliderTrack } from '../SliderTrack'
 import type { SliderRootProps } from '../types'
 
 import { SliderRoot } from './index'
 
-// Exercise the component's event lifecycle without modeling native rendering.
-vi.mock('@lynx-js/react', () => ({
-  memo: <T>(component: T) => component,
-  forwardRef: <T>(component: T) => component,
-  useRef: <T>(current: T) => ({ current }),
-  useState: <T>(initial: T) => [initial, vi.fn()],
-  useEffect: vi.fn(),
-  useImperativeHandle: vi.fn(),
-}))
-vi.mock('@lynx-js/react/jsx-runtime', () => ({
-  jsx: (type: unknown, props: unknown) => ({ type, props }),
-  jsxs: (type: unknown, props: unknown) => ({ type, props }),
-}))
-vi.mock('../context', () => ({ SliderContext: { Provider: 'provider' } }))
-vi.mock('@lynx-js/lynx-ui-common', () => ({ getRectByRef: vi.fn() }))
-
-interface TestTree {
-  props: {
-    value: SliderContextValue
-    children: { props: Record<string, unknown> }
-  }
+interface InvokeOptions {
+  method: string
+  params?: Record<string, unknown>
+  success?: (res: unknown) => void
+  fail?: (res: { code: number, data?: unknown }) => void
 }
 
+interface EventMappedElement extends Element {
+  eventMap?: Record<string, unknown>
+}
+
+const EVENT_TYPE_PREFIXES = [
+  ['global-bind', 'global-bindEvent'],
+  ['catch', 'catchEvent'],
+  ['bind', 'bindEvent'],
+] as const
+
+const invokeMock = vi.fn((options: InvokeOptions) => ({
+  exec: () => {
+    if (options.method === 'boundingClientRect') {
+      options.success?.({ left: 40, width: 560 })
+    }
+  },
+}))
+
+beforeEach(() => {
+  invokeMock.mockClear()
+  const prototype = Object.getPrototypeOf(
+    lynx.createSelectorQuery().selectUniqueID(0),
+  ) as { invoke: (options: InvokeOptions) => { exec: () => void } }
+  vi.spyOn(prototype, 'invoke').mockImplementation(invokeMock)
+})
+
 function setup(platform: string, options: Partial<SliderRootProps> = {}) {
-  vi.stubGlobal('SystemInfo', { platform })
-  vi.mocked(getRectByRef).mockResolvedValue({ left: 40, width: 560 })
+  SystemInfo.platform = platform as typeof SystemInfo.platform
   const onValueChange = vi.fn()
   const onValueCommit = vi.fn()
   const onDragging = vi.fn()
-  const tree = SliderRoot({
-    defaultValue: 0.3,
-    onValueChange,
-    onValueCommit,
-    onDragging,
-    ...options,
-  }) as unknown as TestTree
-  tree.props.value.trackRef.current = {} as NodesRef
-  const props = tree.props.children.props
-  const send = async (name: string, event: unknown = {}) => {
-    const handler = props[name] as ((event: unknown) => void) | undefined
-    handler?.(event)
-    await Promise.resolve()
-  }
-  return { props, send, onValueChange, onValueCommit, onDragging }
-}
+  const { container } = render(
+    <SliderRoot
+      defaultValue={0.3}
+      onValueChange={onValueChange}
+      onValueCommit={onValueCommit}
+      onDragging={onDragging}
+      {...options}
+    >
+      <SliderTrack />
+    </SliderRoot>,
+  )
+  const root = container.firstElementChild as HTMLElement & EventMappedElement
 
-afterEach(() => {
-  vi.unstubAllGlobals()
-  vi.clearAllMocks()
-})
+  const send = async (name: string, event: Record<string, unknown> = {}) => {
+    const matched = EVENT_TYPE_PREFIXES.find(([prefix]) =>
+      name.startsWith(prefix)
+    )
+    if (!matched) {
+      throw new Error(`Unsupported event name: ${name}`)
+    }
+    const [prefix, eventType] = matched
+    const eventName = name.slice(prefix.length) as keyof typeof fireEvent
+    const dispatch = fireEvent[eventName] as (
+      element: Element,
+      init?: Record<string, unknown>,
+    ) => boolean
+    await act(async () => {
+      dispatch(root, { eventType, ...event })
+      await Promise.resolve()
+    })
+  }
+
+  return { root, send, onValueChange, onValueCommit, onDragging }
+}
 
 describe('slider platform interactions', () => {
   it('tracks Web movement outside the root and commits only once', async () => {
@@ -105,11 +126,12 @@ describe('slider platform interactions', () => {
   )
 
   it('preserves Android touch coordinates, styles and subscriptions', async () => {
-    const style = { height: '36px' }
-    const slider = setup('Android', { style })
-    expect(slider.props.style).toBe(style)
+    const slider = setup('Android', { style: { height: '36px' } })
+    expect(slider.root.getAttribute('style')).toContain('height: 36px')
+    expect(slider.root.getAttribute('style')).not.toContain('user-select')
     for (const event of ['mousemove', 'touchmove', 'touchend', 'touchcancel']) {
-      expect(slider.props[`global-bind${event}`]).toBeUndefined()
+      expect(slider.root.eventMap?.[`global-bindEvent:${event}`])
+        .toBeUndefined()
     }
     await slider.send('catchtouchstart', { detail: { x: 320 }, clientX: 999 })
     expect(slider.onValueChange).toHaveBeenLastCalledWith(0.5, 'drag')
@@ -124,10 +146,9 @@ describe('slider platform interactions', () => {
       disabled: true,
       style: { touchAction: 'none' },
     })
-    expect(slider.props.style).toEqual({
-      touchAction: 'none',
-      userSelect: 'none',
-    })
+    expect(slider.root.style.touchAction).toBe('none')
+    expect(slider.root.style.userSelect).toBe('none')
+    expect(slider.root.classList.contains('ui-disabled')).toBe(true)
     await slider.send('catchmousedown', { x: 320 })
     await slider.send('global-bindmousemove', { x: 488 })
     await slider.send('global-bindmouseup')

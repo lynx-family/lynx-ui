@@ -2,25 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { fileURLToPath } from 'node:url'
+import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-import { vitestTestingLibraryPlugin } from '@lynx-js/react/testing-library/plugins'
-import { defineConfig, type UserConfig } from 'vitest/config'
-
-const config: UserConfig = defineConfig({
+export default vitestBaseConfig({
   root: import.meta.dirname,
-  plugins: [vitestTestingLibraryPlugin()],
-  resolve: {
-    alias: {
-      '@lynx-js/lynx-ui-common': fileURLToPath(
-        new URL('../lynx-ui-common/src/index.tsx', import.meta.url),
-      ),
-    },
-  },
-  test: {
-    include: ['__tests__/*.test.{ts,tsx}'],
-    name: 'lynx-ui-popover',
-  },
+  name: 'lynx-ui-popover',
 })
-
-export default config

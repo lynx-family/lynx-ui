@@ -2,7 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { describe, expect, it } from 'vitest'
+import { runOnMainThread } from '@lynx-js/react'
+
+import { renderHook } from '@lynx-js/react/testing-library'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
   getDefaultClaimedGestureAngles,
@@ -15,6 +18,10 @@ import {
   resolveSheetSide,
   toPxJS,
 } from './direction'
+
+beforeEach(() => {
+  renderHook(() => null)
+})
 
 describe('sheet side utils', () => {
   it('resolves logical sides from enableRTL', () => {
@@ -51,25 +58,25 @@ describe('sheet side utils', () => {
     ).toBe(360)
   })
 
-  it('reads fit layout from height for vertical sheets', () => {
-    expect(
-      getMainAxisLayoutSize('top', {
+  it('reads fit layout from height for vertical sheets', async () => {
+    await expect(
+      runOnMainThread(getMainAxisLayoutSize)('top', {
         detail: { height: 420, width: 260 },
       }),
-    ).toBe(420)
-    expect(
-      getMainAxisLayoutSize('bottom', {
+    ).resolves.toBe(420)
+    await expect(
+      runOnMainThread(getMainAxisLayoutSize)('bottom', {
         detail: { height: 420, width: 260 },
       }),
-    ).toBe(420)
+    ).resolves.toBe(420)
   })
 
-  it('reads fit layout from width for drawers', () => {
-    expect(
-      getMainAxisLayoutSize('left', {
+  it('reads fit layout from width for drawers', async () => {
+    await expect(
+      runOnMainThread(getMainAxisLayoutSize)('left', {
         detail: { height: 420, width: 260 },
       }),
-    ).toBe(260)
+    ).resolves.toBe(260)
   })
 
   it('uses the highest resolved snap point as the stable layout size', () => {
@@ -103,25 +110,31 @@ describe('sheet side utils', () => {
     expect(getDefaultRubberBand('right')).toBe(false)
   })
 
-  it('applies drag deltas with the correct sign', () => {
-    expect(getNextMainAxisOffset('top', 120, 30)).toBe(150)
-    expect(getNextMainAxisOffset('left', 120, 30)).toBe(150)
-    expect(getNextMainAxisOffset('right', 120, 30)).toBe(90)
-    expect(getNextMainAxisOffset('bottom', 120, 30)).toBe(90)
+  it('applies drag deltas with the correct sign', async () => {
+    await expect(runOnMainThread(getNextMainAxisOffset)('top', 120, 30))
+      .resolves.toBe(150)
+    await expect(runOnMainThread(getNextMainAxisOffset)('left', 120, 30))
+      .resolves.toBe(150)
+    await expect(runOnMainThread(getNextMainAxisOffset)('right', 120, 30))
+      .resolves.toBe(90)
+    await expect(runOnMainThread(getNextMainAxisOffset)('bottom', 120, 30))
+      .resolves.toBe(90)
   })
 
-  it('computes the expected transforms for each resolved side', () => {
-    expect(getSheetTransform('top', 120)).toBe(
+  it('computes the expected transforms for each resolved side', async () => {
+    await expect(runOnMainThread(getSheetTransform)('top', 120)).resolves.toBe(
       'translate(0px, 120px)',
     )
-    expect(getSheetTransform('bottom', 120)).toBe(
-      'translate(0px, -120px)',
-    )
-    expect(getSheetTransform('left', 120)).toBe(
+    await expect(runOnMainThread(getSheetTransform)('bottom', 120)).resolves
+      .toBe(
+        'translate(0px, -120px)',
+      )
+    await expect(runOnMainThread(getSheetTransform)('left', 120)).resolves.toBe(
       'translate(120px, 0px)',
     )
-    expect(getSheetTransform('right', 120)).toBe(
-      'translate(-120px, 0px)',
-    )
+    await expect(runOnMainThread(getSheetTransform)('right', 120)).resolves
+      .toBe(
+        'translate(-120px, 0px)',
+      )
   })
 })

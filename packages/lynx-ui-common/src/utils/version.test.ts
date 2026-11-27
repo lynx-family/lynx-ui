@@ -2,6 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+import '@lynx-js/react/testing-library'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
@@ -9,18 +10,6 @@ import {
   nativeLynxSDKVersionGreaterThan,
   nativeLynxSDKVersionLessThan,
 } from './version'
-
-function createMockSystemInfo(lynxSdkVersion: string): typeof SystemInfo {
-  return {
-    lynxSdkVersion,
-    osVersion: '1.0',
-    pixelHeight: 100,
-    pixelWidth: 100,
-    pixelRatio: 1,
-    platform: 'Android',
-    runtimeType: 'quickjs',
-  }
-}
 
 describe('version utils', () => {
   describe('lynxSDKVersionStringToNumber', () => {
@@ -47,52 +36,52 @@ describe('version utils', () => {
 
   describe('nativeLynxSDKVersionGreaterThan', () => {
     beforeEach(() => {
-      global.SystemInfo = createMockSystemInfo('1.2.3')
+      SystemInfo.lynxSdkVersion = '1.2.3'
     })
 
     it('should return true when native version is greater', () => {
-      global.SystemInfo = createMockSystemInfo('1.2.4')
+      SystemInfo.lynxSdkVersion = '1.2.4'
       expect(nativeLynxSDKVersionGreaterThan('1.2.3')).toBe(true)
     })
 
     it('should return false when native version is equal', () => {
-      global.SystemInfo = createMockSystemInfo('1.2.3')
+      SystemInfo.lynxSdkVersion = '1.2.3'
       expect(nativeLynxSDKVersionGreaterThan('1.2.3')).toBe(false)
     })
 
     it('should return false when native version is less', () => {
-      global.SystemInfo = createMockSystemInfo('1.2.2')
+      SystemInfo.lynxSdkVersion = '1.2.2'
       expect(nativeLynxSDKVersionGreaterThan('1.2.3')).toBe(false)
     })
   })
 
   describe('nativeLynxSDKVersionLessThan', () => {
     beforeEach(() => {
-      global.SystemInfo = createMockSystemInfo('1.2.3')
+      SystemInfo.lynxSdkVersion = '1.2.3'
     })
 
     it('should return true when native version is less', () => {
-      global.SystemInfo = createMockSystemInfo('1.2.2')
+      SystemInfo.lynxSdkVersion = '1.2.2'
       expect(nativeLynxSDKVersionLessThan('1.2.3')).toBe(true)
     })
 
     it('should return false when native version is equal', () => {
-      global.SystemInfo = createMockSystemInfo('1.2.3')
+      SystemInfo.lynxSdkVersion = '1.2.3'
       expect(nativeLynxSDKVersionLessThan('1.2.3')).toBe(false)
     })
 
     it('should return false when native version is greater', () => {
-      global.SystemInfo = createMockSystemInfo('1.2.4')
+      SystemInfo.lynxSdkVersion = '1.2.4'
       expect(nativeLynxSDKVersionLessThan('1.2.3')).toBe(false)
     })
 
     it('should handle major version differences', () => {
-      global.SystemInfo = createMockSystemInfo('1.0.0')
+      SystemInfo.lynxSdkVersion = '1.0.0'
       expect(nativeLynxSDKVersionLessThan('2.0.0')).toBe(true)
     })
 
     it('should handle minor version differences', () => {
-      global.SystemInfo = createMockSystemInfo('1.1.0')
+      SystemInfo.lynxSdkVersion = '1.1.0'
       expect(nativeLynxSDKVersionLessThan('1.2.0')).toBe(true)
     })
   })
