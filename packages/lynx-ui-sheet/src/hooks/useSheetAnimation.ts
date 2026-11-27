@@ -102,10 +102,25 @@ export function useSheetAnimation(
     animateToMT(animation.value, animation.complete, animation.config)
   }
 
+  function retargetAnimationMT(value: number, complete: () => void) {
+    'main thread'
+    const animation = animationMTRef.current
+    if (!animation) return false
+    if (animation.interrupted) {
+      animation.value = value
+      animation.complete = complete
+      animationMTRef.current = animation
+    } else {
+      animateToMT(value, complete, animation.config)
+    }
+    return true
+  }
+
   return {
     animateToMT,
     stopAnimationMT,
     interruptAnimationMT,
     resumeAnimationMT,
+    retargetAnimationMT,
   }
 }

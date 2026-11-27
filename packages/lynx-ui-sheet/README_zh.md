@@ -36,6 +36,8 @@ _（如有需要，也可以通过 `pnpm add @lynx-js/lynx-ui-sheet` 单独安�
 </SheetRoot>
 ```
 
+`SheetPositioner` 是可选的局部视口，可在 `SheetView` 内同时包裹背景遮罩和内容。
+
 ## 关于 @lynx-js/lynx-ui
 
 该包是 `@lynx-js/lynx-ui` 的一部分。`@lynx-js/lynx-ui` 是 Lynx 团队维护的无样式 UI 组件库，用于构建灵活、通用且高性能的 ReactLynx 组件。
