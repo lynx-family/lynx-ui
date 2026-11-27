@@ -24,6 +24,7 @@ vi.mock('@lynx-js/react', () => ({
 vi.mock('@lynx-js/lynx-ui-common', () => ({ useMemoizedFn: <T>(fn: T) => fn }))
 vi.mock('../utils', () => ({ getDefaultRubberBand: () => false }))
 vi.mock('../context', () => ({
+  useSheetPositionerContext: () => null,
   useSheetContext: () => ({
     resolvedSide: 'bottom',
     show: false,
