@@ -2,12 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { defineConfig, type UserConfig } from 'vitest/config'
+import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-const config: UserConfig = defineConfig({
-  test: {
-    name: 'lynx-ui-input',
-  },
+export default vitestBaseConfig({
+  root: import.meta.dirname,
+  name: 'lynx-ui-input',
 })
-
-export default config

@@ -2,21 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { fileURLToPath } from 'node:url'
+import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-import { defineConfig } from 'vitest/config'
-
-const config = defineConfig({
-  resolve: {
-    alias: {
-      '@lynx-js/lynx-ui-presence': fileURLToPath(
-        new URL('../lynx-ui-presence/src/index.tsx', import.meta.url),
-      ),
-    },
-  },
-  test: {
-    name: 'lynx-ui-sheet',
-  },
+export default vitestBaseConfig({
+  root: import.meta.dirname,
+  name: 'lynx-ui-sheet',
 })
-
-export default config

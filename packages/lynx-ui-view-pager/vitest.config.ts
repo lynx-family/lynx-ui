@@ -2,14 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { vitestTestingLibraryPlugin } from '@lynx-js/react/testing-library/plugins'
-import { defineConfig } from 'vitest/config'
+import { vitestBaseConfig } from '../../tools/configs/vitestBaseConfig'
 
-export default defineConfig({
+export default vitestBaseConfig({
   root: import.meta.dirname,
-  plugins: [vitestTestingLibraryPlugin()],
-  test: {
-    include: ['__tests__/**/*.test.{ts,tsx}'],
-    name: 'lynx-ui-view-pager',
-  },
+  name: 'lynx-ui-view-pager',
 })

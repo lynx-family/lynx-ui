@@ -365,10 +365,16 @@ factory and include those files in their lint project. Run
 
 ### Testing
 
-- Use **Vitest** for unit testing.
+- Use **Vitest** with **ReactLynx Testing Library** (`@lynx-js/react/testing-library`) for component, hook, and worklet tests in ReactLynx packages (`packages/*` and `apps/examples`).
+- Configure ReactLynx package Vitest configs with `vitestBaseConfig` from `tools/configs/vitestBaseConfig.ts`. It registers `vitestTestingLibraryPlugin()` from `@lynx-js/react/testing-library/plugins`, sets up the dual-thread `LynxTestingEnv`, compiles JSX snapshots and `'main thread'` worklet functions in `MIXED` mode, and aliases workspace `@lynx-js/lynx-ui-*` packages to their source entries.
+- Do not mock `@lynx-js/react`, `@lynx-js/react/jsx-runtime`, or hand-roll hook or compiler harnesses. Use `render`, `renderHook`, `fireEvent`, and `act` from `@lynx-js/react/testing-library` so tests run against the real ReactLynx runtime and dual-thread element tree.
+- Exercise `'main thread'` worklet functions through the real worklet runtime: trigger `main-thread:bind*` handlers with `fireEvent`, or call `'main thread'` functions through `await runOnMainThread(fn)(...)` after mounting a page with `render(...)` or `renderHook(...)`. Use `runOnBackground` inside test worklet functions to notify background spies, and mark mocked main-thread module functions with `'main thread'` so they survive cross-thread serialization.
+- When calling `rerender(...)` to verify hook or instance stability, build the initial and updated elements from the same JSX helper or component so ReactLynx reuses the same compiled snapshot type instead of remounting.
+- Spy on `NodesRef.prototype.invoke` (via `Object.getPrototypeOf(lynx.createSelectorQuery().selectUniqueID(0))`) for unimplemented native UI methods such as `boundingClientRect` instead of replacing `globalThis.lynx`. Mutate `SystemInfo` fields directly when testing platform or SDK branches; importing `@lynx-js/react/testing-library` runs `cleanup()` and `lynxTestingEnv.reset()` automatically after each test.
+- Keep non-ReactLynx workspaces (such as Web React packages under `luna/packages/*` and Node tooling under `tools/*`) on their native Vitest or `node --test` setups.
 - Test files should be located alongside source files or in a `__tests__` directory (follow existing pattern).
 - Run tests: `pnpm test`. The root command uses `vitest.workspace.json` to collect package-level Vitest configs.
-- When adding tests for a package, add or update that package's `vitest.config.ts` so root `pnpm test` includes it.
+- When adding tests for a package, add or update that package's `vitest.config.ts` using `vitestBaseConfig` so root `pnpm test` includes it.
 - Add a package-level `test` script only when that package has tests or intentionally delegates to an external test config.
 
 ## Contribution Rules
