@@ -46,9 +46,13 @@ vi.mock('@lynx-js/motion/mini', async importOriginal => ({
   ) => ref.current.on(event, fn),
 }))
 
-function setup(snapPoints: Array<number | string> = ['fit']) {
+function setup(
+  snapPoints: Array<number | string> = ['fit'],
+  onSnapStart?: Parameters<typeof useSnap>[0]['onSnapStartMT'],
+) {
   const state = { current: PresenceState.Left }
   const entered = vi.fn()
+  const onSnapChange = vi.fn()
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
   const snap = useSnap({
     snapPoints,
@@ -56,6 +60,8 @@ function setup(snapPoints: Array<number | string> = ['fit']) {
     screenWidth: 400,
     presenceStateMTRef: state,
     onEntered: entered,
+    onSnapChange,
+    onSnapStartMT: onSnapStart,
   })
   const styles = vi.fn()
   const element = {
@@ -67,10 +73,10 @@ function setup(snapPoints: Array<number | string> = ['fit']) {
       setStyleProperties: () => undefined,
     } as unknown as MainThread.Element,
   )
-  return { snap, state, entered, styles }
+  return { snap, state, entered, styles, onSnapChange }
 }
 
-describe('Sheet footer fit sizing', () => {
+describe('Sheet intrinsic and footer fit sizing', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     vi.stubGlobal(
@@ -81,6 +87,97 @@ describe('Sheet footer fit sizing', () => {
   afterEach(() => {
     vi.useRealTimers()
     vi.unstubAllGlobals()
+  })
+
+  it('reports a released maximum snap without an onSnapStart subscriber', () => {
+    const { snap, onSnapChange } = setup([300, 800])
+    snap.show({ animate: false })
+    snap.yRef.current.set(800)
+    expect(onSnapChange).not.toHaveBeenCalled()
+
+    snap.releaseAtMaxSnapMT(1)
+    vi.advanceTimersByTime(1000)
+    expect(onSnapChange.mock.calls).toEqual([[1, 800]])
+  })
+
+  it('starts fullscreen appearance before reporting the released maximum snap', () => {
+    const onSnapStart = vi.fn()
+    const { snap, onSnapChange } = setup([300, 800], onSnapStart)
+    snap.show({ animate: false })
+    snap.yRef.current.set(800)
+    expect(onSnapStart).not.toHaveBeenCalled()
+    expect(onSnapChange).not.toHaveBeenCalled()
+
+    snap.releaseAtMaxSnapMT(1)
+    expect(onSnapStart.mock.calls).toEqual([[1, 800, true]])
+    vi.advanceTimersByTime(1000)
+    expect(onSnapChange.mock.calls).toEqual([[1, 800]])
+    expect(onSnapStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onSnapChange.mock.invocationCallOrder[0],
+    )
+  })
+
+  it('preserves an immediate open while waiting for fit measurement', () => {
+    const { snap, state, entered } = setup()
+    snap.show({ animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    expect(snap.yRef.current.get()).toBe(300)
+    expect(state.current).toBe(PresenceState.Entered)
+    expect(entered).toHaveBeenCalledTimes(1)
+  })
+
+  it('resizes an open fit panel when intrinsic body content grows and shrinks', () => {
+    const { snap } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(snap.yRef.current.get()).toBe(420)
+    snap.handleSheetLayoutChangeMT({ detail: { height: 240 } })
+    expect(snap.yRef.current.get()).toBe(240)
+  })
+
+  it('preserves a numeric destination while intrinsic body content changes', () => {
+    const { snap } = setup(['fit', 600])
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.snapToMT(1, { animate: false })
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([420, 600])
+    expect(snap.yRef.current.get()).toBe(600)
+  })
+
+  it('preserves a dragged position when intrinsic body content changes', () => {
+    const { snap } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.yRef.current.set(250)
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(snap.getResolvedSnapOffsets()).toEqual([420])
+    expect(snap.yRef.current.get()).toBe(250)
+  })
+
+  it('updates an opening fit animation target when intrinsic body content changes', () => {
+    const { snap, state, entered } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.showMT()
+    vi.advanceTimersByTime(32)
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    vi.advanceTimersByTime(3000)
+    expect(snap.yRef.current.get()).toBe(420)
+    expect(state.current).toBe(PresenceState.Entered)
+    expect(entered).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps a closing panel closed when intrinsic body content changes', () => {
+    const { snap, state } = setup()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 300 } })
+    snap.show({ animate: false })
+    snap.closeMT()
+    snap.handleSheetLayoutChangeMT({ detail: { height: 420 } })
+    expect(state.current).toBe(PresenceState.Leaving)
+    vi.advanceTimersByTime(3000)
+    expect(snap.yRef.current.get()).toBe(0)
+    expect(state.current).toBe(PresenceState.Left)
   })
 
   it.each([true, false])(

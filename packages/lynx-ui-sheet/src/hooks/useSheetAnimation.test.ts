@@ -42,6 +42,14 @@ describe('Sheet animation ownership with the installed motion runtime', () => {
     vi.unstubAllGlobals()
   })
 
+  it('completes an appearance animation without an arrival callback', () => {
+    const { position, animateToMT } = setup()
+    animateToMT(900)
+    expect(() => vi.advanceTimersByTime(500)).not.toThrow()
+    expect(position.get()).toBe(900)
+    expect(position.isAnimating()).toBe(false)
+  })
+
   it('holds an interrupted snap and completes it only after resuming', () => {
     const { position, animateToMT, interruptAnimationMT, resumeAnimationMT } =
       setup()

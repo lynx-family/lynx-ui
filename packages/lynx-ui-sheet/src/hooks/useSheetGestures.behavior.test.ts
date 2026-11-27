@@ -125,19 +125,25 @@ function makePan(offsets = [450, 900], overrides = {}) {
     viewportSize: 1000,
     sheetSizeMTRef: { current: 900 },
     getResolvedSnapOffsets: () => offsets,
-    onSnapChangeMT: vi.fn(),
     onGestureStartMT: vi.fn(),
     onGestureEndMT: vi.fn(),
     onDragStartMT: vi.fn(),
     onDragEndSnapMT: vi.fn(),
     onDragEndCloseMT: vi.fn(),
+    onReleaseAtMaxMT: vi.fn(),
     ...overrides,
   }
   // rslint-disable-next-line react-hooks/rules-of-hooks -- React bindings are mocked for direct hook unit tests.
-  const gesture = useSheetPanGesture(
+  const { gesture, finishTouchMT } = useSheetPanGesture(
     options as unknown as Parameters<typeof useSheetPanGesture>[0],
-  ) as unknown as InstanceType<typeof runtime.Gesture>
-  return { gesture, motion, options, scrollManager }
+  )
+  return {
+    gesture: gesture as unknown as InstanceType<typeof runtime.Gesture>,
+    finishTouchMT,
+    motion,
+    options,
+    scrollManager,
+  }
 }
 
 describe('native scroll coordination', () => {
@@ -187,17 +193,89 @@ describe('native scroll coordination', () => {
     })
     return { promise, resolve }
   }
-  it('notifies the maximum snap after expanding and handing off to content', () => {
+  it('waits for touch-up to settle a snap after handing off at the maximum', () => {
     const { gesture, motion, options } = makePan()
     const manager = makeManager()
     gesture.callbacks.begin(event(500), manager)
     gesture.callbacks.update(event(0), manager)
     expect(motion.get()).toBe(900)
     gesture.callbacks.update(event(-20), manager)
-    gesture.callbacks.end(event(-20), manager)
-    expect(options.onSnapChangeMT).toHaveBeenCalledWith(1, 900)
+    gesture.callbacks.end?.(event(-20), manager)
+    expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+    gesture.callbacks.up(event(-20), manager)
     expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    expect(options.onReleaseAtMaxMT.mock.calls).toEqual([[1]])
   })
+
+  it.each(['native-only', 'native-first', 'pan-first'] as const)(
+    'settles the maximum snap once on release with %s touch delivery',
+    order => {
+      const { gesture, options, finishTouchMT } = makePan()
+      const manager = makeManager()
+      const scroll = useSheetNativeScrollGesture(
+        {
+          sheetGesture: gesture,
+          activeScrollMTRef: options.activeScrollMTRef,
+          resolvedSide: 'bottom',
+          position: options.yRef,
+          getResolvedSnapOffsets: options.getResolvedSnapOffsets,
+          onScrollEndMT: finishTouchMT,
+        } as unknown as Parameters<typeof useSheetNativeScrollGesture>[0],
+      ) as unknown as InstanceType<typeof runtime.Gesture>
+      scroll.callbacks.down({
+        params: { pageX: 0, pageY: 500, isAtStart: true },
+      }, manager)
+      gesture.callbacks.begin(event(500), manager)
+      gesture.callbacks.update(event(0), manager)
+      gesture.callbacks.update(event(-20), manager)
+      expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+      if (order === 'pan-first') gesture.callbacks.up(event(-20), manager)
+      scroll.callbacks.up(event(-20), manager)
+      if (order === 'native-first') gesture.callbacks.up(event(-20), manager)
+      expect(options.onReleaseAtMaxMT.mock.calls).toEqual([[1]])
+    },
+  )
+
+  it('settles the final snap after reversing a maximum handoff', () => {
+    const { gesture, motion, options } = makePan([450, 700, 900])
+    const manager = makeManager()
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(250), manager)
+    expect(motion.get()).toBe(700)
+    gesture.callbacks.update(event(30), manager)
+    gesture.callbacks.update(event(0), manager)
+    expect(motion.get()).toBe(900)
+    expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+    gesture.callbacks.update(event(200), manager)
+    expect(motion.get()).toBe(700)
+    expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    gesture.callbacks.up(event(200), manager)
+    expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+    expect(options.onDragEndSnapMT.mock.calls).toEqual([[1]])
+  })
+
+  it('does not emit a max-snap release when the content alone moved', () => {
+    const { gesture, motion, options } = makePan()
+    const manager = makeManager()
+    motion.set(900)
+    options.activeScrollMTRef.current.atStart = false
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(450), manager)
+    gesture.callbacks.up(event(450), manager)
+    expect(options.onReleaseAtMaxMT).not.toHaveBeenCalled()
+  })
+
+  it('settles a maximum handoff on touch cancellation only once', () => {
+    const { gesture, options } = makePan()
+    const manager = makeManager()
+    gesture.callbacks.begin(event(500), manager)
+    gesture.callbacks.update(event(0), manager)
+    gesture.callbacks.update(event(-20), manager)
+    gesture.callbacks.cancel(event(-20), manager)
+    gesture.callbacks.up(event(-20), manager)
+    expect(options.onReleaseAtMaxMT.mock.calls).toEqual([[1]])
+  })
+
   it('does not repeat a native consumption command while the owner stays Sheet', () => {
     const { gesture, scrollManager } = makePan()
     const manager = makeManager()
@@ -219,7 +297,7 @@ describe('native scroll coordination', () => {
     expect(options.onGestureStartMT).toHaveBeenCalledTimes(1)
     expect(options.onDragStartMT).not.toHaveBeenCalled()
     expect(motion.get()).toBe(900)
-    gesture.callbacks.end(event(140), manager)
+    gesture.callbacks.up(event(140), manager)
     expect(options.onGestureEndMT).not.toHaveBeenCalled()
   })
 
@@ -232,16 +310,18 @@ describe('native scroll coordination', () => {
     expect(options.onGestureStartMT).not.toHaveBeenCalled()
   })
 
-  it('ends a header interaction only once across pan end and touch-up', () => {
+  it('settles a header drag only once on touch-up', () => {
     const { gesture, options } = makePan([450, 900], {
       activeScrollMTRef: { current: null },
     })
     const manager = makeManager()
     gesture.callbacks.begin(event(100), manager)
     gesture.callbacks.update(event(120), manager)
-    gesture.callbacks.end(event(120), manager)
+    gesture.callbacks.end?.(event(120), manager)
+    expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
     gesture.callbacks.up(event(120), manager)
-    expect(options.onGestureEndMT).toHaveBeenCalledTimes(1)
+    expect(options.onDragEndSnapMT).toHaveBeenCalledOnce()
+    expect(options.onGestureEndMT).toHaveBeenCalledOnce()
   })
 
   it.each(['up', 'cancel'])(
@@ -502,7 +582,7 @@ describe('native scroll coordination', () => {
       const manager = makeManager()
       gesture.callbacks.begin(event(500), manager)
       gesture.callbacks.update(event(100), manager)
-      gesture.callbacks.end(event(100), manager)
+      gesture.callbacks.up(event(100), manager)
       expect(motion.get()).toBe(450)
       expect(options.onDragStartMT).not.toHaveBeenCalled()
       expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
@@ -521,6 +601,66 @@ describe('native scroll coordination', () => {
     expect(motion.get()).toBe(880)
     expect(manager.fail).not.toHaveBeenCalled()
   })
+})
+
+describe('nested pan release recovery', () => {
+  it.each([
+    { offsets: [450, 900], position: 200, velocity: 1000, index: 0 },
+    { offsets: [450, 900], position: 200, velocity: 1800, index: 1 },
+    { offsets: [0, 450, 900], position: 0, velocity: 200, index: 1 },
+    { offsets: [-1, 450, 900], position: 0, velocity: 200, index: 1 },
+  ])(
+    'recovers an opening fling without selecting closed or unresolved snaps: %j',
+    ({ offsets, position, velocity, index }) => {
+      const { gesture, motion, options } = makePan(offsets)
+      const manager = makeManager()
+      gesture.callbacks.begin(event(0), manager)
+      gesture.callbacks.update(event(50), manager)
+      motion.set(position)
+      vi.spyOn(motion, 'getVelocity').mockReturnValue(velocity)
+      gesture.callbacks.up(event(50), manager)
+      expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+      expect(options.onDragEndSnapMT).toHaveBeenCalledWith(index)
+    },
+  )
+
+  it.each([
+    { velocity: 0, overrides: {} },
+    { velocity: 100, overrides: {} },
+    { velocity: -1000, overrides: {} },
+    { velocity: 1000, overrides: { flingEnabled: false } },
+    { velocity: 1000, overrides: { flingMinVelocity: 1200 } },
+  ])(
+    'retains dismiss-zone closure without an opening fling: %j',
+    ({ velocity, overrides }) => {
+      const { gesture, motion, options } = makePan([450, 900], overrides)
+      const manager = makeManager()
+      gesture.callbacks.begin(event(0), manager)
+      gesture.callbacks.update(event(50), manager)
+      motion.set(200)
+      vi.spyOn(motion, 'getVelocity').mockReturnValue(velocity)
+      gesture.callbacks.up(event(50), manager)
+      expect(options.onDragEndCloseMT).toHaveBeenCalledOnce()
+      expect(options.onDragEndSnapMT).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each([-1000, 0, 1000])(
+    'never dismisses with drag-to-close disabled at velocity %s',
+    velocity => {
+      const { gesture, motion, options } = makePan([450, 900], {
+        enableDragToClose: false,
+      })
+      const manager = makeManager()
+      gesture.callbacks.begin(event(0), manager)
+      gesture.callbacks.update(event(50), manager)
+      motion.set(200)
+      vi.spyOn(motion, 'getVelocity').mockReturnValue(velocity)
+      gesture.callbacks.up(event(50), manager)
+      expect(options.onDragEndCloseMT).not.toHaveBeenCalled()
+      expect(options.onDragEndSnapMT).toHaveBeenCalledWith(0)
+    },
+  )
 })
 
 describe('relations across recognizer clones', () => {

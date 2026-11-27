@@ -1,3 +1,4 @@
+@import "@lynx-js/luna-styles/index.css";
 @import "../shared/base.css";
 
 .gesture-sheet-inner {
@@ -9,7 +10,7 @@
 
 .nested-list {
   width: 100%;
-  height: calc(100% - 88px);
+  height: calc(100% - 120px);
 }
 
 .list-item {
@@ -41,4 +42,8 @@
 .example-copy {
   color: var(--content-muted);
   font-size: 12px;
+}
+
+.list-item-text {
+  color: var(--content);
 }
